@@ -3,10 +3,6 @@
   "version": "0.0.4",
   "main": "dist/index.js",
   "license": "MIT",
-  "scripts": {
-    "build": "rm -rf dist && tsc",
-    "prepublishOnly": "yarn build"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/notunderctrl/commandkit"
