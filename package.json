@@ -1,0 +1,11 @@
+{
+  "name": "commandkit",
+  "version": "0.0.2",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "discord.js": "^14.11.0",
+    "tsc": "^2.0.4"
+  },
+  "dependencies": {}
+}
