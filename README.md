@@ -15,8 +15,7 @@ _Tested with Discord.js version `v14.11.0`_
 
 # Documentation
 
-_Coming soon_
-~~You can find the full documentation [here](https://commandkit.underctrl.io)~~
+You can find the full documentation [here](https://commandkit.underctrl.io)
 
 # Installation
 
@@ -40,7 +39,7 @@ yarn add commandkit
 
 This is a simple overview of how to set up this library with all the options.
 
-~~**It's highly recommended you check out the documentation to fully understand how to work with this library.**~~
+**It's highly recommended you check out the [documentation](https://commandkit.underctrl.io) to fully understand how to work with this library.**
 
 ```js
 // index.js
