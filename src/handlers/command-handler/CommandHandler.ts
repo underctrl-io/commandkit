@@ -91,20 +91,34 @@ export class CommandHandler {
           } catch (error) {}
         }
 
+        // <!-- TODO: Edit command if there's any changes -->
+
         // <!-- Delete command if options.deleted -->
         if (command.options?.deleted) {
           const targetCommand = appCommands?.cache.find((cmd) => cmd.name === command.data.name);
-          targetCommand?.delete().then(() => {
-            console.log(`🗑️ Deleted command "${command.data.name}" globally.`);
-          });
+
+          if (!targetCommand) {
+            console.log(`⏩ Ignoring: Command "${command.data.name}" is set to be deleted.`);
+          } else {
+            targetCommand.delete().then(() => {
+              console.log(`🗑️ Deleted command "${command.data.name}" globally.`);
+            });
+          }
 
           for (const guildCommands of devGuildCommands) {
             const targetCommand = guildCommands.cache.find((cmd) => cmd.name === command.data.name);
-            targetCommand?.delete().then(() => {
+
+            if (!targetCommand) {
               console.log(
-                `🗑️ Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`
+                `⏩ Ignoring: Command "${command.data.name}" is set to be deleted in ${guildCommands.guild.name}.`
               );
-            });
+            } else {
+              targetCommand.delete().then(() => {
+                console.log(
+                  `🗑️ Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`
+                );
+              });
+            }
           }
 
           continue;
