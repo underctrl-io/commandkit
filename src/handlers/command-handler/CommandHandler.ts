@@ -289,9 +289,12 @@ export class CommandHandler {
       // Run user validation functions
       const validationFunctions = this._data.validations;
 
+      const { data, options, run, ...rest } = targetCommand;
+
       const commandObj = {
         data: targetCommand.data,
         options: targetCommand.options,
+        ...rest,
       };
 
       let canRun = true;

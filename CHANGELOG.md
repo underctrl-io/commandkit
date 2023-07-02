@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.0.7] - 2023-07-02
+
+### Changed
+
+- Give validation functions access to the full command object (commandObj) excluding the run function (as that is handled by the command handler), as opposed to just the `data` and `options` properties.
+
 ## [0.0.6] - 2023-07-02
 
 ### Fixed
