@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.0.8] - 2023-07-03
+
+### Added
+
+- Support for nested files inside of each event folder.
+
 ## [0.0.7] - 2023-07-02
 
 ### Changed
