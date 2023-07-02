@@ -29,7 +29,7 @@ export interface SlashCommandObject {
         name_localizations?: any;
         description: string;
         dm_permission?: boolean;
-        options: APIApplicationCommandOption[];
+        options?: APIApplicationCommandOption[];
       };
   options?: {
     guildOnly?: boolean;

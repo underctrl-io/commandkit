@@ -1,9 +1,4 @@
-import {
-  Guild,
-  SlashCommandBuilder,
-  ContextMenuCommandBuilder,
-  GuildApplicationCommandManager,
-} from 'discord.js';
+import { Guild, GuildApplicationCommandManager } from 'discord.js';
 import { getFilePaths } from '../../utils/get-paths';
 import { CommandHandlerData, CommandHandlerOptions } from './typings';
 import { ContextCommandObject, SlashCommandObject } from '../../../typings';
@@ -80,28 +75,17 @@ export class CommandHandler {
       }
 
       for (const command of commands) {
-        const commandData = command.data;
-
-        if (
-          commandData instanceof SlashCommandBuilder ||
-          commandData instanceof ContextMenuCommandBuilder
-        ) {
-          try {
-            commandData.toJSON();
-          } catch (error) {}
-        }
-
-        // <!-- TODO: Edit command if there's any changes -->
-
         // <!-- Delete command if options.deleted -->
         if (command.options?.deleted) {
           const targetCommand = appCommands?.cache.find((cmd) => cmd.name === command.data.name);
 
           if (!targetCommand) {
-            console.log(`⏩ Ignoring: Command "${command.data.name}" is set to be deleted.`);
+            console.log(
+              `⏩ Ignoring: Command "${command.data.name}" is globally marked as deleted.`
+            );
           } else {
             targetCommand.delete().then(() => {
-              console.log(`🗑️ Deleted command "${command.data.name}" globally.`);
+              console.log(`🚮 Deleted command "${command.data.name}" globally.`);
             });
           }
 
@@ -110,12 +94,12 @@ export class CommandHandler {
 
             if (!targetCommand) {
               console.log(
-                `⏩ Ignoring: Command "${command.data.name}" is set to be deleted in ${guildCommands.guild.name}.`
+                `⏩ Ignoring: Command "${command.data.name}" is marked as deleted for ${guildCommands.guild.name}.`
               );
             } else {
               targetCommand.delete().then(() => {
                 console.log(
-                  `🗑️ Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`
+                  `🚮 Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`
                 );
               });
             }
@@ -123,6 +107,70 @@ export class CommandHandler {
 
           continue;
         }
+
+        // <!-- Edit command if there's any changes -->
+        let commandData = command.data;
+        let editedCommand = false;
+
+        (() => {
+          // global
+          const appGlobalCommand = appCommands?.cache.find((cmd) => cmd.name === command.data.name);
+
+          if (appGlobalCommand) {
+            const commandsAreDifferent = this._areSlashCommandsDifferent(
+              appGlobalCommand,
+              commandData
+            );
+
+            if (commandsAreDifferent) {
+              appGlobalCommand
+                .edit(commandData)
+                .then(() => {
+                  console.log(`✅ Edited command "${commandData.name}" globally.`);
+                })
+                .catch((error) => {
+                  console.log(`❌ Failed to edit command "${commandData.name}" globally.`);
+                  console.error(error);
+                });
+
+              editedCommand = true;
+            }
+          }
+
+          // guilds
+          for (const guildCommands of devGuildCommands) {
+            const appGuildCommand = guildCommands.cache.find(
+              (cmd) => cmd.name === commandData.name
+            );
+
+            if (appGuildCommand) {
+              const commandsAreDifferent = this._areSlashCommandsDifferent(
+                appGuildCommand,
+                commandData
+              );
+
+              if (commandsAreDifferent) {
+                appGuildCommand
+                  .edit(commandData)
+                  .then(() => {
+                    console.log(
+                      `✅ Edited command "${commandData.name}" in ${guildCommands.guild.name}.`
+                    );
+                  })
+                  .catch((error) => {
+                    console.log(
+                      `❌ Failed to edit command "${commandData.name}" in ${guildCommands.guild.name}.`
+                    );
+                    console.error(error);
+                  });
+
+                editedCommand = true;
+              }
+            }
+          }
+        })();
+
+        if (editedCommand) continue;
 
         // <!-- Registration -->
         // guild-based command registration
@@ -261,6 +309,21 @@ export class CommandHandler {
         targetCommand.run({ interaction, client });
       }
     });
+  }
+
+  _areSlashCommandsDifferent(appCommand: any, localCommand: any) {
+    if (!appCommand.options) appCommand.options = [];
+    if (!localCommand.options) localCommand.options = [];
+
+    if (!appCommand.description) appCommand.description = '';
+    if (!localCommand.description) localCommand.description = '';
+
+    if (
+      localCommand.description !== appCommand.description ||
+      localCommand.options.length !== appCommand.options.length
+    ) {
+      return true;
+    }
   }
 
   getCommands() {

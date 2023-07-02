@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.0.5] - 2023-07-02
+
+### Added
+
+- Ability to automatically update application commands (guilds and global) when there's changes to the description or number of options (slash commands only).
+
 ## [0.0.4] - 2023-07-01
 
 ### Updated

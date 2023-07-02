@@ -8,7 +8,7 @@ _Tested with Discord.js version `v14.11.0`_
 
 - Very beginner friendly 🚀
 - Support for slash and context menu commands ✅
-- Automatic command registrations and deletion 🤖
+- Automatic command registration, edits, and deletion 🤖
 - Supports multiple development servers 🤝
 - Supports multiple users as bot developers 👥
 - Object oriented 💻
