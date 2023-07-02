@@ -18,8 +18,7 @@ export class EventHandler {
     const eventFolderPaths = getFolderPaths(this._data.eventsPath);
 
     for (const eventFolderPath of eventFolderPaths) {
-      const eventFolderPathChunks = eventFolderPath.replace('\\', '/').split('/');
-      const eventName = eventFolderPathChunks[eventFolderPathChunks.length - 1];
+      const eventName = eventFolderPath.replace(/\\/g, '/').split('/').pop() as string;
 
       const eventFilePaths = getFilePaths(eventFolderPath).filter(
         (path) => path.endsWith('.js') || path.endsWith('.ts')

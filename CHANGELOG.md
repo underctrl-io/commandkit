@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.0.6] - 2023-07-02
+
+### Fixed
+
+- Fixed a bug where wrong event names were being registered on Windows.
+
 ## [0.0.5] - 2023-07-02
 
 ### Added
