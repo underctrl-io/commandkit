@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.0.9] - 2023-08-09
+
+### Added
+
+-   Support for developer role IDs
+-   Ability to skip built-in validations by setting `skipBuiltInValidations` to true inside the `CommandKit` constructor
+
+### Changed
+
+-   Change validations to run custom user validations first, then CommandKit's built-in validations.
+
 ## [0.0.8] - 2023-07-03
 
 ### Added

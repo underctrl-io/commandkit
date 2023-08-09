@@ -1,7 +1,8 @@
 import { Guild, GuildApplicationCommandManager } from 'discord.js';
-import { getFilePaths } from '../../utils/get-paths';
-import { CommandHandlerData, CommandHandlerOptions } from './typings';
+import { BuiltInValidation, CommandHandlerData, CommandHandlerOptions } from './typings';
 import { ContextCommandObject, SlashCommandObject } from '../../../typings';
+import { getFilePaths } from '../../utils/get-paths';
+import path from 'path';
 
 export class CommandHandler {
     _data: CommandHandlerData;
@@ -9,6 +10,7 @@ export class CommandHandler {
     constructor({ ...options }: CommandHandlerOptions) {
         this._data = {
             ...options,
+            builtInValidations: [],
             commands: [],
         };
 
@@ -17,6 +19,7 @@ export class CommandHandler {
 
     _init() {
         this._buildCommands();
+        this._buildValidations();
         this._registerCommands();
         this._handleCommands();
     }
@@ -40,6 +43,22 @@ export class CommandHandler {
             }
 
             this._data.commands.push(commandObj);
+        }
+    }
+
+    _buildValidations() {
+        const validationFilePaths = getFilePaths(path.join(__dirname, 'validations'), true).filter(
+            (path) => path.endsWith('.js')
+        );
+
+        for (const validationFilePath of validationFilePaths) {
+            const validationFunction: Function = require(validationFilePath);
+
+            if (typeof validationFunction !== 'function') {
+                continue;
+            }
+
+            this._data.builtInValidations.push(validationFunction as BuiltInValidation);
         }
     }
 
@@ -248,65 +267,6 @@ export class CommandHandler {
 
             if (!targetCommand) return;
 
-            // Options validation
-            // options.guildOnly
-            if (targetCommand.options?.guildOnly && !interaction.inGuild()) {
-                interaction.reply({
-                    content: '❌ This command can only be used inside a server.',
-                    ephemeral: true,
-                });
-                return;
-            }
-
-            // options.devOnly
-            if (targetCommand.options?.devOnly) {
-                const isDevUser = this._data.devUserIds.includes(interaction.user.id);
-
-                if (!isDevUser) {
-                    interaction.reply({
-                        content: '❌ This command can only be used by developers.',
-                        ephemeral: true,
-                    });
-                    return;
-                }
-            }
-
-            // options.userPermissions
-            const memberPermissions = interaction.memberPermissions;
-            if (targetCommand.options?.userPermissions && memberPermissions) {
-                for (const permission of targetCommand.options.userPermissions) {
-                    const hasPermission = memberPermissions.has(permission);
-
-                    if (!hasPermission) {
-                        interaction.reply({
-                            content: `❌ You do not have enough permission to run this command. Required permission: \`${permission}\``,
-                            ephemeral: true,
-                        });
-                        return;
-                    }
-                }
-            }
-
-            // options.botPermissions
-            const botMember = interaction.guild?.members.me;
-
-            if (targetCommand.options?.botPermissions && botMember) {
-                for (const permission of targetCommand.options.botPermissions) {
-                    const hasPermission = botMember.permissions.has(permission);
-
-                    if (!hasPermission) {
-                        interaction.reply({
-                            content: `❌ I do not have enough permission to execute this command. Required permission: \`${permission}\``,
-                            ephemeral: true,
-                        });
-                        return;
-                    }
-                }
-            }
-
-            // Run user validation functions
-            const validationFunctions = this._data.validations;
-
             const { data, options, run, ...rest } = targetCommand;
 
             const commandObj = {
@@ -317,7 +277,7 @@ export class CommandHandler {
 
             let canRun = true;
 
-            for (const validationFunction of validationFunctions) {
+            for (const validationFunction of this._data.customValidations) {
                 const stopValidationLoop = await validationFunction({
                     interaction,
                     client,
@@ -330,9 +290,27 @@ export class CommandHandler {
                 }
             }
 
-            if (canRun) {
-                targetCommand.run({ interaction, client });
+            if (!canRun) return;
+
+            // If custom validations pass and !skipBuiltInValidations, run built-in CommandKit validation functions
+            if (!this._data.skipBuiltInValidations) {
+                for (const validation of this._data.builtInValidations) {
+                    const stopValidationLoop = validation({
+                        targetCommand,
+                        interaction,
+                        handlerData: this._data,
+                    });
+
+                    if (stopValidationLoop) {
+                        canRun = false;
+                        break;
+                    }
+                }
             }
+
+            if (!canRun) return;
+
+            targetCommand.run({ interaction, client });
         });
     }
 

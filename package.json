@@ -1,6 +1,6 @@
 {
     "name": "commandkit",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "main": "dist/index.js",
     "license": "MIT",
     "scripts": {
@@ -19,7 +19,7 @@
     ],
     "dependencies": {},
     "devDependencies": {
-        "discord.js": "^14.11.0",
+        "discord.js": "^14.12.1",
         "tsc": "^2.0.4",
         "typescript": "^5.1.6"
     }

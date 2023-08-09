@@ -38,7 +38,7 @@ export class CommandKit {
                 validationsPath: this._data.validationsPath,
             });
 
-            validationFunctions = validationHandler.getValidations();
+            validationHandler.getValidations().forEach((v) => validationFunctions.push(v));
         }
 
         // Command handler
@@ -48,7 +48,9 @@ export class CommandKit {
                 commandsPath: this._data.commandsPath,
                 devGuildIds: this._data.devGuildIds || [],
                 devUserIds: this._data.devUserIds || [],
-                validations: validationFunctions,
+                devRoleIds: this._data.devRoleIds || [],
+                customValidations: validationFunctions,
+                skipBuiltInValidations: this._data.skipBuiltInValidations || false,
             });
 
             this._data.commands = commandHandler.getCommands();

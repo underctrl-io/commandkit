@@ -15,6 +15,8 @@ export interface CommandKitOptions {
     validationsPath?: string;
     devGuildIds?: string[];
     devUserIds?: string[];
+    devRoleIds?: string[];
+    skipBuiltInValidations?: boolean;
 }
 
 export interface CommandKitData extends CommandKitOptions {
