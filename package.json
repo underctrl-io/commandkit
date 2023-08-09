@@ -17,7 +17,6 @@
         "event handler",
         "command validations"
     ],
-    "dependencies": {},
     "devDependencies": {
         "discord.js": "^14.12.1",
         "typescript": "^5.1.6"
