@@ -72,6 +72,9 @@ new CommandKit({
     // Array of developer user IDs (used for devOnly commands)
     devUserIds: ['DEV_USER_ID_1', 'DEV_USER_ID_2'],
 
+    // Array of developer role IDs (used for devOnly commands)
+    devRoleIds: ['DEV_ROLE_ID_1', 'DEV_ROLE_ID_2'],
+
     // A property that disables CommandKit's built-in validations
     skipBuiltInValidations: true,
 });
