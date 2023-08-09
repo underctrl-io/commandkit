@@ -71,6 +71,9 @@ new CommandKit({
 
     // Array of developer user IDs (used for devOnly commands)
     devUserIds: ['DEV_USER_ID_1', 'DEV_USER_ID_2'],
+
+    // A property that disables CommandKit's built-in validations
+    skipBuiltInValidations: true,
 });
 
 client.login('YOUR_TOKEN_HERE');
