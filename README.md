@@ -1,17 +1,17 @@
 # CommandKit
 
-CommandKit is a library that makes it easy to handle commands (+validations), and events in your Discord.js projects.
+CommandKit is a library that makes it easy to handle commands (+ validations), and events in your Discord.js projects.
 
-_Tested with Discord.js version `v14.11.0`_
+**Supports Discord.js version 14**
 
 # Features
 
-- Very beginner friendly 🚀
-- Support for slash and context menu commands ✅
-- Automatic command registration, edits, and deletion 🤖
-- Supports multiple development servers 🤝
-- Supports multiple users as bot developers 👥
-- Object oriented 💻
+-   Very beginner friendly 🚀
+-   Support for slash and context menu commands ✅
+-   Automatic command registration, edits, and deletion 🤖
+-   Supports multiple development servers 🤝
+-   Supports multiple users as bot developers 👥
+-   Object oriented 💻
 
 # Documentation
 
@@ -37,38 +37,46 @@ yarn add commandkit
 
 # Usage
 
-This is a simple overview of how to set up this library with all the options.
-
-**It's highly recommended you check out the [documentation](https://commandkit.underctrl.io) to fully understand how to work with this library.**
+This is a simple overview of how to set up this library with all the options. You can read more in the [full documentation](https://commandkit.underctrl.io)
 
 ```js
 // index.js
-const { Client, IntentsBitField } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 const { CommandKit } = require('commandkit');
 const path = require('path');
 
 const client = new Client({
-  intents: [IntentsBitField.Flags.Guilds],
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+    ],
 });
 
 new CommandKit({
-  // Your discord.js client object
-  client,
+    // Your discord.js client object
+    client,
 
-  // Path to the commands folder
-  commandsPath: path.join(__dirname, 'commands'),
+    // Path to the commands folder
+    commandsPath: path.join(__dirname, 'commands'),
 
-  // Path to the events folder
-  eventsPath: path.join(__dirname, 'events'),
+    // Path to the events folder
+    eventsPath: path.join(__dirname, 'events'),
 
-  // Path to the validations folder (only valid if "commandsPath" was provided)
-  validationsPath: path.join(__dirname, 'validations'),
+    // Path to the validations folder (only valid if "commandsPath" was provided)
+    validationsPath: path.join(__dirname, 'validations'),
 
-  // Array of development server IDs (used to register and run devOnly commands)
-  devGuildIds: ['DEV_SERVER_ID_1', 'DEV_SERVER_ID_2'],
+    // Array of development server IDs (used to register and run devOnly commands)
+    devGuildIds: ['DEV_SERVER_ID_1', 'DEV_SERVER_ID_2'],
 
-  // Array of developer user IDs (used for devOnly commands)
-  devUserIds: ['DEV_USER_ID_1', 'DEV_USER_ID_2'],
+    // Array of developer user IDs (used for devOnly commands)
+    devUserIds: ['DEV_USER_ID_1', 'DEV_USER_ID_2'],
+
+    // Array of developer role IDs (used for devOnly commands)
+    devRoleIds: ['DEV_ROLE_ID_1', 'DEV_ROLE_ID_2'],
+
+    // A property that disables CommandKit's built-in validations
+    skipBuiltInValidations: true,
 });
 
 client.login('YOUR_TOKEN_HERE');
