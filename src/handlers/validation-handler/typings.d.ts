@@ -1,7 +1,7 @@
 export interface ValidationHandlerOptions {
-  validationsPath: string;
+    validationsPath: string;
 }
 
 export interface ValidationHandlerData extends ValidationHandlerOptions {
-  validations: Function[];
+    validations: Function[];
 }
