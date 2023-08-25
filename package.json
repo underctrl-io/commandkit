@@ -31,5 +31,8 @@
         "discord.js": "^14.12.1",
         "tsup": "^7.2.0",
         "typescript": "^5.1.6"
+    },
+    "peerDependencies": {
+        "discord.js": "^14"
     }
 }
