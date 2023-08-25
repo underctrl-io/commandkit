@@ -1,38 +1,39 @@
-import { getFilePaths } from '../../utils/get-paths';
-import { ValidationHandlerData, ValidationHandlerOptions } from './typings';
+import { ValidationHandlerData, ValidationHandlerOptions } from "./typings";
+import { getFilePaths } from "../../utils/get-paths";
 
 export class ValidationHandler {
-    _data: ValidationHandlerData;
+    #data: ValidationHandlerData;
 
     constructor({ ...options }: ValidationHandlerOptions) {
-        this._data = {
+        this.#data = {
             ...options,
             validations: [],
         };
-
-        this._buildValidations();
     }
 
-    _buildValidations() {
-        const validationFilePaths = getFilePaths(this._data.validationsPath, true).filter(
-            (path) => path.endsWith('.js') || path.endsWith('.ts')
+    async init() {
+        await this.#buildValidations();
+    }
+
+    async #buildValidations() {
+        const validationFilePaths = getFilePaths(this.#data.validationsPath, true).filter(
+            (path) => path.endsWith(".js") || path.endsWith(".ts")
         );
 
         for (const validationFilePath of validationFilePaths) {
-            const validationFunction = require(validationFilePath);
+            let validationFunction = (await import(validationFilePath)).default;
+            const compactFilePath = validationFilePath.split(process.cwd())[1] || validationFilePath;
 
-            if (typeof validationFunction !== 'function') {
-                console.log(
-                    `Ignoring: Validation ${validationFilePath} does not export a function.`
-                );
+            if (typeof validationFunction !== "function") {
+                console.log(`⏩ Ignoring: Validation ${compactFilePath} does not export a function.`);
                 continue;
             }
 
-            this._data.validations.push(validationFunction);
+            this.#data.validations.push(validationFunction);
         }
     }
 
-    getValidations() {
-        return this._data.validations;
+    get validations() {
+        return this.#data.validations;
     }
 }

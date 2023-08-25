@@ -1,8 +1,8 @@
-import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
-import { CommandKitData, CommandKitOptions } from '../typings';
+import { CommandHandler, EventHandler, ValidationHandler } from "./handlers";
+import { CommandKitData, CommandKitOptions } from "./typings";
 
 export class CommandKit {
-    private _data: CommandKitData;
+    #data: CommandKitData;
 
     constructor({ ...options }: CommandKitOptions) {
         if (!options.client) {
@@ -13,52 +13,58 @@ export class CommandKit {
             throw new Error('"commandsPath" is required when "validationsPath" is set.');
         }
 
-        this._data = {
+        this.#data = {
             ...options,
             commands: [],
         };
 
-        this._init();
+        this.#init();
     }
 
-    private _init() {
+    async #init() {
         // Event handler
-        if (this._data.eventsPath) {
-            new EventHandler({
-                client: this._data.client,
-                eventsPath: this._data.eventsPath,
+        if (this.#data.eventsPath) {
+            const eventHandler = new EventHandler({
+                client: this.#data.client,
+                eventsPath: this.#data.eventsPath,
             });
+
+            await eventHandler.init();
         }
 
         // Validation handler
         let validationFunctions: Function[] = [];
 
-        if (this._data.validationsPath) {
+        if (this.#data.validationsPath) {
             const validationHandler = new ValidationHandler({
-                validationsPath: this._data.validationsPath,
+                validationsPath: this.#data.validationsPath,
             });
 
-            validationHandler.getValidations().forEach((v) => validationFunctions.push(v));
+            await validationHandler.init();
+
+            validationHandler.validations.forEach((v) => validationFunctions.push(v));
         }
 
         // Command handler
-        if (this._data.commandsPath) {
+        if (this.#data.commandsPath) {
             const commandHandler = new CommandHandler({
-                client: this._data.client,
-                commandsPath: this._data.commandsPath,
-                devGuildIds: this._data.devGuildIds || [],
-                devUserIds: this._data.devUserIds || [],
-                devRoleIds: this._data.devRoleIds || [],
+                client: this.#data.client,
+                commandsPath: this.#data.commandsPath,
+                devGuildIds: this.#data.devGuildIds || [],
+                devUserIds: this.#data.devUserIds || [],
+                devRoleIds: this.#data.devRoleIds || [],
                 customValidations: validationFunctions,
-                skipBuiltInValidations: this._data.skipBuiltInValidations || false,
+                skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
             });
 
-            this._data.commands = commandHandler.getCommands();
+            await commandHandler.init();
+
+            this.#data.commands = commandHandler.commands;
         }
     }
 
     get commands() {
-        return this._data.commands.map((cmd) => {
+        return this.#data.commands.map((cmd) => {
             const { run, ...command } = cmd;
             return command;
         });

@@ -1,7 +1,7 @@
-import path from 'path';
-import fs from 'fs';
+import path from "path";
+import fs from "fs";
 
-function getFilePaths(directory: string, nesting?: boolean): string[] {
+export function getFilePaths(directory: string, nesting?: boolean): string[] {
     let filePaths: string[] = [];
 
     if (!directory) return filePaths;
@@ -23,7 +23,7 @@ function getFilePaths(directory: string, nesting?: boolean): string[] {
     return filePaths;
 }
 
-function getFolderPaths(directory: string, nesting?: boolean): string[] {
+export function getFolderPaths(directory: string, nesting?: boolean): string[] {
     let folderPaths: string[] = [];
 
     if (!directory) return folderPaths;
@@ -44,5 +44,3 @@ function getFolderPaths(directory: string, nesting?: boolean): string[] {
 
     return folderPaths;
 }
-
-export { getFilePaths, getFolderPaths };
