@@ -3,6 +3,7 @@ import { getFilePaths } from "../../utils/get-paths";
 import builtInValidations from "./validations";
 import registerCommands from "./functions/registerCommands";
 import handleCommands from "./functions/handleCommands";
+import "colors";
 
 export class CommandHandler {
     _data: CommandHandlerData;
@@ -34,12 +35,12 @@ export class CommandHandler {
             if (commandObj.default) commandObj = commandObj.default;
 
             if (!commandObj.data) {
-                console.log(`⏩ Ignoring: Command ${compactFilePath} does not export "data".`);
+                console.log(`⏩ Ignoring: Command ${compactFilePath} does not export "data".`.yellow);
                 continue;
             }
 
             if (!commandObj.run) {
-                console.log(`⏩ Ignoring: Command ${compactFilePath} does not export "run".`);
+                console.log(`⏩ Ignoring: Command ${compactFilePath} does not export "run".`.yellow);
                 continue;
             }
 

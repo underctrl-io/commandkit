@@ -1,5 +1,6 @@
 import { getFilePaths, getFolderPaths } from "../../utils/get-paths";
 import { EventHandlerOptions, EventHandlerData } from "./typings";
+import "colors";
 
 export class EventHandler {
     #data: EventHandlerData;
@@ -38,7 +39,7 @@ export class EventHandler {
                 const compactFilePath = eventFilePath.split(process.cwd())[1] || eventFilePath;
 
                 if (typeof eventFunction !== "function") {
-                    console.log(`⏩ Ignoring: Event ${compactFilePath} does not export a function.`);
+                    console.log(`⏩ Ignoring: Event ${compactFilePath} does not export a function.`.yellow);
                     continue;
                 }
 

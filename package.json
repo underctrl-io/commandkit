@@ -1,6 +1,6 @@
 {
-    "name": "commandkit",
-    "version": "0.0.9",
+    "name": "@underctrl/commandkit",
+    "version": "0.0.10",
     "license": "MIT",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -27,6 +27,9 @@
         "event handler",
         "command validations"
     ],
+    "dependencies": {
+        "colors": "^1.4.0"
+    },
     "devDependencies": {
         "discord.js": "^14.12.1",
         "tsup": "^7.2.0",
