@@ -1,6 +1,9 @@
 import { BuiltInValidationParams } from '../typings';
 
-module.exports = ({ interaction, targetCommand }: BuiltInValidationParams) => {
+export default function ({
+    interaction,
+    targetCommand,
+}: BuiltInValidationParams) {
     const botMember = interaction.guild?.members.me;
 
     if (targetCommand.options?.botPermissions && botMember) {
@@ -17,4 +20,4 @@ module.exports = ({ interaction, targetCommand }: BuiltInValidationParams) => {
             }
         }
     }
-};
+}

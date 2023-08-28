@@ -1,9 +1,9 @@
-import { BuiltInValidation, CommandHandlerData, CommandHandlerOptions } from './typings';
-import { ContextCommandObject, SlashCommandObject } from '../../../typings';
-import { getFilePaths } from '../../utils/get-paths';
-import registerCommands from './functions/registerCommands';
-import handleCommands from './functions/handleCommands';
-import path from 'path';
+import { CommandHandlerData, CommandHandlerOptions } from "./typings";
+import { getFilePaths } from "../../utils/get-paths";
+import builtInValidations from "./validations";
+import registerCommands from "./functions/registerCommands";
+import handleCommands from "./functions/handleCommands";
+import "colors";
 
 export class CommandHandler {
     _data: CommandHandlerData;
@@ -14,32 +14,33 @@ export class CommandHandler {
             builtInValidations: [],
             commands: [],
         };
-
-        this._init();
     }
 
-    _init() {
-        this._buildCommands();
-        this._buildValidations();
-        this._registerCommands();
-        this._handleCommands();
+    async init() {
+        await this.#buildCommands();
+        this.#buildValidations();
+        await this.#registerCommands();
+        this.#handleCommands();
     }
 
-    _buildCommands() {
+    async #buildCommands() {
         const commandFilePaths = getFilePaths(this._data.commandsPath, true).filter(
-            (path) => path.endsWith('.js') || path.endsWith('.ts')
+            (path) => path.endsWith(".js") || path.endsWith(".ts")
         );
 
         for (const commandFilePath of commandFilePaths) {
-            const commandObj: SlashCommandObject | ContextCommandObject = require(commandFilePath);
+            let commandObj = await import(commandFilePath);
+            const compactFilePath = commandFilePath.split(process.cwd())[1] || commandFilePath;
+
+            if (commandObj.default) commandObj = commandObj.default;
 
             if (!commandObj.data) {
-                console.log(`⏩ Ignoring: Command ${commandFilePath} does not export "data".`);
+                console.log(`⏩ Ignoring: Command ${compactFilePath} does not export "data".`.yellow);
                 continue;
             }
 
             if (!commandObj.run) {
-                console.log(`⏩ Ignoring: Command ${commandFilePath} does not export "run".`);
+                console.log(`⏩ Ignoring: Command ${compactFilePath} does not export "run".`.yellow);
                 continue;
             }
 
@@ -47,31 +48,21 @@ export class CommandHandler {
         }
     }
 
-    _buildValidations() {
-        const validationFilePaths = getFilePaths(path.join(__dirname, 'validations'), true).filter(
-            (path) => path.endsWith('.js')
-        );
-
-        for (const validationFilePath of validationFilePaths) {
-            const validationFunction: Function = require(validationFilePath);
-
-            if (typeof validationFunction !== 'function') {
-                continue;
-            }
-
-            this._data.builtInValidations.push(validationFunction as BuiltInValidation);
+    #buildValidations() {
+        for (const validationFunction of builtInValidations) {
+            this._data.builtInValidations.push(validationFunction);
         }
     }
 
-    _registerCommands() {
-        registerCommands(this);
+    async #registerCommands() {
+        await registerCommands(this);
     }
 
-    _handleCommands() {
+    #handleCommands() {
         handleCommands(this);
     }
 
-    getCommands() {
+    get commands() {
         return this._data.commands;
     }
 }

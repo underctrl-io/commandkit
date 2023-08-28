@@ -1,14 +1,24 @@
 {
     "name": "commandkit",
     "version": "0.0.9",
-    "main": "dist/index.js",
     "license": "MIT",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/index.js",
+            "import": "./dist/index.mjs",
+            "types": "./dist/index.d.ts"
+        }
+    },
     "scripts": {
-        "build": "tsc"
+        "lint": "tsc",
+        "build": "yarn lint && tsup"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/notunderctrl/commandkit"
+        "url": "https://github.com/underctrl-io/commandkit"
     },
     "homepage": "https://commandkit.underctrl.io",
     "keywords": [
@@ -17,8 +27,15 @@
         "event handler",
         "command validations"
     ],
+    "dependencies": {
+        "colors": "^1.4.0"
+    },
     "devDependencies": {
         "discord.js": "^14.12.1",
+        "tsup": "^7.2.0",
         "typescript": "^5.1.6"
+    },
+    "peerDependencies": {
+        "discord.js": "^14"
     }
 }

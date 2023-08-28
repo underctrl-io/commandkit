@@ -1,4 +1,11 @@
 /node_modules
 /src
+/.github
+/.vscode
+/.git
+
 .DS_Store
-.vscode
+yarn.lock
+tsconfig.json
+.prettierrc.json
+tsup.config.ts

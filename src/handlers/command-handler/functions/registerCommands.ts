@@ -1,22 +1,21 @@
-import { Guild, GuildApplicationCommandManager } from 'discord.js';
-import { CommandHandler } from '../CommandHandler';
-import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
+import { Guild, GuildApplicationCommandManager } from "discord.js";
+import { CommandHandler } from "../CommandHandler";
+import areSlashCommandsDifferent from "../utils/areSlashCommandsDifferent";
+import "colors";
 
-export default function registerCommands(commandHandler: CommandHandler) {
+export default async function registerCommands(commandHandler: CommandHandler) {
     const client = commandHandler._data.client;
     const devGuildIds = commandHandler._data.devGuildIds;
     const commands = commandHandler._data.commands;
 
-    client.once('ready', async () => {
+    client.once("ready", async () => {
         const devGuilds: Guild[] = [];
 
         for (const devGuildId of devGuildIds) {
             const guild = client.guilds.cache.get(devGuildId);
 
             if (!guild) {
-                console.log(
-                    `⏩ Ignoring: Guild ${devGuildId} does not exist or client isn't in this guild.`
-                );
+                console.log(`⏩ Ignoring: Guild ${devGuildId} does not exist or client isn't in this guild.`.yellow);
                 continue;
             }
 
@@ -37,33 +36,28 @@ export default function registerCommands(commandHandler: CommandHandler) {
         for (const command of commands) {
             // <!-- Delete command if options.deleted -->
             if (command.options?.deleted) {
-                const targetCommand = appCommands?.cache.find(
-                    (cmd) => cmd.name === command.data.name
-                );
+                const targetCommand = appCommands?.cache.find((cmd) => cmd.name === command.data.name);
 
                 if (!targetCommand) {
-                    console.log(
-                        `⏩ Ignoring: Command "${command.data.name}" is globally marked as deleted.`
-                    );
+                    console.log(`⏩ Ignoring: Command "${command.data.name}" is globally marked as deleted.`.yellow);
                 } else {
                     targetCommand.delete().then(() => {
-                        console.log(`🚮 Deleted command "${command.data.name}" globally.`);
+                        console.log(`🚮 Deleted command "${command.data.name}" globally.`.green);
                     });
                 }
 
                 for (const guildCommands of devGuildCommands) {
-                    const targetCommand = guildCommands.cache.find(
-                        (cmd) => cmd.name === command.data.name
-                    );
+                    const targetCommand = guildCommands.cache.find((cmd) => cmd.name === command.data.name);
 
                     if (!targetCommand) {
                         console.log(
                             `⏩ Ignoring: Command "${command.data.name}" is marked as deleted for ${guildCommands.guild.name}.`
+                                .yellow
                         );
                     } else {
                         targetCommand.delete().then(() => {
                             console.log(
-                                `🚮 Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`
+                                `🚮 Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`.green
                             );
                         });
                     }
@@ -77,26 +71,19 @@ export default function registerCommands(commandHandler: CommandHandler) {
             let editedCommand = false;
 
             // Edit command globally
-            const appGlobalCommand = appCommands?.cache.find(
-                (cmd) => cmd.name === command.data.name
-            );
+            const appGlobalCommand = appCommands?.cache.find((cmd) => cmd.name === command.data.name);
 
             if (appGlobalCommand) {
-                const commandsAreDifferent = areSlashCommandsDifferent(
-                    appGlobalCommand,
-                    commandData
-                );
+                const commandsAreDifferent = areSlashCommandsDifferent(appGlobalCommand, commandData);
 
                 if (commandsAreDifferent) {
                     appGlobalCommand
                         .edit(commandData)
                         .then(() => {
-                            console.log(`✅ Edited command "${commandData.name}" globally.`);
+                            console.log(`✅ Edited command "${commandData.name}" globally.`.green);
                         })
                         .catch((error) => {
-                            console.log(
-                                `❌ Failed to edit command "${commandData.name}" globally.`
-                            );
+                            console.log(`❌ Failed to edit command "${commandData.name}" globally.`.red);
                             console.error(error);
                         });
 
@@ -106,27 +93,23 @@ export default function registerCommands(commandHandler: CommandHandler) {
 
             // Edit command in a specific guild
             for (const guildCommands of devGuildCommands) {
-                const appGuildCommand = guildCommands.cache.find(
-                    (cmd) => cmd.name === commandData.name
-                );
+                const appGuildCommand = guildCommands.cache.find((cmd) => cmd.name === commandData.name);
 
                 if (appGuildCommand) {
-                    const commandsAreDifferent = areSlashCommandsDifferent(
-                        appGuildCommand,
-                        commandData
-                    );
+                    const commandsAreDifferent = areSlashCommandsDifferent(appGuildCommand, commandData);
 
                     if (commandsAreDifferent) {
                         appGuildCommand
                             .edit(commandData)
                             .then(() => {
                                 console.log(
-                                    `✅ Edited command "${commandData.name}" in ${guildCommands.guild.name}.`
+                                    `✅ Edited command "${commandData.name}" in ${guildCommands.guild.name}.`.green
                                 );
                             })
                             .catch((error) => {
                                 console.log(
                                     `❌ Failed to edit command "${commandData.name}" in ${guildCommands.guild.name}.`
+                                        .red
                                 );
                                 console.error(error);
                             });
@@ -144,27 +127,22 @@ export default function registerCommands(commandHandler: CommandHandler) {
                 if (!devGuilds.length) {
                     console.log(
                         `⏩ Ignoring: Cannot register command "${command.data.name}" as no valid "devGuildIds" were provided.`
+                            .yellow
                     );
                     continue;
                 }
 
                 for (const guild of devGuilds) {
-                    const cmdExists = guild.commands.cache.some(
-                        (cmd) => cmd.name === command.data.name
-                    );
+                    const cmdExists = guild.commands.cache.some((cmd) => cmd.name === command.data.name);
                     if (cmdExists) continue;
 
                     guild?.commands
                         .create(command.data)
                         .then(() => {
-                            console.log(
-                                `✅ Registered command "${command.data.name}" in ${guild.name}.`
-                            );
+                            console.log(`✅ Registered command "${command.data.name}" in ${guild.name}.`.green);
                         })
                         .catch((error) => {
-                            console.log(
-                                `❌ Failed to register command "${command.data.name}" in ${guild.name}.`
-                            );
+                            console.log(`❌ Failed to register command "${command.data.name}" in ${guild.name}.`.red);
                             console.error(error);
                         });
                 }
@@ -177,12 +155,10 @@ export default function registerCommands(commandHandler: CommandHandler) {
                 appCommands
                     ?.create(command.data)
                     .then(() => {
-                        console.log(`✅ Registered command "${command.data.name}" globally.`);
+                        console.log(`✅ Registered command "${command.data.name}" globally.`.green);
                     })
                     .catch((error) => {
-                        console.log(
-                            `❌ Failed to register command "${command.data.name}" globally.`
-                        );
+                        console.log(`❌ Failed to register command "${command.data.name}" globally.`.red);
                         console.error(error);
                     });
             }

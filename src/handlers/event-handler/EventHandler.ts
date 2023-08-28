@@ -1,27 +1,30 @@
-import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
-import { EventHandlerOptions, EventHandlerData } from './typings';
+import { getFilePaths, getFolderPaths } from "../../utils/get-paths";
+import { EventHandlerOptions, EventHandlerData } from "./typings";
+import "colors";
 
 export class EventHandler {
-    _data: EventHandlerData;
+    #data: EventHandlerData;
 
     constructor({ ...options }: EventHandlerOptions) {
-        this._data = {
+        this.#data = {
             ...options,
             events: [],
         };
-
-        this._buildEvents();
-        this._registerEvents();
     }
 
-    _buildEvents() {
-        const eventFolderPaths = getFolderPaths(this._data.eventsPath);
+    async init() {
+        await this.#buildEvents();
+        this.#registerEvents();
+    }
+
+    async #buildEvents() {
+        const eventFolderPaths = getFolderPaths(this.#data.eventsPath);
 
         for (const eventFolderPath of eventFolderPaths) {
-            const eventName = eventFolderPath.replace(/\\/g, '/').split('/').pop() as string;
+            const eventName = eventFolderPath.replace(/\\/g, "/").split("/").pop() as string;
 
             const eventFilePaths = getFilePaths(eventFolderPath, true).filter(
-                (path) => path.endsWith('.js') || path.endsWith('.ts')
+                (path) => path.endsWith(".js") || path.endsWith(".ts")
             );
 
             const eventObj = {
@@ -29,13 +32,14 @@ export class EventHandler {
                 functions: [] as Function[],
             };
 
-            this._data.events.push(eventObj);
+            this.#data.events.push(eventObj);
 
             for (const eventFilePath of eventFilePaths) {
-                const eventFunction = require(eventFilePath);
+                let eventFunction = (await import(eventFilePath)).default;
+                const compactFilePath = eventFilePath.split(process.cwd())[1] || eventFilePath;
 
-                if (typeof eventFunction !== 'function') {
-                    console.log(`Ignoring: Event ${eventFilePath} does not export a function.`);
+                if (typeof eventFunction !== "function") {
+                    console.log(`⏩ Ignoring: Event ${compactFilePath} does not export a function.`.yellow);
                     continue;
                 }
 
@@ -44,10 +48,10 @@ export class EventHandler {
         }
     }
 
-    _registerEvents() {
-        const client = this._data.client;
+    #registerEvents() {
+        const client = this.#data.client;
 
-        for (const eventObj of this._data.events) {
+        for (const eventObj of this.#data.events) {
             client.on(eventObj.name, async (...params) => {
                 for (const eventFunction of eventObj.functions) {
                     const stopEventLoop = await eventFunction(...params, client);
@@ -60,7 +64,7 @@ export class EventHandler {
         }
     }
 
-    getEvents() {
-        return this._data.events;
+    get events() {
+        return this.#data.events;
     }
 }

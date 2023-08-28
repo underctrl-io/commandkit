@@ -1,5 +1,5 @@
-import { ChatInputCommandInteraction, Client, ContextMenuCommandInteraction } from 'discord.js';
-import { ContextCommandObject, SlashCommandObject } from '../../../typings';
+import { ChatInputCommandInteraction, Client, ContextMenuCommandInteraction } from "discord.js";
+import { ContextCommandObject, SlashCommandObject } from "../../typings";
 
 export interface CommandHandlerOptions {
     client: Client;

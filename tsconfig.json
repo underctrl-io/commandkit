@@ -7,8 +7,10 @@
         "strictNullChecks": true,
         "target": "ES2022",
         "moduleResolution": "Node",
-        "module": "CommonJS",
-        "declaration": true
+        "module": "NodeNext",
+        "declaration": true,
+        "isolatedModules": true,
+        "noEmit": true
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*.ts"]
 }

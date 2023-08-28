@@ -1,6 +1,9 @@
 import { BuiltInValidationParams } from '../typings';
 
-module.exports = ({ interaction, targetCommand }: BuiltInValidationParams) => {
+export default function ({
+    interaction,
+    targetCommand,
+}: BuiltInValidationParams) {
     if (targetCommand.options?.guildOnly && !interaction.inGuild()) {
         interaction.reply({
             content: '❌ This command can only be used inside a server.',
@@ -9,4 +12,4 @@ module.exports = ({ interaction, targetCommand }: BuiltInValidationParams) => {
 
         return true;
     }
-};
+}
