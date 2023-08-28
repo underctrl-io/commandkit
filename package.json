@@ -1,6 +1,6 @@
 {
-    "name": "@underctrl/commandkit",
-    "version": "0.0.10",
+    "name": "commandkit",
+    "version": "0.0.9",
     "license": "MIT",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
