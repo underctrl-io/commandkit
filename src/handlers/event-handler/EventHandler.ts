@@ -1,6 +1,7 @@
-import { getFilePaths, getFolderPaths } from "../../utils/get-paths";
-import { EventHandlerOptions, EventHandlerData } from "./typings";
-import "colors";
+import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
+import { toFileURL } from '../../utils/resolve-file-url';
+import { EventHandlerOptions, EventHandlerData } from './typings';
+import 'colors';
 
 export class EventHandler {
     #data: EventHandlerData;
@@ -21,10 +22,10 @@ export class EventHandler {
         const eventFolderPaths = getFolderPaths(this.#data.eventsPath);
 
         for (const eventFolderPath of eventFolderPaths) {
-            const eventName = eventFolderPath.replace(/\\/g, "/").split("/").pop() as string;
+            const eventName = eventFolderPath.replace(/\\/g, '/').split('/').pop() as string;
 
             const eventFilePaths = getFilePaths(eventFolderPath, true).filter(
-                (path) => path.endsWith(".js") || path.endsWith(".ts")
+                (path) => path.endsWith('.js') || path.endsWith('.ts')
             );
 
             const eventObj = {
@@ -35,10 +36,12 @@ export class EventHandler {
             this.#data.events.push(eventObj);
 
             for (const eventFilePath of eventFilePaths) {
-                let eventFunction = (await import(eventFilePath)).default;
+                const modulePath = toFileURL(eventFilePath);
+
+                let eventFunction = (await import(modulePath)).default;
                 const compactFilePath = eventFilePath.split(process.cwd())[1] || eventFilePath;
 
-                if (typeof eventFunction !== "function") {
+                if (typeof eventFunction !== 'function') {
                     console.log(`⏩ Ignoring: Event ${compactFilePath} does not export a function.`.yellow);
                     continue;
                 }
