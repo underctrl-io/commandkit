@@ -26,7 +26,7 @@ export class CommandHandler {
 
     async #buildCommands() {
         const commandFilePaths = getFilePaths(this._data.commandsPath, true).filter(
-            (path) => path.endsWith('.js') || path.endsWith('.ts')
+            (path) => path.endsWith('.js') || path.endsWith('.ts'),
         );
 
         for (const commandFilePath of commandFilePaths) {
@@ -39,12 +39,18 @@ export class CommandHandler {
             if (commandObj.default) commandObj = commandObj.default;
 
             if (!commandObj.data) {
-                console.log(colors.yellow(`⏩ Ignoring: Command ${compactFilePath} does not export "data".`));
+                console.log(
+                    colors.yellow(
+                        `⏩ Ignoring: Command ${compactFilePath} does not export "data".`,
+                    ),
+                );
                 continue;
             }
 
             if (!commandObj.run) {
-                console.log(colors.yellow(`⏩ Ignoring: Command ${compactFilePath} does not export "run".`));
+                console.log(
+                    colors.yellow(`⏩ Ignoring: Command ${compactFilePath} does not export "run".`),
+                );
                 continue;
             }
 

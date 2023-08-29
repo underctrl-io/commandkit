@@ -1,12 +1,14 @@
-import { CommandHandler } from "../CommandHandler";
+import { CommandHandler } from '../CommandHandler';
 
 export default function handleCommands(commandHandler: CommandHandler) {
     const client = commandHandler._data.client;
 
-    client.on("interactionCreate", async (interaction) => {
+    client.on('interactionCreate', async (interaction) => {
         if (!interaction.isChatInputCommand() && !interaction.isContextMenuCommand()) return;
 
-        const targetCommand = commandHandler._data.commands.find((cmd) => cmd.data.name === interaction.commandName);
+        const targetCommand = commandHandler._data.commands.find(
+            (cmd) => cmd.data.name === interaction.commandName,
+        );
 
         if (!targetCommand) return;
 

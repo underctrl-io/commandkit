@@ -25,7 +25,7 @@ export class EventHandler {
             const eventName = eventFolderPath.replace(/\\/g, '/').split('/').pop() as string;
 
             const eventFilePaths = getFilePaths(eventFolderPath, true).filter(
-                (path) => path.endsWith('.js') || path.endsWith('.ts')
+                (path) => path.endsWith('.js') || path.endsWith('.ts'),
             );
 
             const eventObj = {
@@ -42,7 +42,11 @@ export class EventHandler {
                 const compactFilePath = eventFilePath.split(process.cwd())[1] || eventFilePath;
 
                 if (typeof eventFunction !== 'function') {
-                    console.log(colors.yellow(`⏩ Ignoring: Event ${compactFilePath} does not export a function.`));
+                    console.log(
+                        colors.yellow(
+                            `⏩ Ignoring: Event ${compactFilePath} does not export a function.`,
+                        ),
+                    );
                     continue;
                 }
 

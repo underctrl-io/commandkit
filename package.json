@@ -13,8 +13,9 @@
         }
     },
     "scripts": {
-        "lint": "tsc",
-        "build": "yarn lint && tsup"
+        "lint": "tsc && prettier --check ./ --config .prettierrc.json --ignore-path=.prettierignore",
+        "build": "yarn lint && tsup",
+        "format": "prettier --write ./ --config .prettierrc.json"
     },
     "repository": {
         "type": "git",
@@ -31,7 +32,8 @@
         "colors": "^1.4.0"
     },
     "devDependencies": {
-        "discord.js": "^14.12.1",
+        "discord.js": "^14.13.0",
+        "prettier": "^3.0.2",
         "tsup": "^7.2.0",
         "typescript": "^5.1.6"
     },

@@ -1,12 +1,13 @@
-name: Publish to NPM
+name: Lint
 
 on:
-    release:
-        types: [created]
+    push:
+        branches:
+            - '**'
 
 jobs:
-    release:
-        name: 🚀 Publish
+    build:
+        name: 🔍 Lint
         runs-on: ubuntu-latest
         steps:
             - name: 📚 Checkout
@@ -19,11 +20,7 @@ jobs:
                   registry-url: https://registry.npmjs.org
 
             - name: 🍳 Prepare
-              run: |
-                  npm install
-                  npm run build
+              run: npm install
 
-            - name: 🚚 Publish
-              run: npm publish
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+            - name: ✨ Lint
+              run: npm run lint

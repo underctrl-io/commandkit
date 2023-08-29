@@ -1,5 +1,5 @@
-import path from "path";
-import fs from "fs";
+import path from 'path';
+import fs from 'fs';
 
 export function getFilePaths(directory: string, nesting?: boolean): string[] {
     let filePaths: string[] = [];

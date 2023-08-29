@@ -19,17 +19,22 @@ export class ValidationHandler {
 
     async #buildValidations() {
         const validationFilePaths = getFilePaths(this.#data.validationsPath, true).filter(
-            (path) => path.endsWith('.js') || path.endsWith('.ts')
+            (path) => path.endsWith('.js') || path.endsWith('.ts'),
         );
 
         for (const validationFilePath of validationFilePaths) {
             const modulePath = toFileURL(validationFilePath);
 
             let validationFunction = (await import(modulePath)).default;
-            const compactFilePath = validationFilePath.split(process.cwd())[1] || validationFilePath;
+            const compactFilePath =
+                validationFilePath.split(process.cwd())[1] || validationFilePath;
 
             if (typeof validationFunction !== 'function') {
-                console.log(colors.yellow(`⏩ Ignoring: Validation ${compactFilePath} does not export a function.`));
+                console.log(
+                    colors.yellow(
+                        `⏩ Ignoring: Validation ${compactFilePath} does not export a function.`,
+                    ),
+                );
                 continue;
             }
 

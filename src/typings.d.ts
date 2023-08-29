@@ -6,7 +6,7 @@ import {
     PermissionResolvable,
     SlashCommandBuilder,
     ContextMenuCommandBuilder,
-} from "discord.js";
+} from 'discord.js';
 
 export interface CommandKitOptions {
     client: Client;

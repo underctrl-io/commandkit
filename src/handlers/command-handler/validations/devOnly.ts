@@ -1,27 +1,17 @@
 import { BuiltInValidationParams } from '../typings';
 
-export default function ({
-    interaction,
-    targetCommand,
-    handlerData,
-}: BuiltInValidationParams) {
+export default function ({ interaction, targetCommand, handlerData }: BuiltInValidationParams) {
     if (targetCommand.options?.devOnly) {
-        if (
-            interaction.inGuild() &&
-            !handlerData.devGuildIds.includes(interaction.guildId)
-        ) {
+        if (interaction.inGuild() && !handlerData.devGuildIds.includes(interaction.guildId)) {
             interaction.reply({
-                content:
-                    '❌ This command can only be used inside development servers.',
+                content: '❌ This command can only be used inside development servers.',
                 ephemeral: true,
             });
 
             return true;
         }
 
-        const guildMember = interaction.guild?.members.cache.get(
-            interaction.user.id
-        );
+        const guildMember = interaction.guild?.members.cache.get(interaction.user.id);
         const memberRoles = guildMember?.roles.cache;
 
         let hasDevRole = false;
@@ -32,8 +22,7 @@ export default function ({
             }
         });
 
-        const isDevUser =
-            handlerData.devUserIds.includes(interaction.user.id) || hasDevRole;
+        const isDevUser = handlerData.devUserIds.includes(interaction.user.id) || hasDevRole;
 
         if (!isDevUser) {
             interaction.reply({

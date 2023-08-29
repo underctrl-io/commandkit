@@ -11,7 +11,9 @@ export class CommandKit {
         }
 
         if (options.validationsPath && !options.commandsPath) {
-            throw new Error(colors.red('"commandsPath" is required when "validationsPath" is set.'));
+            throw new Error(
+                colors.red('"commandsPath" is required when "validationsPath" is set.'),
+            );
         }
 
         this.#data = {
