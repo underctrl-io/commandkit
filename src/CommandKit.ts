@@ -1,17 +1,17 @@
-import { CommandHandler, EventHandler, ValidationHandler } from "./handlers";
-import { CommandKitData, CommandKitOptions } from "./typings";
-import "colors";
+import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
+import { CommandKitData, CommandKitOptions } from './typings';
+import colors from 'colors/safe';
 
 export class CommandKit {
     #data: CommandKitData;
 
     constructor({ ...options }: CommandKitOptions) {
         if (!options.client) {
-            throw new Error('"client" is required when instantiating CommandKit.'.red);
+            throw new Error(colors.red('"client" is required when instantiating CommandKit.'));
         }
 
         if (options.validationsPath && !options.commandsPath) {
-            throw new Error('"commandsPath" is required when "validationsPath" is set.'.red);
+            throw new Error(colors.red('"commandsPath" is required when "validationsPath" is set.'));
         }
 
         this.#data = {

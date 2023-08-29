@@ -4,7 +4,7 @@ import { toFileURL } from '../../utils/resolve-file-url';
 import builtInValidations from './validations';
 import registerCommands from './functions/registerCommands';
 import handleCommands from './functions/handleCommands';
-import 'colors';
+import colors from 'colors/safe';
 
 export class CommandHandler {
     _data: CommandHandlerData;
@@ -39,12 +39,12 @@ export class CommandHandler {
             if (commandObj.default) commandObj = commandObj.default;
 
             if (!commandObj.data) {
-                console.log(`⏩ Ignoring: Command ${compactFilePath} does not export "data".`.yellow);
+                console.log(colors.yellow(`⏩ Ignoring: Command ${compactFilePath} does not export "data".`));
                 continue;
             }
 
             if (!commandObj.run) {
-                console.log(`⏩ Ignoring: Command ${compactFilePath} does not export "run".`.yellow);
+                console.log(colors.yellow(`⏩ Ignoring: Command ${compactFilePath} does not export "run".`));
                 continue;
             }
 
