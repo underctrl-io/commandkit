@@ -1,7 +1,6 @@
 {
     "name": "commandkit",
     "version": "0.0.10",
-    "private": true,
     "license": "MIT",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -16,7 +15,8 @@
     "scripts": {
         "lint": "tsc",
         "dev": "tsup --watch",
-        "build": "tsup"
+        "build": "tsup",
+        "publish": "npm publish"
     },
     "repository": {
         "type": "git",

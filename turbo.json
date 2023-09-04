@@ -3,6 +3,7 @@
     "pipeline": {
         "lint": {},
         "build": {},
+        "publish": {},
         "dev": {
             "cache": false,
             "persistent": true

@@ -4,9 +4,10 @@
     "private": true,
     "license": "MIT",
     "scripts": {
-        "lint": "turbo lint && prettier ./ --check --ignore-path=.prettierignore",
         "dev": "turbo dev",
-        "build": "pnpm lint && turbo build"
+        "lint": "turbo lint && prettier ./ --check --ignore-path=.prettierignore",
+        "build": "turbo lint && turbo build",
+        "publish": "turbo lint && turbo build && turbo publish"
     },
     "devDependencies": {
         "prettier": "^3.0.3",
