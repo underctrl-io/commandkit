@@ -1,6 +1,6 @@
 {
+    "$schema": "https://json.schemastore.org/tsconfig",
     "compilerOptions": {
-        "outDir": "dist",
         "strict": true,
         "noImplicitAny": true,
         "esModuleInterop": true,
@@ -11,6 +11,5 @@
         "declaration": true,
         "isolatedModules": true,
         "noEmit": true
-    },
-    "include": ["src/**/*.ts"]
+    }
 }

@@ -20,7 +20,7 @@ jobs:
                   registry-url: https://registry.npmjs.org
 
             - name: 🍳 Prepare
-              run: npm install
+              run: pnpm install
 
             - name: ✨ Lint
-              run: npm run lint
+              run: pnpm lint
