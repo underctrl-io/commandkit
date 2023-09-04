@@ -1,4 +1,4 @@
-import {
+import type {
     Client,
     APIApplicationCommandOption,
     ContextMenuCommandType,
@@ -60,4 +60,16 @@ export interface ContextCommandObject {
         botPermissions?: PermissionResolvable[];
     };
     run: ({}: { interaction: Interaction; client: Client }) => void;
+}
+
+export interface CommandFileObject {
+    data: Partial<SlashCommandBuilder | ContextMenuCommandBuilder> | any;
+    options?: {
+        guildOnly?: boolean;
+        devOnly?: boolean;
+        deleted?: boolean;
+        userPermissions?: PermissionResolvable[];
+        botPermissions?: PermissionResolvable[];
+        [key: string]: any;
+    };
 }

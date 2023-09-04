@@ -1,5 +1,5 @@
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
-import { CommandKitData, CommandKitOptions } from './typings';
+import { CommandKitData, CommandKitOptions, CommandFileObject } from './typings';
 import colors from 'colors/safe';
 
 export class CommandKit {
@@ -66,10 +66,12 @@ export class CommandKit {
         }
     }
 
-    get commands() {
-        return this.#data.commands.map((cmd) => {
+    get commands(): CommandFileObject[] {
+        const commands = this.#data.commands.map((cmd) => {
             const { run, ...command } = cmd;
             return command;
         });
+
+        return commands;
     }
 }

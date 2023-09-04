@@ -1,43 +1,16 @@
 {
     "name": "commandkit",
     "version": "0.0.10",
+    "private": true,
     "license": "MIT",
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "require": "./dist/index.js",
-            "import": "./dist/index.mjs",
-            "types": "./dist/index.d.ts"
-        }
-    },
     "scripts": {
-        "lint": "tsc && prettier --check ./ --config .prettierrc.json --ignore-path=.prettierignore",
-        "build": "yarn lint && tsup",
-        "format": "prettier --write ./ --config .prettierrc.json"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/underctrl-io/commandkit"
-    },
-    "homepage": "https://commandkit.underctrl.io",
-    "keywords": [
-        "discord.js",
-        "command handler",
-        "event handler",
-        "command validations"
-    ],
-    "dependencies": {
-        "colors": "^1.4.0"
+        "dev": "turbo dev",
+        "lint": "turbo lint && prettier ./ --check --ignore-path=.prettierignore",
+        "build": "turbo lint && turbo build",
+        "publish": "turbo lint && turbo build && turbo publish"
     },
     "devDependencies": {
-        "discord.js": "^14.13.0",
-        "prettier": "^3.0.2",
-        "tsup": "^7.2.0",
-        "typescript": "^5.1.6"
-    },
-    "peerDependencies": {
-        "discord.js": "^14"
+        "prettier": "^3.0.3",
+        "turbo": "^1.10.13"
     }
 }

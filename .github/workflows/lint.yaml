@@ -10,6 +10,10 @@ jobs:
         name: 🔍 Lint
         runs-on: ubuntu-latest
         steps:
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+
             - name: 📚 Checkout
               uses: actions/checkout@v3
 
@@ -20,7 +24,7 @@ jobs:
                   registry-url: https://registry.npmjs.org
 
             - name: 🍳 Prepare
-              run: npm install
+              run: pnpm install
 
             - name: ✨ Lint
-              run: npm run lint
+              run: pnpm lint

@@ -9,6 +9,10 @@ jobs:
         name: 🚀 Publish
         runs-on: ubuntu-latest
         steps:
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+
             - name: 📚 Checkout
               uses: actions/checkout@v3
 
@@ -19,11 +23,9 @@ jobs:
                   registry-url: https://registry.npmjs.org
 
             - name: 🍳 Prepare
-              run: |
-                  npm install
-                  npm run build
+              run: pnpm install
 
             - name: 🚚 Publish
-              run: npm publish
+              run: pnpm run publish
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
