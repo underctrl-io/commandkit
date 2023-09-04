@@ -3,6 +3,9 @@ title: CommandKit setup
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { ViewTransitions } from 'astro:transitions';
+
+<ViewTransitions fallback="swap" />
 
 This is a simple overview of how to set up CommandKit with all the available options. You'd usually set this up in your entry point file (e.g. `index.js`) where you have access to your Discord client object.
 

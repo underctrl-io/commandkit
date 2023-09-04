@@ -5,7 +5,6 @@
 /.git
 
 .DS_Store
-yarn.lock
 tsconfig.json
 .prettierrc.json
 tsup.config.ts

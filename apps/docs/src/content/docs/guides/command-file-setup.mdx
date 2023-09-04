@@ -3,6 +3,9 @@ title: Commands Setup
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { ViewTransitions } from 'astro:transitions';
+
+<ViewTransitions fallback="swap" />
 
 CommandKit supports both slash commands and context menu commands. And since both have very similar triggers (interactions) and command structures, they are both stored and handled from within the commands directory for convenience.
 

@@ -3,6 +3,9 @@ title: Events Setup
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { ViewTransitions } from 'astro:transitions';
+
+<ViewTransitions fallback="swap" />
 
 This is a simple overview of how to set up a simple function that is called when the "ready" event is triggered. All this code does is log to the console when the bot is ready.
 

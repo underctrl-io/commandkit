@@ -3,6 +3,9 @@ title: Validations Setup
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { ViewTransitions } from 'astro:transitions';
+
+<ViewTransitions fallback="swap" />
 
 Validations are functions that are called before the `run()` function from a command object is called. They can be used for many things, including validating your command object, or even implementing features such as cooldowns where the user will not be able to run the command if a validation functions says so.
 
