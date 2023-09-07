@@ -16,7 +16,8 @@
         "lint": "tsc",
         "dev": "tsup --watch",
         "build": "tsup",
-        "publish": "npm publish"
+        "publish": "npm publish",
+        "test": "tsx tests/index.ts"
     },
     "repository": {
         "type": "git",
@@ -35,8 +36,10 @@
     "devDependencies": {
         "@types/node": "^20.5.9",
         "discord.js": "^14.13.0",
+        "dotenv": "^16.3.1",
         "tsconfig": "workspace:*",
         "tsup": "^7.2.0",
+        "tsx": "^3.12.8",
         "typescript": "^5.1.6"
     },
     "peerDependencies": {
