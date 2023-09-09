@@ -2,10 +2,10 @@ name: Lint
 
 on:
     push:
-        branches-ignore:
-            - 'dev-build'
         branches:
             - '**'
+        branches-ignore:
+            - 'dev-build'
 
 jobs:
     build:
