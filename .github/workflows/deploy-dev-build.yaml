@@ -39,7 +39,13 @@ jobs:
                   git config user.name "GitHub Actions Bot"
                   git config user.email ${{secrets.USER_EMAIL}}
                   git checkout -B dev-build
-                  cp -r packages/commandkit/dist/* .
+                  pnpm run build:package
+                  mkdir temp_dir && mkdir temp_dir/dist/
+                  cp -r packages/commandkit/dist/* temp_dir/dist
+                  cp packages/commandkit/package.json temp_dir/
+                  git rm -rf . && echo "node_modules/" > .gitignore
+                  rm -rf apps/ && rm -rf packages
+                  cp -r temp_dir/* . && rm -rf temp_dir
                   git add .
                   git commit -m "Deploy latest development build"
                   git push origin dev-build
