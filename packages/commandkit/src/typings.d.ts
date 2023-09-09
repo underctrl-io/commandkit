@@ -13,16 +13,10 @@ export interface CommandKitOptions {
 }
 
 export interface CommandKitData extends CommandKitOptions {
-    commands: Array<SlashCommandObject | ContextCommandObject>;
+    commands: CommandFileObject[];
 }
 
-export interface SlashCommandObject {
-    data: CommandData;
-    options?: CommandOptions;
-    run: ({}: { interaction: Interaction; client: Client; handler: CommandKit }) => void;
-}
-
-export interface ContextCommandObject {
+export interface CommandFileObject {
     data: CommandData;
     options?: CommandOptions;
     run: ({}: { interaction: Interaction; client: Client; handler: CommandKit }) => void;

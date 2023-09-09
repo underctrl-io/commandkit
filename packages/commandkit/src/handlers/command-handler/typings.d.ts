@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, Client, ContextMenuCommandInteraction } from 'discord.js';
-import { ContextCommandObject, SlashCommandObject } from '../../typings';
 import { CommandKit } from '../../CommandKit';
+import { CommandFileObject } from '../../typings';
 
 export interface CommandHandlerOptions {
     client: Client;
@@ -14,12 +14,12 @@ export interface CommandHandlerOptions {
 }
 
 export interface CommandHandlerData extends CommandHandlerOptions {
-    commands: Array<SlashCommandObject | ContextCommandObject>;
+    commands: CommandFileObject[];
     builtInValidations: Array<BuiltInValidation>;
 }
 
 export interface BuiltInValidationParams {
-    targetCommand: SlashCommandObject | ContextCommandObject;
+    targetCommand: CommandFileObject;
     interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction;
     handlerData: CommandHandlerData;
 }

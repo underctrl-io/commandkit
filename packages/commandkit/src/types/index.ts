@@ -8,7 +8,7 @@ import type {
     APIApplicationCommandSubcommandGroupOption,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
-import type { ContextCommandObject, SlashCommandObject } from '../typings';
+import type { CommandFileObject } from '../typings';
 
 export interface CommandProps {
     interaction: CommandInteraction;
@@ -31,7 +31,7 @@ export interface ContextMenuCommandProps {
 export interface ValidationFunctionProps {
     interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction;
     client: Client<true>;
-    commandObj: SlashCommandObject | ContextCommandObject;
+    commandObj: CommandObject;
     handler: CommandKit;
 }
 
@@ -97,7 +97,4 @@ export type CommandData = {
     >;
 };
 
-export interface CommandFileObject {
-    data: CommandData;
-    options?: CommandOptions;
-}
+export type CommandObject = Omit<CommandFileObject, 'run'>;
