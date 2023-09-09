@@ -4,6 +4,7 @@
 /.github
 /.vscode
 /.git
+/.turbo
 
 .DS_Store
 tsconfig.json

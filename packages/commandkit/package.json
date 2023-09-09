@@ -1,6 +1,6 @@
 {
     "name": "commandkit",
-    "version": "0.0.12",
+    "version": "0.1.0",
     "license": "MIT",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -16,7 +16,7 @@
         "lint": "tsc",
         "dev": "tsup --watch",
         "build": "tsup",
-        "publish": "pnpm lint && pnpm build && npm publish",
+        "deploy": "npm publish",
         "test": "tsx tests/index.ts"
     },
     "repository": {
