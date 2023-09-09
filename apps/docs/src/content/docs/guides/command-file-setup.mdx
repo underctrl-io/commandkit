@@ -57,12 +57,12 @@ This is a simple overview of how to set up a simple "ping" slash command that si
         },
         ```
     </TabItem>
-    
+
     <TabItem label="TypeScript">
         ```ts
         // commands/misc/ping.ts
         import type { CommandData, SlashCommandProps, CommandOptions } from 'commandkit';
-        
+
         export const data: CommandData = {
             name: 'ping',
             description: 'Pong!',
@@ -93,9 +93,9 @@ Every command file must export an object with the following properties:
     This can also be set to the [`SlashCommandBuilder`](https://discord.js.org/docs/packages/builders/0.16.0/SlashCommandBuilder:Class) class, or the [`ContextMenuCommandBuilder`](https://discord.js.org/docs/packages/builders/0.16.0/ContextMenuCommandBuilder:Class) class if that's what you're comfortable with.
 
 -   `run` - A function that will be called when your command is executed. This function also has an object passed to it as an argument with the following properties:
-    - `interaction` - The interaction object that triggered the command. This can either be a [chat input command interaction](https://old.discordjs.dev/#/docs/discord.js/main/class/ChatInputCommandInteraction) or a [context menu command interaction](https://old.discordjs.dev/#/docs/discord.js/main/class/ContextMenuCommandInteraction).
-    - `client` - The Discord [client object](https://old.discordjs.dev/#/docs/discord.js/main/class/Client).
-    - `handler` - The current [CommandKit instance](/api/classes/classcommandkit/).
+    -   `interaction` - The interaction object that triggered the command. This can either be a [chat input command interaction](https://old.discordjs.dev/#/docs/discord.js/main/class/ChatInputCommandInteraction) or a [context menu command interaction](https://old.discordjs.dev/#/docs/discord.js/main/class/ContextMenuCommandInteraction).
+    -   `client` - The Discord [client object](https://old.discordjs.dev/#/docs/discord.js/main/class/Client).
+    -   `handler` - The current [CommandKit instance](/api/classes/classcommandkit/).
 
 ### Optional properties
 
