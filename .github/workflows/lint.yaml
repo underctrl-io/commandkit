@@ -4,8 +4,6 @@ on:
     push:
         branches:
             - '**'
-        branches-ignore:
-            - 'dev-build'
 
 jobs:
     build:
