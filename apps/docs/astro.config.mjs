@@ -1,5 +1,14 @@
 import { defineConfig } from 'astro/config';
+import { generateTypeDoc } from 'starlight-typedoc';
 import starlight from '@astrojs/starlight';
+import path from 'path';
+
+const typeDocSidebarGroup = await generateTypeDoc({
+    entryPoints: [
+        path.join(process.cwd(), '..', '..', 'packages', 'commandkit', 'src', 'index.ts'),
+    ],
+    tsconfig: path.join(process.cwd(), '..', '..', 'packages', 'commandkit', 'tsconfig.json'),
+});
 
 // https://astro.build/config
 export default defineConfig({
@@ -38,6 +47,7 @@ export default defineConfig({
                         },
                     ],
                 },
+                typeDocSidebarGroup,
             ],
         }),
     ],
