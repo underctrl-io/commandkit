@@ -72,6 +72,39 @@ This is a simple overview of how to set up CommandKit with all the available opt
         client.login('YOUR_TOKEN_HERE');
         ```
     </TabItem>
+    
+    <TabItem label="TypeScript">
+        ```js
+        // index.ts
+        import { Client, GatewayIntentBits } from 'discord.js';
+        import { CommandKit } from 'commandkit';
+        import { fileURLToPath } from 'url';
+        import path from 'path';
+
+        const client = new Client({
+            intents: [
+                GatewayIntentBits.Guilds,
+                GatewayIntentBits.GuildMessages,
+                GatewayIntentBits.MessageContent
+            ],
+        });
+
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+        new CommandKit({
+            client,
+            commandsPath: path.join(__dirname, 'commands'),
+            eventsPath: path.join(__dirname, 'events'),
+            validationsPath: path.join(__dirname, 'validations'),
+            devGuildIds: ['DEV_SERVER_ID_1', 'DEV_SERVER_ID_2'],
+            devUserIds: ['DEV_USER_ID_1', 'DEV_USER_ID_2'],
+            devRoleIds: ['DEV_ROLE_ID_1', 'DEV_ROLE_ID_2'],
+            skipBuiltInValidations: true,
+        });
+
+        client.login('YOUR_TOKEN_HERE');
+        ```
+    </TabItem>
 
 </Tabs>
 
@@ -96,7 +129,7 @@ constructor, a [list of intents can be found here](https://discord-api-types.dev
 -   `devGuildIds` - Array of development server IDs. Used to register and run developer only commands in specific servers.
 -   `devUserIds` - Array of developer user IDs. Used to ensure developer only commands can only be ran by these users.
 -   `devRoleIds` - Array of developer role IDs. Used to ensure developer only commands can only be ran by users with these roles.
--   `skipBuiltInValidations` - A property that disables CommandKit's built-in validations.
+-   `skipBuiltInValidations` - A property that disables CommandKit's built-in validations. These validations are responsible for handling the default behaviour of the [`options`](/api/interfaces/interfacecommandoptions/) property in commands.
 
 :::note
 It's highly recommended to use the "path" library to define your paths to avoid any file import issues.

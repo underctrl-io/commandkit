@@ -13,7 +13,7 @@ This is a simple overview of how to set up a simple function that is called when
     <TabItem label="CommonJS">
         ```js
         // events/ready/console-log.js
-        module.exports = (c, client) => {
+        module.exports = (c, client, handler) => {
             console.log(`${c.user.username} is ready!`);
         };
         ```
@@ -22,7 +22,19 @@ This is a simple overview of how to set up a simple function that is called when
     <TabItem label="ESM">
         ```js
         // events/ready/console-log.js
-        export default function (c, client) {
+        export default function (c, client, handler) {
+            console.log(`${c.user.username} is ready!`);
+        };
+        ```
+    </TabItem>
+    
+    <TabItem label="TypeScript">
+        ```ts
+        // events/ready/console-log.ts
+        import type { Client } from 'discord.js';
+        import type { CommandKit } from 'commandkit';
+
+        export default function (c: Client<true>, client: Client<true>, handler: CommandKit) {
             console.log(`${c.user.username} is ready!`);
         };
         ```
@@ -31,7 +43,7 @@ This is a simple overview of how to set up a simple function that is called when
 
 ### Parameters explained
 
-The parameters might look a bit confusing at first, but they're actually quite simple. The first parameter `c` is the client object that was returned as a parameter when the "ready" event was triggered. The second parameter `client` is the Discord.js client that was instantiated in your main entry point file.
+The parameters might look a bit confusing at first, but they're actually quite simple. The first parameter `c` is the client object that was returned as a parameter when the "ready" event was triggered. The second parameter `client` is the Discord.js client that was instantiated in your main entry point file. Finally, the `handler` parameter is the [CommandKit instance](/api/classes/classcommandkit/).
 
 To better understand how the parameters work, here's another example but with the "messageCreate" event listener.
 
@@ -50,7 +62,21 @@ To better understand how the parameters work, here's another example but with th
     <TabItem label="ESM">
         ```js
         // events/messageCreate/say-hi.js
-        export default function (message, client) {
+        export default function (message, client, handler) {
+          if (message.content === 'hey') {
+               message.reply('Hi!');
+            }
+        };
+        ```
+    </TabItem>
+    
+    <TabItem label="TypeScript">
+        ```ts
+        // events/messageCreate/say-hi.ts
+        import type { Message, Client } from 'discord.js';
+        import type { CommandKit } from 'commandkit';
+
+        export default function (message: Message<true>, client: Client<true>, handler: CommandKit) {
           if (message.content === 'hey') {
                message.reply('Hi!');
             }
@@ -83,6 +109,18 @@ But what if an event returns multiple parameters? Let's take for example the "me
         };
         ```
     </TabItem>
+    
+    <TabItem label="TypeScript">
+        ```js
+        // events/messageUpdate/log-message-update.ts
+        import type { Message, PartialMessage } from 'discord.js';
+        import type { CommandKit } from 'commandkit';
+
+        export default function (oldMessage: Message<boolean> | PartialMessage, newMessage: Message<boolean> | PartialMessage, client: Client<true>, handler: CommandKit) {
+            console.log(`Message edited from ${oldMessage.content} to ${newMessage.content}`);
+        };
+        ```
+    </TabItem>
 
 </Tabs>
 
@@ -110,6 +148,22 @@ The code above is just a simple example of how to set up an event function. But 
         ```js
         // events/messageCreate/say-hi.js
         export default function (message, client) {
+            if (message.content === 'hey') {
+                message.reply('Hi!')
+
+                return true // THIS STOPS THE EVENT LOOP
+            }
+        }
+        ```
+    </TabItem>
+    
+    <TabItem label="TypeScript">
+        ```js
+        // events/messageCreate/say-hi.ts
+        import type { Message, Client } from 'discord.js';
+        import type { CommandKit } from 'commandkit';
+
+        export default function (message: Message<true>, client: Client<true>, handler: CommandKit) {
             if (message.content === 'hey') {
                 message.reply('Hi!')
 

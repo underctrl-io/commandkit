@@ -47,7 +47,10 @@ export default defineConfig({
                         },
                     ],
                 },
-                typeDocSidebarGroup,
+                {
+                    ...typeDocSidebarGroup,
+                    label: 'Reference',
+                },
             ],
         }),
     ],
