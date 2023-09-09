@@ -38,42 +38,44 @@ export default async function registerCommands(commandHandler: CommandHandler) {
         }
 
         for (const command of commands) {
+            let commandData = command.data as any;
+
             // <!-- Delete command if options.deleted -->
             if (command.options?.deleted) {
                 const targetCommand = appCommands?.cache.find(
-                    (cmd) => cmd.name === command.data.name,
+                    (cmd) => cmd.name === commandData.name,
                 );
 
                 if (!targetCommand) {
                     console.log(
                         colors.yellow(
-                            `⏩ Ignoring: Command "${command.data.name}" is globally marked as deleted.`,
+                            `⏩ Ignoring: Command "${commandData.name}" is globally marked as deleted.`,
                         ),
                     );
                 } else {
                     targetCommand.delete().then(() => {
                         console.log(
-                            colors.green(`🚮 Deleted command "${command.data.name}" globally.`),
+                            colors.green(`🚮 Deleted command "${commandData.name}" globally.`),
                         );
                     });
                 }
 
                 for (const guildCommands of devGuildCommands) {
                     const targetCommand = guildCommands.cache.find(
-                        (cmd) => cmd.name === command.data.name,
+                        (cmd) => cmd.name === commandData.name,
                     );
 
                     if (!targetCommand) {
                         console.log(
                             colors.yellow(
-                                `⏩ Ignoring: Command "${command.data.name}" is marked as deleted for ${guildCommands.guild.name}.`,
+                                `⏩ Ignoring: Command "${commandData.name}" is marked as deleted for ${guildCommands.guild.name}.`,
                             ),
                         );
                     } else {
                         targetCommand.delete().then(() => {
                             console.log(
                                 colors.green(
-                                    `🚮 Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                                    `🚮 Deleted command "${commandData.name}" in ${guildCommands.guild.name}.`,
                                 ),
                             );
                         });
@@ -84,12 +86,11 @@ export default async function registerCommands(commandHandler: CommandHandler) {
             }
 
             // <!-- Edit command -->
-            let commandData = command.data;
             let editedCommand = false;
 
             // Edit command globally
             const appGlobalCommand = appCommands?.cache.find(
-                (cmd) => cmd.name === command.data.name,
+                (cmd) => cmd.name === commandData.name,
             );
 
             if (appGlobalCommand) {
@@ -163,7 +164,7 @@ export default async function registerCommands(commandHandler: CommandHandler) {
                 if (!devGuilds.length) {
                     console.log(
                         colors.yellow(
-                            `⏩ Ignoring: Cannot register command "${command.data.name}" as no valid "devGuildIds" were provided.`,
+                            `⏩ Ignoring: Cannot register command "${commandData.name}" as no valid "devGuildIds" were provided.`,
                         ),
                     );
                     continue;
@@ -171,23 +172,23 @@ export default async function registerCommands(commandHandler: CommandHandler) {
 
                 for (const guild of devGuilds) {
                     const cmdExists = guild.commands.cache.some(
-                        (cmd) => cmd.name === command.data.name,
+                        (cmd) => cmd.name === commandData.name,
                     );
                     if (cmdExists) continue;
 
                     guild?.commands
-                        .create(command.data)
+                        .create(commandData)
                         .then(() => {
                             console.log(
                                 colors.green(
-                                    `✅ Registered command "${command.data.name}" in ${guild.name}.`,
+                                    `✅ Registered command "${commandData.name}" in ${guild.name}.`,
                                 ),
                             );
                         })
                         .catch((error) => {
                             console.log(
                                 colors.red(
-                                    `❌ Failed to register command "${command.data.name}" in ${guild.name}.`,
+                                    `❌ Failed to register command "${commandData.name}" in ${guild.name}.`,
                                 ),
                             );
                             console.error(error);
@@ -196,20 +197,20 @@ export default async function registerCommands(commandHandler: CommandHandler) {
             }
             // Register command globally
             else {
-                const cmdExists = appCommands?.cache.some((cmd) => cmd.name === command.data.name);
+                const cmdExists = appCommands?.cache.some((cmd) => cmd.name === commandData.name);
                 if (cmdExists) continue;
 
                 appCommands
-                    ?.create(command.data)
+                    ?.create(commandData)
                     .then(() => {
                         console.log(
-                            colors.green(`✅ Registered command "${command.data.name}" globally.`),
+                            colors.green(`✅ Registered command "${commandData.name}" globally.`),
                         );
                     })
                     .catch((error) => {
                         console.log(
                             colors.red(
-                                `❌ Failed to register command "${command.data.name}" globally.`,
+                                `❌ Failed to register command "${commandData.name}" globally.`,
                             ),
                         );
                         console.error(error);
