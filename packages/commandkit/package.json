@@ -16,7 +16,7 @@
         "lint": "tsc",
         "dev": "tsup --watch",
         "build": "tsup",
-        "publish": "npm publish",
+        "publish": "pnpm lint && pnpm build && npm publish",
         "test": "tsx tests/index.ts"
     },
     "repository": {
