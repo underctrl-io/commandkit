@@ -57,11 +57,12 @@ export class EventHandler {
 
     #registerEvents() {
         const client = this.#data.client;
+        const handler = this.#data.commandKitInstance;
 
         for (const eventObj of this.#data.events) {
             client.on(eventObj.name, async (...params) => {
                 for (const eventFunction of eventObj.functions) {
-                    const stopEventLoop = await eventFunction(...params, client);
+                    const stopEventLoop = await eventFunction(...params, client, handler);
 
                     if (stopEventLoop) {
                         break;

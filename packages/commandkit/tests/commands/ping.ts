@@ -1,16 +1,18 @@
-import type { ChatInputCommandInteraction, PermissionResolvable } from 'discord.js';
+import { SlashCommandProps, CommandOptions, CommandData, CommandType } from '../../src/index';
 
-export const data = {
+export const data: CommandData = {
     name: 'ping',
     description: 'Pong!',
+    type: CommandType.User,
 };
 
-export function run({ interaction }: { interaction: ChatInputCommandInteraction }) {
+export function run({ interaction, handler }: SlashCommandProps) {
     interaction.reply('Pong!');
+
+    console.log(handler.commands);
 }
 
-export const options: {
-    userPermissions: PermissionResolvable;
-} = {
-    userPermissions: ['AddReactions', 'KickMembers'],
+export const options: CommandOptions = {
+    botPermissions: 'Administrator',
+    userPermissions: [],
 };

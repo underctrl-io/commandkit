@@ -2,27 +2,32 @@ import { BuiltInValidationParams } from '../typings';
 
 export default function ({ interaction, targetCommand }: BuiltInValidationParams) {
     const memberPermissions = interaction.memberPermissions;
+    let commandPermissions = targetCommand.options?.userPermissions;
 
-    if (targetCommand.options?.userPermissions && memberPermissions) {
-        const missingPermissions: string[] = [];
+    if (!memberPermissions || !commandPermissions) return;
 
-        for (const permission of targetCommand.options.userPermissions) {
-            const hasPermission = memberPermissions.has(permission);
+    if (!Array.isArray(commandPermissions)) {
+        commandPermissions = [commandPermissions];
+    }
 
-            if (!hasPermission) {
-                missingPermissions.push(`\`${permission.toString()}\``);
-            }
+    const missingPermissions: string[] = [];
+
+    for (const permission of commandPermissions) {
+        const hasPermission = memberPermissions.has(permission);
+
+        if (!hasPermission) {
+            missingPermissions.push(`\`${permission.toString()}\``);
         }
+    }
 
-        if (missingPermissions.length) {
-            interaction.reply({
-                content: `❌ You do not have enough permission to run this command. Missing: ${missingPermissions.join(
-                    ', ',
-                )}`,
-                ephemeral: true,
-            });
+    if (missingPermissions.length) {
+        interaction.reply({
+            content: `❌ You do not have enough permissions to run this command. Missing: ${missingPermissions.join(
+                ', ',
+            )}`,
+            ephemeral: true,
+        });
 
-            return true;
-        }
+        return true;
     }
 }

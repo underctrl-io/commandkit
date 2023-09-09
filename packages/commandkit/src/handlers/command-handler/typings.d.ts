@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, Client, ContextMenuCommandInteraction } from 'discord.js';
 import { ContextCommandObject, SlashCommandObject } from '../../typings';
+import { CommandKit } from '../../CommandKit';
 
 export interface CommandHandlerOptions {
     client: Client;
@@ -9,6 +10,7 @@ export interface CommandHandlerOptions {
     devRoleIds: string[];
     customValidations: Function[];
     skipBuiltInValidations: boolean;
+    commandKitInstance: CommandKit;
 }
 
 export interface CommandHandlerData extends CommandHandlerOptions {

@@ -1,12 +1,5 @@
-import type {
-    Client,
-    APIApplicationCommandOption,
-    ContextMenuCommandType,
-    Interaction,
-    PermissionResolvable,
-    SlashCommandBuilder,
-    ContextMenuCommandBuilder,
-} from 'discord.js';
+import { Client, Interaction } from 'discord.js';
+import { CommandData, CommandKit, CommandOptions } from './index';
 
 export interface CommandKitOptions {
     client: Client;
@@ -24,52 +17,13 @@ export interface CommandKitData extends CommandKitOptions {
 }
 
 export interface SlashCommandObject {
-    data:
-        | SlashCommandBuilder
-        | {
-              name: string;
-              name_localizations?: any;
-              description: string;
-              dm_permission?: boolean;
-              options?: APIApplicationCommandOption[];
-          };
-    options?: {
-        guildOnly?: boolean;
-        devOnly?: boolean;
-        deleted?: boolean;
-        userPermissions?: PermissionResolvable[];
-        botPermissions?: PermissionResolvable[];
-    };
-    run: ({}: { interaction: Interaction; client: Client }) => void;
+    data: CommandData;
+    options?: CommandOptions;
+    run: ({}: { interaction: Interaction; client: Client; handler: CommandKit }) => void;
 }
 
 export interface ContextCommandObject {
-    data:
-        | ContextMenuCommandBuilder
-        | {
-              name: string;
-              name_localizations?: any;
-              type: ContextMenuCommandType;
-              dm_permission?: boolean;
-          };
-    options?: {
-        guildOnly?: boolean;
-        devOnly?: boolean;
-        deleted?: boolean;
-        userPermissions?: PermissionResolvable[];
-        botPermissions?: PermissionResolvable[];
-    };
-    run: ({}: { interaction: Interaction; client: Client }) => void;
-}
-
-export interface CommandFileObject {
-    data: Partial<SlashCommandBuilder | ContextMenuCommandBuilder> | any;
-    options?: {
-        guildOnly?: boolean;
-        devOnly?: boolean;
-        deleted?: boolean;
-        userPermissions?: PermissionResolvable[];
-        botPermissions?: PermissionResolvable[];
-        [key: string]: any;
-    };
+    data: CommandData;
+    options?: CommandOptions;
+    run: ({}: { interaction: Interaction; client: Client; handler: CommandKit }) => void;
 }

@@ -2,6 +2,7 @@ import { CommandHandler } from '../CommandHandler';
 
 export default function handleCommands(commandHandler: CommandHandler) {
     const client = commandHandler._data.client;
+    const handler = commandHandler._data.commandKitInstance;
 
     client.on('interactionCreate', async (interaction) => {
         if (!interaction.isChatInputCommand() && !interaction.isContextMenuCommand()) return;
@@ -27,6 +28,7 @@ export default function handleCommands(commandHandler: CommandHandler) {
                 interaction,
                 client,
                 commandObj,
+                handler,
             });
 
             if (stopValidationLoop) {
@@ -55,6 +57,6 @@ export default function handleCommands(commandHandler: CommandHandler) {
 
         if (!canRun) return;
 
-        targetCommand.run({ interaction, client });
+        targetCommand.run({ interaction, client, handler });
     });
 }
