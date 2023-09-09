@@ -46,6 +46,7 @@ jobs:
                   git rm -rf . && echo "node_modules/" > .gitignore
                   rm -rf apps/ && rm -rf packages
                   cp -r temp_dir/* . && rm -rf temp_dir
+                  sed '/"devDependencies": {/,/},/d' package.json > package_temp.json && mv package_temp.json package.json
                   git add .
                   git commit -m "Deploy latest development build"
                   git push origin dev-build --force
