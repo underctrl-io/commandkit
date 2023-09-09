@@ -40,4 +40,4 @@ jobs:
                   cp -r packages/commandkit/dist/* .
                   git add .
                   git commit -m "Deploy latest development build"
-                  git push https://YOUR_USERNAME:${{ secrets.GITHUB_TOKEN }}@github.com/underctrl-io/commandkit.git dev-build
+                  git push https://YOUR_USERNAME:${{ secrets.TOKEN_GH }}@github.com/underctrl-io/commandkit.git dev-build
