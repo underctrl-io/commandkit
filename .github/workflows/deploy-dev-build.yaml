@@ -1,0 +1,43 @@
+name: Deploy Development Build
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build-and-deploy:
+        name: 🚀 Build
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+
+            - name: 📚 Checkout
+              uses: actions/checkout@v3
+
+            - name: 🟢 Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
+                  registry-url: https://registry.npmjs.org
+
+            - name: 🍳 Prepare
+              run: pnpm install
+
+            - name: 📦 Build package
+              run: |
+                  cd packages/commandkit
+                  pnpm run lint && pnpm run build
+
+            - name: ⚡️ Create/update dev branch
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email ${{secrets.USER_EMAIL}}
+                  git checkout -B dev-build
+                  cp -r packages/commandkit/dist/* .
+                  git add .
+                  git commit -m "Deploy latest development build"
+                  git push origin dev-build
