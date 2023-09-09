@@ -2,6 +2,8 @@ name: Lint
 
 on:
     push:
+        branches-ignore:
+            - 'dev-build'
         branches:
             - '**'
 
