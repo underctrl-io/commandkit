@@ -48,4 +48,4 @@ jobs:
                   cp -r temp_dir/* . && rm -rf temp_dir
                   git add .
                   git commit -m "Deploy latest development build"
-                  git push origin dev-build
+                  git push origin dev-build --force
