@@ -4,8 +4,7 @@ import type {
     PermissionResolvable,
     ChatInputCommandInteraction,
     ContextMenuCommandInteraction,
-    APIApplicationCommandSubcommandOption,
-    APIApplicationCommandSubcommandGroupOption,
+    APIApplicationCommandOption,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
 import type { CommandFileObject } from '../typings';
@@ -92,9 +91,7 @@ export type CommandData = {
     dm_permission?: boolean;
     default_member_permissions?: string;
     nsfw?: boolean;
-    options?: Array<
-        APIApplicationCommandSubcommandOption | APIApplicationCommandSubcommandGroupOption
-    >;
+    options?: Array<APIApplicationCommandOption>;
 };
 
 export type CommandObject = Omit<CommandFileObject, 'run'>;

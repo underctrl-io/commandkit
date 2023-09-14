@@ -3,7 +3,7 @@ import { SlashCommandProps, CommandOptions, CommandData, CommandType } from '../
 export const data: CommandData = {
     name: 'ping',
     description: 'Pong!',
-    type: CommandType.User,
+    type: CommandType.ChatInput,
 };
 
 export function run({ interaction, handler }: SlashCommandProps) {
