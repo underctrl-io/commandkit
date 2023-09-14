@@ -1,3 +1,8 @@
+<h1 align="center">
+    <img src="https://raw.githubusercontent.com/underctrl-io/commandkit/master/apps/docs/public/ckit_logo.png" width="50%">
+    <br>
+</h1>
+
 # CommandKit
 
 CommandKit is a library that makes it easy to handle commands (+ validations), and events in your Discord.js projects.
@@ -29,10 +34,24 @@ For npm:
 npm install commandkit
 ```
 
-For yarn:
+Yarn:
 
 ```bash
 yarn add commandkit
+```
+
+pnpm:
+
+```bash
+pnpm add commandkit
+```
+
+### Install development version
+
+To install the development version of CommandKit, run the following command:
+
+```bash
+npm install underctrl-io/commandkit#dev-build
 ```
 
 # Usage
