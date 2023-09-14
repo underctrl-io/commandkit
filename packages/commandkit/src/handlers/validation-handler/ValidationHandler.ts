@@ -26,6 +26,11 @@ export class ValidationHandler {
             const modulePath = toFileURL(validationFilePath);
 
             let validationFunction = (await import(modulePath)).default;
+
+            if (validationFunction?.default) {
+                validationFunction = validationFunction.default;
+            }
+
             const compactFilePath =
                 validationFilePath.split(process.cwd())[1] || validationFilePath;
 
