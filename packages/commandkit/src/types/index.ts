@@ -82,16 +82,26 @@ type LocaleString =
     | 'uk'
     | 'vi';
 
-export type CommandData = {
+type BaseCommandData = {
     name: string;
-    description: string;
     type?: CommandType;
     name_localizations?: Partial<Record<LocaleString, string | null>>;
-    description_localizations?: Partial<Record<LocaleString, string | null>>;
     dm_permission?: boolean;
     default_member_permissions?: string;
     nsfw?: boolean;
+};
+
+type ChatInputCommandData = BaseCommandData & {
+    type?: CommandType.ChatInput;
+    description: string;
+    description_localizations?: Partial<Record<LocaleString, string | null>>;
     options?: Array<APIApplicationCommandOption>;
 };
+
+type UserOrMessageCommandData = BaseCommandData & {
+    type: CommandType.User | CommandType.Message;
+};
+
+export type CommandData = ChatInputCommandData | UserOrMessageCommandData;
 
 export type CommandObject = Omit<CommandFileObject, 'run'>;
