@@ -39,6 +39,11 @@ export class EventHandler {
                 const modulePath = toFileURL(eventFilePath);
 
                 let eventFunction = (await import(modulePath)).default;
+
+                if (eventFunction?.default) {
+                    eventFunction = eventFunction.default;
+                }
+
                 const compactFilePath = eventFilePath.split(process.cwd())[1] || eventFilePath;
 
                 if (typeof eventFunction !== 'function') {
