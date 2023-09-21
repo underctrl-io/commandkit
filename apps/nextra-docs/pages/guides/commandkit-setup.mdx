@@ -1,1 +1,101 @@
+import { Steps, Tabs, Callout } from 'nextra/components';
+
 # CommandKit Setup
+
+This is a simple overview of how to set up CommandKit with all the available options. You’d usually set this up in your entry point file (e.g. `index.js`) where you have access to your Discord client object.
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="index.js" copy {2, 13-22}
+        const { Client, GatewayIntentBits } = require('discord.js');
+        const { CommandKit } = require('commandkit');
+        const path = require('path');
+
+        const client = new Client({
+            intents: [
+                GatewayIntentBits.Guilds,
+                GatewayIntentBits.GuildMessages,
+                GatewayIntentBits.MessageContent,
+            ],
+        });
+
+        new CommandKit({
+            client,
+            commandsPath: path.join(__dirname, 'commands'),
+            eventsPath: path.join(__dirname, 'events'),
+            validationsPath: path.join(__dirname, 'validations'),
+            devGuildIds: ['DEV_SERVER_ID_1', 'DEV_SERVER_ID_2'],
+            devUserIds: ['DEV_USER_ID_1', 'DEV_USER_ID_2'],
+            devRoleIds: ['DEV_ROLE_ID_1', 'DEV_ROLE_ID_2'],
+            skipBuiltInValidations: true,
+        });
+
+        client.login('YOUR_TOKEN_HERE');
+
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```js filename="index.js" copy {2, 16-25}
+        import { Client, GatewayIntentBits } from 'discord.js';
+        import { CommandKit } from 'commandkit';
+        import { fileURLToPath } from 'url';
+        import path from 'path';
+
+        const client = new Client({
+            intents: [
+                GatewayIntentBits.Guilds,
+                GatewayIntentBits.GuildMessages,
+                GatewayIntentBits.MessageContent
+            ],
+        });
+
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+        new CommandKit({
+            client,
+            commandsPath: path.join(__dirname, 'commands'),
+            eventsPath: path.join(__dirname, 'events'),
+            validationsPath: path.join(__dirname, 'validations'),
+            devGuildIds: ['DEV_SERVER_ID_1', 'DEV_SERVER_ID_2'],
+            devUserIds: ['DEV_USER_ID_1', 'DEV_USER_ID_2'],
+            devRoleIds: ['DEV_ROLE_ID_1', 'DEV_ROLE_ID_2'],
+            skipBuiltInValidations: true,
+        });
+
+        client.login('YOUR_TOKEN_HERE');
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```ts filename="index.ts" copy {2, 13-22}
+        import { Client, GatewayIntentBits } from 'discord.js';
+        import { CommandKit } from 'commandkit';
+        import path from 'path';
+
+        const client = new Client({
+            intents: [
+                GatewayIntentBits.Guilds,
+                GatewayIntentBits.GuildMessages,
+                GatewayIntentBits.MessageContent
+            ],
+        });
+
+        new CommandKit({
+            client,
+            commandsPath: path.join(__dirname, 'commands'),
+            eventsPath: path.join(__dirname, 'events'),
+            validationsPath: path.join(__dirname, 'validations'),
+            devGuildIds: ['DEV_SERVER_ID_1', 'DEV_SERVER_ID_2'],
+            devUserIds: ['DEV_USER_ID_1', 'DEV_USER_ID_2'],
+            devRoleIds: ['DEV_ROLE_ID_1', 'DEV_ROLE_ID_2'],
+            skipBuiltInValidations: true,
+        });
+
+        client.login('YOUR_TOKEN_HERE');
+        ```
+    </Tabs.Tab>
+
+</Tabs>
+
+<Callout>
+    **Note:** Some Discord.js properties are only accessible using the correct intents.
+</Callout>

@@ -1,5 +1,5 @@
 export default {
-    logo: <span>My Nextra Documentation</span>,
+    logo: <span>CommandKit</span>,
     project: {
         link: 'https://github.com/underctrl-io/commandkit',
     },
