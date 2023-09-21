@@ -1,5 +1,8 @@
 {
-    "classes": "Classes",
-    "typedef": "Type Definitions",
-    "enums": "Enums"
+    "installation": "Installation",
+    "commandkit-setup": "CommandKit Setup",
+    "handler-properties": "Handler Properties",
+    "command-file-setup": "Commands Setup",
+    "event-file-setup": "Events Setup",
+    "validation-file-setup": "Validations Setup"
 }

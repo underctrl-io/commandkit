@@ -1,5 +1,13 @@
 import '../styles/globals.css';
+import Head from 'next/head';
 
 export default function Nextra({ Component, pageProps }) {
-    return <Component {...pageProps} />;
+    return (
+        <>
+            <Head>
+                <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+            </Head>
+            <Component {...pageProps} />
+        </>
+    );
 }
