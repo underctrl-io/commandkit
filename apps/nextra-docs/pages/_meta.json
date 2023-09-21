@@ -1,0 +1,9 @@
+{
+    "index": {
+        "title": "Home",
+        "type": "page"
+    },
+    "docs": "Documentation",
+    "typedef": "Typedefs",
+    "enums": "Enums"
+}
