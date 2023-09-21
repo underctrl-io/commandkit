@@ -1,6 +1,5 @@
 {
     "classes": "Classes",
-    "functions": "Functions",
     "typedef": "Type Definitions",
     "enums": "Enums"
 }
