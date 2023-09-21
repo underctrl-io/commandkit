@@ -2,7 +2,7 @@ import { Tabs, Callout } from 'nextra/components';
 
 # Validations Setup
 
-Validations are functions that are called before the `run()` function from a command object is called. They can be used for many things, including validating your command object, or even implementing features such as cooldowns where the user will not be able to run the command if a validation functions says so.
+Validations are functions that are called before the `run` function from a command object is called. They can be used for many things, including validating your command object, or even implementing features such as cooldowns where the user will not be able to run the command if a validation functions says so.
 
 Validation functions are called on every command trigger, so it's important to keep them as lightweight as possible.
 
@@ -70,9 +70,9 @@ Validation functions are called on every command trigger, so it's important to k
 
 Within every validation function, you have the ability to check what command is trying to be executed using `commandObj` and the `interaction` object from the parameters and respond accordingly.
 
-The `commandObj` object is what's being exported from your command file (excluding the `run()` function). This means you can access the `data` and `options` property from within your validation function.
+The `commandObj` object is what's being exported from your command file (excluding the `run` function). This means you can access the `data` and `options` property from within your validation function.
 
-The `handler` object is your [CommandKit instance](/api/classes/classcommandkit/).
+The `handler` object is the current CommandKit instance.
 
 ### Stopping the command from running
 
