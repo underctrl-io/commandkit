@@ -15,6 +15,24 @@ const config: DocsThemeConfig = {
             };
         }
     },
+    gitTimestamp({ timestamp }) {
+        const { locale, asPath } = useRouter();
+
+        if (asPath !== '/') {
+            return (
+                <>
+                    Last updated on:{' '}
+                    <time dateTime={timestamp.toISOString()}>
+                        {timestamp.toLocaleDateString(locale, {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                        })}
+                    </time>
+                </>
+            );
+        }
+    },
 };
 
 export default config;
