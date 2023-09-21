@@ -2,13 +2,13 @@ import { Callout } from 'nextra/components';
 
 # CommandOptions
 
-### `devOnly`
+### `devOnly` (optional)
 
 -   Type: `boolean`
 
 This determines whether the command should only be registered in development guilds and be executed by the bot developers.
 
-### `guildOnly`
+### `guildOnly` (optional)
 
 <Callout type="error">
     This will soon be deprecated. Use `dm_permission` in your command `data` instead.
@@ -18,19 +18,19 @@ This determines whether the command should only be registered in development gui
 
 This determines whether the command should only be handled in guilds.
 
-### `userPermissions`
+### `userPermissions` (optional)
 
 -   Type: [`PermissionResolvable`](https://old.discordjs.dev/#/docs/discord.js/main/typedef/PermissionResolvable)
 
 This determines whether the user has the required permissions to execute the command. This is checked against the user's permissions in the guild where the command was executed (if any).
 
-### `botPermissions`
+### `botPermissions` (optional)
 
 -   Type: [`PermissionResolvable`](https://old.discordjs.dev/#/docs/discord.js/main/typedef/PermissionResolvable)
 
 This determines whether the bot has the required permissions to execute the command. This is checked against the bot's permissions in the guild where the command was executed (if any).
 
-### `deleted`
+### `deleted` (optional)
 
 -   Type: [`PermissionResolvable`](https://old.discordjs.dev/#/docs/discord.js/main/typedef/PermissionResolvable)
 
