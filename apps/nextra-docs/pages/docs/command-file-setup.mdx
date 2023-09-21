@@ -1,1 +1,175 @@
+import { Tabs } from 'nextra/components';
+
 # Commands Setup
+
+CommandKit supports both slash commands and context menu commands. Since both have the same triggers (interactions) and similar command structure, they are both stored and handled from the same commands directory.
+
+### Slash Command
+
+Here's an example `/ping` slash command which replies with "Pong!"
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="commands/misc/ping.js" copy
+        module.exports = {
+            data: {
+                name: 'ping',
+                description: 'Pong!',
+            },
+
+            run: ({ interaction, client, handler }) => {
+                interaction.reply(`:ping_pong: Pong! ${client.ws.ping}ms`);
+            },
+
+            options: {
+                devOnly: true,
+                guildOnly: true,
+                userPermissions: ['Administrator', 'AddReactions'],
+                botPermissions: ['Administrator', 'AddReactions'],
+                deleted: false,
+            },
+        };
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```js filename="commands/misc/ping.js" copy
+        export const data = {
+            name: 'ping',
+            description: 'Pong!',
+        },
+
+        export function run({ interaction, client, handler }) {
+            interaction.reply(`:ping_pong: Pong! ${client.ws.ping}ms`);
+        },
+
+        export const options = {
+            devOnly: true,
+            guildOnly: true,
+            userPermissions: ['Administrator', 'AddReactions'],
+            botPermissions: ['Administrator', 'AddReactions'],
+            deleted: false,
+        },
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```ts filename="commands/misc/ping.ts" copy
+        import type { CommandData, SlashCommandProps, CommandOptions } from 'commandkit';
+
+        export const data: CommandData = {
+            name: 'ping',
+            description: 'Pong!',
+        },
+
+        export function run({ interaction, client, handler }: SlashCommandProps) {
+            interaction.reply(`:ping_pong: Pong! ${client.ws.ping}ms`);
+        },
+
+        export const options: CommandOptions = {
+            devOnly: true,
+            guildOnly: true,
+            userPermissions: ['Administrator', 'AddReactions'],
+            botPermissions: ['Administrator', 'AddReactions'],
+            deleted: false,
+        },
+        ```
+    </Tabs.Tab>
+
+</Tabs>
+
+### Context Menu Command
+
+Here's an example `content` command which replies with the content of the target message.
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="commands/misc/content.js" copy
+        const { CommandType } = require('commandkit');
+        
+        module.exports = {
+            data: {
+                name: 'content',
+                type: CommandType.Message,
+            },
+
+            run: ({ interaction, client, handler }) => {
+                interaction.reply(`The message is: ${interaction.targetMessage}`);
+            },
+
+            options: {
+                devOnly: true,
+                guildOnly: true,
+                userPermissions: ['Administrator', 'AddReactions'],
+                botPermissions: ['Administrator', 'AddReactions'],
+                deleted: false,
+            },
+        };
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```js filename="commands/misc/content.js" copy
+        import { CommandType } from 'commandkit';
+
+        export const data = {
+            name: 'content',
+            type: CommandType.Message,
+        },
+
+        export function run({ interaction, client, handler }) {
+            interaction.reply(`The message is: ${interaction.targetMessage}`);
+        },
+
+        export const options = {
+            devOnly: true,
+            guildOnly: true,
+            userPermissions: ['Administrator', 'AddReactions'],
+            botPermissions: ['Administrator', 'AddReactions'],
+            deleted: false,
+        },
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```ts filename="commands/misc/content.ts" copy
+        import { CommandType, type CommandData, type ContextMenuCommandProps, type CommandOptions } from 'commandkit';
+
+        export const data: CommandData = {
+            name: 'content',
+            type: CommandType.Message,
+        },
+
+        export function run({ interaction, client, handler }: ContextMenuCommandProps) {
+            interaction.reply(`The message is: ${interaction.targetMessage}`);
+        },
+
+        export const options: CommandOptions = {
+            devOnly: true,
+            guildOnly: true,
+            userPermissions: ['Administrator', 'AddReactions'],
+            botPermissions: ['Administrator', 'AddReactions'],
+            deleted: false,
+        },
+        ```
+    </Tabs.Tab>
+
+</Tabs>
+
+## Properties and Methods
+
+### `data`
+
+-   Type: [`CommandData`](/typedef/CommandData) | [`SlashCommandBuilder`](https://discord.js.org/docs/packages/builders/main/SlashCommandBuilder:Class) | [`ContextMenuCommandBuilder`](https://discord.js.org/docs/packages/builders/main/ContextMenuCommandBuilder:Class)
+
+This property contains the command's structural information, and is required to register and handle commands.
+
+### `run`
+
+-   Type: `void`
+
+-   Props Type: [`SlashCommandProps`](/typedef/SlashCommandProps) | [`ContextMenuCommandProps`](/typedef/ContextMenuCommandProps)
+
+This function will be called when the command is executed.
+
+### `options` (optional)
+
+-   Type: [`CommandOptions`](/typedef/CommandOptions)
+
+This property contains the command's registration/handling behaviour.

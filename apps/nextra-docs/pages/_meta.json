@@ -6,5 +6,9 @@
     "docs": {
         "title": "Documentation",
         "type": "page"
+    },
+    "typedef": {
+        "title": "Typedefs",
+        "type": "page"
     }
 }

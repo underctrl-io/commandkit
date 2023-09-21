@@ -1,0 +1,7 @@
+{
+    "CommandData": "CommandData",
+    "CommandObject": "CommandObject",
+    "CommandOptions": "CommandOptions",
+    "ContextMenuCommandProps": "ContextMenuCommandProps",
+    "SlashCommandProps": "SlashCommandProps"
+}
