@@ -123,9 +123,9 @@ The code above is just a simple example of how to set up an event function. But 
         ```js filename="events/messageCreate/say-hi.js" copy
         module.exports = (message, client) => {
             if (message.content === 'hey') {
-                message.reply('Hi!')
+                message.reply('Hi!');
 
-                return true // This stops the event loop
+                return true; // This stops the event loop
             }
         }
         ```
@@ -135,9 +135,9 @@ The code above is just a simple example of how to set up an event function. But 
         ```js filename="events/messageCreate/say-hi.js" copy
         export default function (message, client) {
             if (message.content === 'hey') {
-                message.reply('Hi!')
+                message.reply('Hi!');
 
-                return true // This stops the event loop
+                return true; // This stops the event loop
             }
         }
         ```
@@ -150,9 +150,9 @@ The code above is just a simple example of how to set up an event function. But 
 
         export default function (message: Message<true>, client: Client<true>, handler: CommandKit) {
             if (message.content === 'hey') {
-                message.reply('Hi!')
+                message.reply('Hi!');
 
-                return true // This stops the event loop
+                return true; // This stops the event loop
             }
         }
         ```

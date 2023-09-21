@@ -13,8 +13,7 @@ Validation functions are called on every command trigger, so it's important to k
 
 <Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
     <Tabs.Tab label="CommonJS">
-        ```js
-        // validations/cooldowns.js
+        ```js filename="validations/cooldowns.js" copy
         const cooldowns = require('../cooldowns-cache');
 
         module.exports = ({ interaction, commandObj, handler }) => {
@@ -31,8 +30,7 @@ Validation functions are called on every command trigger, so it's important to k
     </Tabs.Tab>
 
     <Tabs.Tab label="ESM">
-        ```js
-        // validations/cooldowns.js
+        ```js filename="validations/cooldowns.js" copy
         import cooldowns from '../cooldowns-cache';
 
         export default function ({ interaction, commandObj, handler }) {
@@ -49,8 +47,7 @@ Validation functions are called on every command trigger, so it's important to k
     </Tabs.Tab>
 
     <Tabs.Tab label="TypeScript">
-        ```js
-        // validations/cooldowns.js
+        ```ts filename="validations/cooldowns.ts" copy
         import type { ValidationFunctionProps } from 'commandkit';
         import cooldowns from '../cooldowns-cache';
 
