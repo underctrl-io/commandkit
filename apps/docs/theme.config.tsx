@@ -12,7 +12,7 @@ const config: DocsThemeConfig = {
     project: {
         link: 'https://github.com/underctrl-io/commandkit',
     },
-    docsRepositoryBase: 'https://github.com/underctrl-io/commandkit/blob/apps/docs',
+    docsRepositoryBase: 'https://github.com/underctrl-io/commandkit/blob/master/apps/docs',
     useNextSeoProps() {
         const { asPath } = useRouter();
         if (asPath !== '/') {
