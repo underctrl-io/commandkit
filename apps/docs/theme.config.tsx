@@ -9,6 +9,9 @@ const config: DocsThemeConfig = {
             <span className="font-bold">CommandKit</span>
         </div>
     ),
+    chat: {
+        link: 'https://ctrl.lol/discord',
+    },
     project: {
         link: 'https://github.com/underctrl-io/commandkit',
     },

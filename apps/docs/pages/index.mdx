@@ -5,36 +5,58 @@ title: CommandKit - A Discord.js Handler
 import Image from 'next/image';
 import Link from 'next/link';
 
+export function FeatureList() {
+    return (
+        <section className="w-96 mx-auto md:w-[700px] lg:w-[850px]">
+            <h2>Features</h2>
+
+            <ul>
+                <li>Very beginner friendly 🚀</li>
+                <li>Support for slash and context menu commands ✅</li>
+                <li>Automatic command registration, edits, and deletion 🤖</li>
+                <li>Supports multiple development servers 🤝</li>
+                <li>Supports multiple users as bot developers 👥</li>
+                <li>Object oriented 💻</li>
+            </ul>
+        </section>
+    )
+
+}
+
 export default function Home() {
     return (
-        <div className="w-72 h-96 mx-auto text-center mt-10 flex items-center justify-center flex-col md:flex-row-reverse md:gap-2 md:text-left md:w-[700px] lg:w-[850px]">
-            <Image
-                src="/logo_lg.webp"
-                alt="CommandKit Logo"
-                className="md:w-[360px] mb-10 md:mb-0"
-                width={200}
-                height={200}
-            />
+        <>
+            <section className="w-72 h-96 mx-auto text-center mt-10 mb-28 md:mb-16 flex items-center justify-center flex-col md:flex-row-reverse md:gap-2 md:text-left md:w-[700px] lg:w-[850px]">
+                <Image
+                    src="/logo_lg.webp"
+                    alt="CommandKit Logo"
+                    className="md:w-[360px] mb-10 md:mb-0"
+                    width={200}
+                    height={200}
+                />
 
-            <div>
-                <p className="text-4xl font-bold mb-5 md:text-5xl lg:text-6xl">
-                    Let{' '}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffbc6f] to-[#b079fc]">
-                        CommandKit
-                    </span>{' '}
-                    handle it for you!
-                </p>
-                <p className="font-semibold lg:text-xl text-gray-300">
-                    A Discord.js handler for commands and events.
-                </p>
+                <div>
+                    <p className="text-4xl font-bold mb-5 md:text-5xl lg:text-6xl">
+                        Let{' '}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffbc6f] to-[#b079fc]">
+                            CommandKit
+                        </span>{' '}
+                        handle it for you!
+                    </p>
+                    <p className="font-semibold lg:text-xl text-gray-300">
+                        A Discord.js handler for commands and events.
+                    </p>
 
-                <div className="flex items-center justify-center gap-3 mt-10 md:justify-start">
-                    <Link href='/docs/installation' className="font-semibold bg-[#ec6068] py-2 px-4 rounded-full">Documentation</Link>
+                    <div className="flex items-center justify-center gap-3 mt-10 md:justify-start">
+                        <Link href='/docs/installation' className="font-semibold bg-[#b079fc] py-2 px-4 rounded-full">Documentation</Link>
 
-                    <Link href='https://github.com/underctrl-io/commandkit' className="font-semibold bg-blue-500 py-2 px-4 rounded-full" target='_blank' target="_blank" rel="noopener noreferrer">GitHub</Link>
+                        <Link href='https://github.com/underctrl-io/commandkit' className="font-semibold bg-blue-500 py-2 px-4 rounded-full" target='_blank' target="_blank" rel="noopener noreferrer">GitHub</Link>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </section>
+
+            <FeatureList />
+        </>
     );
 
 }
