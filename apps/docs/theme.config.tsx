@@ -1,6 +1,8 @@
 import type { DocsThemeConfig } from 'nextra-theme-docs';
+import { useConfig } from 'nextra-theme-docs';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { MetaHTMLAttributes } from 'react';
 
 const config: DocsThemeConfig = {
     logo: (
@@ -41,6 +43,28 @@ const config: DocsThemeConfig = {
                 </>
             );
         }
+    },
+    head: (meta: any) => {
+        const { frontMatter, title } = useConfig();
+        const { asPath } = useRouter();
+
+        let ogTitle = `${title} – CommandKit`;
+
+        if (asPath === '/') {
+            ogTitle = title;
+        }
+
+        const ogDescription = frontMatter.description || '';
+
+        return (
+            <>
+                <meta content={ogTitle} property="og:title" />
+                <meta content={ogDescription} property="og:description" />
+                <meta content={asPath} property="og:url" />
+                <meta content="/favicon.png" property="og:image" />
+                <meta content="#fab259" data-react-helmet="true" name="theme-color" />
+            </>
+        );
     },
     footer: {
         text: (
