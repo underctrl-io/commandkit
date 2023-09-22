@@ -5,11 +5,11 @@
 
 # CommandKit
 
-CommandKit is a library that makes it easy to handle commands (+ validations), and events in your Discord.js projects.
+CommandKit is a library that makes it easy to handle commands and events in your Discord.js projects.
 
 **Supports Discord.js version 14**
 
-# Features
+## Features
 
 -   Very beginner friendly 🚀
 -   Support for slash and context menu commands ✅
@@ -18,11 +18,11 @@ CommandKit is a library that makes it easy to handle commands (+ validations), a
 -   Supports multiple users as bot developers 👥
 -   Object oriented 💻
 
-# Documentation
+## Documentation
 
-You can find the full documentation [here](https://commandkit.underctrl.io)
+You can find the full documentation [here](https://commandkit.js.org)
 
-# Installation
+## Installation
 
 [![npm](https://nodei.co/npm/commandkit.png)](https://nodei.co/npm/commandkit/)
 
@@ -54,9 +54,11 @@ To install the development version of CommandKit, run the following command:
 npm install underctrl-io/commandkit#dev-build
 ```
 
-# Usage
+> ⚠️ The development version is likely to have bugs.
 
-This is a simple overview of how to set up this library with all the options. You can read more in the [full documentation](https://commandkit.underctrl.io)
+## Usage
+
+This is a simple overview of how to set up this library with all the options. You can read more in the [full documentation](https://commandkit.js.org)
 
 ```js
 // index.js
