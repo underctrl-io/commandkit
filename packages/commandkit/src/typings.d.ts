@@ -20,4 +20,6 @@ export interface CommandFileObject {
     data: CommandData;
     options?: CommandOptions;
     run: ({}: { interaction: Interaction; client: Client; handler: CommandKit }) => void;
+    filePath: string;
+    category?: string;
 }
