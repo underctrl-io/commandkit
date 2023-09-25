@@ -1,6 +1,6 @@
+import type { EventHandlerOptions, EventHandlerData } from './types';
 import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
-import { EventHandlerOptions, EventHandlerData } from './typings';
 import colors from 'colors/safe';
 
 export class EventHandler {

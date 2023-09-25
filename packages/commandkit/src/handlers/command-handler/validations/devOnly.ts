@@ -1,4 +1,4 @@
-import { BuiltInValidationParams } from '../typings';
+import { BuiltInValidationParams } from '../types';
 
 export default function ({ interaction, targetCommand, handlerData }: BuiltInValidationParams) {
     if (targetCommand.options?.devOnly) {

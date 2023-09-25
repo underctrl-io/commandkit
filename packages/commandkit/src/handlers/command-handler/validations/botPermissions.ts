@@ -1,4 +1,4 @@
-import { BuiltInValidationParams } from '../typings';
+import { BuiltInValidationParams } from '../types';
 
 export default function ({ interaction, targetCommand }: BuiltInValidationParams) {
     const botMember = interaction.guild?.members.me;

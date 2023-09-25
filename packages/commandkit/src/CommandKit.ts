@@ -1,5 +1,5 @@
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
-import { CommandKitData, CommandKitOptions } from './typings';
+import { CommandKitData, CommandKitOptions } from './dev-types';
 import { CommandObject } from './types';
 import colors from 'colors/safe';
 
@@ -101,5 +101,15 @@ export class CommandKit {
     /** @returns An array of all the developer role IDs which was set when instantiating CommandKit. */
     get devRoleIds(): string[] {
         return this.#data.devRoleIds || [];
+    }
+
+    reloadCommands({ type }: { type?: 'dev' | 'global' }) {
+        if (type === 'dev') {
+            // register dev
+        } else if (type === 'global') {
+            // register global
+        } else {
+            // register dev and global
+        }
     }
 }

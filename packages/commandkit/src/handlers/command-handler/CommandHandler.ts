@@ -1,4 +1,4 @@
-import { CommandHandlerData, CommandHandlerOptions } from './typings';
+import { CommandHandlerData, CommandHandlerOptions } from './types';
 import { getFilePaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 import builtInValidations from './validations';
