@@ -60,7 +60,7 @@ export class CommandKit {
                 devRoleIds: this.#data.devRoleIds || [],
                 customValidations: validationFunctions,
                 skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
-                commandKitInstance: this,
+                handler: this,
             });
 
             await commandHandler.init();

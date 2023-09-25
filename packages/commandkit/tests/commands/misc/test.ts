@@ -1,7 +1,7 @@
 import { SlashCommandProps, CommandOptions, CommandData, CommandType } from '../../../src/index';
 
 export const data: CommandData = {
-    name: 'ping',
+    name: 'test',
     description: 'Pong!!',
 };
 
@@ -14,4 +14,5 @@ export function run({ interaction, handler }: SlashCommandProps) {
 export const options: CommandOptions = {
     botPermissions: 'Administrator',
     userPermissions: [],
+    devOnly: true,
 };

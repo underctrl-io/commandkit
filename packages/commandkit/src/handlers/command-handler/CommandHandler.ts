@@ -1,5 +1,5 @@
 import type { CommandHandlerData, CommandHandlerOptions } from './typings';
-import type { ReloadOptions } from '../../typings';
+import type { CommandFileObject, ReloadOptions } from '../../typings';
 import { getFilePaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 
@@ -90,10 +90,7 @@ export class CommandHandler {
     }
 
     #handleCommands() {
-        const client = this.#data.client;
-        const handler = this.#data.commandKitInstance;
-
-        client.on('interactionCreate', async (interaction) => {
+        this.#data.client.on('interactionCreate', async (interaction) => {
             if (!interaction.isChatInputCommand() && !interaction.isContextMenuCommand()) return;
 
             const targetCommand = this.#data.commands.find(
@@ -115,9 +112,9 @@ export class CommandHandler {
             for (const validationFunction of this.#data.customValidations) {
                 const stopValidationLoop = await validationFunction({
                     interaction,
-                    client,
                     commandObj,
-                    handler,
+                    client: this.#data.client,
+                    handler: this.#data.handler,
                 });
 
                 if (stopValidationLoop) {
@@ -146,7 +143,11 @@ export class CommandHandler {
 
             if (!canRun) return;
 
-            targetCommand.run({ interaction, client, handler });
+            targetCommand.run({
+                interaction,
+                client: this.#data.client,
+                handler: this.#data.handler,
+            });
         });
     }
 
@@ -155,6 +156,26 @@ export class CommandHandler {
     }
 
     async reloadCommands(options?: ReloadOptions) {
+        this.#data.commands = [];
         await this.#buildCommands();
+
+        console.log(this.#data.commands[0].data);
+
+        let commands: CommandFileObject[];
+
+        if (options?.type === 'dev') {
+            commands = this.#data.commands.filter((cmd) => cmd.options?.devOnly);
+        } else if (options?.type === 'global') {
+            commands = this.#data.commands.filter((cmd) => !cmd.options?.devOnly);
+        } else {
+            commands = this.#data.commands;
+        }
+
+        await registerCommands({
+            client: this.#data.client,
+            devGuildIds: this.#data.devGuildIds,
+            commands,
+            reloading: true,
+        });
     }
 }

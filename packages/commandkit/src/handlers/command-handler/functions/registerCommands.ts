@@ -1,4 +1,11 @@
-import type { Guild, GuildApplicationCommandManager, Client } from 'discord.js';
+import type {
+    Guild,
+    GuildApplicationCommandManager,
+    Client,
+    ApplicationCommandData,
+    ApplicationCommandDataResolvable,
+} from 'discord.js';
+import type { CommandData } from '../../..';
 import type { CommandFileObject } from '../../../typings';
 import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
 import colors from 'colors/safe';
@@ -7,12 +14,20 @@ export default async function registerCommands({
     client,
     devGuildIds,
     commands,
+    reloading,
 }: {
     client: Client;
     devGuildIds: string[];
     commands: CommandFileObject[];
+    reloading?: boolean;
 }) {
-    client.once('ready', async () => {
+    if (reloading) {
+        handleRegistration();
+    } else {
+        client.once('ready', handleRegistration);
+    }
+
+    async function handleRegistration() {
         const devGuilds: Guild[] = [];
 
         for (const devGuildId of devGuildIds) {
@@ -38,11 +53,12 @@ export default async function registerCommands({
         for (const guild of devGuilds) {
             const guildCommands = guild.commands;
             await guildCommands?.fetch();
+
             devGuildCommands.push(guildCommands);
         }
 
         for (const command of commands) {
-            let commandData = command.data as any;
+            let commandData = command.data as CommandData;
 
             // <!-- Delete command if options.deleted -->
             if (command.options?.deleted) {
@@ -105,7 +121,7 @@ export default async function registerCommands({
 
                 if (commandsAreDifferent) {
                     appGlobalCommand
-                        .edit(commandData)
+                        .edit(commandData as Partial<ApplicationCommandData>)
                         .then(() => {
                             console.log(
                                 colors.green(`✅ Edited command "${commandData.name}" globally.`),
@@ -138,7 +154,7 @@ export default async function registerCommands({
 
                     if (commandsAreDifferent) {
                         appGuildCommand
-                            .edit(commandData)
+                            .edit(commandData as Partial<ApplicationCommandData>)
                             .then(() => {
                                 console.log(
                                     colors.green(
@@ -181,7 +197,7 @@ export default async function registerCommands({
                     if (cmdExists) continue;
 
                     guild?.commands
-                        .create(commandData)
+                        .create(commandData as ApplicationCommandDataResolvable)
                         .then(() => {
                             console.log(
                                 colors.green(
@@ -205,7 +221,7 @@ export default async function registerCommands({
                 if (cmdExists) continue;
 
                 appCommands
-                    ?.create(commandData)
+                    ?.create(commandData as ApplicationCommandDataResolvable)
                     .then(() => {
                         console.log(
                             colors.green(`✅ Registered command "${commandData.name}" globally.`),
@@ -221,5 +237,5 @@ export default async function registerCommands({
                     });
             }
         }
-    });
+    }
 }

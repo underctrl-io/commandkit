@@ -1,4 +1,4 @@
-import { CommandKit } from '../src/index';
+import { CommandKit } from '../src';
 import { Client } from 'discord.js';
 import { config } from 'dotenv';
 
