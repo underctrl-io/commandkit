@@ -1,4 +1,4 @@
-import { BuiltInValidationParams } from '../types';
+import { BuiltInValidationParams } from '../typings';
 
 export default function ({ interaction, targetCommand }: BuiltInValidationParams) {
     if (targetCommand.options?.guildOnly && !interaction.inGuild()) {

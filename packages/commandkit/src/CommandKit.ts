@@ -1,12 +1,12 @@
+import type { CommandObject } from './types';
+import type { CommandKitData, CommandKitOptions, ReloadOptions } from './typings';
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
-import { CommandKitData, CommandKitOptions } from './dev-types';
-import { CommandObject } from './types';
 import colors from 'colors/safe';
 
 export class CommandKit {
     #data: CommandKitData;
 
-    constructor({ ...options }: CommandKitOptions) {
+    constructor(options: CommandKitOptions) {
         if (!options.client) {
             throw new Error(colors.red('"client" is required when instantiating CommandKit.'));
         }
@@ -17,15 +17,13 @@ export class CommandKit {
             );
         }
 
-        this.#data = {
-            ...options,
-            commands: [],
-        };
+        this.#data = options;
 
         this.#init();
     }
 
     async #init() {
+        // 1. Setup event handler
         if (this.#data.eventsPath) {
             const eventHandler = new EventHandler({
                 client: this.#data.client,
@@ -34,18 +32,25 @@ export class CommandKit {
             });
 
             await eventHandler.init();
+
+            this.#data.eventHandler = eventHandler;
         }
 
+        // 2. Setup validation handler
         let validationFunctions: Function[] = [];
+
         if (this.#data.validationsPath) {
             const validationHandler = new ValidationHandler({
                 validationsPath: this.#data.validationsPath,
             });
 
             await validationHandler.init();
+
             validationHandler.validations.forEach((v) => validationFunctions.push(v));
+            this.#data.validationHandler = validationHandler;
         }
 
+        // 3. Setup command handler
         if (this.#data.commandsPath) {
             const commandHandler = new CommandHandler({
                 client: this.#data.client,
@@ -59,13 +64,28 @@ export class CommandKit {
             });
 
             await commandHandler.init();
-            this.#data.commands = commandHandler.commands;
+
+            this.#data.commandHandler = commandHandler;
         }
     }
 
-    /** @returns An array of objects of all the commands that CommandKit is handling. */
+    /**
+     * Updates application commands with the latest from "commandsPath".
+     */
+    async reloadCommands(options?: ReloadOptions) {
+        if (!this.#data.commandHandler) return;
+        await this.#data.commandHandler.reloadCommands(options);
+    }
+
+    /**
+     * @returns An array of objects of all the commands that CommandKit is handling.
+     */
     get commands(): CommandObject[] {
-        const commands = this.#data.commands.map((cmd) => {
+        if (!this.#data.commandHandler) {
+            return [];
+        }
+
+        const commands = this.#data.commandHandler.commands.map((cmd) => {
             const { run, ...command } = cmd;
             return command;
         });
@@ -73,43 +93,45 @@ export class CommandKit {
         return commands;
     }
 
-    /** @returns The path to the commands folder which was set when instantiating CommandKit. */
+    /**
+     * @returns The path to the commands folder which was set when instantiating CommandKit.
+     */
     get commandsPath(): string | undefined {
         return this.#data.commandsPath;
     }
 
-    /** @returns The path to the events folder which was set when instantiating CommandKit. */
+    /**
+     * @returns The path to the events folder which was set when instantiating CommandKit.
+     */
     get eventsPath(): string | undefined {
         return this.#data.eventsPath;
     }
 
-    /** @returns The path to the validations folder which was set when instantiating CommandKit. */
+    /**
+     * @returns The path to the validations folder which was set when instantiating CommandKit.
+     */
     get validationsPath(): string | undefined {
         return this.#data.validationsPath;
     }
 
-    /** @returns An array of all the developer user IDs which was set when instantiating CommandKit. */
+    /**
+     * @returns An array of all the developer user IDs which was set when instantiating CommandKit.
+     */
     get devUserIds(): string[] {
         return this.#data.devUserIds || [];
     }
 
-    /** @returns An array of all the developer guild IDs which was set when instantiating CommandKit. */
+    /**
+     * @returns An array of all the developer guild IDs which was set when instantiating CommandKit.
+     */
     get devGuildIds(): string[] {
         return this.#data.devGuildIds || [];
     }
 
-    /** @returns An array of all the developer role IDs which was set when instantiating CommandKit. */
+    /**
+     * @returns An array of all the developer role IDs which was set when instantiating CommandKit.
+     */
     get devRoleIds(): string[] {
         return this.#data.devRoleIds || [];
-    }
-
-    reloadCommands({ type }: { type?: 'dev' | 'global' }) {
-        if (type === 'dev') {
-            // register dev
-        } else if (type === 'global') {
-            // register global
-        } else {
-            // register dev and global
-        }
     }
 }

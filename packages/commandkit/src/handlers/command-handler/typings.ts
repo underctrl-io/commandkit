@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, Client, ContextMenuCommandInteraction } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
-import { CommandFileObject } from '../../dev-types';
+import { CommandFileObject } from '../../typings';
 
 export interface CommandHandlerOptions {
     client: Client;

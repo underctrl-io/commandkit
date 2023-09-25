@@ -1,4 +1,4 @@
-import type { ValidationHandlerData, ValidationHandlerOptions } from './types';
+import type { ValidationHandlerData, ValidationHandlerOptions } from './typings';
 import { toFileURL } from '../../utils/resolve-file-url';
 import { getFilePaths } from '../../utils/get-paths';
 import colors from 'colors/safe';

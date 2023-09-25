@@ -7,7 +7,7 @@ import type {
     APIApplicationCommandOption,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
-import type { CommandFileObject } from '../dev-types';
+import type { CommandFileObject } from '../typings';
 
 export interface CommandProps {
     interaction: CommandInteraction;

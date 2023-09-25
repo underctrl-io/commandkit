@@ -1,13 +1,17 @@
-import { Guild, GuildApplicationCommandManager } from 'discord.js';
-import { CommandHandler } from '../CommandHandler';
+import type { Guild, GuildApplicationCommandManager, Client } from 'discord.js';
+import type { CommandFileObject } from '../../../typings';
 import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
 import colors from 'colors/safe';
 
-export default async function registerCommands(commandHandler: CommandHandler) {
-    const client = commandHandler._data.client;
-    const devGuildIds = commandHandler._data.devGuildIds;
-    const commands = commandHandler._data.commands;
-
+export default async function registerCommands({
+    client,
+    devGuildIds,
+    commands,
+}: {
+    client: Client;
+    devGuildIds: string[];
+    commands: CommandFileObject[];
+}) {
     client.once('ready', async () => {
         const devGuilds: Guild[] = [];
 

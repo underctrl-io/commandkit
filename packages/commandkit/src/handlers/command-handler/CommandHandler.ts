@@ -1,16 +1,18 @@
-import { CommandHandlerData, CommandHandlerOptions } from './types';
+import type { CommandHandlerData, CommandHandlerOptions } from './typings';
+import type { ReloadOptions } from '../../typings';
 import { getFilePaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
-import builtInValidations from './validations';
+
 import registerCommands from './functions/registerCommands';
-import handleCommands from './functions/handleCommands';
+import builtInValidations from './validations';
+
 import colors from 'colors/safe';
 
 export class CommandHandler {
-    _data: CommandHandlerData;
+    #data: CommandHandlerData;
 
     constructor({ ...options }: CommandHandlerOptions) {
-        this._data = {
+        this.#data = {
             ...options,
             builtInValidations: [],
             commands: [],
@@ -19,15 +21,23 @@ export class CommandHandler {
 
     async init() {
         await this.#buildCommands();
+
         this.#buildValidations();
 
-        await this.#registerCommands();
+        await registerCommands({
+            client: this.#data.client,
+            devGuildIds: this.#data.devGuildIds,
+            commands: this.#data.commands,
+        });
+
         this.#handleCommands();
     }
 
     async #buildCommands() {
-        const commandFilePaths = getFilePaths(this._data.commandsPath, true).filter(
-            (path) => path.endsWith('.js') || path.endsWith('.ts'),
+        const allowedExtensions = /\.(js|mjs|cjs|ts)$/i;
+
+        const commandFilePaths = getFilePaths(this.#data.commandsPath, true).filter((path) =>
+            allowedExtensions.test(path),
         );
 
         for (const commandFilePath of commandFilePaths) {
@@ -59,35 +69,92 @@ export class CommandHandler {
 
             let commandCategory =
                 commandFilePath
-                    .split(this._data.commandsPath)[1]
+                    .split(this.#data.commandsPath)[1]
                     ?.replace(/\\\\|\\/g, '/')
                     .split('/')[1] || null;
 
-            if (commandCategory?.endsWith('.js') || commandCategory?.endsWith('.ts')) {
+            if (commandCategory && allowedExtensions.test(commandCategory)) {
                 commandObj.category = null;
             } else {
                 commandObj.category = commandCategory;
             }
 
-            this._data.commands.push(commandObj);
+            this.#data.commands.push(commandObj);
         }
     }
 
     #buildValidations() {
         for (const validationFunction of builtInValidations) {
-            this._data.builtInValidations.push(validationFunction);
+            this.#data.builtInValidations.push(validationFunction);
         }
     }
 
-    async #registerCommands() {
-        await registerCommands(this);
-    }
-
     #handleCommands() {
-        handleCommands(this);
+        const client = this.#data.client;
+        const handler = this.#data.commandKitInstance;
+
+        client.on('interactionCreate', async (interaction) => {
+            if (!interaction.isChatInputCommand() && !interaction.isContextMenuCommand()) return;
+
+            const targetCommand = this.#data.commands.find(
+                (cmd) => cmd.data.name === interaction.commandName,
+            );
+
+            if (!targetCommand) return;
+
+            const { data, options, run, ...rest } = targetCommand;
+
+            const commandObj = {
+                data: targetCommand.data,
+                options: targetCommand.options,
+                ...rest,
+            };
+
+            let canRun = true;
+
+            for (const validationFunction of this.#data.customValidations) {
+                const stopValidationLoop = await validationFunction({
+                    interaction,
+                    client,
+                    commandObj,
+                    handler,
+                });
+
+                if (stopValidationLoop) {
+                    canRun = false;
+                    break;
+                }
+            }
+
+            if (!canRun) return;
+
+            // If custom validations pass and !skipBuiltInValidations, run built-in CommandKit validation functions
+            if (!this.#data.skipBuiltInValidations) {
+                for (const validation of this.#data.builtInValidations) {
+                    const stopValidationLoop = validation({
+                        targetCommand,
+                        interaction,
+                        handlerData: this.#data,
+                    });
+
+                    if (stopValidationLoop) {
+                        canRun = false;
+                        break;
+                    }
+                }
+            }
+
+            if (!canRun) return;
+
+            targetCommand.run({ interaction, client, handler });
+        });
     }
 
     get commands() {
-        return this._data.commands;
+        return this.#data.commands;
+    }
+
+    async reloadCommands(options?: ReloadOptions) {
+        await this.#buildCommands();
     }
 }
