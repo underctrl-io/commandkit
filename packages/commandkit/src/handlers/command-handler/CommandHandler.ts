@@ -42,8 +42,9 @@ export class CommandHandler {
 
         for (const commandFilePath of commandFilePaths) {
             const modulePath = toFileURL(commandFilePath);
+            const importPath = `${modulePath}?timestamp=${Date.now()}`;
 
-            let commandObj = await import(modulePath);
+            let commandObj = await import(importPath);
 
             const compactFilePath = commandFilePath.split(process.cwd())[1] || commandFilePath;
 
@@ -158,8 +159,6 @@ export class CommandHandler {
     async reloadCommands(options?: ReloadOptions) {
         this.#data.commands = [];
         await this.#buildCommands();
-
-        console.log(this.#data.commands[0].data);
 
         let commands: CommandFileObject[];
 

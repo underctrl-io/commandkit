@@ -18,7 +18,8 @@
         "dev": "tsup --watch",
         "build": "tsup",
         "deploy": "npm publish",
-        "test": "tsx watch tests/index.ts"
+        "test": "tsx tests/index.ts",
+        "test:watch": "tsx watch tests/index.ts"
     },
     "repository": {
         "type": "git",
