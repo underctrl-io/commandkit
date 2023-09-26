@@ -52,7 +52,7 @@ async function handleRegistration(
 
 async function registerGlobalCommands(client: Client<true>, commands: CommandFileObject[]) {
     const appCommandsManager = client.application.commands;
-    // await appCommands.fetch();
+    await appCommandsManager.fetch();
 
     for (const command of commands) {
         const targetCommand = appCommandsManager.cache.find(
@@ -146,7 +146,7 @@ async function registerDevCommands(
 
     for (const guild of devGuilds) {
         const guildCommandsManager = guild.commands;
-        // await guildCommands.fetch();
+        await guildCommandsManager.fetch();
 
         guildCommandsManagers.push(guildCommandsManager);
     }

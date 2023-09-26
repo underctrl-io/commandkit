@@ -5,7 +5,7 @@ const { SlashCommandProps, CommandOptions, CommandData } = require('commandkit')
  */
 const data = {
     name: 'ping',
-    description: 'Pong!',
+    description: 'Pong!!',
 };
 
 /**
@@ -14,7 +14,7 @@ const data = {
 async function run({ interaction, handler }) {
     interaction.reply('Pong!');
 
-    console.log(handler.commands[0].name);
+    console.log(handler.commands);
 
     await handler.reloadCommands();
     console.log('Reloaded');
@@ -26,7 +26,8 @@ async function run({ interaction, handler }) {
 const options = {
     botPermissions: 'Administrator',
     userPermissions: [],
-    devOnly: true,
+    // devOnly: true,
+    // deleted: true,
 };
 
 module.exports = { data, run, options };
