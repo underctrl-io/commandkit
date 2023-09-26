@@ -6,14 +6,51 @@ import type { CommandData, CommandKit, CommandOptions } from './index';
 import type { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 
 export interface CommandKitOptions {
+    /**
+     * The Discord.js client object to use with CommandKit.
+     */
     client: Client;
+
+    /**
+     * The path to your commands directory.
+     */
     commandsPath?: string;
+
+    /**
+     * The path to your events directory.
+     */
     eventsPath?: string;
+
+    /**
+     * The path to the validations directory.
+     */
     validationsPath?: string;
+
+    /**
+     * List of development guild IDs to restrict devOnly commands to.
+     */
     devGuildIds?: string[];
+
+    /**
+     * List of developer user IDs to restrict devOnly commands to.
+     */
     devUserIds?: string[];
+
+    /**
+     * List of developer role IDs to restrict devOnly commands to.
+     */
     devRoleIds?: string[];
+
+    /**
+     * Skip CommandKit's built-in validations (for devOnly commands).
+     */
     skipBuiltInValidations?: boolean;
+
+    /**
+     * Uses discordjs/rest to register application commands.
+     * @experimental
+     */
+    useRest?: boolean;
 }
 
 export interface CommandKitData extends CommandKitOptions {
@@ -31,4 +68,6 @@ export interface CommandFileObject {
     [key: string]: any;
 }
 
-export type ReloadOptions = { type?: 'dev' | 'global' };
+export type ReloadType = 'dev' | 'global';
+
+export type ReloadOptions = { type?: ReloadType };

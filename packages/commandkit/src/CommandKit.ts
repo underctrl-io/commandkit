@@ -23,7 +23,7 @@ export class CommandKit {
     }
 
     async #init() {
-        // 1. Setup event handler
+        // <!-- Setup event handler -->
         if (this.#data.eventsPath) {
             const eventHandler = new EventHandler({
                 client: this.#data.client,
@@ -36,7 +36,7 @@ export class CommandKit {
             this.#data.eventHandler = eventHandler;
         }
 
-        // 2. Setup validation handler
+        // <!-- Setup validation handler -->
         let validationFunctions: Function[] = [];
 
         if (this.#data.validationsPath) {
@@ -50,7 +50,7 @@ export class CommandKit {
             this.#data.validationHandler = validationHandler;
         }
 
-        // 3. Setup command handler
+        // <!-- Setup command handler -->
         if (this.#data.commandsPath) {
             const commandHandler = new CommandHandler({
                 client: this.#data.client,
@@ -61,6 +61,7 @@ export class CommandKit {
                 customValidations: validationFunctions,
                 skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
                 handler: this,
+                useRest: this.#data.useRest || false,
             });
 
             await commandHandler.init();
@@ -71,6 +72,7 @@ export class CommandKit {
 
     /**
      * Updates application commands with the latest from "commandsPath".
+     * @experimental
      */
     async reloadCommands(options?: ReloadOptions) {
         if (!this.#data.commandHandler) return;

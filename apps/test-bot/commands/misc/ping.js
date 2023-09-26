@@ -14,6 +14,8 @@ const data = {
 async function run({ interaction, handler }) {
     interaction.reply('Pong!');
 
+    console.log(handler.commands[0].name);
+
     await handler.reloadCommands();
     console.log('Reloaded');
 }

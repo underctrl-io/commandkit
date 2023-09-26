@@ -3,6 +3,7 @@ import type { ReloadOptions } from '../../typings';
 import { getFilePaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 
+import loadCommandsWithRest from './functions/loadCommandsWithRest';
 import registerCommands from './functions/registerCommands';
 import builtInValidations from './validations';
 
@@ -46,11 +47,19 @@ export class CommandHandler {
             );
         }
 
-        await registerCommands({
-            client: this.#data.client,
-            commands: this.#data.commands,
-            devGuildIds: this.#data.devGuildIds,
-        });
+        if (this.#data.useRest) {
+            await loadCommandsWithRest({
+                client: this.#data.client,
+                devGuildIds: this.#data.devGuildIds,
+                commands: this.#data.commands,
+            });
+        } else {
+            await registerCommands({
+                client: this.#data.client,
+                devGuildIds: this.#data.devGuildIds,
+                commands: this.#data.commands,
+            });
+        }
 
         this.#handleCommands();
     }
@@ -201,14 +210,25 @@ export class CommandHandler {
     async reloadCommands(options?: ReloadOptions) {
         this.#data.commands = [];
 
+        // Rebuild commands tree
         await this.#buildCommands();
 
-        await registerCommands({
-            client: this.#data.client,
-            devGuildIds: this.#data.devGuildIds,
-            commands: this.#data.commands,
-            type: options?.type,
-            reloading: true,
-        });
+        if (this.#data.useRest) {
+            await loadCommandsWithRest({
+                client: this.#data.client,
+                devGuildIds: this.#data.devGuildIds,
+                commands: this.#data.commands,
+                type: options?.type,
+                reloading: true,
+            });
+        } else {
+            await registerCommands({
+                client: this.#data.client,
+                devGuildIds: this.#data.devGuildIds,
+                commands: this.#data.commands,
+                type: options?.type,
+                reloading: true,
+            });
+        }
     }
 }

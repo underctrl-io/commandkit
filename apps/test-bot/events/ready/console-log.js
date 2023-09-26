@@ -8,6 +8,5 @@ const { CommandKit } = require('commandkit');
  * @param {CommandKit} handler
  */
 module.exports = (c, client, handler) => {
-    console.log(handler.commands);
     console.log(`${c.user.username} is online.`);
 };
