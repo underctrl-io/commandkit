@@ -68,9 +68,15 @@ importers:
 
   packages/commandkit:
     dependencies:
+      '@discordjs/rest':
+        specifier: ^2.0.1
+        version: 2.0.1
       colors:
         specifier: ^1.4.0
         version: 1.4.0
+      discord-api-types:
+        specifier: ^0.37.58
+        version: 0.37.58
     devDependencies:
       '@types/node':
         specifier: ^20.5.9
@@ -1500,6 +1506,10 @@ packages:
 
   /discord-api-types@0.37.50:
     resolution: {integrity: sha512-X4CDiMnDbA3s3RaUXWXmgAIbY1uxab3fqe3qwzg5XutR3wjqi7M3IkgQbsIBzpqBN2YWr/Qdv7JrFRqSgb4TFg==}
+
+  /discord-api-types@0.37.58:
+    resolution: {integrity: sha512-LubQHjyrr4nXjotWuao9T5RjzvvDstRztIpf5vamIXreSu75FQD20BJv2FnNc+vqrWLWnQwqg3qPb9P6cE2sUw==}
+    dev: false
 
   /discord.js@14.13.0:
     resolution: {integrity: sha512-Kufdvg7fpyTEwANGy9x7i4od4yu5c6gVddGi5CKm4Y5a6sF0VBODObI3o0Bh7TGCj0LfNT8Qp8z04wnLFzgnbA==}

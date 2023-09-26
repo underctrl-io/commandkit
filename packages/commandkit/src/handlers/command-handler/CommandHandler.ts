@@ -26,8 +26,8 @@ export class CommandHandler {
 
         await registerCommands({
             client: this.#data.client,
-            devGuildIds: this.#data.devGuildIds,
             commands: this.#data.commands,
+            devGuildIds: this.#data.devGuildIds,
         });
 
         this.#handleCommands();
@@ -158,6 +158,7 @@ export class CommandHandler {
 
     async reloadCommands(options?: ReloadOptions) {
         this.#data.commands = [];
+
         await this.#buildCommands();
 
         let commands: CommandFileObject[];
@@ -173,8 +174,9 @@ export class CommandHandler {
         await registerCommands({
             client: this.#data.client,
             devGuildIds: this.#data.devGuildIds,
-            commands,
             reloading: true,
+            type: options?.type,
+            commands,
         });
     }
 }

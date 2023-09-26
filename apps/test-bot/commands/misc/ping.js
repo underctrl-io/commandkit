@@ -5,16 +5,17 @@ const { SlashCommandProps, CommandOptions, CommandData } = require('commandkit')
  */
 const data = {
     name: 'ping',
-    description: 'Pong!!!',
+    description: 'Pong!',
 };
 
 /**
  * @param {SlashCommandProps} param0
  */
-function run({ interaction, handler }) {
+async function run({ interaction, handler }) {
     interaction.reply('Pong!');
 
-    handler.reloadCommands();
+    await handler.reloadCommands();
+    console.log('Reloaded');
 }
 
 /**

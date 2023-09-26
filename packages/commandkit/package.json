@@ -33,7 +33,9 @@
         "command validations"
     ],
     "dependencies": {
-        "colors": "^1.4.0"
+        "@discordjs/rest": "^2.0.1",
+        "colors": "^1.4.0",
+        "discord-api-types": "^0.37.58"
     },
     "devDependencies": {
         "@types/node": "^20.5.9",

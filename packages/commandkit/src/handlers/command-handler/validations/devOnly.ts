@@ -17,7 +17,7 @@ export default function ({ interaction, targetCommand, handlerData }: BuiltInVal
         let hasDevRole = false;
 
         memberRoles?.forEach((role) => {
-            if (handlerData.devRoleIds?.includes(role.id)) {
+            if (handlerData.devRoleIds.includes(role.id)) {
                 hasDevRole = true;
             }
         });
