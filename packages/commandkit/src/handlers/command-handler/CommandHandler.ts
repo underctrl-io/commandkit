@@ -161,15 +161,7 @@ export class CommandHandler {
 
         await this.#buildCommands();
 
-        let commands: CommandFileObject[];
-
-        if (options?.type === 'dev') {
-            commands = this.#data.commands.filter((cmd) => cmd.options?.devOnly);
-        } else if (options?.type === 'global') {
-            commands = this.#data.commands.filter((cmd) => !cmd.options?.devOnly);
-        } else {
-            commands = this.#data.commands;
-        }
+        let commands: CommandFileObject[] = this.#data.commands;
 
         await registerCommands({
             client: this.#data.client,
