@@ -1,5 +1,5 @@
 import type { CommandHandlerData, CommandHandlerOptions } from './typings';
-import type { CommandFileObject, ReloadOptions } from '../../typings';
+import type { ReloadOptions } from '../../typings';
 import { getFilePaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 
@@ -23,6 +23,28 @@ export class CommandHandler {
         await this.#buildCommands();
 
         this.#buildValidations();
+
+        const devOnlyCommands = this.#data.commands.filter((cmd) => cmd.options?.devOnly);
+
+        if (devOnlyCommands.length && !this.#data.devGuildIds.length) {
+            console.log(
+                colors.yellow(
+                    'ℹ️ Warning: You have commands marked as "devOnly" but "devGuildIds" has not been set.',
+                ),
+            );
+        }
+
+        if (
+            devOnlyCommands.length &&
+            !this.#data.devUserIds.length &&
+            !this.#data.devRoleIds.length
+        ) {
+            console.log(
+                colors.yellow(
+                    'ℹ️ Warning: You have commands marked as "devOnly" but not "devUserIds" or "devRoleIds" were set.',
+                ),
+            );
+        }
 
         await registerCommands({
             client: this.#data.client,
@@ -181,14 +203,12 @@ export class CommandHandler {
 
         await this.#buildCommands();
 
-        let commands: CommandFileObject[] = this.#data.commands;
-
         await registerCommands({
             client: this.#data.client,
             devGuildIds: this.#data.devGuildIds,
-            reloading: true,
+            commands: this.#data.commands,
             type: options?.type,
-            commands,
+            reloading: true,
         });
     }
 }

@@ -2,13 +2,18 @@ import { SlashCommandProps, CommandOptions, CommandData, CommandType } from '../
 
 export const data: CommandData = {
     name: 'ping',
-    description: 'Pong!!',
+    description: 'Pong!',
 };
 
-export function run({ interaction, handler }: SlashCommandProps) {
+export async function run({ interaction, handler }: SlashCommandProps) {
     interaction.reply('Pong!');
 
-    handler.reloadCommands();
+    await handler
+        .reloadCommands()
+        .then(() => {
+            console.log('Done');
+        })
+        .catch((e) => console.error(e));
 }
 
 export const options: CommandOptions = {

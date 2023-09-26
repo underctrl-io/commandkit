@@ -13,6 +13,7 @@ new CommandKit({
     commandsPath: `${__dirname}/commands`,
     eventsPath: `${__dirname}/events`,
     validationsPath: `${__dirname}/validations`,
+    devGuildIds: ['1049345075366334617'],
 });
 
 client.login(process.env.TOKEN);

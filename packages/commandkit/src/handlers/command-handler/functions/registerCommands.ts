@@ -9,11 +9,21 @@ import colors from 'colors/safe';
 export default async function registerCommands(props: {
     client: Client;
     commands: CommandFileObject[];
+    devGuildIds: string[];
     reloading?: boolean;
     type?: 'dev' | 'global';
-    devGuildIds: string[];
 }) {
-    props.client.once('ready', async (client) => {
+    if (!props.reloading) {
+        props.client.once('ready', handleRegistration);
+    } else {
+        if (props.client.isReady()) {
+            handleRegistration(props.client);
+        } else {
+            console.log(colors.red(`❌ Cannot reload commands when client is not ready.`));
+        }
+    }
+
+    async function handleRegistration(client: Client<true>) {
         const devOnlyCommands = props.commands.filter((cmd) => cmd.options?.devOnly);
         const globalCommands = props.commands.filter((cmd) => !cmd.options?.devOnly);
 
@@ -25,7 +35,7 @@ export default async function registerCommands(props: {
             await loadDevCommands(client, devOnlyCommands, props.devGuildIds, props.reloading);
             await loadGlobalCommands(client, globalCommands, props.reloading);
         }
-    });
+    }
 }
 
 async function loadGlobalCommands(
@@ -35,9 +45,11 @@ async function loadGlobalCommands(
 ) {
     const rest = new REST({ version: '10' }).setToken(client.token);
 
+    const requestBody = commands.map((cmd) => cmd.data);
+
     const data: any = await rest
         .put(Routes.applicationCommands(client.user.id), {
-            body: commands,
+            body: requestBody,
         })
         .catch((error) => {
             console.error(
@@ -53,9 +65,7 @@ async function loadGlobalCommands(
     if (!data) return;
 
     console.log(
-        colors.green(
-            `✅ ${reloading ? 'Reloaded' : 'Loaded'} ${data.length} global application commands.`,
-        ),
+        colors.green(`✅ ${reloading ? 'Reloaded' : 'Loaded'} ${data.length} global commands.`),
     );
 }
 
@@ -67,12 +77,14 @@ async function loadDevCommands(
 ) {
     const rest = new REST({ version: '10' }).setToken(client.token);
 
+    const requestBody = commands.map((cmd) => cmd.data);
+
     for (const guildId of guildIds) {
         const targetGuild = client.guilds.cache.get(guildId);
 
         const data: any = await rest
             .put(Routes.applicationGuildCommands(client.user.id, guildId), {
-                body: commands,
+                body: requestBody,
             })
             .catch((error) => {
                 console.error(
@@ -93,7 +105,7 @@ async function loadDevCommands(
             colors.green(
                 `✅ ${reloading ? 'Reloaded' : 'Loaded'} ${
                     data.length
-                } developer application commands in guild "${targetGuild?.name || guildId}".`,
+                } developer commands in guild "${targetGuild?.name || guildId}".`,
             ),
         );
     }
