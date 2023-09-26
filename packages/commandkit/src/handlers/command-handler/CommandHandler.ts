@@ -59,9 +59,29 @@ export class CommandHandler {
                 continue;
             }
 
+            if (!commandObj.data.name) {
+                console.log(
+                    colors.yellow(
+                        `⏩ Ignoring: Command ${compactFilePath} does not export "data.name".`,
+                    ),
+                );
+                continue;
+            }
+
             if (!commandObj.run) {
                 console.log(
-                    colors.yellow(`⏩ Ignoring: Command ${compactFilePath} does not export "run".`),
+                    colors.yellow(
+                        `⏩ Ignoring: Command ${commandObj.data.name} does not export "run".`,
+                    ),
+                );
+                continue;
+            }
+
+            if (typeof commandObj.run !== 'function') {
+                console.log(
+                    colors.yellow(
+                        `⏩ Ignoring: Command ${commandObj.data.name} does not export "run" as a function.`,
+                    ),
                 );
                 continue;
             }
