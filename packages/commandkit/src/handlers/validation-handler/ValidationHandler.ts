@@ -1,7 +1,7 @@
-import { ValidationHandlerData, ValidationHandlerOptions } from './typings';
-import { getFilePaths } from '../../utils/get-paths';
+import type { ValidationHandlerData, ValidationHandlerOptions } from './typings';
 import { toFileURL } from '../../utils/resolve-file-url';
-import colors from 'colors/safe';
+import { getFilePaths } from '../../utils/get-paths';
+import colors from '../../utils/colors';
 
 export class ValidationHandler {
     #data: ValidationHandlerData;

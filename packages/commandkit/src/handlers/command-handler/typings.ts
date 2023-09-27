@@ -10,7 +10,8 @@ export interface CommandHandlerOptions {
     devRoleIds: string[];
     customValidations: Function[];
     skipBuiltInValidations: boolean;
-    commandKitInstance: CommandKit;
+    handler: CommandKit;
+    useRest: boolean;
 }
 
 export interface CommandHandlerData extends CommandHandlerOptions {

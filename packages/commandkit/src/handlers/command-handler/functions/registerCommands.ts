@@ -1,221 +1,228 @@
-import { Guild, GuildApplicationCommandManager } from 'discord.js';
-import { CommandHandler } from '../CommandHandler';
+import type {
+    Guild,
+    Client,
+    ApplicationCommandData,
+    GuildApplicationCommandManager,
+    ApplicationCommandDataResolvable,
+} from 'discord.js';
+import type { CommandFileObject, ReloadType } from '../../../typings';
+
 import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
-import colors from 'colors/safe';
 
-export default async function registerCommands(commandHandler: CommandHandler) {
-    const client = commandHandler._data.client;
-    const devGuildIds = commandHandler._data.devGuildIds;
-    const commands = commandHandler._data.commands;
+import colors from '../../../utils/colors';
 
-    client.once('ready', async () => {
-        const devGuilds: Guild[] = [];
+export default async function registerCommands(props: {
+    client: Client;
+    commands: CommandFileObject[];
+    devGuildIds: string[];
+    reloading?: boolean;
+    type?: ReloadType;
+}) {
+    if (props.reloading) {
+        if (props.client.isReady()) {
+            await handleRegistration(props.client, props.commands, props.devGuildIds, props.type);
+        } else {
+            throw new Error(colors.red(`❌ Cannot reload commands when client is not ready.`));
+        }
+    } else {
+        props.client.once('ready', async (c) => {
+            await handleRegistration(c, props.commands, props.devGuildIds, props.type);
+        });
+    }
+}
 
-        for (const devGuildId of devGuildIds) {
-            const guild = client.guilds.cache.get(devGuildId);
+async function handleRegistration(
+    client: Client<true>,
+    commands: CommandFileObject[],
+    devGuildIds: string[],
+    type?: ReloadType,
+) {
+    const devOnlyCommands = commands.filter((cmd) => cmd.options?.devOnly);
+    const globalCommands = commands.filter((cmd) => !cmd.options?.devOnly);
 
-            if (!guild) {
+    if (type === 'dev') {
+        await registerDevCommands(client, devOnlyCommands, devGuildIds);
+    } else if (type === 'global') {
+        await registerGlobalCommands(client, globalCommands);
+    } else {
+        await registerDevCommands(client, devOnlyCommands, devGuildIds);
+        await registerGlobalCommands(client, globalCommands);
+    }
+}
+
+async function registerGlobalCommands(client: Client<true>, commands: CommandFileObject[]) {
+    const appCommandsManager = client.application.commands;
+    await appCommandsManager.fetch();
+
+    for (const command of commands) {
+        const targetCommand = appCommandsManager.cache.find(
+            (cmd) => cmd.name === command.data.name,
+        );
+
+        // <!-- Delete global command -->
+        if (command.options?.deleted) {
+            if (!targetCommand) {
                 console.log(
                     colors.yellow(
-                        `⏩ Ignoring: Guild ${devGuildId} does not exist or client isn't in this guild.`,
+                        `⏩ Ignoring: Command "${command.data.name}" is globally marked as deleted.`,
                     ),
                 );
-                continue;
+            } else {
+                targetCommand.delete().then(() => {
+                    console.log(
+                        colors.green(`🚮 Deleted command "${command.data.name}" globally.`),
+                    );
+                });
             }
 
-            devGuilds.push(guild);
+            continue;
         }
 
-        const appCommands = client.application?.commands;
-        await appCommands?.fetch();
+        // <!-- Edit global command -->
+        if (targetCommand) {
+            const commandsAreDifferent = areSlashCommandsDifferent(targetCommand, command.data);
 
-        const devGuildCommands: GuildApplicationCommandManager[] = [];
-
-        for (const guild of devGuilds) {
-            const guildCommands = guild.commands;
-            await guildCommands?.fetch();
-            devGuildCommands.push(guildCommands);
-        }
-
-        for (const command of commands) {
-            let commandData = command.data as any;
-
-            // <!-- Delete command if options.deleted -->
-            if (command.options?.deleted) {
-                const targetCommand = appCommands?.cache.find(
-                    (cmd) => cmd.name === commandData.name,
-                );
-
-                if (!targetCommand) {
-                    console.log(
-                        colors.yellow(
-                            `⏩ Ignoring: Command "${commandData.name}" is globally marked as deleted.`,
-                        ),
-                    );
-                } else {
-                    targetCommand.delete().then(() => {
-                        console.log(
-                            colors.green(`🚮 Deleted command "${commandData.name}" globally.`),
-                        );
-                    });
-                }
-
-                for (const guildCommands of devGuildCommands) {
-                    const targetCommand = guildCommands.cache.find(
-                        (cmd) => cmd.name === commandData.name,
-                    );
-
-                    if (!targetCommand) {
-                        console.log(
-                            colors.yellow(
-                                `⏩ Ignoring: Command "${commandData.name}" is marked as deleted for ${guildCommands.guild.name}.`,
-                            ),
-                        );
-                    } else {
-                        targetCommand.delete().then(() => {
-                            console.log(
-                                colors.green(
-                                    `🚮 Deleted command "${commandData.name}" in ${guildCommands.guild.name}.`,
-                                ),
-                            );
-                        });
-                    }
-                }
-
-                continue;
-            }
-
-            // <!-- Edit command -->
-            let editedCommand = false;
-
-            // Edit command globally
-            const appGlobalCommand = appCommands?.cache.find(
-                (cmd) => cmd.name === commandData.name,
-            );
-
-            if (appGlobalCommand) {
-                const commandsAreDifferent = areSlashCommandsDifferent(
-                    appGlobalCommand,
-                    commandData,
-                );
-
-                if (commandsAreDifferent) {
-                    appGlobalCommand
-                        .edit(commandData)
-                        .then(() => {
-                            console.log(
-                                colors.green(`✅ Edited command "${commandData.name}" globally.`),
-                            );
-                        })
-                        .catch((error) => {
-                            console.log(
-                                colors.red(
-                                    `❌ Failed to edit command "${commandData.name}" globally.`,
-                                ),
-                            );
-                            console.error(error);
-                        });
-
-                    editedCommand = true;
-                }
-            }
-
-            // Edit command in a specific guild
-            for (const guildCommands of devGuildCommands) {
-                const appGuildCommand = guildCommands.cache.find(
-                    (cmd) => cmd.name === commandData.name,
-                );
-
-                if (appGuildCommand) {
-                    const commandsAreDifferent = areSlashCommandsDifferent(
-                        appGuildCommand,
-                        commandData,
-                    );
-
-                    if (commandsAreDifferent) {
-                        appGuildCommand
-                            .edit(commandData)
-                            .then(() => {
-                                console.log(
-                                    colors.green(
-                                        `✅ Edited command "${commandData.name}" in ${guildCommands.guild.name}.`,
-                                    ),
-                                );
-                            })
-                            .catch((error) => {
-                                console.log(
-                                    colors.red(
-                                        `❌ Failed to edit command "${commandData.name}" in ${guildCommands.guild.name}.`,
-                                    ),
-                                );
-                                console.error(error);
-                            });
-
-                        editedCommand = true;
-                    }
-                }
-            }
-
-            if (editedCommand) continue;
-
-            // <!-- Register command -->
-            // Register command in a specific guild
-            if (command.options?.devOnly) {
-                if (!devGuilds.length) {
-                    console.log(
-                        colors.yellow(
-                            `⏩ Ignoring: Cannot register command "${commandData.name}" as no valid "devGuildIds" were provided.`,
-                        ),
-                    );
-                    continue;
-                }
-
-                for (const guild of devGuilds) {
-                    const cmdExists = guild.commands.cache.some(
-                        (cmd) => cmd.name === commandData.name,
-                    );
-                    if (cmdExists) continue;
-
-                    guild?.commands
-                        .create(commandData)
-                        .then(() => {
-                            console.log(
-                                colors.green(
-                                    `✅ Registered command "${commandData.name}" in ${guild.name}.`,
-                                ),
-                            );
-                        })
-                        .catch((error) => {
-                            console.log(
-                                colors.red(
-                                    `❌ Failed to register command "${commandData.name}" in ${guild.name}.`,
-                                ),
-                            );
-                            console.error(error);
-                        });
-                }
-            }
-            // Register command globally
-            else {
-                const cmdExists = appCommands?.cache.some((cmd) => cmd.name === commandData.name);
-                if (cmdExists) continue;
-
-                appCommands
-                    ?.create(commandData)
+            if (commandsAreDifferent) {
+                targetCommand
+                    .edit(command.data as Partial<ApplicationCommandData>)
                     .then(() => {
                         console.log(
-                            colors.green(`✅ Registered command "${commandData.name}" globally.`),
+                            colors.green(`✅ Edited command "${command.data.name}" globally.`),
                         );
                     })
                     .catch((error) => {
                         console.log(
                             colors.red(
-                                `❌ Failed to register command "${commandData.name}" globally.`,
+                                `❌ Failed to edit command "${command.data.name}" globally.`,
                             ),
                         );
                         console.error(error);
                     });
+
+                continue;
             }
         }
-    });
+
+        // <!-- Register global command -->
+        if (targetCommand) continue;
+
+        appCommandsManager
+            .create(command.data as ApplicationCommandDataResolvable)
+            .then(() => {
+                console.log(colors.green(`✅ Registered command "${command.data.name}" globally.`));
+            })
+            .catch((error) => {
+                console.log(
+                    colors.red(`❌ Failed to register command "${command.data.name}" globally.`),
+                );
+                console.error(error);
+            });
+    }
+}
+
+async function registerDevCommands(
+    client: Client<true>,
+    commands: CommandFileObject[],
+    guildIds: string[],
+) {
+    const devGuilds: Guild[] = [];
+
+    for (const guildId of guildIds) {
+        const guild = client.guilds.cache.get(guildId) || (await client.guilds.fetch(guildId));
+
+        if (!guild) {
+            console.log(
+                colors.yellow(
+                    `⏩ Ignoring: Guild ${guildId} does not exist or client isn't in this guild.`,
+                ),
+            );
+            continue;
+        }
+
+        devGuilds.push(guild);
+    }
+
+    const guildCommandsManagers: GuildApplicationCommandManager[] = [];
+
+    for (const guild of devGuilds) {
+        const guildCommandsManager = guild.commands;
+        await guildCommandsManager.fetch();
+
+        guildCommandsManagers.push(guildCommandsManager);
+    }
+
+    for (const command of commands) {
+        for (const guildCommands of guildCommandsManagers) {
+            const targetCommand = guildCommands.cache.find((cmd) => cmd.name === command.data.name);
+
+            // <!-- Delete dev command -->
+            if (command.options?.deleted) {
+                if (!targetCommand) {
+                    console.log(
+                        colors.yellow(
+                            `⏩ Ignoring: Command "${command.data.name}" is marked as deleted for ${guildCommands.guild.name}.`,
+                        ),
+                    );
+                } else {
+                    targetCommand.delete().then(() => {
+                        console.log(
+                            colors.green(
+                                `🚮 Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                            ),
+                        );
+                    });
+                }
+
+                continue;
+            }
+
+            // <!-- Edit dev command -->
+            if (targetCommand) {
+                const commandsAreDifferent = areSlashCommandsDifferent(targetCommand, command.data);
+
+                if (commandsAreDifferent) {
+                    targetCommand
+                        .edit(command.data as Partial<ApplicationCommandData>)
+                        .then(() => {
+                            console.log(
+                                colors.green(
+                                    `✅ Edited command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                                ),
+                            );
+                        })
+                        .catch((error) => {
+                            console.log(
+                                colors.red(
+                                    `❌ Failed to edit command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                                ),
+                            );
+                            console.error(error);
+                        });
+
+                    continue;
+                }
+            }
+
+            // <!-- Register guild command -->
+            if (targetCommand) continue;
+
+            guildCommands
+                .create(command.data as ApplicationCommandDataResolvable)
+                .then(() => {
+                    console.log(
+                        colors.green(
+                            `✅ Registered command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                        ),
+                    );
+                })
+                .catch((error) => {
+                    console.log(
+                        colors.red(
+                            `❌ Failed to register command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                        ),
+                    );
+                    console.error(error);
+                });
+        }
+    }
 }

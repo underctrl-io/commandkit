@@ -1,7 +1,7 @@
+import type { EventHandlerOptions, EventHandlerData } from './typings';
 import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
-import { EventHandlerOptions, EventHandlerData } from './typings';
-import colors from 'colors/safe';
+import colors from '../../utils/colors';
 
 export class EventHandler {
     #data: EventHandlerData;
@@ -22,7 +22,10 @@ export class EventHandler {
         const eventFolderPaths = getFolderPaths(this.#data.eventsPath);
 
         for (const eventFolderPath of eventFolderPaths) {
-            const eventName = eventFolderPath.replace(/\\/g, '/').split('/').pop() as string;
+            const eventName = eventFolderPath
+                .replace(/\\\\|\\/g, '/')
+                .split('/')
+                .pop() as string;
 
             const eventFilePaths = getFilePaths(eventFolderPath, true).filter(
                 (path) => path.endsWith('.js') || path.endsWith('.ts'),
