@@ -2,7 +2,7 @@
 // For exported types use ./types/index.ts
 
 import type { Client, Interaction } from 'discord.js';
-import type { CommandData, CommandKit, CommandOptions } from './index';
+import type { CommandData, CommandKit, CommandOptions, ReloadType } from './index';
 import type { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 
 export interface CommandKitOptions {
@@ -68,4 +68,4 @@ export interface CommandFileObject {
     [key: string]: any;
 }
 
-export type ReloadType = 'dev' | 'global';
+export type ReloadOptions = 'dev' | 'global' | ReloadType;

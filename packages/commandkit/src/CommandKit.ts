@@ -1,5 +1,5 @@
 import type { CommandObject } from './types';
-import type { CommandKitData, CommandKitOptions, ReloadType } from './typings';
+import type { CommandKitData, CommandKitOptions, ReloadOptions } from './typings';
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 import colors from './utils/colors';
 
@@ -74,7 +74,7 @@ export class CommandKit {
      * Updates application commands with the latest from "commandsPath".
      * @experimental
      */
-    async reloadCommands(type?: ReloadType) {
+    async reloadCommands(type?: ReloadOptions) {
         if (!this.#data.commandHandler) return;
         await this.#data.commandHandler.reloadCommands(type);
     }

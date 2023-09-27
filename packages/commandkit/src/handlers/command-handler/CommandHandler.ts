@@ -1,5 +1,5 @@
 import type { CommandHandlerData, CommandHandlerOptions } from './typings';
-import type { CommandFileObject, ReloadType } from '../../typings';
+import type { CommandFileObject, ReloadOptions } from '../../typings';
 import { getFilePaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 
@@ -216,7 +216,7 @@ export class CommandHandler {
         return this.#data.commands;
     }
 
-    async reloadCommands(type?: ReloadType) {
+    async reloadCommands(type?: ReloadOptions) {
         this.#data.commands = [];
 
         // Rebuild commands tree

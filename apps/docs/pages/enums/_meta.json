@@ -1,3 +1,4 @@
 {
-    "CommandType": "CommandType"
+    "CommandType": "CommandType",
+    "ReloadType": "ReloadType"
 }

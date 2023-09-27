@@ -105,3 +105,8 @@ type UserOrMessageCommandData = BaseCommandData & {
 export type CommandData = ChatInputCommandData | UserOrMessageCommandData;
 
 export type CommandObject = Omit<CommandFileObject, 'run'>;
+
+export enum ReloadType {
+    'Developer' = 'dev',
+    'Global' = 'global',
+}

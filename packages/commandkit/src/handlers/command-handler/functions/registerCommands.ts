@@ -5,7 +5,7 @@ import type {
     GuildApplicationCommandManager,
     ApplicationCommandDataResolvable,
 } from 'discord.js';
-import type { CommandFileObject, ReloadType } from '../../../typings';
+import type { CommandFileObject, ReloadOptions } from '../../../typings';
 
 import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
 
@@ -16,7 +16,7 @@ export default async function registerCommands(props: {
     commands: CommandFileObject[];
     devGuildIds: string[];
     reloading?: boolean;
-    type?: ReloadType;
+    type?: ReloadOptions;
 }) {
     if (props.reloading) {
         if (props.client.isReady()) {
@@ -35,7 +35,7 @@ async function handleRegistration(
     client: Client<true>,
     commands: CommandFileObject[],
     devGuildIds: string[],
-    type?: ReloadType,
+    type?: ReloadOptions,
 ) {
     const devOnlyCommands = commands.filter((cmd) => cmd.options?.devOnly);
     const globalCommands = commands.filter((cmd) => !cmd.options?.devOnly);
