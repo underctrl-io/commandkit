@@ -1,17 +1,15 @@
 import type { CommandHandlerData, CommandHandlerOptions } from './typings';
-import type { CommandFileObject, ReloadOptions } from '../../typings';
+import type { CommandFileObject, ReloadType } from '../../typings';
 import { getFilePaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
-import rdfc from 'rfdc';
-
-const clone = rdfc();
 
 import loadCommandsWithRest from './functions/loadCommandsWithRest';
 import registerCommands from './functions/registerCommands';
 import builtInValidations from './validations';
-
 import colors from '../../utils/colors';
-import path from 'path';
+import rdfc from 'rfdc';
+
+const clone = rdfc();
 
 export class CommandHandler {
     #data: CommandHandlerData;
@@ -216,7 +214,7 @@ export class CommandHandler {
         return this.#data.commands;
     }
 
-    async reloadCommands(options?: ReloadOptions) {
+    async reloadCommands(type?: ReloadType) {
         this.#data.commands = [];
 
         // Rebuild commands tree
@@ -227,16 +225,16 @@ export class CommandHandler {
                 client: this.#data.client,
                 devGuildIds: this.#data.devGuildIds,
                 commands: this.#data.commands,
-                type: options?.type,
                 reloading: true,
+                type,
             });
         } else {
             await registerCommands({
                 client: this.#data.client,
                 devGuildIds: this.#data.devGuildIds,
                 commands: this.#data.commands,
-                type: options?.type,
                 reloading: true,
+                type,
             });
         }
     }

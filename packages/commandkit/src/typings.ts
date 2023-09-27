@@ -69,5 +69,3 @@ export interface CommandFileObject {
 }
 
 export type ReloadType = 'dev' | 'global';
-
-export type ReloadOptions = { type?: ReloadType };
