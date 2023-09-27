@@ -1,22 +1,14 @@
-import { SlashCommandProps, CommandOptions, CommandData, CommandType } from '../../../src/index';
+import { SlashCommandProps, CommandOptions, CommandData } from '../../../src/index';
 
 export const data: CommandData = {
     name: 'ping',
-    description: 'ALDKFJAKSDJFKL',
+    description: 'Replies with pong!',
 };
 
-export async function run({ interaction, handler }: SlashCommandProps) {
-    interaction.reply('Pong!');
-
-    await handler
-        .reloadCommands()
-        .then(() => {
-            console.log('Done');
-        })
-        .catch((e) => console.error(e));
+export async function run({ interaction, client, handler }: SlashCommandProps) {
+    interaction.reply(`:ping_pong: Pong! \`${client.ws.ping}ms\``);
 }
 
 export const options: CommandOptions = {
-    botPermissions: 'Administrator',
-    userPermissions: [],
+    devOnly: true,
 };

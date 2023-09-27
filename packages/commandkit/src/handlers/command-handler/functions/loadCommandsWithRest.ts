@@ -78,9 +78,7 @@ async function loadGlobalCommands(
 
     if (!data) return;
 
-    if (!reloading) {
-        console.log(colors.green(`✅ Loaded ${data.length} global commands.`));
-    }
+    console.log(colors.green(`✅ Loaded ${data.length} global commands.`));
 }
 
 async function loadDevCommands(
@@ -115,14 +113,12 @@ async function loadDevCommands(
 
         if (!data) return;
 
-        if (!reloading) {
-            console.log(
-                colors.green(
-                    `✅ Loaded ${data.length} developer commands in guild "${
-                        targetGuild?.name || guildId
-                    }".`,
-                ),
-            );
-        }
+        console.log(
+            colors.green(
+                `✅ Loaded ${data.length} developer commands in guild "${
+                    targetGuild?.name || guildId
+                }".`,
+            ),
+        );
     }
 }
