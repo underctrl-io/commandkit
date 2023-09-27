@@ -41,3 +41,9 @@ The array of development server IDs which was set when [instantiating CommandKit
 -   Type: `string[]`
 
 The array of developer role IDs which was set when [instantiating CommandKit](/docs/commandkit-setup).
+
+### `reloadCommands` (development version)
+
+-   Props type: `{ type: 'dev' | 'global' }` (optional)
+
+Reloads application commands. Using "dev" will only reload commands marked with `devOnly`, and using "global" will do the opposite. Not passing in a property will reload both dev and global commands. The reload behaviour depends on [`useRest`](/docs/commandkit-setup#userest-development-version---optional).
