@@ -40,7 +40,7 @@ export class EventHandler {
             this.#data.events.push(eventObj);
 
             for (const eventFilePath of eventFilePaths) {
-                const modulePath = toFileURL(path.resolve(eventFilePath));
+                const modulePath = toFileURL(eventFilePath);
 
                 let eventFunction = (await import(modulePath)).default;
 

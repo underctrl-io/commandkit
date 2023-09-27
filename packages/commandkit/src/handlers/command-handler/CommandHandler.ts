@@ -76,7 +76,7 @@ export class CommandHandler {
         );
 
         for (const commandFilePath of commandFilePaths) {
-            const modulePath = toFileURL(path.resolve(commandFilePath));
+            const modulePath = toFileURL(commandFilePath);
 
             let importedObj = await import(`${modulePath}?t=${Date.now()}`);
             let commandObj: CommandFileObject = clone(importedObj); // Make commandObj extensible
