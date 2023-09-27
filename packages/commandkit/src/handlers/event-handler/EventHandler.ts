@@ -2,6 +2,7 @@ import type { EventHandlerOptions, EventHandlerData } from './typings';
 import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 import colors from '../../utils/colors';
+import path from 'path';
 
 export class EventHandler {
     #data: EventHandlerData;
@@ -39,7 +40,7 @@ export class EventHandler {
             this.#data.events.push(eventObj);
 
             for (const eventFilePath of eventFilePaths) {
-                const modulePath = toFileURL(eventFilePath);
+                const modulePath = toFileURL(path.resolve(eventFilePath));
 
                 let eventFunction = (await import(modulePath)).default;
 

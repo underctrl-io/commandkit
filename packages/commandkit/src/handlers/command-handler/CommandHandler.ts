@@ -1,6 +1,7 @@
 import type { CommandHandlerData, CommandHandlerOptions } from './typings';
 import type { CommandFileObject, ReloadOptions } from '../../typings';
 import { getFilePaths } from '../../utils/get-paths';
+import { toFileURL } from '../../utils/resolve-file-url';
 import rdfc from 'rfdc';
 
 const clone = rdfc();
@@ -75,7 +76,7 @@ export class CommandHandler {
         );
 
         for (const commandFilePath of commandFilePaths) {
-            const modulePath = path.resolve(commandFilePath);
+            const modulePath = toFileURL(path.resolve(commandFilePath));
 
             let importedObj = await import(`${modulePath}?t=${Date.now()}`);
             let commandObj: CommandFileObject = clone(importedObj); // Make commandObj extensible
