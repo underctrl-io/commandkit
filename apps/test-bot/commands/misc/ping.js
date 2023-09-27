@@ -1,3 +1,4 @@
+const { PermissionFlagsBits } = require('discord.js');
 const { SlashCommandProps, CommandOptions, CommandData } = require('commandkit');
 
 /**
@@ -14,8 +15,6 @@ const data = {
 async function run({ interaction, handler }) {
     interaction.reply('Pong!');
 
-    console.log(handler.commands);
-
     await handler.reloadCommands();
     console.log('Reloaded');
 }
@@ -25,7 +24,7 @@ async function run({ interaction, handler }) {
  */
 const options = {
     botPermissions: 'Administrator',
-    userPermissions: [],
+    userPermissions: [PermissionFlagsBits.Administrator],
     // devOnly: true,
     // deleted: true,
 };

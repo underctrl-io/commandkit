@@ -3,4 +3,5 @@ import type { CommandKit } from '../../../src';
 
 export default function (c: Client<true>, client, handler: CommandKit) {
     console.log(`${c.user.username} is online.`);
+    console.log('test');
 }

@@ -9,7 +9,7 @@ import type { CommandFileObject, ReloadType } from '../../../typings';
 
 import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
 
-import colors from 'colors/safe';
+import colors from '../../../utils/colors';
 
 export default async function registerCommands(props: {
     client: Client;

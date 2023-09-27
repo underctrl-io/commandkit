@@ -1,13 +1,16 @@
 import type { CommandHandlerData, CommandHandlerOptions } from './typings';
-import type { ReloadOptions } from '../../typings';
+import type { CommandFileObject, ReloadOptions } from '../../typings';
 import { getFilePaths } from '../../utils/get-paths';
-import { toFileURL } from '../../utils/resolve-file-url';
+import rdfc from 'rfdc';
+
+const clone = rdfc();
 
 import loadCommandsWithRest from './functions/loadCommandsWithRest';
 import registerCommands from './functions/registerCommands';
 import builtInValidations from './validations';
 
-import colors from 'colors/safe';
+import colors from '../../utils/colors';
+import path from 'path';
 
 export class CommandHandler {
     #data: CommandHandlerData;
@@ -72,14 +75,19 @@ export class CommandHandler {
         );
 
         for (const commandFilePath of commandFilePaths) {
-            const modulePath = toFileURL(commandFilePath);
-            const importPath = `${modulePath}?timestamp=${Date.now()}`;
+            const modulePath = path.resolve(commandFilePath);
 
-            let commandObj = await import(importPath);
+            let importedObj = await import(`${modulePath}?t=${Date.now()}`);
+            let commandObj: CommandFileObject = clone(importedObj); // Make commandObj extensible
+
+            // If it's CommonJS, invalidate the import cache
+            if (typeof exports === 'object' && typeof module !== 'undefined') {
+                delete require.cache[require.resolve(modulePath)];
+            }
 
             const compactFilePath = commandFilePath.split(process.cwd())[1] || commandFilePath;
 
-            if (commandObj.default) commandObj = commandObj.default;
+            if (commandObj.default) commandObj = commandObj.default as CommandFileObject;
 
             if (!commandObj.data) {
                 console.log(

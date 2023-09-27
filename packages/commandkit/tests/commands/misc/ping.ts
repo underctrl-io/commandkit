@@ -2,7 +2,7 @@ import { SlashCommandProps, CommandOptions, CommandData, CommandType } from '../
 
 export const data: CommandData = {
     name: 'ping',
-    description: 'Pong!',
+    description: 'ALDKFJAKSDJFKL',
 };
 
 export async function run({ interaction, handler }: SlashCommandProps) {

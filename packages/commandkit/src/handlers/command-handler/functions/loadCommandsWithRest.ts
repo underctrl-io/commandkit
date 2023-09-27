@@ -4,7 +4,7 @@ import type { CommandFileObject, ReloadType } from '../../../typings';
 import { Routes } from 'discord-api-types/v10';
 import { REST } from '@discordjs/rest';
 
-import colors from 'colors/safe';
+import colors from '../../../utils/colors';
 
 export default async function loadCommandsWithRest(props: {
     client: Client;
@@ -66,14 +66,14 @@ async function loadGlobalCommands(
             body: requestBody,
         })
         .catch((error) => {
-            console.error(
+            console.log(
                 colors.red(
                     `❌ Error ${
                         reloading ? 'reloading' : 'loading'
                     } global application commands.\n`,
                 ),
-                error,
             );
+            throw new Error(error);
         });
 
     if (!data) return;
@@ -101,7 +101,7 @@ async function loadDevCommands(
                 body: requestBody,
             })
             .catch((error) => {
-                console.error(
+                console.log(
                     colors.red(
                         `❌ Error ${
                             reloading ? 'reloading' : 'loading'
@@ -109,8 +109,8 @@ async function loadDevCommands(
                             targetGuild?.name || guildId
                         }".\n`,
                     ),
-                    error,
                 );
+                throw new Error(error);
             });
 
         if (!data) return;

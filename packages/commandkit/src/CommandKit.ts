@@ -1,7 +1,7 @@
 import type { CommandObject } from './types';
 import type { CommandKitData, CommandKitOptions, ReloadOptions } from './typings';
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
-import colors from 'colors/safe';
+import colors from './utils/colors';
 
 export class CommandKit {
     #data: CommandKitData;

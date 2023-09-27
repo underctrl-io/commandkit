@@ -64,7 +64,7 @@ export interface CommandFileObject {
     options?: CommandOptions;
     run: ({}: { interaction: Interaction; client: Client; handler: CommandKit }) => void;
     filePath: string;
-    category?: string;
+    category: string | null;
     [key: string]: any;
 }
 
