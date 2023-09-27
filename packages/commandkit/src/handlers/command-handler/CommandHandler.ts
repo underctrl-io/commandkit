@@ -80,10 +80,8 @@ export class CommandHandler {
             let commandObj: CommandFileObject = clone(importedObj); // Make commandObj extensible
 
             // If it's CommonJS, invalidate the import cache
-            if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-                if (require.cache[require.resolve(commandFilePath)]) {
-                    delete require.cache[require.resolve(commandFilePath)];
-                }
+            if (typeof module !== 'undefined' && typeof require !== 'undefined') {
+                delete require.cache[require.resolve(commandFilePath)];
             }
 
             const compactFilePath = commandFilePath.split(process.cwd())[1] || commandFilePath;
