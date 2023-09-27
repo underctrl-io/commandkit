@@ -92,7 +92,7 @@ Here's an example `content` command which replies with the content of the target
             },
 
             run: ({ interaction, client, handler }) => {
-                interaction.reply(`The message is: ${interaction.targetMessage}`);
+                interaction.reply(`The message is: ${interaction.targetMessage.content}`);
             },
 
             options: {
