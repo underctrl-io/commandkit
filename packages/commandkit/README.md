@@ -51,7 +51,7 @@ pnpm add commandkit
 To install the development version of CommandKit, run the following command:
 
 ```bash
-npm install underctrl-io/commandkit#dev-build
+npm install commandkit@dev
 ```
 
 > ⚠️ The development version is likely to have bugs.
