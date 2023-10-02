@@ -4,6 +4,7 @@
         "lint": {},
         "build": {},
         "deploy": {},
+        "deploy-dev": {},
         "dev": {
             "cache": false,
             "persistent": true

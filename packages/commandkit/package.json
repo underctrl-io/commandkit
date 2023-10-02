@@ -18,13 +18,12 @@
         "dev": "tsup --watch",
         "build": "tsup",
         "deploy": "npm publish",
-        "deploy:dev": "npm publish --access public --tag dev",
+        "deploy-dev": "npm publish --access public --tag dev",
         "test": "tsx tests/index.ts",
         "test:watch": "tsx watch tests/index.ts"
     },
     "repository": {
-        "type": "git",
-        "url": "https://github.com/underctrl-io/commandkit"
+        "url": "git+https://github.com/underctrl-io/commandkit.git"
     },
     "homepage": "https://commandkit.js.org",
     "keywords": [

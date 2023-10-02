@@ -28,6 +28,16 @@ jobs:
             - name: 🍳 Prepare
               run: pnpm install
 
+            - name: 🔢 Update Version
+              run: |
+                  cd packages/commandkit
+                  node -e "const pkg = require('./package.json'); \
+                  const newVersion = pkg.version + '-dev.' + new Date().toISOString().replace(/[:\-T]/g, '').substr(0,14); \
+                  pkg.version = newVersion; \
+                  require('fs').writeFileSync('./package.json', JSON.stringify(pkg, null, 2));"
+              env:
+                  DEBIAN_FRONTEND: noninteractive
+
             - name: 🚚 Publish
               run: pnpm run deploy:package-dev
               env:
