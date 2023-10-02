@@ -68,11 +68,14 @@ async function registerGlobalCommands(client: Client<true>, commands: CommandFil
                     ),
                 );
             } else {
-                targetCommand.delete().then(() => {
+                await targetCommand.delete().catch((error) => {
                     console.log(
-                        colors.green(`🚮 Deleted command "${command.data.name}" globally.`),
+                        colors.red(`❌ Failed to delete command "${command.data.name}" globally.`),
                     );
+                    console.error(error);
                 });
+
+                console.log(colors.green(`🚮 Deleted command "${command.data.name}" globally.`));
             }
 
             continue;
@@ -83,13 +86,8 @@ async function registerGlobalCommands(client: Client<true>, commands: CommandFil
             const commandsAreDifferent = areSlashCommandsDifferent(targetCommand, command.data);
 
             if (commandsAreDifferent) {
-                targetCommand
+                await targetCommand
                     .edit(command.data as Partial<ApplicationCommandData>)
-                    .then(() => {
-                        console.log(
-                            colors.green(`✅ Edited command "${command.data.name}" globally.`),
-                        );
-                    })
                     .catch((error) => {
                         console.log(
                             colors.red(
@@ -99,6 +97,8 @@ async function registerGlobalCommands(client: Client<true>, commands: CommandFil
                         console.error(error);
                     });
 
+                console.log(colors.green(`✅ Edited command "${command.data.name}" globally.`));
+
                 continue;
             }
         }
@@ -106,17 +106,16 @@ async function registerGlobalCommands(client: Client<true>, commands: CommandFil
         // <!-- Register global command -->
         if (targetCommand) continue;
 
-        appCommandsManager
+        await appCommandsManager
             .create(command.data as ApplicationCommandDataResolvable)
-            .then(() => {
-                console.log(colors.green(`✅ Registered command "${command.data.name}" globally.`));
-            })
             .catch((error) => {
                 console.log(
                     colors.red(`❌ Failed to register command "${command.data.name}" globally.`),
                 );
                 console.error(error);
             });
+
+        console.log(colors.green(`✅ Registered command "${command.data.name}" globally.`));
     }
 }
 
@@ -164,13 +163,20 @@ async function registerDevCommands(
                         ),
                     );
                 } else {
-                    targetCommand.delete().then(() => {
+                    await targetCommand.delete().catch((error) => {
                         console.log(
-                            colors.green(
-                                `🚮 Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                            colors.red(
+                                `❌ Failed to delete command "${command.data.name}" in ${guildCommands.guild.name}.`,
                             ),
                         );
+                        console.error(error);
                     });
+
+                    console.log(
+                        colors.green(
+                            `🚮 Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                        ),
+                    );
                 }
 
                 continue;
@@ -181,15 +187,8 @@ async function registerDevCommands(
                 const commandsAreDifferent = areSlashCommandsDifferent(targetCommand, command.data);
 
                 if (commandsAreDifferent) {
-                    targetCommand
+                    await targetCommand
                         .edit(command.data as Partial<ApplicationCommandData>)
-                        .then(() => {
-                            console.log(
-                                colors.green(
-                                    `✅ Edited command "${command.data.name}" in ${guildCommands.guild.name}.`,
-                                ),
-                            );
-                        })
                         .catch((error) => {
                             console.log(
                                 colors.red(
@@ -199,6 +198,12 @@ async function registerDevCommands(
                             console.error(error);
                         });
 
+                    console.log(
+                        colors.green(
+                            `✅ Edited command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                        ),
+                    );
+
                     continue;
                 }
             }
@@ -206,15 +211,8 @@ async function registerDevCommands(
             // <!-- Register guild command -->
             if (targetCommand) continue;
 
-            guildCommands
+            await guildCommands
                 .create(command.data as ApplicationCommandDataResolvable)
-                .then(() => {
-                    console.log(
-                        colors.green(
-                            `✅ Registered command "${command.data.name}" in ${guildCommands.guild.name}.`,
-                        ),
-                    );
-                })
                 .catch((error) => {
                     console.log(
                         colors.red(
@@ -223,6 +221,12 @@ async function registerDevCommands(
                     );
                     console.error(error);
                 });
+
+            console.log(
+                colors.green(
+                    `✅ Registered command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                ),
+            );
         }
     }
 }
