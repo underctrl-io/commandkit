@@ -9,7 +9,7 @@
         "build": "turbo lint && turbo build",
         "build:package": "turbo lint --filter='commandkit' && turbo build --filter='commandkit'",
         "deploy:package": "turbo lint --filter='commandkit' && turbo build --filter='commandkit' && turbo deploy --filter='commandkit'",
-        "deploy:package-dev": "turbo lint --filter='commandkit' && turbo build --filter='commandkit' && turbo deploy-dev --filter='commandkit'"
+        "deploy:package-dev": "turbo lint --filter='commandkit' && turbo build --filter='commandkit' && turbo deploy:dev --filter='commandkit'"
     },
     "devDependencies": {
         "prettier": "^3.0.3",

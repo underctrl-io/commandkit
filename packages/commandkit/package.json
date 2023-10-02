@@ -18,7 +18,7 @@
         "dev": "tsup --watch",
         "build": "tsup",
         "deploy": "npm publish",
-        "deploy-dev": "npm publish --access public --tag dev",
+        "deploy:dev": "npm publish --access public --tag dev",
         "test": "tsx tests/index.ts",
         "test:watch": "tsx watch tests/index.ts"
     },
