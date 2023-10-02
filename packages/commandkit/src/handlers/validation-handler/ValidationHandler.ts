@@ -2,6 +2,9 @@ import type { ValidationHandlerData, ValidationHandlerOptions } from './typings'
 import { toFileURL } from '../../utils/resolve-file-url';
 import { getFilePaths } from '../../utils/get-paths';
 import colors from '../../utils/colors';
+import rdfc from 'rfdc';
+
+const clone = rdfc();
 
 export class ValidationHandler {
     #data: ValidationHandlerData;
@@ -18,14 +21,22 @@ export class ValidationHandler {
     }
 
     async #buildValidations() {
-        const validationFilePaths = getFilePaths(this.#data.validationsPath, true).filter(
-            (path) => path.endsWith('.js') || path.endsWith('.ts'),
+        const allowedExtensions = /\.(js|mjs|cjs|ts)$/i;
+
+        const validationFilePaths = getFilePaths(this.#data.validationsPath, true).filter((path) =>
+            allowedExtensions.test(path),
         );
 
         for (const validationFilePath of validationFilePaths) {
             const modulePath = toFileURL(validationFilePath);
 
-            let validationFunction = (await import(modulePath)).default;
+            let importedFunction = (await import(`${modulePath}?t=${Date.now()}`)).default;
+            let validationFunction = clone(importedFunction);
+
+            // If it's CommonJS, invalidate the import cache
+            if (typeof module !== 'undefined' && typeof require !== 'undefined') {
+                delete require.cache[require.resolve(validationFilePath)];
+            }
 
             if (validationFunction?.default) {
                 validationFunction = validationFunction.default;
@@ -49,5 +60,11 @@ export class ValidationHandler {
 
     get validations() {
         return this.#data.validations;
+    }
+
+    async reloadValidations() {
+        this.#data.validations = [];
+
+        await this.#buildValidations();
     }
 }

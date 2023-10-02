@@ -2,7 +2,9 @@ import type { EventHandlerOptions, EventHandlerData } from './typings';
 import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 import colors from '../../utils/colors';
-import path from 'path';
+import rdfc from 'rfdc';
+
+const clone = rdfc();
 
 export class EventHandler {
     #data: EventHandlerData;
@@ -28,8 +30,10 @@ export class EventHandler {
                 .split('/')
                 .pop() as string;
 
-            const eventFilePaths = getFilePaths(eventFolderPath, true).filter(
-                (path) => path.endsWith('.js') || path.endsWith('.ts'),
+            const allowedExtensions = /\.(js|mjs|cjs|ts)$/i;
+
+            const eventFilePaths = getFilePaths(eventFolderPath, true).filter((path) =>
+                allowedExtensions.test(path),
             );
 
             const eventObj = {
@@ -42,7 +46,13 @@ export class EventHandler {
             for (const eventFilePath of eventFilePaths) {
                 const modulePath = toFileURL(eventFilePath);
 
-                let eventFunction = (await import(modulePath)).default;
+                let importedFunction = (await import(`${modulePath}?t=${Date.now()}`)).default;
+                let eventFunction = clone(importedFunction);
+
+                // If it's CommonJS, invalidate the import cache
+                if (typeof module !== 'undefined' && typeof require !== 'undefined') {
+                    delete require.cache[require.resolve(eventFilePath)];
+                }
 
                 if (eventFunction?.default) {
                     eventFunction = eventFunction.default;
@@ -83,5 +93,12 @@ export class EventHandler {
 
     get events() {
         return this.#data.events;
+    }
+
+    async reloadEvents() {
+        await this.#buildEvents();
+        this.#data.events = [];
+        this.#data.client.removeAllListeners();
+        this.#registerEvents();
     }
 }

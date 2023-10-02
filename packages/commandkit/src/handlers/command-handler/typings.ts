@@ -11,7 +11,7 @@ export interface CommandHandlerOptions {
     customValidations: Function[];
     skipBuiltInValidations: boolean;
     handler: CommandKit;
-    useRest: boolean;
+    bulkRegister: boolean;
 }
 
 export interface CommandHandlerData extends CommandHandlerOptions {

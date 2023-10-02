@@ -47,10 +47,9 @@ export interface CommandKitOptions {
     skipBuiltInValidations?: boolean;
 
     /**
-     * Uses discordjs/rest to register application commands.
-     * @experimental
+     * Bulk register application commands instead of one-by-one.
      */
-    useRest?: boolean;
+    bulkRegister?: boolean;
 }
 
 export interface CommandKitData extends CommandKitOptions {

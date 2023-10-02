@@ -154,8 +154,8 @@ Trying to execute a command when this is set to at-least 1 role ID will call a b
 
 This is used to disable CommandKit's built-in validation functions. Setting this to `true` will ignore the default behaviour of validating who is running commands marked with `devOnly`.
 
-### `useRest` (development version - optional)
+### `bulkRegister` (development version - optional)
 
 -   Type `boolean`
 
-This is used to change the behaviour of how CommandKit loads application commands. By default it's one-by-one while comparing changes. Setting this option to `true` will use @discordjs/rest to load application commands all at once on every restart, and when [reloadCommands()](/typedef/CommandKit#reloadcommands-development-version) is called.
+This is used to change the behaviour of how CommandKit loads application commands. By default it's one-by-one while comparing changes. Setting this option to `true` will load application commands all at once on every restart, and when [reloadCommands()](/typedef/CommandKit#reloadcommands-development-version) is called.

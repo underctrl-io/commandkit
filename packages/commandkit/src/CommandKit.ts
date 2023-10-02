@@ -61,7 +61,7 @@ export class CommandKit {
                 customValidations: validationFunctions,
                 skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
                 handler: this,
-                useRest: this.#data.useRest || false,
+                bulkRegister: this.#data.bulkRegister || false,
             });
 
             await commandHandler.init();
@@ -72,11 +72,26 @@ export class CommandKit {
 
     /**
      * Updates application commands with the latest from "commandsPath".
-     * @experimental
      */
     async reloadCommands(type?: ReloadOptions) {
         if (!this.#data.commandHandler) return;
         await this.#data.commandHandler.reloadCommands(type);
+    }
+
+    /**
+     * Updates application events with the latest from "eventsPath".
+     */
+    async reloadEvents() {
+        if (!this.#data.eventHandler) return;
+        await this.#data.eventHandler.reloadEvents();
+    }
+
+    /**
+     * Updates application command validations with the latest from "validationsPath".
+     */
+    async reloadValidations() {
+        if (!this.#data.validationHandler) return;
+        await this.#data.validationHandler.reloadValidations();
     }
 
     /**

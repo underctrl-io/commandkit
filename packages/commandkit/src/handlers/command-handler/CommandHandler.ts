@@ -49,7 +49,7 @@ export class CommandHandler {
             );
         }
 
-        if (this.#data.useRest) {
+        if (this.#data.bulkRegister) {
             await loadCommandsWithRest({
                 client: this.#data.client,
                 devGuildIds: this.#data.devGuildIds,
@@ -220,7 +220,7 @@ export class CommandHandler {
         // Rebuild commands tree
         await this.#buildCommands();
 
-        if (this.#data.useRest) {
+        if (this.#data.bulkRegister) {
             await loadCommandsWithRest({
                 client: this.#data.client,
                 devGuildIds: this.#data.devGuildIds,
