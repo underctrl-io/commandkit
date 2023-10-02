@@ -30,8 +30,7 @@
     "keywords": [
         "discord.js",
         "command handler",
-        "event handler",
-        "command validations"
+        "event handler"
     ],
     "dependencies": {
         "rfdc": "^1.3.0"
