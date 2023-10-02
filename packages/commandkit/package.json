@@ -1,7 +1,7 @@
 {
     "name": "commandkit",
     "description": "Beginner friendly command & event handler for Discord.js",
-    "version": "0.1.4",
+    "version": "0.1.3",
     "license": "MIT",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -18,6 +18,7 @@
         "dev": "tsup --watch",
         "build": "tsup",
         "deploy": "npm publish",
+        "deploy-dev": "npm publish --access public --tag dev",
         "test": "tsx tests/index.ts",
         "test:watch": "tsx watch tests/index.ts"
     },
@@ -33,8 +34,6 @@
         "command validations"
     ],
     "dependencies": {
-        "@discordjs/rest": "^2.0.1",
-        "discord-api-types": "^0.37.58",
         "rfdc": "^1.3.0"
     },
     "devDependencies": {

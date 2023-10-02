@@ -1,15 +1,13 @@
-name: Deploy Development Build
+name: Publish Dev Build
 
 on:
-    push:
-        branches:
-            - master
+    release:
+        types: [created]
 
 jobs:
-    build-and-deploy:
-        name: 🚀 Build
+    release:
+        name: 🚀 Publish Dev Build
         runs-on: ubuntu-latest
-
         steps:
             - uses: pnpm/action-setup@v2
               with:
@@ -17,8 +15,6 @@ jobs:
 
             - name: 📚 Checkout
               uses: actions/checkout@v3
-              with:
-                  token: ${{secrets.TOKEN_GH}}
 
             - name: 🟢 Node
               uses: actions/setup-node@v2
@@ -29,24 +25,7 @@ jobs:
             - name: 🍳 Prepare
               run: pnpm install
 
-            - name: 📦 Build package
-              run: |
-                  cd packages/commandkit
-                  pnpm run lint && pnpm run build
-
-            - name: ⚡️ Create/update dev branch
-              run: |
-                  git config user.name "GitHub Actions Bot"
-                  git config user.email ${{secrets.USER_EMAIL}}
-                  git checkout -B dev-build
-                  pnpm run build:package
-                  mkdir temp_dir && mkdir temp_dir/dist/
-                  cp -r packages/commandkit/dist/* temp_dir/dist
-                  cp packages/commandkit/package.json temp_dir/
-                  git rm -rf . && echo "node_modules/" > .gitignore
-                  rm -rf apps/ && rm -rf packages
-                  cp -r temp_dir/* . && rm -rf temp_dir
-                  sed '/"devDependencies": {/,/},/d' package.json > package_temp.json && mv package_temp.json package.json
-                  git add .
-                  git commit -m "Deploy latest development build"
-                  git push origin dev-build --force
+            - name: 🚚 Publish
+              run: pnpm run deploy:package-dev
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

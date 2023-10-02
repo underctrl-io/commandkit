@@ -1,8 +1,5 @@
-import type { Client } from 'discord.js';
+import type { ApplicationCommandDataResolvable, Client } from 'discord.js';
 import type { CommandFileObject, ReloadOptions } from '../../../typings';
-
-import { Routes } from 'discord-api-types/v10';
-import { REST } from '@discordjs/rest';
 
 import colors from '../../../utils/colors';
 
@@ -57,14 +54,10 @@ async function loadGlobalCommands(
     commands: CommandFileObject[],
     reloading?: boolean,
 ) {
-    const rest = new REST({ version: '10' }).setToken(client.token);
-
     const requestBody = commands.map((cmd) => cmd.data);
 
-    const data: any = await rest
-        .put(Routes.applicationCommands(client.user.id), {
-            body: requestBody,
-        })
+    await client.application.commands
+        .set(requestBody as ApplicationCommandDataResolvable[])
         .catch((error) => {
             console.log(
                 colors.red(
@@ -76,9 +69,11 @@ async function loadGlobalCommands(
             throw new Error(error);
         });
 
-    if (!data) return;
-
-    console.log(colors.green(`✅ Loaded ${data.length} global commands.`));
+    console.log(
+        colors.green(
+            `✅ ${reloading ? 'Reloaded' : 'Loaded'} ${requestBody.length} global commands.`,
+        ),
+    );
 }
 
 async function loadDevCommands(
@@ -87,17 +82,24 @@ async function loadDevCommands(
     guildIds: string[],
     reloading?: boolean,
 ) {
-    const rest = new REST({ version: '10' }).setToken(client.token);
-
     const requestBody = commands.map((cmd) => cmd.data);
 
     for (const guildId of guildIds) {
-        const targetGuild = client.guilds.cache.get(guildId);
+        const targetGuild =
+            client.guilds.cache.get(guildId) || (await client.guilds.fetch(guildId));
 
-        const data: any = await rest
-            .put(Routes.applicationGuildCommands(client.user.id, guildId), {
-                body: requestBody,
-            })
+        if (!targetGuild) {
+            console.log(
+                `Couldn't ${
+                    reloading ? 'reloading' : 'loading'
+                } commands in guild "${targetGuild}" - guild doesn't exist or client isn't part of the guild.`,
+            );
+
+            continue;
+        }
+
+        await targetGuild.commands
+            .set(requestBody as ApplicationCommandDataResolvable[])
             .catch((error) => {
                 console.log(
                     colors.red(
@@ -111,13 +113,11 @@ async function loadDevCommands(
                 throw new Error(error);
             });
 
-        if (!data) return;
-
         console.log(
             colors.green(
-                `✅ Loaded ${data.length} developer commands in guild "${
-                    targetGuild?.name || guildId
-                }".`,
+                `✅ ${reloading ? 'Reloaded' : 'Loaded'} ${
+                    requestBody.length
+                } developer commands in guild "${targetGuild.name}".`,
             ),
         );
     }
