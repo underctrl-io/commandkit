@@ -7,7 +7,6 @@ import type {
     APIApplicationCommandOption,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
-import type { CommandFileObject } from '../typings';
 
 export interface CommandProps {
     interaction: CommandInteraction;
@@ -104,7 +103,13 @@ type UserOrMessageCommandData = BaseCommandData & {
 
 export type CommandData = ChatInputCommandData | UserOrMessageCommandData;
 
-export type CommandObject = Omit<CommandFileObject, 'run'>;
+export type CommandObject = {
+    data: CommandData;
+    options?: CommandOptions;
+    filePath: string;
+    category: string | null;
+    [key: string]: any;
+};
 
 export enum ReloadType {
     'Developer' = 'dev',
