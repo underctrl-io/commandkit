@@ -42,20 +42,20 @@ The array of development server IDs which was set when [instantiating CommandKit
 
 The array of developer role IDs which was set when [instantiating CommandKit](/docs/commandkit-setup).
 
-### `reloadCommands` (development version)
+### `reloadCommands`
 
 -   Props type: `'dev'` | `'global'` | [`ReloadType`](/enums/ReloadType) (optional)
 -   Return type: `Promise<void>`
 
-Reloads application commands. Using "dev" will only reload commands marked with `devOnly`, and using "global" will do the opposite. Not passing in a property will reload both dev and global commands. The reload behaviour depends on [`bulkRegister`](/docs/commandkit-setup#bulkregister-development-version---optional).
+Reloads application commands. Using "dev" will only reload commands marked with `devOnly`, and using "global" will do the opposite. Not passing in a property will reload both dev and global commands. The reload behaviour depends on [`bulkRegister`](/docs/commandkit-setup#bulkregister---optional).
 
-### `reloadEvents` (development version)
+### `reloadEvents`
 
 -   Return type: `Promise<void>`
 
 Resets and reloads application events.
 
-### `reloadValidations` (development version)
+### `reloadValidations`
 
 -   Return type: `Promise<void>`
 
