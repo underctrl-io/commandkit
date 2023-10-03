@@ -42,3 +42,19 @@ jobs:
               run: pnpm run deploy:package-dev
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+
+            - name: 🚫 Deprecate Older Dev Versions
+              run: |
+                  PACKAGE_NAME=$(node -e "console.log(require('./packages/commandkit/package.json').name);")
+                  ALL_VERSIONS=$(npm info $PACKAGE_NAME versions -json)
+                  OLD_DEV_VERSIONS=$(echo $ALL_VERSIONS | node -e "
+                      const versions = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8'));
+                      const devVersions = versions.filter(v => v.includes('-dev')).sort().slice(0, -1); // exclude the latest dev version
+                      console.log(devVersions.join(' '));
+                  ")
+
+                  for VERSION in $OLD_DEV_VERSIONS; do
+                      npm deprecate $PACKAGE_NAME@$VERSION "Deprecated dev version"
+                  done
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
