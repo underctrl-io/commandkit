@@ -1,5 +1,6 @@
 import type { CommandHandlerData, CommandHandlerOptions } from './typings';
 import type { CommandFileObject, ReloadOptions } from '../../typings';
+
 import { getFilePaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 
@@ -63,7 +64,7 @@ export class CommandHandler {
             });
         }
 
-        this.#handleCommands();
+        this.handleCommands();
     }
 
     async #buildCommands() {
@@ -148,7 +149,7 @@ export class CommandHandler {
         }
     }
 
-    #handleCommands() {
+    handleCommands() {
         this.#data.client.on('interactionCreate', async (interaction) => {
             if (!interaction.isChatInputCommand() && !interaction.isContextMenuCommand()) return;
 
@@ -166,23 +167,27 @@ export class CommandHandler {
                 ...rest,
             };
 
-            let canRun = true;
+            if (this.#data.validationHandler) {
+                let canRun = true;
 
-            for (const validationFunction of this.#data.customValidations) {
-                const stopValidationLoop = await validationFunction({
-                    interaction,
-                    commandObj,
-                    client: this.#data.client,
-                    handler: this.#data.handler,
-                });
+                for (const validationFunction of this.#data.validationHandler.validations) {
+                    const stopValidationLoop = await validationFunction({
+                        interaction,
+                        commandObj,
+                        client: this.#data.client,
+                        handler: this.#data.commandkitInstance,
+                    });
 
-                if (stopValidationLoop) {
-                    canRun = false;
-                    break;
+                    if (stopValidationLoop) {
+                        canRun = false;
+                        break;
+                    }
                 }
+
+                if (!canRun) return;
             }
 
-            if (!canRun) return;
+            let canRun = true;
 
             // If custom validations pass and !skipBuiltInValidations, run built-in CommandKit validation functions
             if (!this.#data.skipBuiltInValidations) {
@@ -205,7 +210,7 @@ export class CommandHandler {
             targetCommand.run({
                 interaction,
                 client: this.#data.client,
-                handler: this.#data.handler,
+                handler: this.#data.commandkitInstance,
             });
         });
     }
@@ -238,4 +243,6 @@ export class CommandHandler {
             });
         }
     }
+
+    async useUpdatedValidations() {}
 }

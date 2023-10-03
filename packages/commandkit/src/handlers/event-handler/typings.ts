@@ -1,5 +1,5 @@
-import { Client } from 'discord.js';
-import { CommandKit } from '../../CommandKit';
+import type { Client } from 'discord.js';
+import type { CommandKit } from '../../CommandKit';
 
 export interface EventHandlerOptions {
     client: Client;

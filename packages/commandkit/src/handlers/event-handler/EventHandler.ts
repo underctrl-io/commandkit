@@ -1,4 +1,5 @@
 import type { EventHandlerOptions, EventHandlerData } from './typings';
+import type { CommandHandler } from '../command-handler/CommandHandler';
 import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 import colors from '../../utils/colors';
@@ -95,10 +96,16 @@ export class EventHandler {
         return this.#data.events;
     }
 
-    async reloadEvents() {
-        await this.#buildEvents();
+    async reloadEvents(commandHandler?: CommandHandler) {
         this.#data.events = [];
+
+        await this.#buildEvents();
+
         this.#data.client.removeAllListeners();
+
         this.#registerEvents();
+
+        // Re-register "interactionCreate" event for application commands.
+        commandHandler?.handleCommands();
     }
 }

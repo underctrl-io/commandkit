@@ -37,16 +37,11 @@ export class CommandKit {
         }
 
         // <!-- Setup validation handler -->
-        let validationFunctions: Function[] = [];
-
         if (this.#data.validationsPath) {
             const validationHandler = new ValidationHandler({
                 validationsPath: this.#data.validationsPath,
             });
 
-            await validationHandler.init();
-
-            validationHandler.validations.forEach((v) => validationFunctions.push(v));
             this.#data.validationHandler = validationHandler;
         }
 
@@ -58,9 +53,9 @@ export class CommandKit {
                 devGuildIds: this.#data.devGuildIds || [],
                 devUserIds: this.#data.devUserIds || [],
                 devRoleIds: this.#data.devRoleIds || [],
-                customValidations: validationFunctions,
+                validationHandler: this.#data.validationHandler,
                 skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
-                handler: this,
+                commandkitInstance: this,
                 bulkRegister: this.#data.bulkRegister || false,
             });
 
@@ -83,7 +78,7 @@ export class CommandKit {
      */
     async reloadEvents() {
         if (!this.#data.eventHandler) return;
-        await this.#data.eventHandler.reloadEvents();
+        await this.#data.eventHandler.reloadEvents(this.#data.commandHandler);
     }
 
     /**
