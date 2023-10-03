@@ -1,13 +1,16 @@
-<h1 align="center">
-    <img src="https://raw.githubusercontent.com/underctrl-io/commandkit/master/apps/docs/public/ckit_logo.png" width="50%">
-    <br>
-</h1>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/underctrl-io/commandkit/master/apps/docs/public/ckit_logo.png" width="60%" />
+    <br />
+    <a href="https://ctrl.lol/discord"><img src="https://img.shields.io/discord/1055188344188973066?color=5865F2&logo=discord&logoColor=white" alt="support server" /></a>
+    <a href="https://www.npmjs.com/package/commandkit"><img src="https://img.shields.io/npm/v/commandkit?maxAge=3600" alt="npm version" /></a>
+    <a href="https://www.npmjs.com/package/commandkit"><img src="https://img.shields.io/npm/dt/commandkit?maxAge=3600" alt="npm downloads" /></a>
+</div>
 
 # CommandKit
 
 CommandKit is a library that makes it easy to handle commands and events in your Discord.js projects.
 
-**Supports Discord.js version 14**
+> **Supports Discord.js version 14**
 
 ## Features
 
@@ -20,7 +23,7 @@ CommandKit is a library that makes it easy to handle commands and events in your
 
 ## Documentation
 
-You can find the full documentation [here](https://commandkit.js.org)
+You can find the full documentation [here](https://commandkit.js.org).
 
 ## Installation
 
@@ -88,13 +91,13 @@ new CommandKit({
     validationsPath: path.join(__dirname, 'validations'),
 
     // Array of development server IDs (used to register and run devOnly commands)
-    devGuildIds: ['DEV_SERVER_ID_1', 'DEV_SERVER_ID_2'],
+    devGuildIds: ['1234567890', '0987654321'],
 
     // Array of developer user IDs (used for devOnly commands)
-    devUserIds: ['DEV_USER_ID_1', 'DEV_USER_ID_2'],
+    devUserIds: ['1234567890', '0987654321'],
 
     // Array of developer role IDs (used for devOnly commands)
-    devRoleIds: ['DEV_ROLE_ID_1', 'DEV_ROLE_ID_2'],
+    devRoleIds: ['1234567890', '0987654321'],
 
     // A property that disables CommandKit's built-in validations
     skipBuiltInValidations: true,
@@ -102,3 +105,7 @@ new CommandKit({
 
 client.login('YOUR_TOKEN_HERE');
 ```
+
+## Support and Suggestions
+
+If you are looking for support or want to provide suggestions, check out the [Discord](https://ctrl.lol/discord).
