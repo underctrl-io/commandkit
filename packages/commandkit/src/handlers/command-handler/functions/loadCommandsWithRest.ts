@@ -36,6 +36,7 @@ async function handleLoading(
     reloading?: boolean,
     type?: ReloadOptions,
 ) {
+    commands = commands.filter((cmd) => !cmd.options?.deleted);
     const devOnlyCommands = commands.filter((cmd) => cmd.options?.devOnly);
     const globalCommands = commands.filter((cmd) => !cmd.options?.devOnly);
 
