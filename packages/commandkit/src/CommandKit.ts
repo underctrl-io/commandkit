@@ -42,6 +42,8 @@ export class CommandKit {
                 validationsPath: this.#data.validationsPath,
             });
 
+            await validationHandler.init();
+
             this.#data.validationHandler = validationHandler;
         }
 
