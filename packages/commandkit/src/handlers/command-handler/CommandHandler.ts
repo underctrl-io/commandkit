@@ -9,7 +9,6 @@ import registerCommands from './functions/registerCommands';
 import builtInValidations from './validations';
 import colors from '../../utils/colors';
 import rdfc from 'rfdc';
-import { SlashCommandBuilder } from 'discord.js';
 
 const clone = rdfc();
 
@@ -81,17 +80,6 @@ export class CommandHandler {
             let importedObj = await import(`${modulePath}?t=${Date.now()}`);
             let commandObj: CommandFileObject = clone(importedObj); // Make commandObj extensible
 
-            // Ensure builder properties
-            if (importedObj.default) {
-                commandObj.data = importedObj.default.data;
-            } else {
-                commandObj.data = importedObj.data;
-            }
-
-            try {
-                commandObj.data = (commandObj.data as any).toJSON();
-            } catch (error) {}
-
             // If it's CommonJS, invalidate the import cache
             if (typeof module !== 'undefined' && typeof require !== 'undefined') {
                 delete require.cache[require.resolve(commandFilePath)];
@@ -100,6 +88,13 @@ export class CommandHandler {
             const compactFilePath = commandFilePath.split(process.cwd())[1] || commandFilePath;
 
             if (commandObj.default) commandObj = commandObj.default as CommandFileObject;
+
+            // Ensure builder properties
+            if (importedObj.default) {
+                commandObj.data = importedObj.default.data;
+            } else {
+                commandObj.data = importedObj.data;
+            }
 
             if (!commandObj.data) {
                 console.log(
