@@ -99,8 +99,11 @@ new CommandKit({
     // Array of developer role IDs (used for devOnly commands)
     devRoleIds: ['1234567890', '0987654321'],
 
-    // A property that disables CommandKit's built-in validations
+    // Disable CommandKit's built-in validations
     skipBuiltInValidations: true,
+
+    // Update command registration/reload behaviour to register all commands at once
+    bulkRegister: true,
 });
 
 client.login('YOUR_TOKEN_HERE');
