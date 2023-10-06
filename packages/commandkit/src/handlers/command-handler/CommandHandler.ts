@@ -69,10 +69,9 @@ export class CommandHandler {
 
     async #buildCommands() {
         const allowedExtensions = /\.(js|mjs|cjs|ts)$/i;
+        const paths = await getFilePaths(this.#data.commandsPath, true);
 
-        const commandFilePaths = getFilePaths(this.#data.commandsPath, true).filter((path) =>
-            allowedExtensions.test(path),
-        );
+        const commandFilePaths = paths.filter((path) => allowedExtensions.test(path));
 
         for (const commandFilePath of commandFilePaths) {
             const modulePath = toFileURL(commandFilePath);

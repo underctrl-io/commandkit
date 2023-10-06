@@ -1,12 +1,12 @@
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs/promises';
 
-export function getFilePaths(directory: string, nesting?: boolean): string[] {
+export async function getFilePaths(directory: string, nesting?: boolean): Promise<string[]> {
     let filePaths: string[] = [];
 
     if (!directory) return filePaths;
 
-    const files = fs.readdirSync(directory, { withFileTypes: true });
+    const files = await fs.readdir(directory, { withFileTypes: true });
 
     for (const file of files) {
         const filePath = path.join(directory, file.name);
@@ -16,19 +16,19 @@ export function getFilePaths(directory: string, nesting?: boolean): string[] {
         }
 
         if (nesting && file.isDirectory()) {
-            filePaths = [...filePaths, ...getFilePaths(filePath, true)];
+            filePaths = [...filePaths, ...(await getFilePaths(filePath, true))];
         }
     }
 
     return filePaths;
 }
 
-export function getFolderPaths(directory: string, nesting?: boolean): string[] {
+export async function getFolderPaths(directory: string, nesting?: boolean): Promise<string[]> {
     let folderPaths: string[] = [];
 
     if (!directory) return folderPaths;
 
-    const folders = fs.readdirSync(directory, { withFileTypes: true });
+    const folders = await fs.readdir(directory, { withFileTypes: true });
 
     for (const folder of folders) {
         const folderPath = path.join(directory, folder.name);
@@ -37,7 +37,7 @@ export function getFolderPaths(directory: string, nesting?: boolean): string[] {
             folderPaths.push(folderPath);
 
             if (nesting) {
-                folderPaths = [...folderPaths, ...getFolderPaths(folderPath, true)];
+                folderPaths = [...folderPaths, ...(await getFolderPaths(folderPath, true))];
             }
         }
     }

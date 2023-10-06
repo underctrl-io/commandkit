@@ -23,7 +23,7 @@ export class EventHandler {
     }
 
     async #buildEvents() {
-        const eventFolderPaths = getFolderPaths(this.#data.eventsPath);
+        const eventFolderPaths = await getFolderPaths(this.#data.eventsPath);
 
         for (const eventFolderPath of eventFolderPaths) {
             const eventName = eventFolderPath
@@ -32,10 +32,9 @@ export class EventHandler {
                 .pop() as string;
 
             const allowedExtensions = /\.(js|mjs|cjs|ts)$/i;
+            const eventPaths = await getFilePaths(eventFolderPath, true);
 
-            const eventFilePaths = getFilePaths(eventFolderPath, true).filter((path) =>
-                allowedExtensions.test(path),
-            );
+            const eventFilePaths = eventPaths.filter((path) => allowedExtensions.test(path));
 
             const eventObj = {
                 name: eventName,
