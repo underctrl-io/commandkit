@@ -23,9 +23,8 @@ export class ValidationHandler {
     async #buildValidations() {
         const allowedExtensions = /\.(js|mjs|cjs|ts)$/i;
 
-        const validationFilePaths = getFilePaths(this.#data.validationsPath, true).filter((path) =>
-            allowedExtensions.test(path),
-        );
+        const validationPaths = await getFilePaths(this.#data.validationsPath, true);
+        const validationFilePaths = validationPaths.filter((path) => allowedExtensions.test(path));
 
         for (const validationFilePath of validationFilePaths) {
             const modulePath = toFileURL(validationFilePath);

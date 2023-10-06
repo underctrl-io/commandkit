@@ -50,11 +50,9 @@ export enum CommandType {
 
 type LocaleString =
     | 'id'
-    | 'en-US'
-    | 'en-GB'
+    | `en-${'GB' | 'US'}`
     | 'bg'
-    | 'zh-CN'
-    | 'zh-TW'
+    | `zh-${'CN' | 'TW'}`
     | 'hr'
     | 'cs'
     | 'da'
@@ -112,6 +110,6 @@ export type CommandObject = {
 };
 
 export enum ReloadType {
-    'Developer' = 'dev',
-    'Global' = 'global',
+    Developer = 'dev',
+    Global = 'global',
 }
