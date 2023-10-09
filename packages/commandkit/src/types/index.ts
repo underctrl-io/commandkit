@@ -1,10 +1,16 @@
 import type {
-    Client,
     CommandInteraction,
-    PermissionResolvable,
     ChatInputCommandInteraction,
     ContextMenuCommandInteraction,
     APIApplicationCommandOption,
+    ContextMenuCommandBuilder,
+    MessageContextMenuCommandInteraction,
+    RESTPostAPIChatInputApplicationCommandsJSONBody,
+    SlashCommandBuilder,
+    SlashCommandSubcommandsOnlyBuilder,
+    UserContextMenuCommandInteraction,
+    PermissionResolvable,
+    Client,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
 
@@ -112,4 +118,64 @@ export type CommandObject = {
 export enum ReloadType {
     Developer = 'dev',
     Global = 'global',
+}
+
+// CommandBuilder Types
+interface BasicSlashCommandRunOptions {
+    interaction: ChatInputCommandInteraction;
+    client: Client;
+    handler: CommandKit;
+}
+
+type BasicSlashCommandRunFunction = (options: BasicSlashCommandRunOptions) => Promise<void> | void;
+
+export interface BasicCommandType {
+    run: BasicSlashCommandRunFunction;
+    data:
+        | SlashCommandBuilder
+        | SlashCommandSubcommandsOnlyBuilder
+        | RESTPostAPIChatInputApplicationCommandsJSONBody
+        | CommandData;
+    options?: OptionTypes;
+}
+
+interface UserContextCommandRunOptions {
+    client: Client;
+    interaction: UserContextMenuCommandInteraction;
+    handler: CommandKit;
+}
+
+type UserContextCommandRunFunction = (
+    options: UserContextCommandRunOptions,
+) => Promise<void> | void;
+
+export interface UserContextCommandType {
+    run: UserContextCommandRunFunction;
+    data: ContextMenuCommandBuilder | RESTPostAPIChatInputApplicationCommandsJSONBody | CommandData;
+    options?: OptionTypes;
+}
+
+interface MessageContextCommandRunOptions {
+    client: Client;
+    interaction: MessageContextMenuCommandInteraction;
+    handler: CommandKit;
+}
+
+type MessageContextCommandRunFunction = (
+    options: MessageContextCommandRunOptions,
+) => Promise<void> | void;
+
+export interface MessageContextCommandType {
+    run: MessageContextCommandRunFunction;
+    data: ContextMenuCommandBuilder | RESTPostAPIChatInputApplicationCommandsJSONBody | CommandData;
+    options?: OptionTypes;
+}
+
+export interface OptionTypes {
+    devOnly?: boolean;
+    guildOnly?: boolean;
+    userPermissions?: PermissionResolvable[];
+    botPermissions?: PermissionResolvable[];
+    deleted?: boolean;
+    [key: string]: any;
 }

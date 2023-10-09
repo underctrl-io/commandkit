@@ -1,4 +1,4 @@
-import type { SlashCommandProps, CommandOptions, CommandData } from '../../../src/index';
+import { type SlashCommandProps, type CommandOptions, type CommandData, BasicSlashCommand, UserContextCommand, CommandType } from '../../../src/index';
 
 export const data: CommandData = {
     name: 'ping',
