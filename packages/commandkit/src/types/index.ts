@@ -136,46 +136,37 @@ export interface BasicCommandType {
         | SlashCommandSubcommandsOnlyBuilder
         | RESTPostAPIChatInputApplicationCommandsJSONBody
         | CommandData;
-    options?: OptionTypes;
+    options?: CommandOptions;
 }
 
-interface UserContextCommandRunOptions {
+interface UserContextCommandProps {
     client: Client;
     interaction: UserContextMenuCommandInteraction;
     handler: CommandKit;
 }
 
 type UserContextCommandRunFunction = (
-    options: UserContextCommandRunOptions,
+    options: UserContextCommandProps,
 ) => Promise<void> | void;
 
 export interface UserContextCommandType {
     run: UserContextCommandRunFunction;
     data: ContextMenuCommandBuilder | RESTPostAPIChatInputApplicationCommandsJSONBody | CommandData;
-    options?: OptionTypes;
+    options?: CommandOptions;
 }
 
-interface MessageContextCommandRunOptions {
+interface MessageContextCommandProps {
     client: Client;
     interaction: MessageContextMenuCommandInteraction;
     handler: CommandKit;
 }
 
 type MessageContextCommandRunFunction = (
-    options: MessageContextCommandRunOptions,
+    options: MessageContextCommandProps,
 ) => Promise<void> | void;
 
 export interface MessageContextCommandType {
     run: MessageContextCommandRunFunction;
     data: ContextMenuCommandBuilder | RESTPostAPIChatInputApplicationCommandsJSONBody | CommandData;
-    options?: OptionTypes;
-}
-
-export interface OptionTypes {
-    devOnly?: boolean;
-    guildOnly?: boolean;
-    userPermissions?: PermissionResolvable[];
-    botPermissions?: PermissionResolvable[];
-    deleted?: boolean;
-    [key: string]: any;
+    options?: CommandOptions;
 }
