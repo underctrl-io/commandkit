@@ -4,5 +4,7 @@
     "CommandObject": "CommandObject",
     "CommandOptions": "CommandOptions",
     "ContextMenuCommandProps": "ContextMenuCommandProps",
-    "SlashCommandProps": "SlashCommandProps"
+    "SlashCommandProps": "SlashCommandProps",
+    "UserContextCommandProps": "UserContextCommandProps",
+    "MessageContextCommandProps": "MessageContextCommandProps"
 }
