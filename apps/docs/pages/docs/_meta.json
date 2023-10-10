@@ -2,7 +2,6 @@
     "installation": "Installation",
     "commandkit-setup": "CommandKit Setup",
     "command-file-setup": "Commands Setup",
-    "command-file-setup-builders": "Commands Builder Setup",
     "event-file-setup": "Events Setup",
     "validation-file-setup": "Validations Setup"
 }

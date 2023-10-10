@@ -11,6 +11,7 @@ import type {
     UserContextMenuCommandInteraction,
     PermissionResolvable,
     Client,
+    RESTPostAPIApplicationCommandsJSONBody,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
 
@@ -121,23 +122,25 @@ export enum ReloadType {
 }
 
 // CommandBuilder Types
-interface BasicSlashCommandRunOptions {
-    interaction: ChatInputCommandInteraction;
-    client: Client;
-    handler: CommandKit;
-}
+export type AnySlashCommandData =
+    | CommandData
+    | SlashCommandBuilder
+    | RESTPostAPIApplicationCommandsJSONBody;
 
-type BasicSlashCommandRunFunction = (options: BasicSlashCommandRunOptions) => Promise<void> | void;
+export type SlashCommandRunFunction = (options: SlashCommandProps) => Promise<void> | void;
 
-export interface BasicCommandType {
-    run: BasicSlashCommandRunFunction;
-    data:
-        | SlashCommandBuilder
-        | SlashCommandSubcommandsOnlyBuilder
-        | RESTPostAPIChatInputApplicationCommandsJSONBody
-        | CommandData;
-    options?: CommandOptions;
-}
+export type AnyContextCommandData =
+    | CommandData
+    | RESTPostAPIApplicationCommandsJSONBody
+    | ContextMenuCommandBuilder;
+
+export type UserContextCommandRunFunction = (
+    options: UserContextCommandProps,
+) => Promise<void> | void;
+
+export type MessageContextCommandRunFunction = (
+    options: MessageContextCommandProps,
+) => Promise<void> | void;
 
 interface UserContextCommandProps {
     client: Client;
@@ -145,28 +148,8 @@ interface UserContextCommandProps {
     handler: CommandKit;
 }
 
-type UserContextCommandRunFunction = (
-    options: UserContextCommandProps,
-) => Promise<void> | void;
-
-export interface UserContextCommandType {
-    run: UserContextCommandRunFunction;
-    data: ContextMenuCommandBuilder | RESTPostAPIChatInputApplicationCommandsJSONBody | CommandData;
-    options?: CommandOptions;
-}
-
 interface MessageContextCommandProps {
     client: Client;
     interaction: MessageContextMenuCommandInteraction;
     handler: CommandKit;
-}
-
-type MessageContextCommandRunFunction = (
-    options: MessageContextCommandProps,
-) => Promise<void> | void;
-
-export interface MessageContextCommandType {
-    run: MessageContextCommandRunFunction;
-    data: ContextMenuCommandBuilder | RESTPostAPIChatInputApplicationCommandsJSONBody | CommandData;
-    options?: CommandOptions;
 }
