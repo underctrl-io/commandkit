@@ -10,9 +10,9 @@ const client = new Client({
 
 new CommandKit({
     client,
-    commandsPath: `${__dirname}/commands`,
-    eventsPath: `${__dirname}/events`,
-    validationsPath: `${__dirname}/validations`,
+    commandsPath: `./commands`,
+    eventsPath: `./events`,
+    validationsPath: `./validations`,
     devGuildIds: ['1049345075366334617'],
     devUserIds: ['1049343381903515778'],
     bulkRegister: true,

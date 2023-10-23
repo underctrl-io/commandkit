@@ -2,6 +2,7 @@ import type { CommandObject } from './types';
 import type { CommandKitData, CommandKitOptions, ReloadOptions } from './typings';
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 import colors from './utils/colors';
+import path from 'path';
 
 export class CommandKit {
     #data: CommandKitData;
@@ -17,7 +18,19 @@ export class CommandKit {
             );
         }
 
-        this.#data = options;
+        this.#data = {
+            ...options,
+
+            commandsPath: options.commandsPath
+                ? path.resolve(process.cwd(), options.commandsPath)
+                : undefined,
+            eventsPath: options.eventsPath
+                ? path.resolve(process.cwd(), options.eventsPath)
+                : undefined,
+            validationsPath: options.validationsPath
+                ? path.resolve(process.cwd(), options.validationsPath)
+                : undefined,
+        };
 
         this.#init();
     }
