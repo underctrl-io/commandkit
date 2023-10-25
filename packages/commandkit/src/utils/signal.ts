@@ -12,16 +12,20 @@ const context: CommandKitEffectCallback[] = [];
 export function createSignal<T = unknown>(value?: CommandKitSignalInitializer<T>) {
     const subscribers = new Set<() => void>();
 
+    let disposed = false;
     let val: T | undefined = value instanceof Function ? value() : value;
 
     const getter = () => {
-        const running = getCurrentObserver();
+        if (!disposed) {
+            const running = getCurrentObserver();
+            if (running) subscribers.add(running);
+        }
 
-        if (running) subscribers.add(running);
         return val;
     };
 
     const setter = (newValue: CommandKitSignalUpdater<T>) => {
+        if (disposed) return;
         val = newValue instanceof Function ? newValue(val!) : newValue;
 
         for (const subscriber of subscribers) {
@@ -31,6 +35,7 @@ export function createSignal<T = unknown>(value?: CommandKitSignalInitializer<T>
 
     const dispose = () => {
         subscribers.clear();
+        disposed = true;
     };
 
     return [getter, setter, dispose] as CommandKitSignal<T>;

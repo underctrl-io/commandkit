@@ -1,0 +1,77 @@
+import { Tabs } from 'nextra/components';
+
+# ButtonKit
+
+ButtonKit is a class that allows you to use buttons easily by extending native [ButtonBuilder](https://old.discordjs.dev/#/docs/discord.js/main/class/ButtonBuilder) features.
+
+## Usage
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="commands/counter.js" copy
+        const { ButtonKit } = require('commandkit');
+        const { ButtonStyle } = require('discord.js');
+
+        // create a button
+        const button = new ButtonKit()
+            .setEmoji('👍')
+            .setStyle(ButtonStyle.Primary)
+            // custom id is required to use onClick
+            .setCustomId('button');
+
+        // listen to the button interaction right away
+        button.onClick(
+            (interaction) => {
+                // reply to the interaction
+                interaction.reply('You clicked the button!');
+            },
+            { message },
+        );
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```js filename="commands/counter.js" copy
+        import { ButtonKit } from 'commandkit';
+        import { ButtonStyle } from 'discord.js';
+
+        // create a button
+        const button = new ButtonKit()
+            .setEmoji('👍')
+            .setStyle(ButtonStyle.Primary)
+            // custom id is required to use onClick
+            .setCustomId('button');
+
+        // listen to the button interaction right away
+        button.onClick(
+            (interaction) => {
+                // reply to the interaction
+                interaction.reply('You clicked the button!');
+            },
+            { message },
+        );
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```ts filename="commands/counter.ts" copy
+        import { ButtonKit } from 'commandkit';
+        import { ButtonStyle, ButtonInteraction } from 'discord.js';
+
+        // create a button
+        const button = new ButtonKit()
+            .setEmoji('👍')
+            .setStyle(ButtonStyle.Primary)
+            // custom id is required to use onClick
+            .setCustomId('button');
+
+        // listen to the button interaction right away
+        button.onClick(
+            (interaction: ButtonInteraction) => {
+                // reply to the interaction
+                interaction.reply('You clicked the button!');
+            },
+            { message },
+        );
+        ```
+    </Tabs.Tab>
+
+</Tabs>
