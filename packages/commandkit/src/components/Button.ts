@@ -75,9 +75,11 @@ export class ButtonKit extends ButtonBuilder {
     }
 
     #setupInteractionCollector() {
+        if (!this.#contextData || !this.#onClickHandler) return;
+
         const message = this.#contextData?.message;
 
-        if (this.#onClickHandler && message && this.data.style !== ButtonStyle.Link) {
+        if (message && this.data.style !== ButtonStyle.Link) {
             const data = {
                 time: 86_400_000,
                 autoReset: true,
@@ -116,11 +118,8 @@ export class ButtonKit extends ButtonBuilder {
     }
 
     #destroyCollector() {
-        if (this.#collector) {
-            this.#collector.stop('end');
-            this.#collector.removeAllListeners();
-        }
-
+        this.#collector?.stop('end');
+        this.#collector?.removeAllListeners();
         this.#collector = null;
         this.#contextData = null;
         this.#onClickHandler = null;

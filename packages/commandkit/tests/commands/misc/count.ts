@@ -78,8 +78,10 @@ export async function run({ interaction }: SlashCommandProps) {
     // prettier-ignore
     trash.onClick(async (interaction) => {
         const disposed = row.setComponents(
-            row.components.map((button) => button.setDisabled(true)),
+            row.components.map((button) => button.onClick(null).setDisabled(true)),
         );
+
+        dispose();
         
         await interaction.update({
             content: 'Finished counting!',
