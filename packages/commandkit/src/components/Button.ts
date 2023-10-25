@@ -79,42 +79,49 @@ export class ButtonKit extends ButtonBuilder {
 
         const message = this.#contextData?.message;
 
-        if (message && this.data.style !== ButtonStyle.Link) {
-            const data = {
-                time: 86_400_000,
-                autoReset: true,
-                ...this.#contextData,
-            };
-
-            const collector = (this.#collector = message.createMessageComponentCollector({
-                filter: (interaction) =>
-                    interaction.customId ===
-                        (<APIButtonComponentWithCustomId>this.data).custom_id &&
-                    interaction.message.id === message.id,
-                componentType: ComponentType.Button,
-                ...data,
-            }));
-
-            this.#collector.on('collect', (interaction) => {
-                const handler = this.#onClickHandler;
-
-                if (!handler) return this.#destroyCollector();
-
-                if (!this.#collector) {
-                    return collector.stop('destroyed');
-                }
-
-                if (data.autoReset) {
-                    this.#collector?.resetTimer();
-                }
-
-                return handler(interaction);
-            });
-
-            this.#collector.on('end', () => {
-                this.#destroyCollector();
-            });
+        if (!message) {
+            throw new TypeError(
+                'Cannot setup "onClick" handler without a message in the context data',
+            );
         }
+
+        if ('customId' in this.data && !this.data.customId) {
+            throw new TypeError('Cannot setup "onClick" handler without a custom id');
+        }
+
+        const data = {
+            time: 86_400_000,
+            autoReset: true,
+            ...this.#contextData,
+        };
+
+        const collector = (this.#collector = message.createMessageComponentCollector({
+            filter: (interaction) =>
+                interaction.customId === (<APIButtonComponentWithCustomId>this.data).custom_id &&
+                interaction.message.id === message.id,
+            componentType: ComponentType.Button,
+            ...data,
+        }));
+
+        this.#collector.on('collect', (interaction) => {
+            const handler = this.#onClickHandler;
+
+            if (!handler) return this.#destroyCollector();
+
+            if (!this.#collector) {
+                return collector.stop('destroyed');
+            }
+
+            if (data.autoReset) {
+                this.#collector?.resetTimer();
+            }
+
+            return handler(interaction);
+        });
+
+        this.#collector.on('end', () => {
+            this.#destroyCollector();
+        });
     }
 
     #destroyCollector() {
