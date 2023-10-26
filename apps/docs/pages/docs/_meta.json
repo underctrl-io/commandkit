@@ -4,7 +4,7 @@
     "command-file-setup": "Commands Setup",
     "event-file-setup": "Events Setup",
     "validation-file-setup": "Validations Setup",
-    "migrating-from-djs-commander": "Migrating from DJS-Commander",
-    "buttonkit-example": "ButtonKit Example",
-    "using-signal": "Using Signal"
+    "buttonkit": "Using ButtonKit",
+    "using-signals": "Using Signals",
+    "migrating-from-djs-commander": "Migrating from DJS-Commander"
 }
