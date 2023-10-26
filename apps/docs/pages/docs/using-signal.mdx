@@ -1,0 +1,475 @@
+import { Tabs } from 'nextra/components';
+
+# Using signal
+
+Signal is a simple way to add states and basic reactivity to your commands. It is partially similar to solidjs signal.
+
+## Creating a signal
+
+Creating a signal is simple, you just need to call the `createSignal` function from `commandkit`. A signal in commandkit is a function that returns the current value of the signal. It also has a `set` function that can be used to update the value of the signal. The `dispose` function can be used to dispose the signal and all its subscribers.
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="signal.js" copy
+        const { createSignal } = require('commandkit');
+
+        const [value, setValue, dispose] = createSignal(0);
+
+        console.log(value()); // 0
+
+        setValue(1);
+
+        console.log(value()); // 1
+
+        dispose(); // dispose subscribers
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```js filename="signal.js" copy
+        import { createSignal } from 'commandkit';
+
+        const [value, setValue, dispose] = createSignal(0);
+
+        console.log(value()); // 0
+
+        setValue(1);
+
+        console.log(value()); // 1
+
+        dispose(); // dispose subscribers
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```ts filename="signal.ts" copy
+        import { createSignal } from 'commandkit';
+
+        const [value, setValue, dispose] = createSignal(0);
+
+        console.log(value()); // 0
+
+        setValue(1);
+
+        console.log(value()); // 1
+
+        dispose(); // dispose subscribers
+        ```
+    </Tabs.Tab>
+
+</Tabs>
+
+### Handling side effects
+
+You can also handle side effects with signals, by using the `createEffect` function. Side effects are functions that run every time the signal value changes.
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="signal.js" copy
+        const { createSignal, createEffect } = require('commandkit');
+
+        const [value, setValue, dispose] = createSignal(0);
+
+        // This will run every time the value changes
+        createEffect(() => {
+            console.log(`Current value is ${value()}`);
+        });
+
+        setValue(1); // This will log "Current value is 1"
+        setValue(2); // This will log "Current value is 2"
+
+        dispose(); // dispose subscribers
+
+        setValue(3); // This will not log anything because we disposed the subscribers
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```js filename="signal.js" copy
+        import { createSignal, createEffect } from 'commandkit';
+
+        const [value, setValue, dispose] = createSignal(0);
+
+        // This will run every time the value changes
+        createEffect(() => {
+            console.log(`Current value is ${value()}`);
+        });
+
+        setValue(1); // This will log "Current value is 1"
+        setValue(2); // This will log "Current value is 2"
+
+        dispose(); // dispose subscribers
+
+        setValue(3); // This will not log anything because we disposed the subscribers
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```ts filename="signal.ts" copy
+        import { createSignal, createEffect } from 'commandkit';
+
+        const [value, setValue, dispose] = createSignal(0);
+
+        // This will run every time the value changes
+        createEffect(() => {
+            console.log(`Current value is ${value()}`);
+        });
+
+        setValue(1); // This will log "Current value is 1"
+        setValue(2); // This will log "Current value is 2"
+
+        dispose(); // dispose subscribers
+
+        setValue(3); // This will not log anything because we disposed the subscribers
+        ```
+    </Tabs.Tab>
+
+</Tabs>
+
+## Count command example
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="commands/counter.js" copy
+        const {
+            createSignal,
+            createEffect.
+            ButtonKit
+        } = require('commandkit');
+        const { ButtonStyle, ActionRowBuilder } = require('discord.js');
+
+        export const data = {
+            name: 'counter',
+            description: 'A simple counter command',
+        };
+
+        // get the buttons
+        function getButtons() {
+            // decrement button
+            const dec = new ButtonKit()
+                .setEmoji('➖')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('decrement');
+
+            // reset button
+            const reset = new ButtonKit()
+                .setEmoji('0️⃣')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('reset');
+
+            // increment button
+            const inc = new ButtonKit()
+                .setEmoji('➕')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('increment');
+
+            // dispose button
+            const trash = new ButtonKit()
+                .setEmoji('🗑️')
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId('trash');
+
+            // action row
+            const row = new ActionRowBuilder<ButtonKit>()
+                .addComponents(dec, reset, inc, trash);
+
+            return { dec, reset, inc, trash, row };
+        }
+
+        export const run = async ({ interaction }) => {
+            // create the signal
+            const [count, setCount, dispose] = createSignal(0);
+            // create the buttons
+            const { dec, reset, inc, trash, row } = getButtons();
+
+            // temporary variable to hold button interactions
+            let inter;
+
+            // send the initial message with the buttons
+            const message = await interaction.reply({
+                content: `Count is ${count()}`,
+                components: [row],
+                fetchReply: true,
+            });
+
+            // Now, we subscribe to count signal and update the message every time the count changes
+            createEffect(() => {
+                // make sure to "always" call the value function inside createEffect, else subscription will not occur
+                const value = count();
+
+                // update the message
+                inter?.update(`Count is ${value}`);
+            });
+
+            // let's add a handler to decrement the count
+            dec.onClick((interaction) => {
+                inter = interaction;
+                setCount((prev) => prev - 1);
+            }, { message });
+
+            // let's add a handler to reset the count
+            reset.onClick((interaction) => {
+                inter = interaction;
+                setCount(0);
+            }, { message });
+
+            // let's add a handler to increment the count
+            inc.onClick((interaction) => {
+                inter = interaction;
+                setCount((prev) => prev + 1);
+            }, { message });
+
+            // let's add a handler to dispose the buttons and the signal
+            trash.onClick(async (interaction) => {
+                const disposed = row.setComponents(
+                    row.components.map((button) => {
+                        // remove 'onClick' handler and disable the button
+                        return button
+                            .onClick(null)
+                            .setDisabled(true);
+                    }),
+                );
+
+                // dispose the signal
+                dispose();
+
+                // finally acknowledge the interaction
+                await interaction.update({
+                    content: 'Finished counting!',
+                    components: [disposed],
+                });
+            }, { message });
+        }
+        ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+        ```js filename="commands/counter.js" copy
+        import {
+            createSignal,
+            createEffect,
+            ButtonKit
+        } from 'commandkit';
+        import { ButtonStyle, ActionRowBuilder } from 'discord.js';
+
+        export const data = {
+            name: 'counter',
+            description: 'A simple counter command',
+        };
+
+        // get the buttons
+        function getButtons() {
+            // decrement button
+            const dec = new ButtonKit()
+                .setEmoji('➖')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('decrement');
+
+            // reset button
+            const reset = new ButtonKit()
+                .setEmoji('0️⃣')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('reset');
+
+            // increment button
+            const inc = new ButtonKit()
+                .setEmoji('➕')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('increment');
+
+            // dispose button
+            const trash = new ButtonKit()
+                .setEmoji('🗑️')
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId('trash');
+
+            // action row
+            const row = new ActionRowBuilder<ButtonKit>()
+                .addComponents(dec, reset, inc, trash);
+
+            return { dec, reset, inc, trash, row };
+        }
+
+        export const run = async ({ interaction }) => {
+            // create the signal
+            const [count, setCount, dispose] = createSignal(0);
+            // create the buttons
+            const { dec, reset, inc, trash, row } = getButtons();
+
+            // temporary variable to hold button interactions
+            let inter;
+
+            // send the initial message with the buttons
+            const message = await interaction.reply({
+                content: `Count is ${count()}`,
+                components: [row],
+                fetchReply: true,
+            });
+
+            // Now, we subscribe to count signal and update the message every time the count changes
+            createEffect(() => {
+                // make sure to "always" call the value function inside createEffect, else subscription will not occur
+                const value = count();
+
+                // update the message
+                inter?.update(`Count is ${value}`);
+            });
+
+            // let's add a handler to decrement the count
+            dec.onClick((interaction) => {
+                inter = interaction;
+                setCount((prev) => prev - 1);
+            }, { message });
+
+            // let's add a handler to reset the count
+            reset.onClick((interaction) => {
+                inter = interaction;
+                setCount(0);
+            }, { message });
+
+            // let's add a handler to increment the count
+            inc.onClick((interaction) => {
+                inter = interaction;
+                setCount((prev) => prev + 1);
+            }, { message });
+
+            // let's add a handler to dispose the buttons and the signal
+            trash.onClick(async (interaction) => {
+                const disposed = row.setComponents(
+                    row.components.map((button) => {
+                        // remove 'onClick' handler and disable the button
+                        return button
+                            .onClick(null)
+                            .setDisabled(true);
+                    }),
+                );
+
+                // dispose the signal
+                dispose();
+
+                // finally acknowledge the interaction
+                await interaction.update({
+                    content: 'Finished counting!',
+                    components: [disposed],
+                });
+            }, { message });
+        }
+        ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+        ```js filename="commands/counter.ts" copy
+        import {
+            createSignal,
+            createEffect,
+            ButtonKit,
+            type SlashCommandProps
+        } from 'commandkit';
+        import { ButtonStyle, ActionRowBuilder, type ButtonInteraction } from 'discord.js';
+
+        export const data = {
+            name: 'counter',
+            description: 'A simple counter command',
+        };
+
+        // get the buttons
+        function getButtons() {
+            // decrement button
+            const dec = new ButtonKit()
+                .setEmoji('➖')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('decrement');
+
+            // reset button
+            const reset = new ButtonKit()
+                .setEmoji('0️⃣')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('reset');
+
+            // increment button
+            const inc = new ButtonKit()
+                .setEmoji('➕')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('increment');
+
+            // dispose button
+            const trash = new ButtonKit()
+                .setEmoji('🗑️')
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId('trash');
+
+            // action row
+            const row = new ActionRowBuilder<ButtonKit>()
+                .addComponents(dec, reset, inc, trash);
+
+            return { dec, reset, inc, trash, row };
+        }
+
+        export const run = async ({ interaction }: SlashCommandProps) => {
+            // create the signal
+            const [count, setCount, dispose] = createSignal(0);
+            // create the buttons
+            const { dec, reset, inc, trash, row } = getButtons();
+
+            // temporary variable to hold button interactions
+            let inter: ButtonInteraction;
+
+            // send the initial message with the buttons
+            const message = await interaction.reply({
+                content: `Count is ${count()}`,
+                components: [row],
+                fetchReply: true,
+            });
+
+            // Now, we subscribe to count signal and update the message every time the count changes
+            createEffect(() => {
+                // make sure to "always" call the value function inside createEffect, else subscription will not occur
+                const value = count();
+
+                // update the message
+                inter?.update(`Count is ${value}`);
+            });
+
+            // let's add a handler to decrement the count
+            dec.onClick((interaction) => {
+                inter = interaction;
+                setCount((prev) => prev - 1);
+            }, { message });
+
+            // let's add a handler to reset the count
+            reset.onClick((interaction) => {
+                inter = interaction;
+                setCount(0);
+            }, { message });
+
+            // let's add a handler to increment the count
+            inc.onClick((interaction) => {
+                inter = interaction;
+                setCount((prev) => prev + 1);
+            }, { message });
+
+            // let's add a handler to dispose the buttons and the signal
+            trash.onClick(async (interaction) => {
+                const disposed = row.setComponents(
+                    row.components.map((button) => {
+                        // remove 'onClick' handler and disable the button
+                        return button
+                            .onClick(null)
+                            .setDisabled(true);
+                    }),
+                );
+
+                // dispose the signal
+                dispose();
+
+                // finally acknowledge the interaction
+                await interaction.update({
+                    content: 'Finished counting!',
+                    components: [disposed],
+                });
+            }, { message });
+        }
+        ```
+    </Tabs.Tab>
+
+</Tabs>
+
+### Result
+
+<video src="/counter.mp4" autoplay controls muted />

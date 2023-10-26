@@ -13,8 +13,8 @@ new CommandKit({
     commandsPath: `${__dirname}/commands`,
     eventsPath: `${__dirname}/events`,
     validationsPath: `${__dirname}/validations`,
-    devGuildIds: ['1049345075366334617'],
-    devUserIds: ['1049343381903515778'],
+    devGuildIds: process.env.DEV_GUILD_ID?.split(',') ?? [],
+    devUserIds: process.env.DEV_USER_ID?.split(',') ?? [],
     bulkRegister: true,
 });
 
