@@ -16,7 +16,7 @@ Firstly, thank you for considering contributing to CommandKit! Whether you're lo
 2. Clone your fork to your local machine:
 
 ```bash
-git clone https://github.com/<YOUR_USERNAME>/commandkit.git
+git clone https://github.com/underctrl-io/commandkit.git
 ```
 
 ### Installing Dependencies
