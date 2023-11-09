@@ -19,7 +19,7 @@ Creating a signal is simple, you just need to call the `createSignal` function f
         const { createSignal } = require('commandkit');
 
         // createValue accepts one param (the initial value)
-        const [value, setValue, disposeValue] = createSignal(0);
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
         // Log the initial value
         console.log(value()); // -> 0
@@ -30,8 +30,8 @@ Creating a signal is simple, you just need to call the `createSignal` function f
         // Log the new value
         console.log(value()); // -> 1
 
-        // Dispose subscribers
-        disposeValue();
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
         ```
     </Tabs.Tab>
     <Tabs.Tab>
@@ -39,7 +39,7 @@ Creating a signal is simple, you just need to call the `createSignal` function f
         import { createSignal } from 'commandkit';
 
         // createValue accepts one param (the initial value)
-        const [value, setValue, disposeValue] = createSignal(0);
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
         // Log the initial value
         console.log(value()); // -> 0
@@ -50,8 +50,8 @@ Creating a signal is simple, you just need to call the `createSignal` function f
         // Log the new value
         console.log(value()); // -> 1
 
-        // Dispose subscribers
-        disposeValue();
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
         ```
     </Tabs.Tab>
     <Tabs.Tab>
@@ -59,7 +59,7 @@ Creating a signal is simple, you just need to call the `createSignal` function f
         import { createSignal } from 'commandkit';
 
         // createValue accepts one param (the initial value)
-        const [value, setValue, disposeValue] = createSignal(0);
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
         // Log the initial value
         console.log(value()); // -> 0
@@ -70,8 +70,8 @@ Creating a signal is simple, you just need to call the `createSignal` function f
         // Log the new value
         console.log(value()); // -> 1
 
-        // Dispose subscribers
-        disposeValue();
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
         ```
     </Tabs.Tab>
 
@@ -86,7 +86,7 @@ You can also handle side effects with signals, by using the `createEffect` funct
         ```js filename="signal.js" copy
         const { createSignal, createEffect } = require('commandkit');
 
-        const [value, setValue, disposeValue] = createSignal(0);
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
         // This will run every time the value changes
         createEffect(() => {
@@ -96,8 +96,8 @@ You can also handle side effects with signals, by using the `createEffect` funct
         setValue(1); // Logs "Current value is 1"
         setValue(2); // Logs "Current value is 2"
 
-        // Dispose subscribers
-        disposeValue();
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
 
         // Logs nothing because subscribers were disposed
         setValue(3);
@@ -107,7 +107,7 @@ You can also handle side effects with signals, by using the `createEffect` funct
         ```js filename="signal.js" copy
         import { createSignal, createEffect } from 'commandkit';
 
-        const [value, setValue, disposeValue] = createSignal(0);
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
         // This will run every time the value changes
         createEffect(() => {
@@ -117,8 +117,8 @@ You can also handle side effects with signals, by using the `createEffect` funct
         setValue(1); // Logs "Current value is 1"
         setValue(2); // Logs "Current value is 2"
 
-        // Dispose subscribers
-        disposeValue();
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
 
         // Logs nothing because subscribers were disposed
         setValue(3);
@@ -128,7 +128,7 @@ You can also handle side effects with signals, by using the `createEffect` funct
         ```ts filename="signal.ts" copy
         import { createSignal, createEffect } from 'commandkit';
 
-        const [value, setValue, disposeValue] = createSignal(0);
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
         // This will run every time the value changes
         createEffect(() => {
@@ -138,8 +138,8 @@ You can also handle side effects with signals, by using the `createEffect` funct
         setValue(1); // Logs "Current value is 1"
         setValue(2); // Logs "Current value is 2"
 
-        // Dispose subscribers
-        disposeValue();
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
 
         // Logs nothing because subscribers were disposed
         setValue(3);
@@ -199,7 +199,7 @@ You can also handle side effects with signals, by using the `createEffect` funct
 
         exports.run = async ({ interaction }) => {
             // Create the signal & buttons
-            const [count, setCount, disposeCount] = createSignal(0);
+            const [count, setCount, disposeCountSubscribers] = createSignal(0);
             const { dec, reset, inc, trash, row } = getButtons();
 
             // Temporary variable to hold button interactions
@@ -250,8 +250,8 @@ You can also handle side effects with signals, by using the `createEffect` funct
                     }),
                 );
 
-                // Dispose the signal
-                disposeCount();
+                // Dispose the signal's subscribers
+                disposeCountSubscribers();
 
                 // And finally: acknowledge the interaction
                 await interaction.update({
@@ -311,7 +311,7 @@ You can also handle side effects with signals, by using the `createEffect` funct
 
         export const run = async ({ interaction }) => {
             // Create the signal & buttons
-            const [count, setCount, disposeCount] = createSignal(0);
+            const [count, setCount, disposeCountSubscribers] = createSignal(0);
             const { dec, reset, inc, trash, row } = getButtons();
 
             // Temporary variable to hold button interactions
@@ -362,8 +362,8 @@ You can also handle side effects with signals, by using the `createEffect` funct
                     }),
                 );
 
-                // Dispose the signal
-                disposeCount();
+                // Dispose the signal's subscribers
+                disposeCountSubscribers();
 
                 // And finally: acknowledge the interaction
                 await interaction.update({
@@ -424,7 +424,7 @@ You can also handle side effects with signals, by using the `createEffect` funct
 
         export const run = async ({ interaction }: SlashCommandProps) => {
             // Create the signal & buttons
-            const [count, setCount, disposeCount] = createSignal(0);
+            const [count, setCount, disposeCountSubscribers] = createSignal(0);
             const { dec, reset, inc, trash, row } = getButtons();
 
             // Temporary variable to hold button interactions
@@ -475,8 +475,8 @@ You can also handle side effects with signals, by using the `createEffect` funct
                     }),
                 );
 
-                // Dispose the signal
-                disposeCount();
+                // Dispose the signal's subscribers
+                disposeCountSubscribers();
 
                 // And finally: acknowledge the interaction
                 await interaction.update({
