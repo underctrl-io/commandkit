@@ -8,20 +8,22 @@ import { bootstrapProductionBuild } from './build.mjs';
 
 const program = new Command('commandkit');
 
-program.command('dev')
+program
+    .command('dev')
     .description('Start your bot in development mode.')
     .option('-c, --config <path>', 'Path to your commandkit.json file.', './commandkit.json')
     .action(() => {
         const options = program.opts();
-        bootstrapDevelopmentServer(options.config)
+        bootstrapDevelopmentServer(options.config);
     });
 
-program.command('build')
+program
+    .command('build')
     .description('Build your project for production usage.')
     .option('-c, --config <path>', 'Path to your commandkit.json file.', './commandkit.json')
     .action(() => {
         const options = program.opts();
-        bootstrapProductionBuild(options.config)
+        bootstrapProductionBuild(options.config);
     });
 
 program.parse();

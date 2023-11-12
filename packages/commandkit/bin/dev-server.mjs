@@ -1,17 +1,13 @@
 // @ts-check
-import { config as dotenv } from 'dotenv'
+import { config as dotenv } from 'dotenv';
 import { build } from 'tsup';
-import child_process from 'node:child_process'
+import child_process from 'node:child_process';
 import ora from 'ora';
 import { join } from 'node:path';
 import { Colors, erase, findCommandKitJSON, panic, write } from './common.mjs';
 
 export async function bootstrapDevelopmentServer(config) {
-    const {
-        src,
-        main = 'index.mjs',
-        nodeOptions = ['--watch']
-    } = findCommandKitJSON(config);
+    const { src, main = 'index.mjs', nodeOptions = ['--watch'] } = findCommandKitJSON(config);
 
     if (!src) {
         panic('Could not find src in commandkit.json');
@@ -38,14 +34,16 @@ export async function bootstrapDevelopmentServer(config) {
             watch: nodeOptions.includes('--watch'),
         });
 
-        status.succeed(Colors.green(`Server started in ${(performance.now() - start).toFixed(2)}ms!\n`));
+        status.succeed(
+            Colors.green(`Server started in ${(performance.now() - start).toFixed(2)}ms!\n`),
+        );
 
         const processEnv = {};
 
         const env = dotenv({
             path: join(process.cwd(), '.env'),
             // @ts-expect-error
-            processEnv
+            processEnv,
         });
 
         if (env.error) {
@@ -56,15 +54,19 @@ export async function bootstrapDevelopmentServer(config) {
             write(Colors.blue('[DOTENV] Loaded .env file!'));
         }
 
-        const ps = child_process.spawn('node', [...nodeOptions, join(process.cwd(), '.commandkit', main)], {
-            env: {
-                ...process.env,
-                ...processEnv,
-                NODE_ENV: 'development',
-                COMMANDKIT_DEV: 'true'
+        const ps = child_process.spawn(
+            'node',
+            [...nodeOptions, join(process.cwd(), '.commandkit', main)],
+            {
+                env: {
+                    ...process.env,
+                    ...processEnv,
+                    NODE_ENV: 'development',
+                    COMMANDKIT_DEV: 'true',
+                },
+                cwd: process.cwd(),
             },
-            cwd: process.cwd(),
-        });
+        );
 
         ps.stdout.on('data', (data) => {
             write(data.toString());
@@ -83,7 +85,7 @@ export async function bootstrapDevelopmentServer(config) {
             panic(err);
         });
     } catch (e) {
-        status.fail(`Error occurred after ${(performance.now() - start).toFixed(2)}ms!\n`)
+        status.fail(`Error occurred after ${(performance.now() - start).toFixed(2)}ms!\n`);
         panic(e);
     }
 }
