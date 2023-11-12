@@ -1,10 +1,10 @@
 import type {
     Client,
     CommandInteraction,
-    PermissionResolvable,
     ChatInputCommandInteraction,
     ContextMenuCommandInteraction,
     APIApplicationCommandOption,
+    PermissionsString,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
 
@@ -37,8 +37,8 @@ export interface CommandOptions {
     guildOnly?: boolean;
     devOnly?: boolean;
     deleted?: boolean;
-    userPermissions?: PermissionResolvable;
-    botPermissions?: PermissionResolvable;
+    userPermissions?: PermissionsString[];
+    botPermissions?: PermissionsString[];
     [key: string]: any;
 }
 
