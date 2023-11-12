@@ -6,6 +6,7 @@
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
+    "bin": "./bin/index.mjs",
     "exports": {
         ".": {
             "require": "./dist/index.js",
@@ -13,6 +14,10 @@
             "types": "./dist/index.d.ts"
         }
     },
+    "files": [
+        "dist",
+        "bin"
+    ],
     "scripts": {
         "lint": "tsc",
         "dev": "tsup --watch",
@@ -32,14 +37,17 @@
         "event handler"
     ],
     "dependencies": {
-        "rfdc": "^1.3.0"
+        "commander": "^11.1.0",
+        "ora": "^7.0.1",
+        "rfdc": "^1.3.0",
+        "rimraf": "^5.0.5",
+        "tsup": "^7.2.0"
     },
     "devDependencies": {
         "@types/node": "^20.5.9",
         "discord.js": "^14.13.0",
         "dotenv": "^16.3.1",
         "tsconfig": "workspace:*",
-        "tsup": "^7.2.0",
         "tsx": "^3.12.8",
         "typescript": "^5.1.6"
     },
