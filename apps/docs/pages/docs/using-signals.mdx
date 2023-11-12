@@ -18,45 +18,60 @@ Creating a signal is simple, you just need to call the `createSignal` function f
         ```js filename="signal.js" copy
         const { createSignal } = require('commandkit');
 
-        const [value, setValue, dispose] = createSignal(0);
+        // createValue accepts one param (the initial value)
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
-        console.log(value()); // 0
+        // Log the initial value
+        console.log(value()); // -> 0
 
+        // Update the value
         setValue(1);
 
-        console.log(value()); // 1
+        // Log the new value
+        console.log(value()); // -> 1
 
-        dispose(); // dispose subscribers
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
         ```
     </Tabs.Tab>
     <Tabs.Tab>
         ```js filename="signal.js" copy
         import { createSignal } from 'commandkit';
 
-        const [value, setValue, dispose] = createSignal(0);
+        // createValue accepts one param (the initial value)
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
-        console.log(value()); // 0
+        // Log the initial value
+        console.log(value()); // -> 0
 
+        // Update the value
         setValue(1);
 
-        console.log(value()); // 1
+        // Log the new value
+        console.log(value()); // -> 1
 
-        dispose(); // dispose subscribers
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
         ```
     </Tabs.Tab>
     <Tabs.Tab>
         ```ts filename="signal.ts" copy
         import { createSignal } from 'commandkit';
 
-        const [value, setValue, dispose] = createSignal(0);
+        // createValue accepts one param (the initial value)
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
-        console.log(value()); // 0
+        // Log the initial value
+        console.log(value()); // -> 0
 
+        // Update the value
         setValue(1);
 
-        console.log(value()); // 1
+        // Log the new value
+        console.log(value()); // -> 1
 
-        dispose(); // dispose subscribers
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
         ```
     </Tabs.Tab>
 
@@ -71,57 +86,63 @@ You can also handle side effects with signals, by using the `createEffect` funct
         ```js filename="signal.js" copy
         const { createSignal, createEffect } = require('commandkit');
 
-        const [value, setValue, dispose] = createSignal(0);
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
         // This will run every time the value changes
         createEffect(() => {
             console.log(`Current value is ${value()}`);
         });
 
-        setValue(1); // This will log "Current value is 1"
-        setValue(2); // This will log "Current value is 2"
+        setValue(1); // Logs "Current value is 1"
+        setValue(2); // Logs "Current value is 2"
 
-        dispose(); // dispose subscribers
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
 
-        setValue(3); // This will not log anything because we disposed the subscribers
+        // Logs nothing because subscribers were disposed
+        setValue(3);
         ```
     </Tabs.Tab>
     <Tabs.Tab>
         ```js filename="signal.js" copy
         import { createSignal, createEffect } from 'commandkit';
 
-        const [value, setValue, dispose] = createSignal(0);
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
         // This will run every time the value changes
         createEffect(() => {
             console.log(`Current value is ${value()}`);
         });
 
-        setValue(1); // This will log "Current value is 1"
-        setValue(2); // This will log "Current value is 2"
+        setValue(1); // Logs "Current value is 1"
+        setValue(2); // Logs "Current value is 2"
 
-        dispose(); // dispose subscribers
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
 
-        setValue(3); // This will not log anything because we disposed the subscribers
+        // Logs nothing because subscribers were disposed
+        setValue(3);
         ```
     </Tabs.Tab>
     <Tabs.Tab>
         ```ts filename="signal.ts" copy
         import { createSignal, createEffect } from 'commandkit';
 
-        const [value, setValue, dispose] = createSignal(0);
+        const [value, setValue, disposeValueSubscribers] = createSignal(0);
 
         // This will run every time the value changes
         createEffect(() => {
             console.log(`Current value is ${value()}`);
         });
 
-        setValue(1); // This will log "Current value is 1"
-        setValue(2); // This will log "Current value is 2"
+        setValue(1); // Logs "Current value is 1"
+        setValue(2); // Logs "Current value is 2"
 
-        dispose(); // dispose subscribers
+        // Dispose the value's subscribers
+        disposeValueSubscribers();
 
-        setValue(3); // This will not log anything because we disposed the subscribers
+        // Logs nothing because subscribers were disposed
+        setValue(3);
         ```
     </Tabs.Tab>
 
@@ -134,59 +155,57 @@ You can also handle side effects with signals, by using the `createEffect` funct
         ```js filename="commands/counter.js" copy
         const {
             createSignal,
-            createEffect.
+            createEffect,
             ButtonKit
         } = require('commandkit');
         const { ButtonStyle, ActionRowBuilder } = require('discord.js');
 
-        export const data = {
+        exports.data = {
             name: 'counter',
             description: 'A simple counter command',
         };
 
-        // get the buttons
         function getButtons() {
-            // decrement button
+            // Decrement button
             const dec = new ButtonKit()
                 .setEmoji('➖')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('decrement');
 
-            // reset button
+            // Reset button
             const reset = new ButtonKit()
                 .setEmoji('0️⃣')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('reset');
 
-            // increment button
+            // Increment button
             const inc = new ButtonKit()
                 .setEmoji('➕')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('increment');
 
-            // dispose button
+            // Disposal button
             const trash = new ButtonKit()
                 .setEmoji('🗑️')
                 .setStyle(ButtonStyle.Danger)
                 .setCustomId('trash');
 
-            // action row
-            const row = new ActionRowBuilder<ButtonKit>()
+            // Create an action row
+            const row = new ActionRowBuilder()
                 .addComponents(dec, reset, inc, trash);
 
             return { dec, reset, inc, trash, row };
         }
 
-        export const run = async ({ interaction }) => {
-            // create the signal
-            const [count, setCount, dispose] = createSignal(0);
-            // create the buttons
+        exports.run = async ({ interaction }) => {
+            // Create the signal & buttons
+            const [count, setCount, disposeCountSubscribers] = createSignal(0);
             const { dec, reset, inc, trash, row } = getButtons();
 
-            // temporary variable to hold button interactions
+            // Temporary variable to hold button interactions
             let inter;
 
-            // send the initial message with the buttons
+            // Send the initial message with the buttons
             const message = await interaction.reply({
                 content: `Count is ${count()}`,
                 components: [row],
@@ -195,46 +214,46 @@ You can also handle side effects with signals, by using the `createEffect` funct
 
             // Now, we subscribe to count signal and update the message every time the count changes
             createEffect(() => {
-                // make sure to "always" call the value function inside createEffect, else subscription will not occur
+                // Make sure to "always" call the value function inside createEffect, otherwise the subscription will not occur
                 const value = count();
 
-                // update the message
+                // Now udate the original message
                 inter?.update(`Count is ${value}`);
             });
 
-            // let's add a handler to decrement the count
+            // Handler to decrement the count
             dec.onClick((interaction) => {
                 inter = interaction;
                 setCount((prev) => prev - 1);
             }, { message });
 
-            // let's add a handler to reset the count
+            // Handler to reset the count
             reset.onClick((interaction) => {
                 inter = interaction;
                 setCount(0);
             }, { message });
 
-            // let's add a handler to increment the count
+            // Handler to increment the count
             inc.onClick((interaction) => {
                 inter = interaction;
                 setCount((prev) => prev + 1);
             }, { message });
 
-            // let's add a handler to dispose the buttons and the signal
+            // Disposal handler
             trash.onClick(async (interaction) => {
                 const disposed = row.setComponents(
                     row.components.map((button) => {
-                        // remove 'onClick' handler and disable the button
+                        // Remove the 'onClick' handler and disable the button
                         return button
                             .onClick(null)
                             .setDisabled(true);
                     }),
                 );
 
-                // dispose the signal
-                dispose();
+                // Dispose the signal's subscribers
+                disposeCountSubscribers();
 
-                // finally acknowledge the interaction
+                // And finally: acknowledge the interaction
                 await interaction.update({
                     content: 'Finished counting!',
                     components: [disposed],
@@ -258,49 +277,47 @@ You can also handle side effects with signals, by using the `createEffect` funct
             description: 'A simple counter command',
         };
 
-        // get the buttons
         function getButtons() {
-            // decrement button
+            // Decrement button
             const dec = new ButtonKit()
                 .setEmoji('➖')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('decrement');
 
-            // reset button
+            // Reset button
             const reset = new ButtonKit()
                 .setEmoji('0️⃣')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('reset');
 
-            // increment button
+            // Increment button
             const inc = new ButtonKit()
                 .setEmoji('➕')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('increment');
 
-            // dispose button
+            // Disposal button
             const trash = new ButtonKit()
                 .setEmoji('🗑️')
                 .setStyle(ButtonStyle.Danger)
                 .setCustomId('trash');
 
-            // action row
-            const row = new ActionRowBuilder<ButtonKit>()
+            // Create an action row
+            const row = new ActionRowBuilder()
                 .addComponents(dec, reset, inc, trash);
 
             return { dec, reset, inc, trash, row };
         }
 
         export const run = async ({ interaction }) => {
-            // create the signal
-            const [count, setCount, dispose] = createSignal(0);
-            // create the buttons
+            // Create the signal & buttons
+            const [count, setCount, disposeCountSubscribers] = createSignal(0);
             const { dec, reset, inc, trash, row } = getButtons();
 
-            // temporary variable to hold button interactions
+            // Temporary variable to hold button interactions
             let inter;
 
-            // send the initial message with the buttons
+            // Send the initial message with the buttons
             const message = await interaction.reply({
                 content: `Count is ${count()}`,
                 components: [row],
@@ -309,46 +326,46 @@ You can also handle side effects with signals, by using the `createEffect` funct
 
             // Now, we subscribe to count signal and update the message every time the count changes
             createEffect(() => {
-                // make sure to "always" call the value function inside createEffect, else subscription will not occur
+                // Make sure to "always" call the value function inside createEffect, otherwise the subscription will not occur
                 const value = count();
 
-                // update the message
+                // Now udate the original message
                 inter?.update(`Count is ${value}`);
             });
 
-            // let's add a handler to decrement the count
+            // Handler to decrement the count
             dec.onClick((interaction) => {
                 inter = interaction;
                 setCount((prev) => prev - 1);
             }, { message });
 
-            // let's add a handler to reset the count
+            // Handler to reset the count
             reset.onClick((interaction) => {
                 inter = interaction;
                 setCount(0);
             }, { message });
 
-            // let's add a handler to increment the count
+            // Handler to increment the count
             inc.onClick((interaction) => {
                 inter = interaction;
                 setCount((prev) => prev + 1);
             }, { message });
 
-            // let's add a handler to dispose the buttons and the signal
+            // Disposal handler
             trash.onClick(async (interaction) => {
                 const disposed = row.setComponents(
                     row.components.map((button) => {
-                        // remove 'onClick' handler and disable the button
+                        // Remove the 'onClick' handler and disable the button
                         return button
                             .onClick(null)
                             .setDisabled(true);
                     }),
                 );
 
-                // dispose the signal
-                dispose();
+                // Dispose the signal's subscribers
+                disposeCountSubscribers();
 
-                // finally acknowledge the interaction
+                // And finally: acknowledge the interaction
                 await interaction.update({
                     content: 'Finished counting!',
                     components: [disposed],
@@ -359,47 +376,46 @@ You can also handle side effects with signals, by using the `createEffect` funct
     </Tabs.Tab>
 
     <Tabs.Tab>
-        ```js filename="commands/counter.ts" copy
+        ```ts filename="commands/counter.ts" copy
         import {
+            type SlashCommandProps,
             createSignal,
             createEffect,
-            ButtonKit,
-            type SlashCommandProps
+            ButtonKit
         } from 'commandkit';
-        import { ButtonStyle, ActionRowBuilder, type ButtonInteraction } from 'discord.js';
+        import { ButtonStyle, ActionRowBuilder } from 'discord.js';
 
         export const data = {
             name: 'counter',
             description: 'A simple counter command',
         };
 
-        // get the buttons
         function getButtons() {
-            // decrement button
+            // Decrement button
             const dec = new ButtonKit()
                 .setEmoji('➖')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('decrement');
 
-            // reset button
+            // Reset button
             const reset = new ButtonKit()
                 .setEmoji('0️⃣')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('reset');
 
-            // increment button
+            // Increment button
             const inc = new ButtonKit()
                 .setEmoji('➕')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('increment');
 
-            // dispose button
+            // Disposal button
             const trash = new ButtonKit()
                 .setEmoji('🗑️')
                 .setStyle(ButtonStyle.Danger)
                 .setCustomId('trash');
 
-            // action row
+            // Create an action row
             const row = new ActionRowBuilder<ButtonKit>()
                 .addComponents(dec, reset, inc, trash);
 
@@ -407,15 +423,14 @@ You can also handle side effects with signals, by using the `createEffect` funct
         }
 
         export const run = async ({ interaction }: SlashCommandProps) => {
-            // create the signal
-            const [count, setCount, dispose] = createSignal(0);
-            // create the buttons
+            // Create the signal & buttons
+            const [count, setCount, disposeCountSubscribers] = createSignal(0);
             const { dec, reset, inc, trash, row } = getButtons();
 
-            // temporary variable to hold button interactions
-            let inter: ButtonInteraction;
+            // Temporary variable to hold button interactions
+            let inter;
 
-            // send the initial message with the buttons
+            // Send the initial message with the buttons
             const message = await interaction.reply({
                 content: `Count is ${count()}`,
                 components: [row],
@@ -424,46 +439,46 @@ You can also handle side effects with signals, by using the `createEffect` funct
 
             // Now, we subscribe to count signal and update the message every time the count changes
             createEffect(() => {
-                // make sure to "always" call the value function inside createEffect, else subscription will not occur
+                // Make sure to "always" call the value function inside createEffect, otherwise the subscription will not occur
                 const value = count();
 
-                // update the message
+                // Now udate the original message
                 inter?.update(`Count is ${value}`);
             });
 
-            // let's add a handler to decrement the count
+            // Handler to decrement the count
             dec.onClick((interaction) => {
                 inter = interaction;
                 setCount((prev) => prev - 1);
             }, { message });
 
-            // let's add a handler to reset the count
+            // Handler to reset the count
             reset.onClick((interaction) => {
                 inter = interaction;
                 setCount(0);
             }, { message });
 
-            // let's add a handler to increment the count
+            // Handler to increment the count
             inc.onClick((interaction) => {
                 inter = interaction;
                 setCount((prev) => prev + 1);
             }, { message });
 
-            // let's add a handler to dispose the buttons and the signal
+            // Disposal handler
             trash.onClick(async (interaction) => {
                 const disposed = row.setComponents(
                     row.components.map((button) => {
-                        // remove 'onClick' handler and disable the button
+                        // Remove the 'onClick' handler and disable the button
                         return button
                             .onClick(null)
                             .setDisabled(true);
                     }),
                 );
 
-                // dispose the signal
-                dispose();
+                // Dispose the signal's subscribers
+                disposeCountSubscribers();
 
-                // finally acknowledge the interaction
+                // And finally: acknowledge the interaction
                 await interaction.update({
                     content: 'Finished counting!',
                     components: [disposed],

@@ -40,7 +40,7 @@ function getButtons() {
 }
 
 export async function run({ interaction }: SlashCommandProps) {
-    const [count, setCount, dispose] = createSignal(0);
+    const [count, setCount, disposeCountSubscribers] = createSignal(0);
     const { dec, reset, inc, trash, row } = getButtons();
 
     let inter: ButtonInteraction;
@@ -81,7 +81,8 @@ export async function run({ interaction }: SlashCommandProps) {
             row.components.map((button) => button.onClick(null).setDisabled(true)),
         );
 
-        dispose();
+        // Dispose the count's subscribers
+        disposeCountSubscribers();
         
         await interaction.update({
             content: 'Finished counting!',

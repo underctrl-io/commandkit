@@ -59,17 +59,16 @@ ButtonKit is a class that allows you to use buttons easily by extending native [
         import { ButtonKit } from 'commandkit';
         import { ButtonStyle, ButtonInteraction } from 'discord.js';
 
-        // create a button
+        // Create a button
         const button = new ButtonKit()
             .setEmoji('👍')
             .setStyle(ButtonStyle.Primary)
-            // custom id is required to use onClick
-            .setCustomId('button');
+            .setCustomId('button'); // Required to use onClick
 
-        // listen to the button interaction right away
+        // Listen to the button interaction right away
         button.onClick(
             (interaction: ButtonInteraction) => {
-                // reply to the interaction
+                // Reply to the interaction
                 interaction.reply('You clicked the button!');
             },
             { message },
