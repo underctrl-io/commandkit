@@ -20,6 +20,10 @@ export type CommandKitButtonBuilderInteractionCollectorDispatchContextData = {
      */
     message: Message;
     /**
+     * The duration (in ms) that the collector should run for.
+     */
+    time?: number;
+    /**
      * If the collector should automatically reset the timer when a button is clicked.
      */
     autoReset?: boolean;
