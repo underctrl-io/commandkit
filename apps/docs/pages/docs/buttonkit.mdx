@@ -1,13 +1,15 @@
 import { Tabs, Callout } from 'nextra/components';
 
+# Using ButtonKit
+
 <Callout type="warning">
     This is currently only available in the [development
     version](/docs/installation#development-version) of CommandKit.
 </Callout>
 
-# Using ButtonKit
+ButtonKit is an enhanced version of the native Discord.js [`ButtonBuilder`](https://old.discordjs.dev/#/docs/discord.js/main/class/ButtonBuilder), designed to simplify the process of creating and handling button interactions in your Discord bot.
 
-ButtonKit is a class that allows you to use buttons easily by extending native [ButtonBuilder](https://old.discordjs.dev/#/docs/discord.js/main/class/ButtonBuilder) features.
+It is not recommended to use this to listen for button clicks forever since it creates collectors. For that purpose, it's recommended to use a regular "interactionCreate" event listener.
 
 ## Usage
 
@@ -15,13 +17,17 @@ ButtonKit is a class that allows you to use buttons easily by extending native [
     <Tabs.Tab>
         ```js filename="commands/counter.js" copy
         const { ButtonKit } = require('commandkit');
-        const { ButtonStyle } = require('discord.js');
+        const { ButtonStyle, ActionRowBuilder } = require('discord.js');
 
         // Create a button
         const button = new ButtonKit()
             .setEmoji('👍')
             .setStyle(ButtonStyle.Primary)
             .setCustomId('button'); // Required to use onClick
+
+        const buttonRow = new ActionRowBuilder().addComponents(button);
+
+        const message = await channel.send({ components: [buttonRow] });
 
         // Listen to the button interaction right away
         button.onClick(
@@ -36,13 +42,17 @@ ButtonKit is a class that allows you to use buttons easily by extending native [
     <Tabs.Tab>
         ```js filename="commands/counter.js" copy
         import { ButtonKit } from 'commandkit';
-        import { ButtonStyle } from 'discord.js';
+        import { ButtonStyle, ActionRowBuilder } from 'discord.js';
 
         // Create a button
         const button = new ButtonKit()
             .setEmoji('👍')
             .setStyle(ButtonStyle.Primary)
             .setCustomId('button'); // Required to use onClick
+
+        const buttonRow = new ActionRowBuilder().addComponents(button);
+
+        const message = await channel.send({ components: [buttonRow] });
 
         // Listen to the button interaction right away
         button.onClick(
@@ -57,13 +67,17 @@ ButtonKit is a class that allows you to use buttons easily by extending native [
     <Tabs.Tab>
         ```ts filename="commands/counter.ts" copy
         import { ButtonKit } from 'commandkit';
-        import { ButtonStyle, ButtonInteraction } from 'discord.js';
+        import { type ButtonInteraction, ButtonStyle, ActionRowBuilder } from 'discord.js';
 
         // Create a button
         const button = new ButtonKit()
             .setEmoji('👍')
             .setStyle(ButtonStyle.Primary)
             .setCustomId('button'); // Required to use onClick
+
+        const buttonRow = new ActionRowBuilder<ButtonKit>().addComponents(button);
+
+        const message = await channel.send({ components: [buttonRow] });
 
         // Listen to the button interaction right away
         button.onClick(
@@ -77,3 +91,83 @@ ButtonKit is a class that allows you to use buttons easily by extending native [
     </Tabs.Tab>
 
 </Tabs>
+
+In the above example, you may notice how similar `ButtonKit` is to the native Discord.js `ButtonBuilder` class. That's because it's built on top of it. It introduces a new method called `onClick` which will allow you to quickly handle button interactions without having to create collectors. CommandKit does that for you!
+
+<Callout type="warning">
+    ButtonKit doesn't work without a custom ID, so ensure you provide one whenever instantiating a
+    button. This is required to keep track of what button was clicked.
+</Callout>
+
+### Arguments Explained
+
+Here's an empty `onClick` method without any arguments:
+
+```js
+const myButton = new ButtonKit()
+    .setCustomId('custom_button')
+    .setLabel('Click me!')
+    .setStyle(ButtonStyle.Primary);
+
+myButton.onClick();
+```
+
+The first argument required by this function, is your handler function which will acknowledge button clicks (interactions) handled by ButtonKit. You can handle them like so:
+
+```js
+myButton.onClick((buttonInteraction) => {
+    buttonInteraction.reply('You clicked a button!');
+});
+```
+
+However, the code above won't actually work since ButtonKit doesn't have any idea where it's supposed to specifically listen button clicks from. To fix that, you need to pass in a second argument which houses all the collector options. The `message` property is the message that ButtonKit will use to listen for button clicks.
+
+```js
+const row = new ActionRowBuilder().addComponents(myButton);
+const message = await channel.send({ components: [row] });
+
+myButton.onClick(
+    (buttonInteraction) => {
+        buttonInteraction.reply('You clicked a button!');
+    },
+    { message },
+);
+```
+
+This also works with interaction replies. Just ensure you pass `fetchReply` alongside your components:
+
+```js
+const row = new ActionRowBuilder().addComponents(myButton);
+const message = await interaction.reply({ components: [row], fetchReply: true });
+
+myButton.onClick(
+    (buttonInteraction) => {
+        buttonInteraction.reply('You clicked a button!');
+    },
+    { message },
+);
+```
+
+## ButtonKit options
+
+### `message`
+
+-   Type: [`Message`](https://old.discordjs.dev/#/docs/discord.js/main/class/Message)
+
+This is the message that ButtonKit uses to listen button clicks.
+
+### `time` (optional)
+
+-   Type: `number`
+
+This is the time you want the collector to run and listen for button clicks.
+
+### `autoReset` (optional)
+
+-   Type: `boolean`
+
+This determines if the collector should automatically reset the timer when a button is clicked.
+
+### Additional optional options
+
+-   Type: [`InteractionCollectorOptions`](https://old.discordjs.dev/#/docs/discord.js/main/typedef/InteractionCollectorOptions)
