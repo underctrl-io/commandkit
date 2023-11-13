@@ -1,8 +1,8 @@
 // @ts-check
 
 import { build } from 'tsup';
-import ora from 'ora';
 import { Colors, erase, findCommandKitJSON, panic, write } from './common.mjs';
+import ora from 'ora';
 
 export async function bootstrapProductionBuild(config) {
     const { minify = false, outDir = 'dist', main, src } = findCommandKitJSON(config);

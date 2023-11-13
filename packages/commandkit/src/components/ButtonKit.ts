@@ -1,12 +1,14 @@
-import type {
-    Awaitable,
-    ButtonInteraction,
-    Message,
-    InteractionCollector,
-    APIButtonComponentWithCustomId,
-    InteractionCollectorOptions,
+import {
+    type Message,
+    type Awaitable,
+    type ButtonInteraction,
+    type InteractionCollector,
+    type InteractionCollectorOptions,
+    type APIButtonComponentWithCustomId,
+    ButtonStyle,
+    ButtonBuilder,
+    ComponentType,
 } from 'discord.js';
-import { ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
 
 export type CommandKitButtonBuilderInteractionCollectorDispatch = (
     interaction: ButtonInteraction,
@@ -41,13 +43,15 @@ export class ButtonKit extends ButtonBuilder {
      *   .setStyle(ButtonStyle.Primary)
      *   .setCustomId('click_me');
      *
-     * const message = await channel.send({ content: 'Click the button', components: [new MessageActionRow().addComponents(button)] });
+     * const row = new ActionRowBuilder().addComponents(button);
+     *
+     * const message = await channel.send({ content: 'Click the button', components: [row] });
      *
      * button.onClick(async (interaction) => {
      *   await interaction.reply('You clicked me!');
      * }, { message });
      *
-     * // remove onClick handler and destroy the interaction collector
+     * // Remove onClick handler and destroy the interaction collector
      * button.onClick(null);
      * ```
      */
@@ -61,7 +65,7 @@ export class ButtonKit extends ButtonBuilder {
         data?: CommandKitButtonBuilderInteractionCollectorDispatchContextData,
     ): this {
         if (this.data.style === ButtonStyle.Link) {
-            throw new TypeError('Cannot setup "onClick" handler for link buttons');
+            throw new TypeError('Cannot setup "onClick" handler on link buttons.');
         }
 
         this.#destroyCollector();
@@ -77,16 +81,16 @@ export class ButtonKit extends ButtonBuilder {
     #setupInteractionCollector() {
         if (!this.#contextData || !this.#onClickHandler) return;
 
-        const message = this.#contextData?.message;
+        const message = this.#contextData.message;
 
         if (!message) {
             throw new TypeError(
-                'Cannot setup "onClick" handler without a message in the context data',
+                'Cannot setup "onClick" handler without a message in the context data.',
             );
         }
 
         if ('customId' in this.data && !this.data.customId) {
-            throw new TypeError('Cannot setup "onClick" handler without a custom id');
+            throw new TypeError('Cannot setup "onClick" handler on a button without a custom id.');
         }
 
         const data = {
@@ -113,7 +117,7 @@ export class ButtonKit extends ButtonBuilder {
             }
 
             if (data.autoReset) {
-                this.#collector?.resetTimer();
+                this.#collector.resetTimer();
             }
 
             return handler(interaction);
