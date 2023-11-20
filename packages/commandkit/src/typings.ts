@@ -5,6 +5,9 @@ import type { Client, Interaction } from 'discord.js';
 import type { CommandData, CommandKit, CommandOptions, ReloadType } from './index';
 import type { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 
+/**
+ * Options for instantiating a CommandKit handler.
+ */
 export interface CommandKitOptions {
     /**
      * The Discord.js client object to use with CommandKit.
@@ -52,12 +55,18 @@ export interface CommandKitOptions {
     bulkRegister?: boolean;
 }
 
+/**
+ * Private data for the CommandKit class.
+ */
 export interface CommandKitData extends CommandKitOptions {
     commandHandler?: CommandHandler;
     eventHandler?: EventHandler;
     validationHandler?: ValidationHandler;
 }
 
+/**
+ * Represents a command file.
+ */
 export interface CommandFileObject {
     data: CommandData;
     options?: CommandOptions;
@@ -67,4 +76,7 @@ export interface CommandFileObject {
     [key: string]: any;
 }
 
+/**
+ * A reload type for commands.
+ */
 export type ReloadOptions = 'dev' | 'global' | ReloadType;

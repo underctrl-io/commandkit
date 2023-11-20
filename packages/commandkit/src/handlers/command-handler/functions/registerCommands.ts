@@ -11,13 +11,19 @@ import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
 
 import colors from '../../../utils/colors';
 
-export default async function registerCommands(props: {
+type RegisterCommandProps = {
     client: Client;
     commands: CommandFileObject[];
     devGuildIds: string[];
     reloading?: boolean;
     type?: ReloadOptions;
-}) {
+};
+
+/**
+ * Register client commands to Discord.
+ * @param props
+ */
+export default async function registerCommands(props: RegisterCommandProps) {
     if (props.reloading) {
         if (props.client.isReady()) {
             await handleRegistration(props.client, props.commands, props.devGuildIds, props.type);

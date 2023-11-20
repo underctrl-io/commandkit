@@ -9,6 +9,11 @@ export type CommandKitSignal<T> = readonly [
 
 const context: CommandKitEffectCallback[] = [];
 
+/**
+ * Creates a new signal.
+ * @param value - The initial value to use.
+ * @returns An array of functions: a getter, a setter, and a disposer.
+ */
 export function createSignal<T = unknown>(value?: CommandKitSignalInitializer<T>) {
     const subscribers = new Set<() => void>();
 
@@ -41,6 +46,10 @@ export function createSignal<T = unknown>(value?: CommandKitSignalInitializer<T>
     return [getter, setter, dispose] as CommandKitSignal<T>;
 }
 
+/**
+ * Creates a new effect.
+ * @param callback - The callback function to execute.
+ */
 export function createEffect(callback: CommandKitEffectCallback) {
     const execute = () => {
         context.push(execute);
@@ -55,6 +64,9 @@ export function createEffect(callback: CommandKitEffectCallback) {
     execute();
 }
 
+/**
+ * Get the current observer.
+ */
 function getCurrentObserver() {
     return context[context.length - 1];
 }
