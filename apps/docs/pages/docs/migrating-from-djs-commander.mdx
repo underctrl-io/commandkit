@@ -36,14 +36,14 @@ new CommandHandler({
 });
 ```
 
-In CommandKit, you can setup multiple development servers under the property name `devServerIds`
+In CommandKit, you can setup multiple development servers under the property name `devGuildIds`
 
 ```js
 new CommandKit({
     client,
     commandsPath,
     eventsPath,
-    devServerIds: ['123456789012345678', '876543210987654321'], // ✅
+    devGuildIds: ['123456789012345678', '876543210987654321'], // ✅
 });
 ```
 
@@ -73,7 +73,7 @@ new CommandKit({
     client,
     commandsPath,
     eventsPath,
-    devServerIds: ['123456789012345678', '876543210987654321'],
+    devGuildIds: ['123456789012345678', '876543210987654321'],
     devUserIds: ['123456789012345678', '876543210987654321'], // ✅
 });
 ```
