@@ -1,14 +1,17 @@
 node_modules
 
 **/docs/.next/
-dist
 .astro
+dist
+.commandkit
 
 .DS_Store
 .vscode
 
 README.md
 pnpm-lock.yaml
+
+package.json
 
 npm-debug.log*
 yarn-debug.log*

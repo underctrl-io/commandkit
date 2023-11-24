@@ -58,15 +58,39 @@ export function findPackageJSON() {
     return JSON.parse(fs.readFileSync(target, 'utf8'));
 }
 
-export function findCommandKitJSON(src) {
-    const cwd = process.cwd();
-    const target = src || join(cwd, 'commandkit.json');
+const possibleFileNames = [
+    'commandkit.json', 'commandkit.config.json',
+    'commandkit.js', 'commandkit.config.js',
+    'commandkit.mjs', 'commandkit.config.mjs',
+    'commandkit.cjs', 'commandkit.config.cjs'
+];
 
-    if (!fs.existsSync(target)) {
-        panic('Could not find commandkit.json in current directory.');
+export async function findCommandKitConfig(src) {
+    const cwd = process.cwd();
+    const locations = src ? [join(cwd, src)] : possibleFileNames.map(name => join(cwd, name));
+
+    for (const location of locations) {
+        try {
+            return await loadConfigInner(location);
+        } catch (e) {
+            continue;
+        }
     }
 
-    return JSON.parse(fs.readFileSync(target, 'utf8'));
+    panic('Could not locate commandkit config.');
+}
+
+async function loadConfigInner(target) {
+    const isJSON = target.endsWith('.json');
+
+    /**
+     * @type {import('..').CommandKitConfig}
+     */
+    const config = await import(`file://${target}`, {
+        assert: isJSON ? { type: 'json' } : undefined,
+    }).then(conf => conf.default || conf);
+
+    return config;
 }
 
 export function erase(dir) {
