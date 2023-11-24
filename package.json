@@ -1,19 +1,19 @@
 {
-  "name": "commandkit",
-  "version": "0.0.0",
-  "private": true,
-  "license": "MIT",
-  "scripts": {
-    "dev": "turbo dev",
-    "lint": "turbo lint && prettier ./ --check --ignore-path=.prettierignore",
-    "build": "turbo lint && turbo build",
-    "build:package": "turbo lint --filter='commandkit' && turbo build --filter='commandkit'",
-    "deploy:package": "turbo lint --filter='commandkit' && turbo build --filter='commandkit' && turbo deploy --filter='commandkit'",
-    "deploy:package-dev": "turbo lint --filter='commandkit' && turbo build --filter='commandkit' && turbo deploy-dev --filter='commandkit'",
-    "format": "prettier --write \"./{packages,apps}/**/*.{js,ts,jsx,tsx,mjs,mts,cjs,cts,css,md,mdx}\""
-  },
-  "devDependencies": {
-    "prettier": "^3.0.3",
-    "turbo": "^1.10.13"
-  }
+    "name": "commandkit",
+    "version": "0.0.0",
+    "private": true,
+    "license": "MIT",
+    "scripts": {
+        "dev": "turbo dev",
+        "lint": "turbo lint && prettier ./ --check --ignore-path=.prettierignore",
+        "build": "turbo lint && turbo build",
+        "build:package": "turbo lint --filter='commandkit' && turbo build --filter='commandkit'",
+        "deploy:package": "turbo lint --filter='commandkit' && turbo build --filter='commandkit' && turbo deploy --filter='commandkit'",
+        "deploy:package-dev": "turbo lint --filter='commandkit' && turbo build --filter='commandkit' && turbo deploy-dev --filter='commandkit'",
+        "format": "prettier --write \"./{packages,apps}/**/*.{js,ts,jsx,tsx,mjs,mts,cjs,cts,css,md,mdx}\""
+    },
+    "devDependencies": {
+        "prettier": "^3.0.3",
+        "turbo": "^1.10.13"
+    }
 }
