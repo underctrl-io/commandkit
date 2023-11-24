@@ -65,7 +65,7 @@ function injectAntiCrash(outDir, main) {
         "      l(p(`${b} Uncaught Exception`)); l(p(b), e.stack || e); l(p(`${b} Exception origin: ${o}`));",
         "    })",
         "  if (!process.eventNames().includes(e2)) // skip if it is already handled",
-        "    on(e2, (r) => {",
+        "    process.on(e2, (r) => {",
         "      l(p(`${b} Unhandled Rejection at promise`)); l(p(`${b} ${r.stack || r}`));",
         "    });",
         "})();",

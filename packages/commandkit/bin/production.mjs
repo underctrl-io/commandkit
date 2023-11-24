@@ -7,7 +7,7 @@ import { existsSync } from 'node:fs';
 import { parseEnv } from './parse-env.mjs';
 
 export async function bootstrapProductionServer(config) {
-    const { main, outDir = 'dist', envExtra = true } = await findCommandKitConfig(config);
+    const { main, outDir = 'dist', envExtra = true, sourcemap } = await findCommandKitConfig(config);
 
     if (!existsSync(join(process.cwd(), outDir, main))) {
         panic('Could not find production build, maybe run `commandkit build` first?');
@@ -37,7 +37,7 @@ export async function bootstrapProductionServer(config) {
         /**
          * @type {child_process.ChildProcessWithoutNullStreams}
          */
-        const ps = child_process.spawn('node', [join(process.cwd(), '.commandkit', main)], {
+        const ps = child_process.spawn('node', [sourcemap ? '--enable-source-maps' : '', join(process.cwd(), outDir, main)].filter(Boolean), {
             env: {
                 ...process.env,
                 ...processEnv,
