@@ -15,7 +15,4 @@ new CommandKit({
     bulkRegister: true,
 });
 
-console.log('io23hfio3h3iohgio3');
-throw new Error('oh no');
-
 await client.login(process.env.TOKEN);
