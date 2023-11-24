@@ -18,7 +18,7 @@ export async function bootstrapDevelopmentServer(opts) {
         nodeOptions = [],
         envExtra = true,
         clearRestartLogs = true,
-        outDir
+        outDir,
     } = await findCommandKitConfig(opts.config);
 
     if (!src) {
@@ -107,7 +107,8 @@ export async function bootstrapDevelopmentServer(opts) {
             },
         );
 
-        let isLastLogRestarting = false, hasStarted = false;
+        let isLastLogRestarting = false,
+            hasStarted = false;
 
         ps.stdout.on('data', (data) => {
             const message = data.toString();
@@ -137,7 +138,12 @@ export async function bootstrapDevelopmentServer(opts) {
         ps.stderr.on('data', (data) => {
             const message = data.toString();
 
-            if (message.includes('ExperimentalWarning: Watch mode is an experimental feature and might change at any time')) return;
+            if (
+                message.includes(
+                    'ExperimentalWarning: Watch mode is an experimental feature and might change at any time',
+                )
+            )
+                return;
 
             write(Colors.red(message));
         });

@@ -59,15 +59,19 @@ export function findPackageJSON() {
 }
 
 const possibleFileNames = [
-    'commandkit.json', 'commandkit.config.json',
-    'commandkit.js', 'commandkit.config.js',
-    'commandkit.mjs', 'commandkit.config.mjs',
-    'commandkit.cjs', 'commandkit.config.cjs'
+    'commandkit.json',
+    'commandkit.config.json',
+    'commandkit.js',
+    'commandkit.config.js',
+    'commandkit.mjs',
+    'commandkit.config.mjs',
+    'commandkit.cjs',
+    'commandkit.config.cjs',
 ];
 
 export async function findCommandKitConfig(src) {
     const cwd = process.cwd();
-    const locations = src ? [join(cwd, src)] : possibleFileNames.map(name => join(cwd, name));
+    const locations = src ? [join(cwd, src)] : possibleFileNames.map((name) => join(cwd, name));
 
     for (const location of locations) {
         try {
@@ -88,7 +92,7 @@ async function loadConfigInner(target) {
      */
     const config = await import(`file://${target}`, {
         assert: isJSON ? { type: 'json' } : undefined,
-    }).then(conf => conf.default || conf);
+    }).then((conf) => conf.default || conf);
 
     return config;
 }

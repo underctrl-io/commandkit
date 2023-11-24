@@ -7,7 +7,14 @@ import { appendFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 export async function bootstrapProductionBuild(config) {
-    const { sourcemap = false, minify = false, outDir = 'dist', antiCrash = true, src, main } = await findCommandKitConfig(config);
+    const {
+        sourcemap = false,
+        minify = false,
+        outDir = 'dist',
+        antiCrash = true,
+        src,
+        main,
+    } = await findCommandKitConfig(config);
 
     const status = ora('Creating optimized production build...\n').start();
     const start = performance.now();
@@ -39,9 +46,7 @@ export async function bootstrapProductionBuild(config) {
         );
         write(
             Colors.green(
-                `\nRun ${Colors.magenta(`commandkit start`)} ${Colors.green(
-                    'to start your bot.',
-                )}`,
+                `\nRun ${Colors.magenta(`commandkit start`)} ${Colors.green('to start your bot.')}`,
             ),
         );
     } catch (e) {
@@ -53,23 +58,23 @@ export async function bootstrapProductionBuild(config) {
 function injectAntiCrash(outDir, main) {
     const path = join(process.cwd(), outDir, main);
     const snippet = [
-        "\n\n// --- CommandKit Anti-Crash Monitor ---",
-        ";(()=>{",
+        '\n\n// --- CommandKit Anti-Crash Monitor ---',
+        ';(()=>{',
         "  'use strict';",
         "  // 'uncaughtException' event is supposed to be used to perform synchronous cleanup before shutting down the process",
-        "  // instead of using it as a means to resume operation.",
-        "  // But it exists here due to compatibility reasons with discord bot ecosystem.",
+        '  // instead of using it as a means to resume operation.',
+        '  // But it exists here due to compatibility reasons with discord bot ecosystem.',
         "  const p = (t) => `\\x1b[33m${t}\\x1b[0m`, b = '[CommandKit Anti-Crash Monitor]', l = console.log, e1 = 'uncaughtException', e2 = 'unhandledRejection';",
-        "  if (!process.eventNames().includes(e1)) // skip if it is already handled",
-        "    process.on(e1, (e, o) => {",
-        "      l(p(`${b} Uncaught Exception`)); l(p(b), p(e.stack || e));",
-        "    })",
-        "  if (!process.eventNames().includes(e2)) // skip if it is already handled",
-        "    process.on(e2, (r) => {",
-        "      l(p(`${b} Unhandled promise rejection`)); l(p(`${b} ${r.stack || r}`));",
-        "    });",
-        "})();",
-        "// --- CommandKit Anti-Crash Monitor ---\n",
+        '  if (!process.eventNames().includes(e1)) // skip if it is already handled',
+        '    process.on(e1, (e, o) => {',
+        '      l(p(`${b} Uncaught Exception`)); l(p(b), p(e.stack || e));',
+        '    })',
+        '  if (!process.eventNames().includes(e2)) // skip if it is already handled',
+        '    process.on(e2, (r) => {',
+        '      l(p(`${b} Unhandled promise rejection`)); l(p(`${b} ${r.stack || r}`));',
+        '    });',
+        '})();',
+        '// --- CommandKit Anti-Crash Monitor ---\n',
     ].join('\n');
 
     return appendFile(path, snippet);
