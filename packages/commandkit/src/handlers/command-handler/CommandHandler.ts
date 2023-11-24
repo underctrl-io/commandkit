@@ -12,6 +12,9 @@ import rdfc from 'rfdc';
 
 const clone = rdfc();
 
+/**
+ * A handler for client application commands.
+ */
 export class CommandHandler {
     #data: CommandHandlerData;
 

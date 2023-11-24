@@ -6,6 +6,11 @@ import colors from './utils/colors';
 export class CommandKit {
     #data: CommandKitData;
 
+    /**
+     * Create a new handler with CommandKit.
+     * @param options - Options to use (client, commandsPath, eventsPath, etc.)
+     * @see {@link https://commandkit.js.org/docs/commandkit-setup}
+     */
     constructor(options: CommandKitOptions) {
         if (!options.client) {
             throw new Error(colors.red('"client" is required when instantiating CommandKit.'));
@@ -22,6 +27,9 @@ export class CommandKit {
         this.#init();
     }
 
+    /**
+     * (Private) Initialize CommandKit.
+     */
     async #init() {
         // <!-- Setup event handler -->
         if (this.#data.eventsPath) {

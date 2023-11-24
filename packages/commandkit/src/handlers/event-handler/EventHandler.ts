@@ -7,6 +7,9 @@ import rdfc from 'rfdc';
 
 const clone = rdfc();
 
+/**
+ * A handler for client events.
+ */
 export class EventHandler {
     #data: EventHandlerData;
 

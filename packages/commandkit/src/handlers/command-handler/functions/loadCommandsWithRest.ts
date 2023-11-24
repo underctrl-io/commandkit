@@ -3,13 +3,38 @@ import type { CommandFileObject, ReloadOptions } from '../../../typings';
 
 import colors from '../../../utils/colors';
 
-export default async function loadCommandsWithRest(props: {
+type LoadCommandsWithRestProps = {
+    /**
+     * The main client.
+     */
     client: Client;
+
+    /**
+     * An array of command objects.
+     */
     commands: CommandFileObject[];
+
+    /**
+     * An array of developer guild IDs.
+     */
     devGuildIds: string[];
+
+    /**
+     * A boolean indicating whether these commands are reloading.
+     */
     reloading?: boolean;
+
+    /**
+     * A type for reloading the commands (if this is reloading).
+     */
     type?: ReloadOptions;
-}) {
+};
+
+/**
+ * Use REST to load commands.
+ * @param props - Options for loading commands.
+ */
+export default async function loadCommandsWithRest(props: LoadCommandsWithRestProps) {
     if (props.reloading) {
         if (props.client.isReady()) {
             await handleLoading(
@@ -29,6 +54,14 @@ export default async function loadCommandsWithRest(props: {
     }
 }
 
+/**
+ * Handles loading commands.
+ * @param client - The discord.js client instance.
+ * @param commands - An array of command file objects.
+ * @param devGuildIds - An array of developer guild IDs.
+ * @param reloading - A boolean indicating whether this is reloading.
+ * @param type - A type for reloading the commands (if this is reloading).
+ */
 async function handleLoading(
     client: Client<true>,
     commands: CommandFileObject[],
@@ -50,6 +83,12 @@ async function handleLoading(
     }
 }
 
+/**
+ * Load commands globally.
+ * @param client - The discord.js client instance.
+ * @param commands - An array of command file objects.
+ * @param reloading - A boolean indicating whether the commands are reloading.
+ */
 async function loadGlobalCommands(
     client: Client<true>,
     commands: CommandFileObject[],
@@ -77,6 +116,13 @@ async function loadGlobalCommands(
     );
 }
 
+/**
+ * Load commands for dev guilds.
+ * @param client - The discord.js client instance.
+ * @param commands - An array of command file objects.
+ * @param guildIds - An array of developer guild IDs.
+ * @param reloading - A boolean indicating whether the commands are reloading.
+ */
 async function loadDevCommands(
     client: Client<true>,
     commands: CommandFileObject[],

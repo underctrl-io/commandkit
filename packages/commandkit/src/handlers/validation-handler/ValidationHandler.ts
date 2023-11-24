@@ -6,6 +6,9 @@ import rdfc from 'rfdc';
 
 const clone = rdfc();
 
+/**
+ * A handler for command validations.
+ */
 export class ValidationHandler {
     #data: ValidationHandlerData;
 
