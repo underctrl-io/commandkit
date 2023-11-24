@@ -11,8 +11,6 @@ dist
 README.md
 pnpm-lock.yaml
 
-package.json
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

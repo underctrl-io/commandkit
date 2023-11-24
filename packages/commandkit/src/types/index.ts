@@ -1,275 +1,155 @@
-import type {
-    Client,
-    CommandInteraction,
-    ChatInputCommandInteraction,
-    ContextMenuCommandInteraction,
-    APIApplicationCommandOption,
-    PermissionsString,
+import {
+    type RESTPostAPIApplicationCommandsJSONBody,
+    type MessageContextMenuCommandInteraction,
+    type UserContextMenuCommandInteraction,
+    type ContextMenuCommandInteraction,
+    type ChatInputCommandInteraction,
+    type PermissionsString,
+    type Client,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
-import { CommandFileObject } from '../typings';
 
 /**
- * Base props for commands.
+ * Props for command run functions.
  */
 export interface CommandProps {
     /**
-     * Represents the command's interaction.
+     * The current command interaction object.
      */
-    interaction: CommandInteraction;
+    interaction:
+        | ChatInputCommandInteraction
+        | ContextMenuCommandInteraction
+        | UserContextMenuCommandInteraction
+        | MessageContextMenuCommandInteraction;
 
     /**
-     * The client created in your main file.
+     * The Discord.js client object that CommandKit is handling.
      */
     client: Client<true>;
 
     /**
-     * The main CommandKit handler that instantiated this.
+     * The current CommandKit handler instance.
      */
     handler: CommandKit;
 }
 
 /**
- * Props for slash command run functions.
+ * Props for slash (chat input) command run functions.
  */
-export interface SlashCommandProps {
+export interface SlashCommandProps extends CommandProps {
     /**
-     * Represents the command's interaction.
+     * The current slash (chat input) command interaction object.
      */
     interaction: ChatInputCommandInteraction;
-
-    /**
-     * The client created in your main file.
-     */
-    client: Client<true>;
-
-    /**
-     * The CommandKit handler that instantiated this.
-     */
-    handler: CommandKit;
 }
 
 /**
  * Props for context menu command run functions.
  */
-export interface ContextMenuCommandProps {
+export interface ContextMenuCommandProps extends CommandProps {
     /**
-     * Represents the command's interaction.
+     * The current context menu command interaction object.
      */
     interaction: ContextMenuCommandInteraction;
-
-    /**
-     * The client created in your main file.
-     */
-    client: Client<true>;
-
-    /**
-     * The CommandKit handler that instantiated this.
-     */
-    handler: CommandKit;
 }
 
 /**
- * Props for command validations.
+ * Props for user context menu command run functions.
+ */
+export interface UserContextMenuCommandProps extends CommandProps {
+    interaction: UserContextMenuCommandInteraction;
+}
+
+/**
+ * Props for message context menu command run functions.
+ */
+export interface MessageContextMenuCommandProps extends CommandProps {
+    interaction: MessageContextMenuCommandInteraction;
+}
+
+/**
+ * Props for command validation functions.
  */
 export interface ValidationFunctionProps {
     /**
-     * Represents the command's interaction.
-     * Either a slash command or a context menu command interaction.
+     * The current command interaction object.
      */
     interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction;
 
     /**
-     * The client created in your main file.
-     * Represented as a ready client (`Client<true>`).
+     * The Discord.js client object that CommandKit is handling.
      */
     client: Client<true>;
 
     /**
-     * The command object that is being validated.
+     * The current (local) target command object.
      */
     commandObj: CommandObject;
 
     /**
-     * The CommandKit handler that instantiated this.
+     * The current CommandKit handler instance.
      */
     handler: CommandKit;
 }
 
 /**
- * Configuration for commands.
+ * Additional command configuration options.
  */
 export interface CommandOptions {
     /**
-     * Boolean indicating whether the command is guild-only.
-     * @deprecated - Use `dm_permission` in the command's data instead.
+     * A boolean indicating whether the command is guild-only.
+     * Used for built-in validation.
+     *
+     * @deprecated Use `dm_permission` in the command's `data` object instead.
      */
     guildOnly?: boolean;
 
     /**
-     * Boolean indicating whether the command is developer only.
+     * A boolean indicating whether the command is developer-only.
+     * Used for registration and built-in validation.
      */
     devOnly?: boolean;
 
     /**
-     * Boolean indicating whether the command is deleted and should not be registered.
+     * A boolean indicating whether the command is deleted/ignored on restart/reload.
      */
     deleted?: boolean;
 
     /**
-     * An array of user permissions.
+     * A string or array of permissions that a user needs for the current command to be executed.
+     * Used for built-in validation.
      *
      * @example
-     * userPermissions: ['BanMembers']
+     * userPermissions: 'BanMembers'
+     * or
+     * userPermissions: ['BanMembers', 'KickMembers']
      */
-    userPermissions?: PermissionsString[];
+    userPermissions?: PermissionsString | PermissionsString[];
 
     /**
-     * An array of bot permissions.
+     * A string or array of permissions that the bot needs to execute the current command.
+     * Used for built-in validation.
      *
      * @example
-     * botPermissions: ['BanMembers']
+     * botPermissions: 'BanMembers'
+     * or
+     * botPermissions: ['BanMembers', 'KickMembers']
      */
-    botPermissions?: PermissionsString[];
+    botPermissions?: PermissionsString | PermissionsString[];
+
     [key: string]: any;
 }
 
-export enum CommandType {
-    /**
-     * Slash commands.
-     */
-    'ChatInput' = 1,
-
-    /**
-     * Message context menu commands.
-     */
-    'Message' = 3,
-
-    /**
-     * User context menu commands.
-     */
-    'User' = 2,
-}
-
-type LocaleString =
-    | 'id'
-    | `en-${'GB' | 'US'}`
-    | 'bg'
-    | `zh-${'CN' | 'TW'}`
-    | 'hr'
-    | 'cs'
-    | 'da'
-    | 'nl'
-    | 'fi'
-    | 'fr'
-    | 'de'
-    | 'el'
-    | 'hi'
-    | 'hu'
-    | 'it'
-    | 'ja'
-    | 'ko'
-    | 'lt'
-    | 'no'
-    | 'pl'
-    | 'pt-BR'
-    | 'ro'
-    | 'ru'
-    | 'es-ES'
-    | 'sv-SE'
-    | 'th'
-    | 'tr'
-    | 'uk'
-    | 'vi';
-
-/**
- * Common items for command data.
- */
-type BaseCommandData = {
-    /**
-     * The name of the command.
-     */
-    name: string;
-
-    /**
-     * The type of the command.
-     */
-    type?: CommandType;
-
-    /**
-     * i18n for the command name.
-     */
-    name_localizations?: Partial<Record<LocaleString, string | null>>;
-
-    /**
-     * Whether to allow this command in DMs.
-     */
-    dm_permission?: boolean;
-
-    /**
-     * Default permissions for members for the command.
-     */
-    default_member_permissions?: string;
-
-    /**
-     * Whether the command is age-restricted.
-     */
-    nsfw?: boolean;
-};
-
-/**
- * Data for chat input commands.
- */
-type ChatInputCommandData = BaseCommandData & {
-    /**
-     * The command's type.
-     */
-    type?: CommandType.ChatInput;
-
-    /**
-     * The description of the command.
-     */
-    description: string;
-
-    /**
-     * i18n for the command description.
-     */
-    description_localizations?: Partial<Record<LocaleString, string | null>>;
-
-    /**
-     * Chat input command options.
-     */
-    options?: Array<APIApplicationCommandOption>;
-};
-
-/**
- * Represents any context menu command data.
- */
-type UserOrMessageCommandData = BaseCommandData & {
-    type: CommandType.User | CommandType.Message;
-};
-
-export type CommandData = ChatInputCommandData | UserOrMessageCommandData;
+export type CommandData = RESTPostAPIApplicationCommandsJSONBody;
 
 export type CommandObject = {
     /**
-     * Command data which is a slash command builder or raw JSON data.
-     * @example
-     * {
-     *      name: 'ping',
-     *      description: 'Replies with Pong!'
-     * }
+     * An object which defines the structure of the application command.
      */
     data: CommandData;
 
     /**
-     * CommandKit command options.
-     * @example
-     * {
-     *      devOnly: true,
-     *      userPermissions: ['ManageGuild'],
-     *      botPermissions: ['ManageGuild'],
-     * }
+     * Additional command configuration options.
      */
     options?: CommandOptions;
 
@@ -279,7 +159,13 @@ export type CommandObject = {
     filePath: string;
 
     /**
-     * The command's category.
+     * The command's category. Determined based on the command folder.
+     *
+     * @example
+     * ```txt
+     * "/src/commands/ping.js" -> null
+     * "/src/commands/Misc/ping.js" -> "Misc"
+     * ```
      */
     category: string | null;
 

@@ -1,14 +1,17 @@
-import type { CommandObject } from './types';
 import type { CommandKitData, CommandKitOptions, ReloadOptions } from './typings';
+import type { CommandObject } from './types';
+
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
+
 import colors from './utils/colors';
 
 export class CommandKit {
     #data: CommandKitData;
 
     /**
-     * Create a new handler with CommandKit.
-     * @param options - Options to use (client, commandsPath, eventsPath, etc.)
+     * Create a new command and event handler with CommandKit.
+     *
+     * @param options - The default CommandKit configuration.
      * @see {@link https://commandkit.js.org/docs/commandkit-setup}
      */
     constructor(options: CommandKitOptions) {

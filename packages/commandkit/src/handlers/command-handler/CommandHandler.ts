@@ -1,13 +1,14 @@
 import type { CommandHandlerData, CommandHandlerOptions } from './typings';
 import type { CommandFileObject, ReloadOptions } from '../../typings';
 
-import { getFilePaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
+import { getFilePaths } from '../../utils/get-paths';
 
 import loadCommandsWithRest from './functions/loadCommandsWithRest';
 import registerCommands from './functions/registerCommands';
 import builtInValidations from './validations';
 import colors from '../../utils/colors';
+
 import rdfc from 'rfdc';
 
 const clone = rdfc();

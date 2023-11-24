@@ -1,58 +1,58 @@
 {
-  "name": "commandkit",
-  "description": "Beginner friendly command & event handler for Discord.js",
-  "version": "0.1.6",
-  "license": "MIT",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "bin": "./bin/index.mjs",
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+    "name": "commandkit",
+    "description": "Beginner friendly command & event handler for Discord.js",
+    "version": "0.1.6",
+    "license": "MIT",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "bin": "./bin/index.mjs",
+    "exports": {
+        ".": {
+            "require": "./dist/index.js",
+            "import": "./dist/index.mjs",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist",
+        "bin"
+    ],
+    "scripts": {
+        "lint": "tsc",
+        "dev": "tsup --watch",
+        "build": "tsup",
+        "deploy": "npm publish",
+        "deploy-dev": "npm publish --access public --tag dev",
+        "test": "cd ./tests && node ../bin/index.mjs dev",
+        "test:build": "cd ./tests && node ../bin/index.mjs build",
+        "test:prod": "cd ./tests && node ../bin/index.mjs start"
+    },
+    "repository": {
+        "url": "git+https://github.com/underctrl-io/commandkit.git"
+    },
+    "homepage": "https://commandkit.js.org",
+    "keywords": [
+        "discord.js",
+        "command handler",
+        "event handler"
+    ],
+    "dependencies": {
+        "commander": "^11.1.0",
+        "ora": "^7.0.1",
+        "rfdc": "^1.3.0",
+        "rimraf": "^5.0.5",
+        "tsup": "^7.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.5.9",
+        "discord.js": "^14.13.0",
+        "dotenv": "^16.3.1",
+        "tsconfig": "workspace:*",
+        "tsx": "^3.12.8",
+        "typescript": "^5.1.6"
+    },
+    "peerDependencies": {
+        "discord.js": "^14"
     }
-  },
-  "files": [
-    "dist",
-    "bin"
-  ],
-  "scripts": {
-    "lint": "tsc",
-    "dev": "tsup --watch",
-    "build": "tsup",
-    "deploy": "npm publish",
-    "deploy-dev": "npm publish --access public --tag dev",
-    "test": "cd ./tests && node ../bin/index.mjs dev",
-    "test:build": "cd ./tests && node ../bin/index.mjs build",
-    "test:prod": "cd ./tests && node ../bin/index.mjs start"
-  },
-  "repository": {
-    "url": "git+https://github.com/underctrl-io/commandkit.git"
-  },
-  "homepage": "https://commandkit.js.org",
-  "keywords": [
-    "discord.js",
-    "command handler",
-    "event handler"
-  ],
-  "dependencies": {
-    "commander": "^11.1.0",
-    "ora": "^7.0.1",
-    "rfdc": "^1.3.0",
-    "rimraf": "^5.0.5",
-    "tsup": "^7.2.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.5.9",
-    "discord.js": "^14.13.0",
-    "dotenv": "^16.3.1",
-    "tsconfig": "workspace:*",
-    "tsx": "^3.12.8",
-    "typescript": "^5.1.6"
-  },
-  "peerDependencies": {
-    "discord.js": "^14"
-  }
 }

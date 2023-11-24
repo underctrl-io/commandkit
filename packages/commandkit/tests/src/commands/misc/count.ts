@@ -1,5 +1,5 @@
-import type { SlashCommandProps, CommandOptions, CommandData } from '../../../src/index';
-import { ButtonKit, createEffect, createSignal } from '../../../src/index';
+import type { SlashCommandProps, CommandOptions, CommandData } from '../../../../src';
+import { ButtonKit, createEffect, createSignal } from '../../../../src/index';
 import { ButtonStyle, ActionRowBuilder, ButtonInteraction } from 'discord.js';
 
 export const data: CommandData = {

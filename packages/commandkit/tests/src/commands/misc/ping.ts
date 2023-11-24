@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonStyle } from 'discord.js';
-import { SlashCommandProps, CommandOptions, CommandData, ButtonKit } from '../../../src/index';
+import { SlashCommandProps, CommandOptions, CommandData, ButtonKit } from '../../../../src/index';
 
 export const data: CommandData = {
     name: 'ping',

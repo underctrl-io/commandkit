@@ -6,9 +6,17 @@ export default function ({ interaction, targetCommand }: BuiltInValidationParams
     let userPermissionsRequired = targetCommand.options?.userPermissions;
     let missingUserPermissions: string[] = [];
 
+    if (typeof userPermissionsRequired === 'string') {
+        userPermissionsRequired = [userPermissionsRequired];
+    }
+
     const botPermissions = interaction.guild?.members.me?.permissions;
     let botPermissionsRequired = targetCommand.options?.botPermissions;
     let missingBotPermissions: string[] = [];
+
+    if (typeof botPermissionsRequired === 'string') {
+        botPermissionsRequired = [botPermissionsRequired];
+    }
 
     if (!userPermissionsRequired?.length && !botPermissionsRequired?.length) {
         return;
