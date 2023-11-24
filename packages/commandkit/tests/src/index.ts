@@ -1,8 +1,5 @@
-import { CommandKit } from '../src';
+import { CommandKit } from '../../src/index';
 import { Client } from 'discord.js';
-import { config } from 'dotenv';
-
-config({ path: `${__dirname}/.env` });
 
 const client = new Client({
     intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent'],
@@ -18,4 +15,4 @@ new CommandKit({
     bulkRegister: true,
 });
 
-client.login(process.env.TOKEN);
+await client.login(process.env.TOKEN);
