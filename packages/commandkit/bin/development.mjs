@@ -107,7 +107,7 @@ export async function bootstrapDevelopmentServer(opts) {
             },
         );
 
-        let isLastLogRestarting = false;
+        let isLastLogRestarting = false, hasStarted = false;
 
         ps.stdout.on('data', (data) => {
             const message = data.toString();
@@ -115,6 +115,7 @@ export async function bootstrapDevelopmentServer(opts) {
             if (FAILED_RUNNING_PATTERN.test(message)) {
                 write(Colors.cyan('Failed running the bot, waiting for changes...'));
                 isLastLogRestarting = false;
+                if (!hasStarted) hasStarted = true;
                 return;
             }
 
@@ -122,10 +123,15 @@ export async function bootstrapDevelopmentServer(opts) {
                 write(message);
                 isLastLogRestarting = false;
             } else {
-                if (isLastLogRestarting) return;
+                if (isLastLogRestarting || !hasStarted) {
+                    if (!hasStarted) hasStarted = true;
+                    return;
+                }
                 write(Colors.cyan('⌀ Restarting the bot...'));
                 isLastLogRestarting = true;
             }
+
+            if (!hasStarted) hasStarted = true;
         });
 
         ps.stderr.on('data', (data) => {
