@@ -19,7 +19,7 @@ CommandKit is a library that makes it easy to handle commands and events in your
 -   Automatic command registration, edits, and deletion 🤖
 -   Supports multiple development servers 🤝
 -   Supports multiple users as bot developers 👥
--   Object oriented 💻
+-   User friendly CLI 🖥️
 
 ## Documentation
 

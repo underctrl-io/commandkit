@@ -57,37 +57,47 @@ export async function run({ interaction }: SlashCommandProps) {
         inter?.update(`Count is ${value}`);
     });
 
-    // prettier-ignore
-    dec.onClick((interaction) => {
-        inter = interaction;
-        setCount((prev) => prev - 1);
-    }, { message });
-
-    // prettier-ignore
-    reset.onClick((interaction) => {
-        inter = interaction;
-        setCount(0);
-    }, { message });
-
-    // prettier-ignore
-    inc.onClick((interaction) => {
-        inter = interaction;
-        setCount((prev) => prev + 1);
-    }, { message });
-
-    // prettier-ignore
-    trash.onClick(async (interaction) => {
+    const disposeButtons = async (interaction: ButtonInteraction | null = null) => {
         const disposed = row.setComponents(
             row.components.map((button) => button.onClick(null).setDisabled(true)),
         );
 
         // Dispose the count's subscribers
         disposeCountSubscribers();
-        
-        await interaction.update({
+
+        const data = {
             content: 'Finished counting!',
             components: [disposed],
-        });
+        };
+
+        if (interaction) await interaction.update(data);
+        else await message.edit(data);
+    };
+
+    // prettier-ignore
+    dec.onClick((interaction) => {
+        if (!interaction) return disposeButtons();
+        inter = interaction;
+        setCount((prev) => prev - 1);
+    }, { message });
+
+    // prettier-ignore
+    reset.onClick((interaction) => {
+        if (!interaction) return disposeButtons();
+        inter = interaction;
+        setCount(0);
+    }, { message });
+
+    // prettier-ignore
+    inc.onClick((interaction) => {
+        if (!interaction) return disposeButtons();
+        inter = interaction;
+        setCount((prev) => prev + 1);
+    }, { message });
+
+    // prettier-ignore
+    trash.onClick(async (interaction) => {
+        disposeButtons(interaction);
     }, { message });
 }
 

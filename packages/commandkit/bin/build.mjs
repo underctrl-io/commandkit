@@ -39,7 +39,7 @@ export async function bootstrapProductionBuild(config) {
             entry: [src, '!dist', '!.commandkit', `!${outDir}`],
         });
 
-        if (antiCrash) await injectAntiCrash(outDir, main);
+        await injectShims(outDir, main, antiCrash);
 
         status.succeed(
             Colors.green(`Build completed in ${(performance.now() - start).toFixed(2)}ms!`),
@@ -55,9 +55,10 @@ export async function bootstrapProductionBuild(config) {
     }
 }
 
-function injectAntiCrash(outDir, main) {
+async function injectShims(outDir, main, antiCrash) {
     const path = join(process.cwd(), outDir, main);
-    const snippet = [
+
+    const antiCrashScript = antiCrash ? [
         '\n\n// --- CommandKit Anti-Crash Monitor ---',
         ';(()=>{',
         "  'use strict';",
@@ -66,7 +67,7 @@ function injectAntiCrash(outDir, main) {
         '  // But it exists here due to compatibility reasons with discord bot ecosystem.',
         "  const p = (t) => `\\x1b[33m${t}\\x1b[0m`, b = '[CommandKit Anti-Crash Monitor]', l = console.log, e1 = 'uncaughtException', e2 = 'unhandledRejection';",
         '  if (!process.eventNames().includes(e1)) // skip if it is already handled',
-        '    process.on(e1, (e, o) => {',
+        '    process.on(e1, (e) => {',
         '      l(p(`${b} Uncaught Exception`)); l(p(b), p(e.stack || e));',
         '    })',
         '  if (!process.eventNames().includes(e2)) // skip if it is already handled',
@@ -75,7 +76,9 @@ function injectAntiCrash(outDir, main) {
         '    });',
         '})();',
         '// --- CommandKit Anti-Crash Monitor ---\n',
-    ].join('\n');
+    ].join('\n') : '';
 
-    return appendFile(path, snippet);
+    const finalScript = [antiCrashScript].join('\n');
+
+    return appendFile(path, finalScript);
 }

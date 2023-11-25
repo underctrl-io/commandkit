@@ -8,10 +8,7 @@ import loadCommandsWithRest from './functions/loadCommandsWithRest';
 import registerCommands from './functions/registerCommands';
 import builtInValidations from './validations';
 import colors from '../../utils/colors';
-
-import rdfc from 'rfdc';
-
-const clone = rdfc();
+import { clone } from '../../utils/clone';
 
 /**
  * A handler for client application commands.
@@ -80,7 +77,7 @@ export class CommandHandler {
         for (const commandFilePath of commandFilePaths) {
             const modulePath = toFileURL(commandFilePath);
 
-            let importedObj = await import(`${modulePath}?t=${Date.now()}`);
+            const importedObj = await import(`${modulePath}?t=${Date.now()}`);
             let commandObj: CommandFileObject = clone(importedObj); // Make commandObj extensible
 
             // If it's CommonJS, invalidate the import cache
@@ -161,7 +158,14 @@ export class CommandHandler {
 
     handleCommands() {
         this.#data.client.on('interactionCreate', async (interaction) => {
-            if (!interaction.isChatInputCommand() && !interaction.isContextMenuCommand()) return;
+            if (
+                !interaction.isChatInputCommand() &&
+                !interaction.isContextMenuCommand() &&
+                !interaction.isAutocomplete()
+            )
+                return;
+
+            const isAutocomplete = interaction.isAutocomplete();
 
             const targetCommand = this.#data.commands.find(
                 (cmd) => cmd.data.name === interaction.commandName,
@@ -169,7 +173,10 @@ export class CommandHandler {
 
             if (!targetCommand) return;
 
-            const { data, options, run, ...rest } = targetCommand;
+            const { data, options, run, autocompleteRun, ...rest } = targetCommand;
+
+            // skip if autocomplete handler is not defined
+            if (isAutocomplete && !autocompleteRun) return;
 
             const commandObj = {
                 data: targetCommand.data,
@@ -217,11 +224,13 @@ export class CommandHandler {
 
             if (!canRun) return;
 
-            targetCommand.run({
+            const context = {
                 interaction,
                 client: this.#data.client,
                 handler: this.#data.commandkitInstance,
-            });
+            };
+
+            await targetCommand[isAutocomplete ? 'autocompleteRun' : 'run']!(context);
         });
     }
 

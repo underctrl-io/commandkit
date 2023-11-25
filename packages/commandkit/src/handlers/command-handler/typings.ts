@@ -1,4 +1,9 @@
-import { ChatInputCommandInteraction, Client, ContextMenuCommandInteraction } from 'discord.js';
+import {
+    AutocompleteInteraction,
+    ChatInputCommandInteraction,
+    Client,
+    ContextMenuCommandInteraction,
+} from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { CommandFileObject } from '../../typings';
 import { ValidationHandler } from '../validation-handler/ValidationHandler';
@@ -86,7 +91,10 @@ export interface BuiltInValidationParams {
     /**
      * The interaction of the target command.
      */
-    interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction;
+    interaction:
+        | ChatInputCommandInteraction
+        | ContextMenuCommandInteraction
+        | AutocompleteInteraction;
 
     /**
      * The command handler's data.
