@@ -3,9 +3,7 @@ import type { CommandHandler } from '../command-handler/CommandHandler';
 import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
 import colors from '../../utils/colors';
-import rdfc from 'rfdc';
-
-const clone = rdfc();
+import { clone } from '../../utils/clone';
 
 /**
  * A handler for client events.

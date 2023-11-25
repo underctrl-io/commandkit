@@ -1,7 +1,7 @@
 // This types file is for development
 // For exported types use ./types/index.ts
 
-import type { Client, Interaction } from 'discord.js';
+import type { CacheType, Client, Interaction } from 'discord.js';
 import type { CommandData, CommandKit, CommandOptions, ReloadType } from './index';
 import type { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 
@@ -65,12 +65,35 @@ export interface CommandKitData extends CommandKitOptions {
 }
 
 /**
+ * Represents a command context.
+ */
+export interface CommandContext<T extends Interaction, Cached extends CacheType> {
+    /**
+     * The interaction that triggered this command.
+     */
+    interaction: Interaction<CacheType>;
+    /**
+     * The client that instantiated this command.
+     */
+    client: Client;
+    /**
+     * The command data.
+     */
+    handler: CommandKit;
+}
+
+/**
  * Represents a command file.
  */
 export interface CommandFileObject {
     data: CommandData;
     options?: CommandOptions;
-    run: ({}: { interaction: Interaction; client: Client; handler: CommandKit }) => void;
+    run: <Cached extends CacheType = CacheType>(
+        ctx: CommandContext<Interaction, Cached>,
+    ) => Awaited<void>;
+    autocompleteRun?: <Cached extends CacheType = CacheType>(
+        ctx: CommandContext<Interaction, Cached>,
+    ) => Awaited<void>;
     filePath: string;
     category: string | null;
     [key: string]: any;

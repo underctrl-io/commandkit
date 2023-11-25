@@ -10,8 +10,12 @@ import {
     ComponentType,
 } from 'discord.js';
 
+/**
+ * The handler to run when a button is clicked. This handler is called with the interaction as the first argument.
+ * If the first argument is null, it means that the interaction collector has been destroyed.
+ */
 export type CommandKitButtonBuilderInteractionCollectorDispatch = (
-    interaction: ButtonInteraction,
+    interaction: ButtonInteraction | null,
 ) => Awaitable<void>;
 
 export type CommandKitButtonBuilderInteractionCollectorDispatchContextData = {
@@ -133,6 +137,7 @@ export class ButtonKit extends ButtonBuilder {
     }
 
     #destroyCollector() {
+        this.#onClickHandler?.(null);
         this.#collector?.stop('end');
         this.#collector?.removeAllListeners();
         this.#collector = null;

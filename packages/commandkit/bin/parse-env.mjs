@@ -15,6 +15,15 @@ const VALUE_PREFIXES = {
     DATE: 'DATE::',
 };
 
+function catcher(fn) {
+    try {
+        fn();
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 export function parseEnv(src) {
     for (const key in src) {
         const value = src[key];
@@ -22,7 +31,7 @@ export function parseEnv(src) {
         if (typeof value !== 'string') continue;
 
         if (value.startsWith(VALUE_PREFIXES.JSON)) {
-            src[key] = JSON.parse(value.replace(VALUE_PREFIXES.JSON, ''));
+            catcher(() => (src[key] = JSON.parse(value.replace(VALUE_PREFIXES.JSON, ''))));
             continue;
         }
 

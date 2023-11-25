@@ -2,6 +2,7 @@ import type { BuiltInValidationParams } from '../typings';
 import { EmbedBuilder } from 'discord.js';
 
 export default function ({ interaction, targetCommand }: BuiltInValidationParams) {
+    if (interaction.isAutocomplete()) return;
     const userPermissions = interaction.memberPermissions;
     let userPermissionsRequired = targetCommand.options?.userPermissions;
     let missingUserPermissions: string[] = [];
