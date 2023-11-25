@@ -2,7 +2,6 @@ import type { DocsThemeConfig } from 'nextra-theme-docs';
 import { useConfig } from 'nextra-theme-docs';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { MetaHTMLAttributes } from 'react';
 
 const config: DocsThemeConfig = {
     logo: (
@@ -71,9 +70,8 @@ const config: DocsThemeConfig = {
             <span>
                 MIT {new Date().getFullYear()} ©{' '}
                 <a href="https://github.com/underctrl-io/commandkit" target="_blank">
-                    CommandKit
+                    Under Ctrl
                 </a>
-                .
             </span>
         ),
     },
