@@ -31,7 +31,7 @@ export function parseEnv(src) {
         if (typeof value !== 'string') continue;
 
         if (value.startsWith(VALUE_PREFIXES.JSON)) {
-            catcher(() => src[key] = JSON.parse(value.replace(VALUE_PREFIXES.JSON, '')));
+            catcher(() => (src[key] = JSON.parse(value.replace(VALUE_PREFIXES.JSON, ''))));
             continue;
         }
 

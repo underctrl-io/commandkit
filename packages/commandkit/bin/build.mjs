@@ -58,25 +58,27 @@ export async function bootstrapProductionBuild(config) {
 async function injectShims(outDir, main, antiCrash) {
     const path = join(process.cwd(), outDir, main);
 
-    const antiCrashScript = antiCrash ? [
-        '\n\n// --- CommandKit Anti-Crash Monitor ---',
-        ';(()=>{',
-        "  'use strict';",
-        "  // 'uncaughtException' event is supposed to be used to perform synchronous cleanup before shutting down the process",
-        '  // instead of using it as a means to resume operation.',
-        '  // But it exists here due to compatibility reasons with discord bot ecosystem.',
-        "  const p = (t) => `\\x1b[33m${t}\\x1b[0m`, b = '[CommandKit Anti-Crash Monitor]', l = console.log, e1 = 'uncaughtException', e2 = 'unhandledRejection';",
-        '  if (!process.eventNames().includes(e1)) // skip if it is already handled',
-        '    process.on(e1, (e) => {',
-        '      l(p(`${b} Uncaught Exception`)); l(p(b), p(e.stack || e));',
-        '    })',
-        '  if (!process.eventNames().includes(e2)) // skip if it is already handled',
-        '    process.on(e2, (r) => {',
-        '      l(p(`${b} Unhandled promise rejection`)); l(p(`${b} ${r.stack || r}`));',
-        '    });',
-        '})();',
-        '// --- CommandKit Anti-Crash Monitor ---\n',
-    ].join('\n') : '';
+    const antiCrashScript = antiCrash
+        ? [
+              '\n\n// --- CommandKit Anti-Crash Monitor ---',
+              ';(()=>{',
+              "  'use strict';",
+              "  // 'uncaughtException' event is supposed to be used to perform synchronous cleanup before shutting down the process",
+              '  // instead of using it as a means to resume operation.',
+              '  // But it exists here due to compatibility reasons with discord bot ecosystem.',
+              "  const p = (t) => `\\x1b[33m${t}\\x1b[0m`, b = '[CommandKit Anti-Crash Monitor]', l = console.log, e1 = 'uncaughtException', e2 = 'unhandledRejection';",
+              '  if (!process.eventNames().includes(e1)) // skip if it is already handled',
+              '    process.on(e1, (e) => {',
+              '      l(p(`${b} Uncaught Exception`)); l(p(b), p(e.stack || e));',
+              '    })',
+              '  if (!process.eventNames().includes(e2)) // skip if it is already handled',
+              '    process.on(e2, (r) => {',
+              '      l(p(`${b} Unhandled promise rejection`)); l(p(`${b} ${r.stack || r}`));',
+              '    });',
+              '})();',
+              '// --- CommandKit Anti-Crash Monitor ---\n',
+          ].join('\n')
+        : '';
 
     const finalScript = [antiCrashScript].join('\n');
 
