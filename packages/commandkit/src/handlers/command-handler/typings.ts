@@ -1,12 +1,12 @@
-import {
+import type {
     AutocompleteInteraction,
     ChatInputCommandInteraction,
     Client,
     ContextMenuCommandInteraction,
 } from 'discord.js';
-import { CommandKit } from '../../CommandKit';
-import { CommandFileObject } from '../../typings';
-import { ValidationHandler } from '../validation-handler/ValidationHandler';
+import type { CommandKit } from '../../CommandKit';
+import type { CommandFileObject } from '../../typings';
+import type { ValidationHandler } from '../validation-handler/ValidationHandler';
 
 /**
  * Command handler options.

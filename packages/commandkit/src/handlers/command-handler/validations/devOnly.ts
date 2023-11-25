@@ -1,4 +1,4 @@
-import { BuiltInValidationParams } from '../typings';
+import type { BuiltInValidationParams } from '../typings';
 
 export default function ({ interaction, targetCommand, handlerData }: BuiltInValidationParams) {
     if (interaction.isAutocomplete()) return;

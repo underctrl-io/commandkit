@@ -1,7 +1,7 @@
 // This types file is for development
 // For exported types use ./types/index.ts
 
-import type { AutocompleteInteraction, CacheType, Client, Interaction } from 'discord.js';
+import type { CacheType, Client, Interaction } from 'discord.js';
 import type { CommandData, CommandKit, CommandOptions, ReloadType } from './index';
 import type { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 

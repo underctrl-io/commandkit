@@ -1,11 +1,11 @@
-import {
-    type RESTPostAPIApplicationCommandsJSONBody,
-    type MessageContextMenuCommandInteraction,
-    type UserContextMenuCommandInteraction,
-    type ContextMenuCommandInteraction,
-    type ChatInputCommandInteraction,
-    type PermissionsString,
-    type Client,
+import type {
+    RESTPostAPIApplicationCommandsJSONBody,
+    MessageContextMenuCommandInteraction,
+    UserContextMenuCommandInteraction,
+    ContextMenuCommandInteraction,
+    ChatInputCommandInteraction,
+    PermissionsString,
+    Client,
     AutocompleteInteraction,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
