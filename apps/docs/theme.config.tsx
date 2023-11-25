@@ -77,10 +77,6 @@ const config: DocsThemeConfig = {
             </span>
         ),
     },
-    darkMode: false,
-    nextThemes: {
-        defaultTheme: 'dark',
-    },
 };
 
 export default config;
