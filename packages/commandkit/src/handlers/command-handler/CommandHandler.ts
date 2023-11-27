@@ -171,7 +171,14 @@ export class CommandHandler {
                 (cmd) => cmd.data.name === interaction.commandName,
             );
 
-            if (!targetCommand) return;
+            if (!targetCommand) {
+                console.log(
+                    colors.yellow(
+                        `⏩ Ignoring: Command ${interaction.commandName} does not have a file`,
+                    ),
+                );
+                return;
+            }
 
             const { data, options, run, autocompleteRun, ...rest } = targetCommand;
 
