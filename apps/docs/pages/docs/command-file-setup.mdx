@@ -83,16 +83,18 @@ Here's an example `content` command which replies with the content of the target
 <Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
     <Tabs.Tab>
         ```js filename="commands/misc/content.js" copy
-        const { CommandType } = require('commandkit');
-        
+        const { ApplicationCommandType } = require("discord.js");
+
         module.exports = {
             data: {
                 name: 'content',
-                type: CommandType.Message,
+                type: ApplicationCommandType.Message,
             },
 
             run: ({ interaction, client, handler }) => {
-                interaction.reply(`The message is: ${interaction.targetMessage.content}`);
+                if (interaction.isMessageContextMenuCommand()) {
+                    interaction.reply(`The message is: ${interaction.targetMessage}`);
+                }
             },
 
             options: {
@@ -107,15 +109,17 @@ Here's an example `content` command which replies with the content of the target
     </Tabs.Tab>
     <Tabs.Tab>
         ```js filename="commands/misc/content.js" copy
-        import { CommandType } from 'commandkit';
+        import { ApplicationCommandType } from "discord.js";
 
         export const data = {
             name: 'content',
-            type: CommandType.Message,
+            type: ApplicationCommandType.Message,
         }
 
         export function run({ interaction, client, handler }) {
-            interaction.reply(`The message is: ${interaction.targetMessage}`);
+            if (interaction.isMessageContextMenuCommand()) {
+                interaction.reply(`The message is: ${interaction.targetMessage}`);
+            }
         }
 
         export const options = {
@@ -129,15 +133,18 @@ Here's an example `content` command which replies with the content of the target
     </Tabs.Tab>
     <Tabs.Tab>
         ```ts filename="commands/misc/content.ts" copy
-        import { CommandType, type CommandData, type ContextMenuCommandProps, type CommandOptions } from 'commandkit';
+        import { type CommandData, type ContextMenuCommandProps, type CommandOptions } from 'commandkit';
+        import { ApplicationCommandType } from "discord.js";
 
         export const data: CommandData = {
             name: 'content',
-            type: CommandType.Message,
+            type: ApplicationCommandType.Message,
         }
 
         export function run({ interaction, client, handler }: ContextMenuCommandProps) {
-            interaction.reply(`The message is: ${interaction.targetMessage}`);
+            if (interaction.isMessageContextMenuCommand()) {
+                interaction.reply(`The message is: ${interaction.targetMessage}`);
+            }
         }
 
         export const options: CommandOptions = {
