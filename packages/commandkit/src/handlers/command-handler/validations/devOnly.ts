@@ -2,6 +2,7 @@ import type { BuiltInValidationParams } from '../typings';
 
 export default function ({ interaction, targetCommand, handlerData }: BuiltInValidationParams) {
     if (interaction.isAutocomplete()) return;
+
     if (targetCommand.options?.devOnly) {
         if (interaction.inGuild() && !handlerData.devGuildIds.includes(interaction.guildId)) {
             interaction.reply({

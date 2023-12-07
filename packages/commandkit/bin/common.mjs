@@ -1,8 +1,8 @@
 // @ts-check
 
+import { rimrafSync } from 'rimraf';
 import { join } from 'node:path';
 import fs from 'node:fs';
-import { rimrafSync } from 'rimraf';
 
 const resetColor = '\x1b[0m';
 

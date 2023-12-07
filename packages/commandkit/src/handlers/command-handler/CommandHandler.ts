@@ -3,12 +3,12 @@ import type { CommandFileObject, ReloadOptions } from '../../typings';
 
 import { toFileURL } from '../../utils/resolve-file-url';
 import { getFilePaths } from '../../utils/get-paths';
+import { clone } from '../../utils/clone';
 
 import loadCommandsWithRest from './functions/loadCommandsWithRest';
 import registerCommands from './functions/registerCommands';
-import builtInValidations from './validations';
+import builtInValidationsFunctions from './validations';
 import colors from '../../utils/colors';
-import { clone } from '../../utils/clone';
 
 /**
  * A handler for client application commands.
@@ -27,7 +27,7 @@ export class CommandHandler {
     async init() {
         await this.#buildCommands();
 
-        this.#buildValidations();
+        this.#buildBuiltInValidations();
 
         const devOnlyCommands = this.#data.commands.filter((cmd) => cmd.options?.devOnly);
 
@@ -150,9 +150,9 @@ export class CommandHandler {
         }
     }
 
-    #buildValidations() {
-        for (const validationFunction of builtInValidations) {
-            this.#data.builtInValidations.push(validationFunction);
+    #buildBuiltInValidations() {
+        for (const builtInValidationFunction of builtInValidationsFunctions) {
+            this.#data.builtInValidations.push(builtInValidationFunction);
         }
     }
 
@@ -175,7 +175,7 @@ export class CommandHandler {
 
             const { data, options, run, autocompleteRun, ...rest } = targetCommand;
 
-            // skip if autocomplete handler is not defined
+            // Skip if autocomplete handler is not defined
             if (isAutocomplete && !autocompleteRun) return;
 
             const commandObj = {
@@ -239,9 +239,15 @@ export class CommandHandler {
     }
 
     async reloadCommands(type?: ReloadOptions) {
+        if (!this.#data.commandsPath) {
+            throw new Error(
+                'Cannot reload commands as "commandsPath" was not provided when instantiating CommandKit.',
+            );
+        }
+
         this.#data.commands = [];
 
-        // Rebuild commands tree
+        // Re-build commands tree
         await this.#buildCommands();
 
         if (this.#data.bulkRegister) {
@@ -262,6 +268,4 @@ export class CommandHandler {
             });
         }
     }
-
-    async useUpdatedValidations() {}
 }

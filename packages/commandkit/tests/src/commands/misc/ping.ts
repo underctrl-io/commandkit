@@ -46,7 +46,7 @@ export async function run({ interaction, client }: SlashCommandProps) {
     const row = new ActionRowBuilder<ButtonKit>().addComponents(button);
 
     const message = await interaction.reply({
-        content: 'Click the button',
+        content: 'Click one of the buttons',
         components: [row],
         fetchReply: true,
     });

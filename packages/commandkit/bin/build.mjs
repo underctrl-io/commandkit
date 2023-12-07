@@ -1,10 +1,10 @@
 // @ts-check
 
+import { appendFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { build } from 'tsup';
 import { Colors, erase, findCommandKitConfig, panic, write } from './common.mjs';
 import ora from 'ora';
-import { appendFile } from 'node:fs/promises';
-import { join } from 'node:path';
 
 export async function bootstrapProductionBuild(config) {
     const {

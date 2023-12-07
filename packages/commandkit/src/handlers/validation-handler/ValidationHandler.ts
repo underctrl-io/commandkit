@@ -1,8 +1,8 @@
 import type { ValidationHandlerData, ValidationHandlerOptions } from './typings';
 import { toFileURL } from '../../utils/resolve-file-url';
 import { getFilePaths } from '../../utils/get-paths';
-import colors from '../../utils/colors';
 import { clone } from '../../utils/clone';
+import colors from '../../utils/colors';
 
 /**
  * A handler for command validations.
@@ -18,7 +18,7 @@ export class ValidationHandler {
     }
 
     async init() {
-        await this.#buildValidations();
+        this.#data.validations = await this.#buildValidations();
     }
 
     async #buildValidations() {
@@ -26,6 +26,8 @@ export class ValidationHandler {
 
         const validationPaths = await getFilePaths(this.#data.validationsPath, true);
         const validationFilePaths = validationPaths.filter((path) => allowedExtensions.test(path));
+
+        const validationFunctions: Function[] = [];
 
         for (const validationFilePath of validationFilePaths) {
             const modulePath = toFileURL(validationFilePath);
@@ -54,8 +56,10 @@ export class ValidationHandler {
                 continue;
             }
 
-            this.#data.validations.push(validationFunction);
+            validationFunctions.push(validationFunction);
         }
+
+        return validationFunctions;
     }
 
     get validations() {
@@ -63,8 +67,14 @@ export class ValidationHandler {
     }
 
     async reloadValidations() {
-        this.#data.validations = [];
+        if (!this.#data.validationsPath) {
+            throw new Error(
+                'Cannot reload validations as "validationsPath" was not provided when instantiating CommandKit.',
+            );
+        }
 
-        await this.#buildValidations();
+        const newValidations = await this.#buildValidations();
+
+        this.#data.validations = newValidations;
     }
 }

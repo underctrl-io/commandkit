@@ -1,11 +1,11 @@
 // @ts-check
 import { config as dotenv } from 'dotenv';
-import { build } from 'tsup';
-import child_process from 'node:child_process';
-import ora from 'ora';
 import { join } from 'node:path';
+import { build } from 'tsup';
 import { Colors, erase, findCommandKitConfig, panic, write } from './common.mjs';
 import { parseEnv } from './parse-env.mjs';
+import child_process from 'node:child_process';
+import ora from 'ora';
 
 const RESTARTING_MSG_PATTERN = /^Restarting '|".+'|"\n?$/;
 const FAILED_RUNNING_PATTERN = /^Failed running '.+'|"\n?$/;

@@ -1,10 +1,10 @@
 // @ts-check
 import { config as dotenv } from 'dotenv';
-import child_process from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { Colors, findCommandKitConfig, panic, write } from './common.mjs';
-import { existsSync } from 'node:fs';
 import { parseEnv } from './parse-env.mjs';
+import child_process from 'node:child_process';
 
 export async function bootstrapProductionServer(config) {
     const {

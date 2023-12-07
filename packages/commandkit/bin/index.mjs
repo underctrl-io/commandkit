@@ -4,8 +4,8 @@
 
 import { Command } from 'commander';
 import { bootstrapDevelopmentServer } from './development.mjs';
-import { bootstrapProductionBuild } from './build.mjs';
 import { bootstrapProductionServer } from './production.mjs';
+import { bootstrapProductionBuild } from './build.mjs';
 
 const program = new Command('commandkit');
 

@@ -2,8 +2,8 @@ import type { EventHandlerOptions, EventHandlerData } from './typings';
 import type { CommandHandler } from '../command-handler/CommandHandler';
 import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
 import { toFileURL } from '../../utils/resolve-file-url';
-import colors from '../../utils/colors';
 import { clone } from '../../utils/clone';
+import colors from '../../utils/colors';
 
 /**
  * A handler for client events.
@@ -97,6 +97,12 @@ export class EventHandler {
     }
 
     async reloadEvents(commandHandler?: CommandHandler) {
+        if (!this.#data.eventsPath) {
+            throw new Error(
+                'Cannot reload events as "eventsPath" was not provided when instantiating CommandKit.',
+            );
+        }
+
         this.#data.events = [];
 
         await this.#buildEvents();
