@@ -6,17 +6,16 @@ export const data: CommandData = {
 };
 
 export async function run({ interaction, handler }: SlashCommandProps) {
-    interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
-    await handler.reloadCommands();
-    console.log('Reloaded commands');
+    // await handler.reloadCommands();
+    // console.log('Reloaded commands');
+
+    // await handler.reloadEvents();
+    // console.log('Reloaded events');
 
     await handler.reloadValidations();
-    console.log('Reloaded validations');
-
-    await handler.reloadEvents();
-    console.log('Reloaded events');
-
+    console.log('Reloaded validations.');
     interaction.followUp('Done!');
 }
 
