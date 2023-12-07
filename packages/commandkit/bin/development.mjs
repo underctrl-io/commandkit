@@ -6,6 +6,8 @@ import { Colors, erase, findCommandKitConfig, panic, write } from './common.mjs'
 import { parseEnv } from './parse-env.mjs';
 import child_process from 'node:child_process';
 import ora from 'ora';
+import { watchFiles } from './watcher.mjs';
+import { getDependencies } from './dependency-tracker.mjs';
 
 const RESTARTING_MSG_PATTERN = /^Restarting '|".+'|"\n?$/;
 const FAILED_RUNNING_PATTERN = /^Failed running '.+'|"\n?$/;
@@ -33,11 +35,11 @@ export async function bootstrapDevelopmentServer(opts) {
     const status = ora(Colors.green('Starting a development server...\n')).start();
     const start = performance.now();
 
-    if (watchMode && !nodeOptions.includes('--watch')) {
-        nodeOptions.push('--watch');
-    } else if (!watchMode && nodeOptions.includes('--watch')) {
-        nodeOptions.splice(nodeOptions.indexOf('--watch'), 1);
-    }
+    // if (watchMode && !nodeOptions.includes('--watch')) {
+    //     nodeOptions.push('--watch');
+    // } else if (!watchMode && nodeOptions.includes('--watch')) {
+    //     nodeOptions.splice(nodeOptions.indexOf('--watch'), 1);
+    // }
 
     if (!nodeOptions.includes('--enable-source-maps')) {
         nodeOptions.push('--enable-source-maps');
