@@ -8,19 +8,18 @@ import Link from 'next/link';
 
 export function FeatureList() {
     return (
-        <section className="w-96 mx-auto md:w-[700px] lg:w-[850px]">
+        <section className="max-w-[400px] md:max-w-none mx-auto md:w-[700px] lg:w-[850px]">
             <h2>Features</h2>
 
             <ul>
                 <li>Beginner friendly 🚀</li>
-                <li>Supports slash + context menu commands ✅</li>
-                <li>Supports multiple development servers 🤝</li>
-                <li>Supports multiple bot developers 👥</li>
+                <li>Slash + context menu commands support ✅</li>
+                <li>Multiple dev guilds, users, & roles support 🤝</li>
                 <li>Automatic command updates 🤖</li>
-                <li>Object oriented 💻</li>
-                <li>Easy-to-use CLI 🧑‍💻</li>
+                <li>REST registration behaviour 📍</li>
+                <li>And much more! 🧪</li>
             </ul>
-        </section>
+    </section>
     )
 
 }
@@ -50,7 +49,7 @@ export default function Home() {
                     </p>
 
                     <div className="flex items-center justify-center gap-3 mt-10 md:justify-start text-neutral-100">
-                        <Link href='/docs/installation' className="font-semibold bg-[#b079fc] py-2 px-4 rounded-full">Documentation</Link>
+                        <Link href='/docs/installation' className="font-semibold bg-[#b079fc] py-2 px-4 rounded-full">Docs</Link>
                         <Link href='https://github.com/underctrl-io/commandkit' className="font-semibold bg-blue-500 py-2 px-4 rounded-full" target="_blank" rel="noopener noreferrer">GitHub</Link>
                         <Link href='https://npmjs.com/package/commandkit' className="font-semibold bg-[#fc7993] py-2 px-4 rounded-full">npm</Link>
                     </div>
