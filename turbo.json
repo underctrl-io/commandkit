@@ -5,7 +5,6 @@
         "build": {},
         "deploy": {},
         "deploy-dev": {},
-        "test": {},
         "dev": {
             "cache": false,
             "persistent": true
