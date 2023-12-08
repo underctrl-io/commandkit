@@ -74,4 +74,7 @@ export async function run({ interaction, client }: SlashCommandProps) {
 
 export const options: CommandOptions = {
     devOnly: true,
+
+    // Test deprecation warning.
+    guildOnly: true,
 };
