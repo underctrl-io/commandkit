@@ -149,7 +149,7 @@ export class CommandHandler {
             if (commandObj.options?.guildOnly) {
                 console.log(
                     colors.yellow(
-                        `ℹ️ Deprecation Warning: The command "${commandObj.data.name}" uses options.guildOnly, which will be deprecated soon. Please use the data.dm_permission boolean instead.`,
+                        `ℹ️ Deprecation warning: The command "${commandObj.data.name}" uses "options.guildOnly", which will be deprecated soon. Use "data.dm_permission" instead.`,
                     ),
                 );
             }
