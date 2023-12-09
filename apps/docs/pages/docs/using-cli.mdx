@@ -1,0 +1,52 @@
+import { Callout } from 'nextra/components';
+
+# Using CommandKit CLI
+
+<Callout type="warning">
+    This is currently only available in the [development
+    version](/docs/installation#development-version) of CommandKit.
+</Callout>
+
+CommandKit CLI allows you to start and build your bot application.
+
+To get a list of the available CLI commands, run the following command inside your project directory:
+
+```sh
+npx commandkit --help
+```
+
+The output should look something like this:
+
+```sh
+Usage: commandkit [options] [command]
+
+Options:
+  -h, --help       display help for command
+
+Commands:
+  dev [options]    Start your bot in development mode.
+  start [options]  Start your bot in production mode after running the build command.
+  build [options]  Build your project for production usage.
+  help [command]   display help for command
+```
+
+<Callout type="info">
+    CommandKit does not perform type checking on your code. You need to do that yourself using{' '}
+    <code>tsc --noEmit</code> command or any other tool of your choice.
+</Callout>
+
+# Available commands
+
+## Build
+
+`commandkit build` creates an optimized production build of your bot application. By default, commandkit emits the build to `dist/` directory in your project. It supports typescript out of the box.
+
+CommandKit also injects anti-crash script in your production build to prevent your bot from crashing due to cases like unhandled promise rejections. Although, it's recommended to handle these cases yourself. You can disable this behavior by setting `antiCrash: false` in your `commandkit.config.js` file.
+
+## Development
+
+`commandkit dev` starts your bot in development mode. It supports hot reloading out of the box to automatically restart your bot when you make changes to your code. CommandKit automatically loads your environment variables from `.env` file in your project directory, without you having to worry about it. It also supports typescript out of the box.
+
+## Production
+
+`commandkit start` starts your bot in production mode. You need to run `commandkit build` before running this command. This command also loads the environment variables from `.env` file in your project directory.
