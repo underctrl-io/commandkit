@@ -1,10 +1,12 @@
 {
     "installation": "Installation",
     "commandkit-setup": "CommandKit Setup",
+    "commandkit.config.js-options": "commandkit.config.js Options",
     "command-file-setup": "Commands Setup",
     "event-file-setup": "Events Setup",
     "validation-file-setup": "Validations Setup",
     "buttonkit": "Using ButtonKit",
+    "using-cli": "Using CommandKit CLI",
     "using-signals": "Using Signals",
     "migrating-from-djs-commander": "Migrating from DJS-Commander"
 }

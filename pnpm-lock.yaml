@@ -59,6 +59,9 @@ importers:
       commander:
         specifier: ^11.1.0
         version: 11.1.0
+      dotenv:
+        specifier: ^16.3.1
+        version: 16.3.1
       ora:
         specifier: ^7.0.1
         version: 7.0.1
@@ -78,9 +81,6 @@ importers:
       discord.js:
         specifier: ^14.13.0
         version: 14.13.0
-      dotenv:
-        specifier: ^16.3.1
-        version: 16.3.1
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -1634,7 +1634,7 @@ packages:
   /dotenv@16.3.1:
     resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
     engines: {node: '>=12'}
-    dev: true
+    dev: false
 
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
