@@ -34,7 +34,7 @@ export class CommandHandler {
         if (devOnlyCommands.length && !this.#data.devGuildIds.length) {
             console.log(
                 colors.yellow(
-                    'ℹ️ Warning: You have commands marked as "devOnly" but "devGuildIds" has not been set.',
+                    'ℹ️ Warning: You have commands marked as "devOnly", but "devGuildIds" have not been set.',
                 ),
             );
         }
@@ -46,7 +46,7 @@ export class CommandHandler {
         ) {
             console.log(
                 colors.yellow(
-                    'ℹ️ Warning: You have commands marked as "devOnly" but not "devUserIds" or "devRoleIds" were set.',
+                    'ℹ️ Warning: You have commands marked as "devOnly", but "devUserIds" or "devRoleIds" have not been set.',
                 ),
             );
         }
