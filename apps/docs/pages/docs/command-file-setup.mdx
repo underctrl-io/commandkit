@@ -92,7 +92,7 @@ Here's an example `content` command which replies with the content of the target
             },
 
             run: ({ interaction, client, handler }) => {
-                interaction.reply(`The message is: ${interaction.targetMessage}`);
+                interaction.reply(`The message is: ${interaction.targetMessage.content}`);
             },
 
             options: {
@@ -115,7 +115,7 @@ Here's an example `content` command which replies with the content of the target
         }
 
         export function run({ interaction, client, handler }) {
-            interaction.reply(`The message is: ${interaction.targetMessage}`);
+            interaction.reply(`The message is: ${interaction.targetMessage.content}`);
         }
 
         export const options = {
@@ -138,7 +138,7 @@ Here's an example `content` command which replies with the content of the target
         }
 
         export function run({ interaction, client, handler }: ContextMenuCommandProps) {
-            interaction.reply(`The message is: ${interaction.targetMessage}`);
+            interaction.reply(`The message is: ${interaction.targetMessage.content}`);
         }
 
         export const options: CommandOptions = {
