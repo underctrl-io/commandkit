@@ -1,0 +1,110 @@
+import { Callout } from 'nextra/components';
+
+# CommandKit Configuration
+
+CommandKit CLI can be configured using `commandkit.config` file in the root of your project directory (for example, by `package.json`). You can use either of the following files:
+
+-   `commandkit.js`
+-   `commandkit.config.js`
+-   `commandkit.mjs`
+-   `commandkit.config.mjs`
+-   `commandkit.cjs`
+-   `commandkit.config.cjs`
+-   `commandkit.json`
+-   `commandkit.config.json`
+
+Throughout this guide, we'll be using `commandkit.config.mjs` as an example.
+
+The following is the sample configuration required to run your bot:
+
+```js filename="commandkit.config.mjs" copy
+import { defineConfig } from 'commandkit';
+
+export default defineConfig({
+    src: 'src', // The source directory of your project.
+    main: 'index.mjs', // The JavaScript entry point of your project.
+});
+```
+
+## Options
+
+### `src`
+
+-   Type: `string`
+
+The source directory of the project where your source code lives.
+
+### `main`
+
+-   Type: `string`
+
+The entry point to your project.
+
+Example: If your source is structured as `src/index.ts`, this option must be set to `index.mjs`. This is because CommandKit always compiles your source code to esm format.
+
+<Callout type="warning">
+    The "src" part in this option isn't required because it's already defined in the `src` option.
+</Callout>
+
+### `watch` (optional)
+
+-   Type: `boolean`
+-   Default: `true`
+
+Whether to watch for file changes or not.
+
+### `outDir` (optional)
+
+-   Type: `string`
+-   Default: `"dist"`
+
+The output directory to emit the production build to.
+
+### `envExtra` (optional)
+
+-   Type: `boolean`
+-   Default: `true`
+
+Extra env utilities to load. This allows you to load environment variables in different formats, like `Date`, `JSON`, `Boolean`, etc.
+
+### `nodeOptions` (optional)
+
+-   Type: `string[]`
+-   Default: `[]`
+
+Options to pass to Node.js.
+
+### `clearRestartLogs` (optional)
+
+-   Type: `boolean`
+-   Default: `true`
+
+Whether or not to clear default restart logs.
+
+### `minify` (optional)
+
+-   Type: `boolean`
+-   Default: `false`
+
+Whether or not to minify the production build.
+
+### `sourcemap` (optional)
+
+-   Type: `boolean` | `"inline"`
+-   Default: `false`
+
+Whether or not to include sourcemaps in the production build.
+
+### `antiCrash` (optional)
+
+-   Type: `boolean`
+-   Default: `true`
+
+Whether or not to inject anti-crash script in the production build.
+
+### `requirePolyfill` (optional)
+
+-   Type: `boolean`
+-   Default: `true`
+
+Whether or not to polyfill `require` function.
