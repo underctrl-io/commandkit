@@ -91,7 +91,7 @@ export interface CommandFileObject {
     run: <Cached extends CacheType = CacheType>(
         ctx: CommandContext<Interaction, Cached>,
     ) => Awaited<void>;
-    autocompleteRun?: <Cached extends CacheType = CacheType>(
+    autocomplete?: <Cached extends CacheType = CacheType>(
         ctx: CommandContext<Interaction, Cached>,
     ) => Awaited<void>;
     filePath: string;

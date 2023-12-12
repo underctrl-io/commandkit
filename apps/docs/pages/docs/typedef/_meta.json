@@ -1,4 +1,5 @@
 {
+    "AutocompleteProps": "AutocompleteProps",
     "CommandData": "CommandData",
     "CommandKit": "CommandKit",
     "CommandObject": "CommandObject",

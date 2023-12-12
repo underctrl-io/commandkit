@@ -4,7 +4,7 @@ import {
     CommandOptions,
     CommandData,
     ButtonKit,
-    AutocompleteCommandProps,
+    AutocompleteProps,
 } from '../../../../src/index';
 
 export const data: CommandData = {
@@ -26,7 +26,7 @@ const tests = Array.from({ length: 10 }, (_, i) => ({
     value: `${i}_test`,
 }));
 
-export async function autocompleteRun({ interaction }: AutocompleteCommandProps) {
+export async function autocomplete({ interaction }: AutocompleteProps) {
     const arg = interaction.options.getString('test', false);
     if (!arg) return interaction.respond(tests);
 

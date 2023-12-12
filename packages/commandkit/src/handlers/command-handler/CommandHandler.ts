@@ -181,10 +181,10 @@ export class CommandHandler {
 
             if (!targetCommand) return;
 
-            const { data, options, run, autocompleteRun, ...rest } = targetCommand;
+            const { data, options, run, autocomplete, ...rest } = targetCommand;
 
             // Skip if autocomplete handler is not defined
-            if (isAutocomplete && !autocompleteRun) return;
+            if (isAutocomplete && !autocomplete) return;
 
             const commandObj = {
                 data: targetCommand.data,
@@ -238,7 +238,7 @@ export class CommandHandler {
                 handler: this.#data.commandkitInstance,
             };
 
-            await targetCommand[isAutocomplete ? 'autocompleteRun' : 'run']!(context);
+            await targetCommand[isAutocomplete ? 'autocomplete' : 'run']!(context);
         });
     }
 

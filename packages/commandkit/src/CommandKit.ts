@@ -111,7 +111,7 @@ export class CommandKit {
         }
 
         const commands = this.#data.commandHandler.commands.map((cmd) => {
-            const { run, ...command } = cmd;
+            const { run, autocomplete, ...command } = cmd;
             return command;
         });
 
