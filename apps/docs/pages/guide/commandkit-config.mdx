@@ -26,6 +26,12 @@ export default defineConfig({
 });
 ```
 
+<Callout type="warning">
+    For CommandKit CLI on version `0.1.7` it's recommended to use an ESM project instead of CommonJS
+    due to the behavior of `require()`. If you're using CommonJS you'll have to use dynamic
+    `import()`. However, this is not an issue for TypeScript CommonJS projects.
+</Callout>
+
 ## Options
 
 ### `src`

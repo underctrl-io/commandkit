@@ -4,6 +4,12 @@ import { Callout } from 'nextra/components';
 
 CommandKit CLI allows you to start, build, and manage your bot application. It also includes features such as anti-crash so you can be rest assured your bot won't crash and go offline during production.
 
+<Callout type="warning">
+    For CommandKit CLI on version `0.1.7` it's recommended to use an ESM project instead of CommonJS
+    due to the behavior of `require()`. If you're using CommonJS you'll have to use dynamic
+    `import()`. However, this is not an issue for TypeScript CommonJS projects.
+</Callout>
+
 To get a list of the available CLI commands, run the following command inside your project directory:
 
 ```sh
@@ -26,8 +32,8 @@ Commands:
 ```
 
 <Callout type="info">
-    CommandKit does not perform type checking on your code. You need to do that yourself using{' '}
-    <code>tsc --noEmit</code> command or any other tool of your choice.
+    CommandKit does not perform type checking on your code. You need to do that yourself using `tsc
+    --noEmit` command or any other tool of your choice.
 </Callout>
 
 ## Available commands
