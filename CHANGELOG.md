@@ -17,3 +17,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 -   Broken docs links.
+
+### Added
+
+-   `ValidationProps` type definition.
