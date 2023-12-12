@@ -3,7 +3,12 @@
         "title": "Home",
         "type": "page"
     },
-    "docs": "Documentation",
-    "typedef": "Typedefs",
-    "enums": "Enums"
+    "guide": {
+        "title": "Guide",
+        "type": "page"
+    },
+    "docs": {
+        "title": "Documentation",
+        "type": "page"
+    }
 }
