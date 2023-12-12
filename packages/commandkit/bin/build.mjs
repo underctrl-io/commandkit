@@ -1,6 +1,6 @@
 // @ts-check
 
-import { appendFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { build } from 'tsup';
 import { Colors, erase, findCommandKitConfig, panic, write } from './common.mjs';
@@ -14,6 +14,7 @@ export async function bootstrapProductionBuild(config) {
         antiCrash = true,
         src,
         main,
+        requirePolyfill: polyfillRequire,
     } = await findCommandKitConfig(config);
 
     const status = ora('Creating optimized production build...\n').start();
@@ -39,7 +40,7 @@ export async function bootstrapProductionBuild(config) {
             entry: [src, '!dist', '!.commandkit', `!${outDir}`],
         });
 
-        await injectShims(outDir, main, antiCrash);
+        await injectShims(outDir, main, antiCrash, polyfillRequire);
 
         status.succeed(
             Colors.green(`Build completed in ${(performance.now() - start).toFixed(2)}ms!`),
@@ -55,14 +56,33 @@ export async function bootstrapProductionBuild(config) {
     }
 }
 
-async function injectShims(outDir, main, antiCrash) {
+export async function injectShims(outDir, main, antiCrash, polyfillRequire) {
     const path = join(process.cwd(), outDir, main);
+
+    const head = ['\n\n;await (async()=>{', "  'use strict';"].join('\n');
+    const tail = '\n})();';
+    const requireScript = polyfillRequire
+        ? [
+              '// --- CommandKit require() polyfill ---',
+              '  if (typeof require === "undefined") {',
+              '    const { createRequire } = await import("node:module");',
+              '    const __require = createRequire(import.meta.url);',
+              '    Object.defineProperty(globalThis, "require", {',
+              '      value: (id) => {',
+              '        return __require(id);',
+              '      },',
+              '      configurable: true,',
+              '      enumerable: false,',
+              '      writable: true,',
+              '    });',
+              '  }',
+              '// --- CommandKit require() polyfill ---',
+          ].join('\n')
+        : '';
 
     const antiCrashScript = antiCrash
         ? [
-              '\n\n// --- CommandKit Anti-Crash Monitor ---',
-              ';(()=>{',
-              "  'use strict';",
+              '// --- CommandKit Anti-Crash Monitor ---',
               "  // 'uncaughtException' event is supposed to be used to perform synchronous cleanup before shutting down the process",
               '  // instead of using it as a means to resume operation.',
               '  // But it exists here due to compatibility reasons with discord bot ecosystem.',
@@ -75,12 +95,12 @@ async function injectShims(outDir, main, antiCrash) {
               '    process.on(e2, (r) => {',
               '      l(p(`${b} Unhandled promise rejection`)); l(p(`${b} ${r.stack || r}`));',
               '    });',
-              '})();',
-              '// --- CommandKit Anti-Crash Monitor ---\n',
+              '// --- CommandKit Anti-Crash Monitor ---',
           ].join('\n')
         : '';
 
-    const finalScript = [antiCrashScript].join('\n');
+    const contents = await readFile(path, 'utf-8');
+    const finalScript = [head, requireScript, antiCrashScript, tail, '\n\n', contents].join('\n');
 
-    return appendFile(path, finalScript);
+    return writeFile(path, finalScript);
 }

@@ -6,6 +6,7 @@ import { Colors, erase, findCommandKitConfig, panic, write } from './common.mjs'
 import { parseEnv } from './parse-env.mjs';
 import child_process from 'node:child_process';
 import ora from 'ora';
+import { injectShims } from './build.mjs';
 
 const RESTARTING_MSG_PATTERN = /^Restarting '|".+'|"\n?$/;
 const FAILED_RUNNING_PATTERN = /^Failed running '.+'|"\n?$/;
@@ -19,6 +20,7 @@ export async function bootstrapDevelopmentServer(opts) {
         envExtra = true,
         clearRestartLogs = true,
         outDir,
+        requirePolyfill,
     } = await findCommandKitConfig(opts.config);
 
     if (!src) {
@@ -60,6 +62,8 @@ export async function bootstrapDevelopmentServer(opts) {
             entry: [src, '!dist', '!.commandkit', `!${outDir}`].filter(Boolean),
             watch: watchMode,
         });
+
+        await injectShims('.commandkit', main, false, requirePolyfill);
 
         status.succeed(
             Colors.green(`Dev server started in ${(performance.now() - start).toFixed(2)}ms!\n`),
