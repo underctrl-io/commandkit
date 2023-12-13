@@ -6,7 +6,7 @@ ButtonKit is an enhanced version of the native Discord.js [`ButtonBuilder`](http
 
 It is not recommended to use this to listen for button clicks forever since it creates collectors. For that purpose, it's recommended to use a regular "interactionCreate" event listener.
 
-## Usage
+## Handle button clicks
 
 <Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
     <Tabs.Tab>
@@ -98,7 +98,7 @@ In the above example, you may notice how similar `ButtonKit` is to the native Di
 
 Here's an empty `onClick` method without any arguments:
 
-```js
+```js copy
 const myButton = new ButtonKit()
     .setCustomId('custom_button')
     .setLabel('Click me!')
@@ -109,15 +109,15 @@ myButton.onClick();
 
 The first argument required by this function is your handler function which will acknowledge button clicks (interactions) handled by ButtonKit. You can handle them like so:
 
-```js
+```js copy
 myButton.onClick((buttonInteraction) => {
     buttonInteraction.reply('You clicked a button!');
 });
 ```
 
-However, the code above won't actually work since ButtonKit doesn't have any idea where it's supposed to specifically listen button clicks from. To fix that, you need to pass in a second argument which houses all the collector options. The `message` property is the message that ButtonKit will use to listen for button clicks.
+However, the code above won't actually work since ButtonKit doesn't have any idea where it's supposed to specifically listen button clicks from. To fix that, you need to pass in a second argument, also known as your [options]() which houses all the collector configuration. The `message` property is the message that ButtonKit will use to listen for button clicks.
 
-```js
+```js copy
 const row = new ActionRowBuilder().addComponents(myButton);
 const message = await channel.send({ components: [row] });
 
@@ -131,7 +131,7 @@ myButton.onClick(
 
 This also works with interaction replies. Just ensure you pass `fetchReply` alongside your components:
 
-```js
+```js copy
 const row = new ActionRowBuilder().addComponents(myButton);
 const message = await interaction.reply({ components: [row], fetchReply: true });
 
@@ -143,7 +143,7 @@ myButton.onClick(
 );
 ```
 
-## ButtonKit options
+## ButtonKit `onClick` options
 
 ### `message`
 
@@ -154,6 +154,7 @@ The message object that ButtonKit uses to listen for button clicks (interactions
 ### `time` (optional)
 
 -   Type: `number`
+-   Default: `86400000`
 
 The duration (in ms) the collector should run for and listen for button clicks.
 
@@ -166,3 +167,36 @@ Whether or not the collector should automatically reset the timer when a button 
 ### Additional optional options
 
 -   Type: [`InteractionCollectorOptions`](https://old.discordjs.dev/#/docs/discord.js/main/typedef/InteractionCollectorOptions)
+
+## Handle collector end
+
+<Callout type="warning">
+    This feature is currently only available in the [development
+    version](/guide/installation#development-version)
+</Callout>
+
+When setting up an `onClick()` method using ButtonKit, you may also want to run some code after the collector ends running. The default timeout is 1 day, but you can modify this in [onClickOptions#time](/guide/buttonkit#time-optional). To handle when the collector ends, you can setup an `onEnd()` method like this:
+
+```js copy {16-21}
+const myButton = new ButtonKit()
+    .setCustomId('custom_button')
+    .setLabel('Click me!')
+    .setStyle(ButtonStyle.Primary);
+
+const row = new ActionRowBuilder().addComponents(myButton);
+const message = await interaction.reply({ components: [row], fetchReply: true });
+
+myButton
+    .onClick(
+        (buttonInteraction) => {
+            buttonInteraction.reply('You clicked a button!');
+        },
+        { message },
+    )
+    .onEnd(() => {
+        console.log('Button collector ended.');
+
+        myButton.setDisabled(true);
+        message.edit({ components: [row] });
+    });
+```
