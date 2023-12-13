@@ -3,7 +3,6 @@ title: CommandKit - A Discord.js Handler
 description: Let CommandKit handle it for you!
 ---
 
-import Image from 'next/image';
 import Link from 'next/link';
 
 export function FeatureList() {
@@ -28,7 +27,7 @@ export default function Home() {
     return (
         <>
             <section className="w-72 h-96 mx-auto text-center mt-20 mb-28 md:mb-16 flex items-center justify-center flex-col md:flex-row-reverse md:gap-2 md:text-left md:mt-12 md:w-[700px] lg:w-[850px]">
-                <Image
+                <img
                     src="/logo.png"
                     alt="CommandKit Logo"
                     className="md:w-[230px] lg:w-[280px] mb-10 md:mb-0"
@@ -49,9 +48,9 @@ export default function Home() {
                     </p>
 
                     <div className="flex items-center justify-center gap-3 mt-10 md:justify-start text-neutral-100">
-                        <Link href='/docs/installation' className="font-semibold bg-[#b079fc] py-2 px-4 rounded-full">Docs</Link>
-                        <Link href='https://github.com/underctrl-io/commandkit' className="font-semibold bg-blue-500 py-2 px-4 rounded-full" target="_blank" rel="noopener noreferrer">GitHub</Link>
-                        <Link href='https://npmjs.com/package/commandkit' className="font-semibold bg-[#fc7993] py-2 px-4 rounded-full">npm</Link>
+                        <Link href='/guide/installation' className="font-semibold bg-[#b079fc] py-2 px-4 rounded-full">Guide</Link>
+                        <Link href='/docs/typedef/AutocompleteProps' className="font-semibold bg-blue-500 py-2 px-4 rounded-full">Docs</Link>
+                        <Link href='https://github.com/underctrl-io/commandkit' className="font-semibold bg-[#fc7993] py-2 px-4 rounded-full" target="_blank" rel="noopener noreferrer">GitHub</Link>
                     </div>
                 </div>
             </section>

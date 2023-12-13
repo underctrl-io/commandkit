@@ -39,6 +39,10 @@ export interface CommandKitConfig {
      * Whether or not to include anti-crash handler in production. Defaults to `true`.
      */
     antiCrash: boolean;
+    /**
+     * Whether or not to polyfill `require` function. Defaults to `true`.
+     */
+    requirePolyfill: boolean;
 }
 
 let globalConfig: Partial<CommandKitConfig> = {
@@ -50,6 +54,7 @@ let globalConfig: Partial<CommandKitConfig> = {
     sourcemap: false,
     nodeOptions: [],
     antiCrash: true,
+    requirePolyfill: true,
 };
 
 export function getConfig(): CommandKitConfig {

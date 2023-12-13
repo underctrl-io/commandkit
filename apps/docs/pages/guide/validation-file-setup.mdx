@@ -48,10 +48,10 @@ Validation functions are called on every command trigger, so it's important to k
 
     <Tabs.Tab label="TypeScript">
         ```ts filename="validations/cooldowns.ts" copy
-        import type { ValidationFunctionProps } from 'commandkit';
+        import type { ValidationProps } from 'commandkit';
         import cooldowns from '../cooldowns-cache';
 
-        export default function ({ interaction, commandObj, handler }: ValidationFunctionProps) {
+        export default function ({ interaction, commandObj, handler }: ValidationProps) {
             if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
                 interaction.reply({
                     content: "You're on cooldown, please wait some time before running this command again.",

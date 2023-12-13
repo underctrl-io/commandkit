@@ -1,8 +1,10 @@
 {
+    "AutocompleteProps": "AutocompleteProps",
     "CommandData": "CommandData",
     "CommandKit": "CommandKit",
     "CommandObject": "CommandObject",
     "CommandOptions": "CommandOptions",
     "ContextMenuCommandProps": "ContextMenuCommandProps",
-    "SlashCommandProps": "SlashCommandProps"
+    "SlashCommandProps": "SlashCommandProps",
+    "ValidationProps": "ValidationProps"
 }

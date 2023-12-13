@@ -1,0 +1,310 @@
+import { Tabs } from 'nextra/components';
+
+# Commands Setup
+
+CommandKit supports both slash commands and context menu commands. Since both have the same triggers (interactions) and similar command structure, they are both stored and handled from the same commands directory.
+
+## Slash Command
+
+Here's an example `/ping` slash command which replies with "Pong!"
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="commands/Misc/ping.js" copy
+        module.exports = {
+            data: {
+                name: 'ping',
+                description: 'Pong!',
+            },
+
+            run: ({ interaction, client, handler }) => {
+                interaction.reply(`:ping_pong: Pong! ${client.ws.ping}ms`);
+            },
+
+            options: {
+                devOnly: true,
+                guildOnly: true,
+                userPermissions: ['Administrator', 'AddReactions'],
+                botPermissions: ['Administrator', 'AddReactions'],
+                deleted: false,
+            },
+        };
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```js filename="commands/Misc/ping.js" copy
+        export const data = {
+            name: 'ping',
+            description: 'Pong!',
+        }
+
+        export function run({ interaction, client, handler }) {
+            interaction.reply(`:ping_pong: Pong! ${client.ws.ping}ms`);
+        }
+
+        export const options = {
+            devOnly: true,
+            guildOnly: true,
+            userPermissions: ['Administrator', 'AddReactions'],
+            botPermissions: ['Administrator', 'AddReactions'],
+            deleted: false,
+        }
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```ts filename="commands/Misc/ping.ts" copy
+        import type { CommandData, SlashCommandProps, CommandOptions } from 'commandkit';
+
+        export const data: CommandData = {
+            name: 'ping',
+            description: 'Pong!',
+        }
+
+        export function run({ interaction, client, handler }: SlashCommandProps) {
+            interaction.reply(`:ping_pong: Pong! ${client.ws.ping}ms`);
+        }
+
+        export const options: CommandOptions = {
+            devOnly: true,
+            guildOnly: true,
+            userPermissions: ['Administrator', 'AddReactions'],
+            botPermissions: ['Administrator', 'AddReactions'],
+            deleted: false,
+        }
+        ```
+    </Tabs.Tab>
+
+</Tabs>
+
+## Context Menu Command
+
+Here's an example `content` command which replies with the content of the target message.
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="commands/Misc/content.js" copy
+        const { ApplicationCommandType } = require("discord.js");
+
+        module.exports = {
+            data: {
+                name: 'content',
+                type: ApplicationCommandType.Message,
+            },
+
+            run: ({ interaction, client, handler }) => {
+                interaction.reply(`The message is: ${interaction.targetMessage.content}`);
+            },
+
+            options: {
+                devOnly: true,
+                guildOnly: true,
+                userPermissions: ['Administrator', 'AddReactions'],
+                botPermissions: ['Administrator', 'AddReactions'],
+                deleted: false,
+            },
+        };
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```js filename="commands/Misc/content.js" copy
+        import { ApplicationCommandType } from "discord.js";
+
+        export const data = {
+            name: 'content',
+            type: ApplicationCommandType.Message,
+        }
+
+        export function run({ interaction, client, handler }) {
+            interaction.reply(`The message is: ${interaction.targetMessage.content}`);
+        }
+
+        export const options = {
+            devOnly: true,
+            guildOnly: true,
+            userPermissions: ['Administrator', 'AddReactions'],
+            botPermissions: ['Administrator', 'AddReactions'],
+            deleted: false,
+        }
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```ts filename="commands/Misc/content.ts" copy
+        import { type CommandData, type ContextMenuCommandProps, type CommandOptions } from "commandkit";
+        import { ApplicationCommandType } from "discord.js";
+
+        export const data: CommandData = {
+            name: 'content',
+            type: ApplicationCommandType.Message,
+        }
+
+        export function run({ interaction, client, handler }: ContextMenuCommandProps) {
+            interaction.reply(`The message is: ${interaction.targetMessage.content}`);
+        }
+
+        export const options: CommandOptions = {
+            devOnly: true,
+            guildOnly: true,
+            userPermissions: ['Administrator', 'AddReactions'],
+            botPermissions: ['Administrator', 'AddReactions'],
+            deleted: false,
+        }
+        ```
+    </Tabs.Tab>
+
+</Tabs>
+
+## Autocomplete function
+
+In addition to the `run` function, you can also export an `autocomplete` function from your command file so that you don't have to create a new `"interactionCreate"` event listener.
+
+Here's an example of how to use the `autocomplete` function:
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
+    <Tabs.Tab>
+        ```js filename="commands/Fun/pet.js" copy
+        const pets = require('../data/pets.json');
+
+        module.exports = {
+            data: new SlashCommandBuilder()
+                .setName('pet')
+                .setDescription('Find a pet from a list of pets.')
+                .addStringOption((option) =>
+                    option
+                        .setName('pet')
+                        .setDescription('The pet to check.')
+                        .setRequired(true)
+                        .setAutocomplete(true)
+                ),
+
+            run: ({ interaction, client, handler }) => {
+                const targetPetId = interaction.options.getString('pet');
+                const targetPetObj = pets.find((pet) => pet.id === targetPetId);
+
+                interaction.reply(`Your pet name is ${targetPetObj.name}.`);
+            },
+
+            autocomplete: ({ interaction, client, handler }) => {
+                const focusedPetOption = interaction.options.getFocused(true);
+
+                const filteredChoices = pets.filter((pet) => pet.name.startsWith(focusedPetOption));
+
+                const results = filteredChoices.map((pet) => {
+                    return {
+                        name: `${pet.name} | ${pet.type}`,
+                        value: pet.id,
+                    };
+                });
+
+                interaction.respond(results.slice(0, 25));
+            }
+        }
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```js filename="commands/Fun/pet.js" copy
+        import pets from '../data/pets.json';
+
+        export const data = new SlashCommandBuilder()
+            .setName('pet')
+            .setDescription('Find a pet from a list of pets.')
+            .addStringOption((option) =>
+                option
+                    .setName('pet')
+                    .setDescription('The pet to check.')
+                    .setRequired(true)
+                    .setAutocomplete(true)
+            );
+
+        export function run({ interaction, client, handler }) {
+            const targetPetId = interaction.options.getString('pet');
+            const targetPetObj = pets.find((pet) => pet.id === targetPetId);
+
+            interaction.reply(`Your pet name is ${targetPetObj.name}.`);
+        }
+
+        export function autocomplete({ interaction, client, handler }) {
+            const focusedPetOption = interaction.options.getFocused(true);
+
+            const filteredChoices = pets.filter((pet) => pet.name.startsWith(focusedPetOption));
+
+            const results = filteredChoices.map((pet) => {
+                return {
+                    name: `${pet.name} | ${pet.type}`,
+                    value: pet.id,
+                };
+            });
+
+            interaction.respond(results.slice(0, 25));
+        }
+        ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+        ```ts filename="commands/Fun/pet.ts" copy
+        import type { CommandData, AutocompleteProps, CommandOptions } from 'commandkit';
+        import pets from '../data/pets.json';
+
+        export const data = new SlashCommandBuilder()
+            .setName('pet')
+            .setDescription('Find a pet from a list of pets.')
+            .addStringOption((option) =>
+                option
+                    .setName('pet')
+                    .setDescription('The pet to check.')
+                    .setRequired(true)
+                    .setAutocomplete(true)
+            );
+
+        export function run({ interaction, client, handler }: SlashCommandProps) {
+            const targetPetId = interaction.options.getString('pet');
+            const targetPetObj = pets.find((pet) => pet.id === targetPetId);
+
+            interaction.reply(`Your pet name is ${targetPetObj.name}.`);
+        }
+
+        export function autocomplete({ interaction, client, handler }: AutocompleteProps) {
+            const focusedPetOption = interaction.options.getFocused(true);
+
+            const filteredChoices = pets.filter((pet) => pet.name.startsWith(focusedPetOption));
+
+            const results = filteredChoices.map((pet) => {
+                return {
+                    name: `${pet.name} | ${pet.type}`,
+                    value: pet.id,
+                };
+            });
+
+            interaction.respond(results.slice(0, 25));
+        }
+        ```
+    </Tabs.Tab>
+
+</Tabs>
+
+## Properties and Methods
+
+### `data`
+
+-   Type: [`CommandData`](/docs/typedef/CommandData) | [`SlashCommandBuilder`](https://discord.js.org/docs/packages/builders/main/SlashCommandBuilder:Class) | [`ContextMenuCommandBuilder`](https://discord.js.org/docs/packages/builders/main/ContextMenuCommandBuilder:Class)
+
+This property contains the command's structural information, and is required to register and handle commands.
+
+### `run`
+
+-   Type: `void`
+
+-   Props Type: [`SlashCommandProps`](/docs/typedef/SlashCommandProps) | [`ContextMenuCommandProps`](/docs/typedef/ContextMenuCommandProps)
+
+This function will be called when the command is executed.
+
+### `autocomplete`
+
+-   Type: `void`
+-   Props Type: [`AutocompleteProps`](/docs/typedef/AutocompleteProps)
+
+This function will be called when an autocomplete interaction event is triggered for any option set as autocomplete in this command's `data` object.
+
+### `options` (optional)
+
+-   Type: [`CommandOptions`](/docs/typedef/CommandOptions)
+
+This property contains the command's registration/handling behaviour.

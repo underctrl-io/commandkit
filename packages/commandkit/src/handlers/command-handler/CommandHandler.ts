@@ -34,7 +34,7 @@ export class CommandHandler {
         if (devOnlyCommands.length && !this.#data.devGuildIds.length) {
             console.log(
                 colors.yellow(
-                    'ℹ️ Warning: You have commands marked as "devOnly" but "devGuildIds" has not been set.',
+                    'ℹ️ Warning: You have commands marked as "devOnly", but "devGuildIds" have not been set.',
                 ),
             );
         }
@@ -46,7 +46,7 @@ export class CommandHandler {
         ) {
             console.log(
                 colors.yellow(
-                    'ℹ️ Warning: You have commands marked as "devOnly" but not "devUserIds" or "devRoleIds" were set.',
+                    'ℹ️ Warning: You have commands marked as "devOnly", but "devUserIds" or "devRoleIds" have not been set.',
                 ),
             );
         }
@@ -146,6 +146,14 @@ export class CommandHandler {
                 commandObj.category = commandCategory;
             }
 
+            if (commandObj.options?.guildOnly) {
+                console.log(
+                    colors.yellow(
+                        `ℹ️ Deprecation warning: The command "${commandObj.data.name}" uses "options.guildOnly", which will be deprecated soon. Use "data.dm_permission" instead.`,
+                    ),
+                );
+            }
+
             this.#data.commands.push(commandObj);
         }
     }
@@ -173,10 +181,10 @@ export class CommandHandler {
 
             if (!targetCommand) return;
 
-            const { data, options, run, autocompleteRun, ...rest } = targetCommand;
+            const { data, options, run, autocomplete, ...rest } = targetCommand;
 
             // Skip if autocomplete handler is not defined
-            if (isAutocomplete && !autocompleteRun) return;
+            if (isAutocomplete && !autocomplete) return;
 
             const commandObj = {
                 data: targetCommand.data,
@@ -230,7 +238,7 @@ export class CommandHandler {
                 handler: this.#data.commandkitInstance,
             };
 
-            await targetCommand[isAutocomplete ? 'autocompleteRun' : 'run']!(context);
+            await targetCommand[isAutocomplete ? 'autocomplete' : 'run']!(context);
         });
     }
 

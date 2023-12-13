@@ -4,9 +4,9 @@ import type {
     UserContextMenuCommandInteraction,
     ContextMenuCommandInteraction,
     ChatInputCommandInteraction,
+    AutocompleteInteraction,
     PermissionsString,
     Client,
-    AutocompleteInteraction,
 } from 'discord.js';
 import type { CommandKit } from '../CommandKit';
 
@@ -38,7 +38,7 @@ export interface CommandProps {
 /**
  * Props for autocomplete command run functions.
  */
-export interface AutocompleteCommandProps extends CommandProps {
+export interface AutocompleteProps extends CommandProps {
     /**
      * The current autocomplete command interaction object.
      */
@@ -82,11 +82,14 @@ export interface MessageContextMenuCommandProps extends CommandProps {
 /**
  * Props for command validation functions.
  */
-export interface ValidationFunctionProps {
+export interface ValidationProps {
     /**
      * The current command interaction object.
      */
-    interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction;
+    interaction:
+        | ChatInputCommandInteraction
+        | ContextMenuCommandInteraction
+        | AutocompleteInteraction;
 
     /**
      * The Discord.js client object that CommandKit is handling.

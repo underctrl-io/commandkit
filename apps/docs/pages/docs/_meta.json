@@ -1,10 +1,4 @@
 {
-    "installation": "Installation",
-    "commandkit-setup": "CommandKit Setup",
-    "command-file-setup": "Commands Setup",
-    "event-file-setup": "Events Setup",
-    "validation-file-setup": "Validations Setup",
-    "buttonkit": "Using ButtonKit",
-    "using-signals": "Using Signals",
-    "migrating-from-djs-commander": "Migrating from DJS-Commander"
+    "typedef": "Type Definitions",
+    "enums": "Enums"
 }
