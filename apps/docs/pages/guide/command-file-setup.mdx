@@ -293,7 +293,7 @@ This property contains the command's structural information, and is required to 
 
 ### `run`
 
--   Type: `void`
+-   Type: `Function`
 
 -   Props Type: [`SlashCommandProps`](/docs/typedef/SlashCommandProps) | [`ContextMenuCommandProps`](/docs/typedef/ContextMenuCommandProps)
 
@@ -301,7 +301,7 @@ This function will be called when the command is executed.
 
 ### `autocomplete`
 
--   Type: `void`
+-   Type: `Function`
 -   Props Type: [`AutocompleteProps`](/docs/typedef/AutocompleteProps)
 
 This function will be called when an autocomplete interaction event is triggered for any option set as autocomplete in this command's `data` object.
