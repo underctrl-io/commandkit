@@ -115,7 +115,7 @@ myButton.onClick((buttonInteraction) => {
 });
 ```
 
-However, the code above won't actually work since ButtonKit doesn't have any idea where it's supposed to specifically listen button clicks from. To fix that, you need to pass in a second argument, also known as your [options]() which houses all the collector configuration. The `message` property is the message that ButtonKit will use to listen for button clicks.
+However, the code above won't actually work since ButtonKit doesn't have any idea where it's supposed to specifically listen button clicks from. To fix that, you need to pass in a second argument, also known as your [options](/guide/buttonkit#buttonkit-onclick-options) which houses all the collector configuration. The `message` property is the message that ButtonKit will use to listen for button clicks.
 
 ```js copy
 const row = new ActionRowBuilder().addComponents(myButton);
