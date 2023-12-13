@@ -28,6 +28,7 @@ const tests = Array.from({ length: 10 }, (_, i) => ({
 
 export async function autocomplete({ interaction }: AutocompleteProps) {
     const arg = interaction.options.getString('test', false);
+    console.log(arg);
     if (!arg) return interaction.respond(tests);
 
     const filtered = tests.filter((test) => test.name.toLowerCase().includes(arg.toLowerCase()));
@@ -51,30 +52,26 @@ export async function run({ interaction, client }: SlashCommandProps) {
         fetchReply: true,
     });
 
-    button.onClick(
-        (inter) => {
-            if (!inter) {
-                button.setDisabled(true);
-                message.edit({
-                    components: [row],
+    button
+        .onClick(
+            (inter) => {
+                console.log('onClick called');
+
+                inter.reply({
+                    content: 'You clicked the ping button!',
+                    ephemeral: true,
                 });
-                return;
-            }
+            },
+            { message, time: 10_000, autoReset: true },
+        )
+        .onEnd(() => {
+            console.log('onEnd called');
 
-            inter.reply({
-                content: 'You clicked the ping button!',
-                ephemeral: true,
-            });
-        },
-        { message, time: 10_000, autoReset: true },
-    );
-
-    // interaction.reply(`:ping_pong: Pong! \`${client.ws.ping}ms\``);
+            button.setDisabled(true);
+            message.edit({ components: [row] });
+        });
 }
 
 export const options: CommandOptions = {
     devOnly: true,
-
-    // Test deprecation warning.
-    guildOnly: true,
 };

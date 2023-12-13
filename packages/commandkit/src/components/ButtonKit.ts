@@ -15,8 +15,10 @@ import {
  * If the first argument is null, it means that the interaction collector has been destroyed.
  */
 export type CommandKitButtonBuilderInteractionCollectorDispatch = (
-    interaction: ButtonInteraction | null,
+    interaction: ButtonInteraction,
 ) => Awaitable<void>;
+
+export type CommandKitButtonBuilderOnEnd = () => Awaitable<void>;
 
 export type CommandKitButtonBuilderInteractionCollectorDispatchContextData = {
     /**
@@ -35,6 +37,7 @@ export type CommandKitButtonBuilderInteractionCollectorDispatchContextData = {
 
 export class ButtonKit extends ButtonBuilder {
     #onClickHandler: CommandKitButtonBuilderInteractionCollectorDispatch | null = null;
+    #onEndHandler: CommandKitButtonBuilderOnEnd | null = null;
     #contextData: CommandKitButtonBuilderInteractionCollectorDispatchContextData | null = null;
     #collector: InteractionCollector<ButtonInteraction> | null = null;
 
@@ -63,25 +66,34 @@ export class ButtonKit extends ButtonBuilder {
      * button.onClick(null);
      * ```
      */
-    public onClick(handler: null): this;
     public onClick(
         handler: CommandKitButtonBuilderInteractionCollectorDispatch,
-        data: CommandKitButtonBuilderInteractionCollectorDispatchContextData,
-    ): this;
-    public onClick(
-        handler: CommandKitButtonBuilderInteractionCollectorDispatch | null,
         data?: CommandKitButtonBuilderInteractionCollectorDispatchContextData,
     ): this {
         if (this.data.style === ButtonStyle.Link) {
             throw new TypeError('Cannot setup "onClick" handler on link buttons.');
         }
 
+        if (!handler) {
+            throw new TypeError('Cannot setup "onClick" without a handler function parameter.');
+        }
+
         this.#destroyCollector();
 
         this.#onClickHandler = handler;
-        if (handler && data) this.#contextData = data;
+        if (data) this.#contextData = data;
 
         this.#setupInteractionCollector();
+
+        return this;
+    }
+
+    public onEnd(handler: CommandKitButtonBuilderOnEnd): this {
+        if (!handler) {
+            throw new TypeError('Cannot setup "onEnd" without a handler function parameter.');
+        }
+
+        this.#onEndHandler = handler;
 
         return this;
     }
@@ -133,11 +145,11 @@ export class ButtonKit extends ButtonBuilder {
 
         this.#collector.on('end', () => {
             this.#destroyCollector();
+            this.#onEndHandler?.();
         });
     }
 
     #destroyCollector() {
-        this.#onClickHandler?.(null);
         this.#collector?.stop('end');
         this.#collector?.removeAllListeners();
         this.#collector = null;
