@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 -   CommonJS projects crash when using commandkit cli with watch mode.
 
+### Added
+
+-   add `onEnd` to ButtonKit
+
 ## [0.1.9] - 2023-12-12
 
 ### Changes (breaking)
