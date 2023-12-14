@@ -61,9 +61,10 @@ export async function bootstrapDevelopmentServer(opts) {
             silent: true,
             entry: [src, '!dist', '!.commandkit', `!${outDir}`].filter(Boolean),
             watch: watchMode,
+            async onSuccess() {
+                return await injectShims('.commandkit', main, false, requirePolyfill);
+            },
         });
-
-        await injectShims('.commandkit', main, false, requirePolyfill);
 
         status.succeed(
             Colors.green(`Dev server started in ${(performance.now() - start).toFixed(2)}ms!\n`),
