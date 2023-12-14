@@ -62,7 +62,6 @@ export async function bootstrapDevelopmentServer(opts) {
             entry: [src, '!dist', '!.commandkit', `!${outDir}`].filter(Boolean),
             watch: watchMode,
             async onSuccess() {
-                console.log('watch triggered');
                 return await injectShims('.commandkit', main, false, requirePolyfill);
             },
         });
