@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.10] - 2023-12-12
+
+### Fixed
+
+-   CommonJS projects crash when using commandkit cli with watch mode.
+
 ## [0.1.9] - 2023-12-12
 
 ### Changes (breaking)

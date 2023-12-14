@@ -19,6 +19,7 @@ CommandKit is a library that makes it easy to handle commands and events in your
 - Multiple dev guilds, users, & roles support 🤝
 - Automatic command updates 🤖
 - REST registration behaviour 📍
+- Easy command line interface 🖥️
 - And much more! 🧪
 
 ## Documentation
