@@ -37,6 +37,7 @@ export async function bootstrapProductionBuild(config) {
             keepNames: true,
             outDir,
             silent: true,
+            watch: false,
             entry: [src, '!dist', '!.commandkit', `!${outDir}`],
         });
 
