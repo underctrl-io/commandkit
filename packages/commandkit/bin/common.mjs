@@ -76,7 +76,6 @@ export async function findCommandKitConfig(src) {
 
     for (const location of locations) {
         try {
-            const config = await loadConfigInner(location);
             foundConfigFiles.push(location);
         } catch (e) {
             continue;
