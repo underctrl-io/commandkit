@@ -162,6 +162,7 @@ Here's an example of how to use the `autocomplete` function:
 <Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
     <Tabs.Tab>
         ```js filename="commands/Fun/pet.js" copy
+        const { SlashCommandBuilder } = require('discord.js');
         const pets = require('../data/pets.json');
 
         module.exports = {
@@ -202,6 +203,7 @@ Here's an example of how to use the `autocomplete` function:
     </Tabs.Tab>
     <Tabs.Tab>
         ```js filename="commands/Fun/pet.js" copy
+        import { SlashCommandBuilder } from 'discord.js';
         import pets from '../data/pets.json';
 
         export const data = new SlashCommandBuilder()
@@ -241,6 +243,7 @@ Here's an example of how to use the `autocomplete` function:
     <Tabs.Tab>
         ```ts filename="commands/Fun/pet.ts" copy
         import type { CommandData, AutocompleteProps, CommandOptions } from 'commandkit';
+        import { SlashCommandBuilder } from 'discord.js';
         import pets from '../data/pets.json';
 
         export const data = new SlashCommandBuilder()
