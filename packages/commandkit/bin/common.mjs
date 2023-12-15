@@ -72,16 +72,24 @@ const possibleFileNames = [
 export async function findCommandKitConfig(src) {
     const cwd = process.cwd();
     const locations = src ? [join(cwd, src)] : possibleFileNames.map((name) => join(cwd, name));
+    const foundConfigFiles = [];
 
     for (const location of locations) {
         try {
-            return await loadConfigInner(location);
+            const config = await loadConfigInner(location);
+            foundConfigFiles.push(location);
         } catch (e) {
             continue;
         }
     }
 
-    panic('Could not locate commandkit config.');
+    if (foundConfigFiles.length > 1) {
+        panic(`Multiple configuration files found: ${foundConfigFiles.join(', ')}`);
+    } else if (foundConfigFiles.length === 0) {
+        panic('Could not locate CommandKit configuration file!');
+    }
+
+    return loadConfigInner(foundConfigFiles[0]);
 }
 
 async function loadConfigInner(target) {
