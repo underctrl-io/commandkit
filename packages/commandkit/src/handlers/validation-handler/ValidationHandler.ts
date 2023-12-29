@@ -48,9 +48,9 @@ export class ValidationHandler {
                 validationFilePath.split(process.cwd())[1] || validationFilePath;
 
             if (typeof validationFunction !== 'function') {
-                console.log(
+                process.emitWarning(
                     colors.yellow(
-                        `⏩ Ignoring: Validation ${compactFilePath} does not export a function.`,
+                        `Ignoring: Validation file ${compactFilePath} does not export a function.`,
                     ),
                 );
                 continue;
@@ -69,7 +69,9 @@ export class ValidationHandler {
     async reloadValidations() {
         if (!this.#data.validationsPath) {
             throw new Error(
-                'Cannot reload validations as "validationsPath" was not provided when instantiating CommandKit.',
+                colors.red(
+                    'Cannot reload validations as "validationsPath" was not provided when instantiating CommandKit.',
+                ),
             );
         }
 

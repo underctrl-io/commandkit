@@ -62,9 +62,9 @@ export class EventHandler {
                 const compactFilePath = eventFilePath.split(process.cwd())[1] || eventFilePath;
 
                 if (typeof eventFunction !== 'function') {
-                    console.log(
+                    process.emitWarning(
                         colors.yellow(
-                            `⏩ Ignoring: Event ${compactFilePath} does not export a function.`,
+                            `Ignoring: Event file ${compactFilePath} does not export a function.`,
                         ),
                     );
                     continue;
@@ -99,7 +99,9 @@ export class EventHandler {
     async reloadEvents(commandHandler?: CommandHandler) {
         if (!this.#data.eventsPath) {
             throw new Error(
-                'Cannot reload events as "eventsPath" was not provided when instantiating CommandKit.',
+                colors.red(
+                    'Cannot reload events as "eventsPath" was not provided when instantiating CommandKit.',
+                ),
             );
         }
 

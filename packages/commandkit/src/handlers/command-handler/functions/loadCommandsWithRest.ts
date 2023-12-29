@@ -45,7 +45,7 @@ export default async function loadCommandsWithRest(props: LoadCommandsWithRestPr
                 props.type,
             );
         } else {
-            throw new Error(colors.red(`❌ Cannot reload commands when client is not ready.`));
+            throw new Error(colors.red(`Cannot reload commands when client is not ready.`));
         }
     } else {
         props.client.once('ready', async (c) => {
@@ -99,20 +99,16 @@ async function loadGlobalCommands(
     await client.application.commands
         .set(requestBody as ApplicationCommandDataResolvable[])
         .catch((error) => {
-            console.log(
+            throw new Error(
                 colors.red(
-                    `❌ Error ${
-                        reloading ? 'reloading' : 'loading'
-                    } global application commands.\n`,
+                    `Error ${reloading ? 'reloading' : 'loading'} global application commands.\n`,
                 ),
+                error,
             );
-            throw new Error(error);
         });
 
     console.log(
-        colors.green(
-            `✅ ${reloading ? 'Reloaded' : 'Loaded'} ${requestBody.length} global commands.`,
-        ),
+        colors.green(`${reloading ? 'Reloaded' : 'Loaded'} ${requestBody.length} global commands.`),
     );
 }
 
@@ -136,10 +132,10 @@ async function loadDevCommands(
             client.guilds.cache.get(guildId) || (await client.guilds.fetch(guildId));
 
         if (!targetGuild) {
-            console.log(
-                `Couldn't ${
-                    reloading ? 'reloading' : 'loading'
-                } commands in guild "${targetGuild}" - guild doesn't exist or client isn't part of the guild.`,
+            process.emitWarning(
+                `Cannot ${
+                    reloading ? 'reload' : 'load'
+                } commands in guild "${guildId}" - guild doesn't exist or client isn't part of the guild.`,
             );
 
             continue;
@@ -148,21 +144,21 @@ async function loadDevCommands(
         await targetGuild.commands
             .set(requestBody as ApplicationCommandDataResolvable[])
             .catch((error) => {
-                console.log(
+                throw new Error(
                     colors.red(
-                        `❌ Error ${
+                        `Error ${
                             reloading ? 'reloading' : 'loading'
                         } developer application commands in guild "${
                             targetGuild?.name || guildId
                         }".\n`,
                     ),
+                    error,
                 );
-                throw new Error(error);
             });
 
         console.log(
             colors.green(
-                `✅ ${reloading ? 'Reloaded' : 'Loaded'} ${
+                `${reloading ? 'Reloaded' : 'Loaded'} ${
                     requestBody.length
                 } developer commands in guild "${targetGuild.name}".`,
             ),
