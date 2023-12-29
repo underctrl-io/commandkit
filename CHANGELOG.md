@@ -36,5 +36,5 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
--   `guildOnly` from docs examples.
+-   `guildOnly` from docs examples. Closes [#42](https://github.com/underctrl-io/commandkit/issues/42)
 -   `guildOnly` deprecation warning.
