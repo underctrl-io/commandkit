@@ -146,14 +146,6 @@ export class CommandHandler {
                 commandObj.category = commandCategory;
             }
 
-            if (commandObj.options?.guildOnly) {
-                console.log(
-                    colors.yellow(
-                        `ℹ️ Deprecation warning: The command "${commandObj.data.name}" uses "options.guildOnly", which will be deprecated soon. Use "data.dm_permission" instead.`,
-                    ),
-                );
-            }
-
             this.#data.commands.push(commandObj);
         }
     }
