@@ -28,7 +28,7 @@ export default async function registerCommands(props: RegisterCommandProps) {
         if (props.client.isReady()) {
             await handleRegistration(props.client, props.commands, props.devGuildIds, props.type);
         } else {
-            throw new Error(colors.red(`❌ Cannot reload commands when client is not ready.`));
+            throw new Error(colors.red(`Cannot reload commands when client is not ready.`));
         }
     } else {
         props.client.once('ready', async (c) => {
@@ -68,20 +68,20 @@ async function registerGlobalCommands(client: Client<true>, commands: CommandFil
         // <!-- Delete global command -->
         if (command.options?.deleted) {
             if (!targetCommand) {
-                console.log(
+                process.emitWarning(
                     colors.yellow(
-                        `⏩ Ignoring: Command "${command.data.name}" is globally marked as deleted.`,
+                        `Ignoring: Command "${command.data.name}" is globally marked as deleted.`,
                     ),
                 );
             } else {
                 await targetCommand.delete().catch((error) => {
-                    console.log(
-                        colors.red(`❌ Failed to delete command "${command.data.name}" globally.`),
+                    throw new Error(
+                        colors.red(`Failed to delete command "${command.data.name}" globally.\n`),
+                        error,
                     );
-                    console.error(error);
                 });
 
-                console.log(colors.green(`🚮 Deleted command "${command.data.name}" globally.`));
+                console.log(colors.green(`Deleted command "${command.data.name}" globally.`));
             }
 
             continue;
@@ -95,15 +95,13 @@ async function registerGlobalCommands(client: Client<true>, commands: CommandFil
                 await targetCommand
                     .edit(command.data as Partial<ApplicationCommandData>)
                     .catch((error) => {
-                        console.log(
-                            colors.red(
-                                `❌ Failed to edit command "${command.data.name}" globally.`,
-                            ),
+                        throw new Error(
+                            colors.red(`Failed to edit command "${command.data.name}" globally.\n`),
+                            error,
                         );
-                        console.error(error);
                     });
 
-                console.log(colors.green(`✅ Edited command "${command.data.name}" globally.`));
+                console.log(colors.green(`Edited command "${command.data.name}" globally.`));
 
                 continue;
             }
@@ -115,13 +113,13 @@ async function registerGlobalCommands(client: Client<true>, commands: CommandFil
         await appCommandsManager
             .create(command.data as ApplicationCommandDataResolvable)
             .catch((error) => {
-                console.log(
-                    colors.red(`❌ Failed to register command "${command.data.name}" globally.`),
+                throw new Error(
+                    colors.red(`Failed to register command "${command.data.name}" globally.\n`),
+                    error,
                 );
-                console.error(error);
             });
 
-        console.log(colors.green(`✅ Registered command "${command.data.name}" globally.`));
+        console.log(colors.green(`Registered command "${command.data.name}" globally.`));
     }
 }
 
@@ -136,9 +134,9 @@ async function registerDevCommands(
         const guild = client.guilds.cache.get(guildId) || (await client.guilds.fetch(guildId));
 
         if (!guild) {
-            console.log(
+            process.emitWarning(
                 colors.yellow(
-                    `⏩ Ignoring: Guild ${guildId} does not exist or client isn't in this guild.`,
+                    `Ignoring: Guild ${guildId} doesn't exist or client isn't part of the guild.`,
                 ),
             );
             continue;
@@ -163,24 +161,24 @@ async function registerDevCommands(
             // <!-- Delete dev command -->
             if (command.options?.deleted) {
                 if (!targetCommand) {
-                    console.log(
+                    process.emitWarning(
                         colors.yellow(
-                            `⏩ Ignoring: Command "${command.data.name}" is marked as deleted for ${guildCommands.guild.name}.`,
+                            `Ignoring: Command "${command.data.name}" is marked as deleted in ${guildCommands.guild.name}.`,
                         ),
                     );
                 } else {
                     await targetCommand.delete().catch((error) => {
-                        console.log(
+                        throw new Error(
                             colors.red(
-                                `❌ Failed to delete command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                                `Failed to delete command "${command.data.name}" in ${guildCommands.guild.name}.`,
                             ),
+                            error,
                         );
-                        console.error(error);
                     });
 
                     console.log(
                         colors.green(
-                            `🚮 Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                            `Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`,
                         ),
                     );
                 }
@@ -196,17 +194,17 @@ async function registerDevCommands(
                     await targetCommand
                         .edit(command.data as Partial<ApplicationCommandData>)
                         .catch((error) => {
-                            console.log(
+                            throw new Error(
                                 colors.red(
-                                    `❌ Failed to edit command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                                    `Failed to edit command "${command.data.name}" in ${guildCommands.guild.name}.\n`,
                                 ),
+                                error,
                             );
-                            console.error(error);
                         });
 
                     console.log(
                         colors.green(
-                            `✅ Edited command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                            `Edited command "${command.data.name}" in ${guildCommands.guild.name}.`,
                         ),
                     );
 
@@ -220,17 +218,17 @@ async function registerDevCommands(
             await guildCommands
                 .create(command.data as ApplicationCommandDataResolvable)
                 .catch((error) => {
-                    console.log(
+                    throw new Error(
                         colors.red(
-                            `❌ Failed to register command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                            `Failed to register command "${command.data.name}" in ${guildCommands.guild.name}.\n`,
                         ),
+                        error,
                     );
-                    console.error(error);
                 });
 
             console.log(
                 colors.green(
-                    `✅ Registered command "${command.data.name}" in ${guildCommands.guild.name}.`,
+                    `Registered command "${command.data.name}" in ${guildCommands.guild.name}.`,
                 ),
             );
         }

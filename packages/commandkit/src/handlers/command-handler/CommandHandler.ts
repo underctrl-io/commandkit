@@ -32,9 +32,9 @@ export class CommandHandler {
         const devOnlyCommands = this.#data.commands.filter((cmd) => cmd.options?.devOnly);
 
         if (devOnlyCommands.length && !this.#data.devGuildIds.length) {
-            console.log(
+            process.emitWarning(
                 colors.yellow(
-                    'ℹ️ Warning: You have commands marked as "devOnly", but "devGuildIds" have not been set.',
+                    'You have commands marked as "devOnly", but "devGuildIds" have not been set.',
                 ),
             );
         }
@@ -44,9 +44,9 @@ export class CommandHandler {
             !this.#data.devUserIds.length &&
             !this.#data.devRoleIds.length
         ) {
-            console.log(
+            process.emitWarning(
                 colors.yellow(
-                    'ℹ️ Warning: You have commands marked as "devOnly", but "devUserIds" or "devRoleIds" have not been set.',
+                    'You have commands marked as "devOnly", but "devUserIds" or "devRoleIds" have not been set.',
                 ),
             );
         }
@@ -97,36 +97,36 @@ export class CommandHandler {
             }
 
             if (!commandObj.data) {
-                console.log(
+                process.emitWarning(
                     colors.yellow(
-                        `⏩ Ignoring: Command ${compactFilePath} does not export "data".`,
+                        `Ignoring: Command file ${compactFilePath} does not export "data".`,
                     ),
                 );
                 continue;
             }
 
             if (!commandObj.data.name) {
-                console.log(
+                process.emitWarning(
                     colors.yellow(
-                        `⏩ Ignoring: Command ${compactFilePath} does not export "data.name".`,
+                        `Ignoring: Command file ${compactFilePath} does not export "data.name".`,
                     ),
                 );
                 continue;
             }
 
             if (!commandObj.run) {
-                console.log(
+                process.emitWarning(
                     colors.yellow(
-                        `⏩ Ignoring: Command ${commandObj.data.name} does not export "run".`,
+                        `Ignoring: Command file ${commandObj.data.name} does not export "run".`,
                     ),
                 );
                 continue;
             }
 
             if (typeof commandObj.run !== 'function') {
-                console.log(
+                process.emitWarning(
                     colors.yellow(
-                        `⏩ Ignoring: Command ${commandObj.data.name} does not export "run" as a function.`,
+                        `Ignoring: Command file ${commandObj.data.name} does not export "run" as a function.`,
                     ),
                 );
                 continue;
@@ -241,7 +241,9 @@ export class CommandHandler {
     async reloadCommands(type?: ReloadOptions) {
         if (!this.#data.commandsPath) {
             throw new Error(
-                'Cannot reload commands as "commandsPath" was not provided when instantiating CommandKit.',
+                colors.red(
+                    'Cannot reload commands as "commandsPath" was not provided when instantiating CommandKit.',
+                ),
             );
         }
 
