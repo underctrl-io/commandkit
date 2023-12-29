@@ -31,3 +31,10 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 -   `ValidationProps` type definition.
+
+## [0.1.10 - dev] - 2023-12-29
+
+### Removed
+
+-   `guildOnly` from docs examples.
+-   `guildOnly` deprecation warning.
