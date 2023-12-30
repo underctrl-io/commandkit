@@ -5,6 +5,36 @@ import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 
 import colors from './utils/colors';
 
+/**
+ * The IPC signals that CommandKit uses to communicate with the parent process.
+ */
+export const enum CommandKitSignalType {
+    /**
+     * Reload all commands.
+     */
+    ReloadCommands = '__command$kit__reload_commands__',
+    /**
+     * Reload all events.
+     */
+    ReloadEvents = '__command$kit__reload_events__',
+    /**
+     * Reload all validations.
+     */
+    ReloadValidations = '__command$kit__reload_validations__',
+    /**
+     * Get the commands path.
+     */
+    GetCommandsPath = '__command$kit__get_commands_path__',
+    /**
+     * Get the events path.
+     */
+    GetEventsPath = '__command$kit__get_events_path__',
+    /**
+     * Get the validations path.
+     */
+    GetValidationsPath = '__command$kit__get_validations_path__',
+}
+
 export class CommandKit {
     #data: CommandKitData;
 
@@ -75,6 +105,35 @@ export class CommandKit {
             await commandHandler.init();
 
             this.#data.commandHandler = commandHandler;
+        }
+
+        // <!-- Register message handlers from parent to trigger reload -->
+        // skip if not in a child process
+        if (process.send) {
+            process.on('message', async (message) => {
+                switch (message) {
+                    case CommandKitSignalType.ReloadCommands:
+                        await this.reloadCommands();
+                        break;
+                    case CommandKitSignalType.ReloadEvents:
+                        await this.reloadEvents();
+                        break;
+                    case CommandKitSignalType.ReloadValidations:
+                        await this.reloadValidations();
+                        break;
+                    case CommandKitSignalType.GetCommandsPath:
+                        process.send!(message, this.commandsPath);
+                        break;
+                    case CommandKitSignalType.GetEventsPath:
+                        process.send!(message, this.eventsPath);
+                        break;
+                    case CommandKitSignalType.GetValidationsPath:
+                        process.send!(message, this.validationsPath);
+                        break;
+                    default:
+                        break;
+                }
+            });
         }
     }
 

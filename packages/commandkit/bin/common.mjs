@@ -58,6 +58,17 @@ export function findPackageJSON() {
     return JSON.parse(fs.readFileSync(target, 'utf8'));
 }
 
+export function findTsconfig() {
+    const cwd = process.cwd();
+    const target = join(cwd, 'tsconfig.json');
+
+    if (!fs.existsSync(target)) {
+        return null;
+    }
+
+    return target;
+}
+
 const possibleFileNames = [
     'commandkit.json',
     'commandkit.config.json',
@@ -69,23 +80,28 @@ const possibleFileNames = [
     'commandkit.config.cjs',
 ];
 
-export async function findCommandKitConfig(src) {
+
+export async function findCommandKitConfig(src, skipLoad = false) {
     const cwd = process.cwd();
     const locations = src ? [join(cwd, src)] : possibleFileNames.map((name) => join(cwd, name));
 
     for (const location of locations) {
         try {
-            return await loadConfigInner(location);
+            const conf = await loadConfigInner(location, skipLoad);
+            if (!conf) continue;
+            return conf;
         } catch (e) {
             continue;
         }
     }
-
+    if (skipLoad) return null;
     panic('Could not locate commandkit config.');
 }
 
-async function loadConfigInner(target) {
+async function loadConfigInner(target, skipLoad = false) {
     const isJSON = target.endsWith('.json');
+
+    if (skipLoad) return fs.existsSync(target) ? target : null;
 
     /**
      * @type {import('..').CommandKitConfig}

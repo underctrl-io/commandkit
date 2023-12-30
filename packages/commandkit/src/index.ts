@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 export * from './CommandKit';
 export * from './components';
 export * from './config';
