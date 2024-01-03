@@ -1,4 +1,4 @@
-import { CommandKit } from '../../src/index';
+import { CommandKit, useInteraction } from '../../src/index';
 import { Client } from 'discord.js';
 // require('dotenv').config();
 
@@ -17,3 +17,7 @@ new CommandKit({
 });
 
 await client.login(process.env.TOKEN);
+
+setTimeout(() => {
+    useInteraction();
+});

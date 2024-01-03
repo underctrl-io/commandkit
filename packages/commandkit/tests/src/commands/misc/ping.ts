@@ -1,10 +1,15 @@
-import { ActionRowBuilder, ApplicationCommandOptionType, ButtonStyle } from 'discord.js';
 import {
-    SlashCommandProps,
+    ActionRowBuilder,
+    ApplicationCommandOptionType,
+    ButtonStyle,
+    CommandInteraction,
+} from 'discord.js';
+import {
     CommandOptions,
     CommandData,
     ButtonKit,
     AutocompleteProps,
+    useInteraction,
 } from '../../../../src/index';
 
 export const data: CommandData = {
@@ -36,7 +41,8 @@ export async function autocomplete({ interaction }: AutocompleteProps) {
     interaction.respond(filtered);
 }
 
-export async function run({ interaction, client }: SlashCommandProps) {
+export async function run() {
+    const interaction = useInteraction<CommandInteraction<'cached'>>(); // ignore this type im using ts here
     if (!interaction.channel) return;
 
     const button = new ButtonKit()
@@ -73,5 +79,5 @@ export async function run({ interaction, client }: SlashCommandProps) {
 }
 
 export const options: CommandOptions = {
-    devOnly: true,
+    devOnly: false,
 };

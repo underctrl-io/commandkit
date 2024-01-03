@@ -7,6 +7,7 @@ import colors from './utils/colors';
 
 export class CommandKit {
     #data: CommandKitData;
+    static instance: CommandKit;
 
     /**
      * Create a new command and event handler with CommandKit.
@@ -25,9 +26,19 @@ export class CommandKit {
             );
         }
 
+        CommandKit.instance = this;
+
         this.#data = options;
 
         this.#init();
+    }
+
+    getCommandHandler() {
+        return this.#data.commandHandler;
+    }
+
+    getClient() {
+        return this.#data.client;
     }
 
     /**

@@ -1,6 +1,6 @@
 import type { SlashCommandProps, CommandOptions, CommandData } from '../../../../src';
-import { ButtonKit, createEffect, createSignal } from '../../../../src/index';
-import { ButtonStyle, ActionRowBuilder, ButtonInteraction } from 'discord.js';
+import { ButtonKit, createEffect, createSignal, useInteraction } from '../../../../src/index';
+import { ButtonStyle, ActionRowBuilder, ButtonInteraction, CommandInteraction } from 'discord.js';
 
 export const data: CommandData = {
     name: 'count',
@@ -39,7 +39,10 @@ function getButtons() {
     return { dec, reset, inc, trash, row };
 }
 
-export async function run({ interaction }: SlashCommandProps) {
+export async function run() {
+    const interaction = useInteraction<CommandInteraction<'cached'>>(); // ignore this type im using ts here
+    if (!interaction.channel) return;
+
     const [count, setCount, disposeCountSubscribers] = createSignal(0);
     const { dec, reset, inc, trash, row } = getButtons();
 
