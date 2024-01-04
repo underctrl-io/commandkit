@@ -53,6 +53,15 @@ export interface CommandKitOptions {
      * Bulk register application commands instead of one-by-one.
      */
     bulkRegister?: boolean;
+    /**
+     * Options for experimental features.
+     */
+    experimental?: {
+        /**
+         * Enable hooks. This allows you to utilize hooks such as `useInteraction()` to access the interaction object anywhere inside the command.
+         */
+        hooks?: boolean;
+    };
 }
 
 /**

@@ -1,4 +1,4 @@
-import type { CommandHandlerData, CommandHandlerOptions } from './typings';
+import type { CommandHandlerData, CommandHandlerOptions, CommandKitInteraction } from './typings';
 import type { CommandFileObject, ReloadOptions } from '../../typings';
 
 import { toFileURL } from '../../utils/resolve-file-url';
@@ -9,12 +9,20 @@ import loadCommandsWithRest from './functions/loadCommandsWithRest';
 import registerCommands from './functions/registerCommands';
 import builtInValidationsFunctions from './validations';
 import colors from '../../utils/colors';
+import { AsyncLocalStorage } from 'async_hooks';
+import type { CommandData } from '../../types';
+
+export interface hCommandContext {
+    interaction: CommandKitInteraction;
+    command: CommandData;
+}
 
 /**
  * A handler for client application commands.
  */
 export class CommandHandler {
     #data: CommandHandlerData;
+    context: AsyncLocalStorage<hCommandContext> | null = null;
 
     constructor({ ...options }: CommandHandlerOptions) {
         this.#data = {
@@ -25,6 +33,9 @@ export class CommandHandler {
     }
 
     async init() {
+        if (this.#data.enableHooks && !this.context) {
+            this.context = new AsyncLocalStorage();
+        }
         await this.#buildCommands();
 
         this.#buildBuiltInValidations();
@@ -178,59 +189,71 @@ export class CommandHandler {
             // Skip if autocomplete handler is not defined
             if (isAutocomplete && !autocomplete) return;
 
-            const commandObj = {
-                data: targetCommand.data,
-                options: targetCommand.options,
-                ...rest,
-            };
+            const executor = async () => {
+                const commandObj = {
+                    data: targetCommand.data,
+                    options: targetCommand.options,
+                    ...rest,
+                };
 
-            if (this.#data.validationHandler) {
+                if (this.#data.validationHandler) {
+                    let canRun = true;
+
+                    for (const validationFunction of this.#data.validationHandler.validations) {
+                        const stopValidationLoop = await validationFunction({
+                            interaction,
+                            commandObj,
+                            client: this.#data.client,
+                            handler: this.#data.commandkitInstance,
+                        });
+
+                        if (stopValidationLoop) {
+                            canRun = false;
+                            break;
+                        }
+                    }
+
+                    if (!canRun) return;
+                }
+
                 let canRun = true;
 
-                for (const validationFunction of this.#data.validationHandler.validations) {
-                    const stopValidationLoop = await validationFunction({
-                        interaction,
-                        commandObj,
-                        client: this.#data.client,
-                        handler: this.#data.commandkitInstance,
-                    });
+                // If custom validations pass and !skipBuiltInValidations, run built-in CommandKit validation functions
+                if (!this.#data.skipBuiltInValidations) {
+                    for (const validation of this.#data.builtInValidations) {
+                        const stopValidationLoop = validation({
+                            targetCommand,
+                            interaction,
+                            handlerData: this.#data,
+                        });
 
-                    if (stopValidationLoop) {
-                        canRun = false;
-                        break;
+                        if (stopValidationLoop) {
+                            canRun = false;
+                            break;
+                        }
                     }
                 }
 
                 if (!canRun) return;
-            }
 
-            let canRun = true;
+                const context = {
+                    interaction,
+                    client: this.#data.client,
+                    handler: this.#data.commandkitInstance,
+                };
 
-            // If custom validations pass and !skipBuiltInValidations, run built-in CommandKit validation functions
-            if (!this.#data.skipBuiltInValidations) {
-                for (const validation of this.#data.builtInValidations) {
-                    const stopValidationLoop = validation({
-                        targetCommand,
-                        interaction,
-                        handlerData: this.#data,
-                    });
-
-                    if (stopValidationLoop) {
-                        canRun = false;
-                        break;
-                    }
-                }
-            }
-
-            if (!canRun) return;
-
-            const context = {
-                interaction,
-                client: this.#data.client,
-                handler: this.#data.commandkitInstance,
+                await targetCommand[isAutocomplete ? 'autocomplete' : 'run']!(context);
             };
 
-            await targetCommand[isAutocomplete ? 'autocomplete' : 'run']!(context);
+            if (this.context)
+                return this.context?.run(
+                    {
+                        command: targetCommand.data,
+                        interaction,
+                    },
+                    executor,
+                );
+            return executor();
         });
     }
 
