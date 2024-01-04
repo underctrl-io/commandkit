@@ -33,6 +33,13 @@ export class CommandKit {
     }
 
     /**
+     * Get the client attached to this CommandKit instance.
+     */
+    get client() {
+        return this.#data.client;
+    }
+
+    /**
      * Get command handler instance.
      */
     get commandHandler() {

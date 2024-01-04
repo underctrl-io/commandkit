@@ -168,6 +168,8 @@ export class CommandHandler {
     }
 
     handleCommands() {
+        const areHooksEnabled = this.#data.enableHooks;
+
         this.#data.client.on('interactionCreate', async (interaction) => {
             if (
                 !interaction.isChatInputCommand() &&
@@ -236,17 +238,24 @@ export class CommandHandler {
 
                 if (!canRun) return;
 
-                const context = {
-                    interaction,
-                    client: this.#data.client,
-                    handler: this.#data.commandkitInstance,
-                };
+                const command = targetCommand[isAutocomplete ? 'autocomplete' : 'run']!;
 
-                await targetCommand[isAutocomplete ? 'autocomplete' : 'run']!(context);
+                // if hooks are not enabled, pass the context to the command via its arguments
+                if (!areHooksEnabled) {
+                    const context = {
+                        interaction,
+                        client: this.#data.client,
+                        handler: this.#data.commandkitInstance,
+                    };
+                    return await command(context);
+                }
+
+                // @ts-expect-error - context data is not passed when hooks are enabled
+                return command();
             };
 
             if (this.context)
-                return this.context?.run(
+                return this.context.run(
                     {
                         command: targetCommand.data,
                         interaction,

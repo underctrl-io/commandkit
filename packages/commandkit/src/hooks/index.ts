@@ -1,3 +1,5 @@
+export { useClient } from './useClient';
+export { useCommandKit } from './useCommandKit';
 export { response } from './response';
 export { useChannel } from './useChannel';
 export { useCommandData } from './useCommandData';

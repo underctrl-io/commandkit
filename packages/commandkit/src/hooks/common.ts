@@ -1,6 +1,6 @@
 import { CommandKit } from '..';
 
-function getCommandKit() {
+export function getCommandKit() {
     return CommandKit._instance;
 }
 
