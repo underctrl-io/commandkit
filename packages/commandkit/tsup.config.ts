@@ -6,6 +6,7 @@ export default defineConfig({
     minifyIdentifiers: false,
     minifySyntax: true,
     minifyWhitespace: true,
+    keepNames: true,
     dts: true,
     shims: true,
     skipNodeModulesBundle: true,
