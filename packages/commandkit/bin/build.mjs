@@ -9,7 +9,7 @@ import ora from 'ora';
 export async function bootstrapProductionBuild(config) {
     const {
         sourcemap = false,
-        minify = false,
+        minify = true,
         outDir = 'dist',
         antiCrash = true,
         src,
