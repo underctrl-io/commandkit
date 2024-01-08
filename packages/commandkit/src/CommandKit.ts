@@ -7,6 +7,7 @@ import colors from './utils/colors';
 
 export class CommandKit {
     #data: CommandKitData;
+    static _instance: CommandKit | null = null;
 
     /**
      * Create a new command and event handler with CommandKit.
@@ -26,8 +27,23 @@ export class CommandKit {
         }
 
         this.#data = options;
+        CommandKit._instance = this;
 
         this.#init();
+    }
+
+    /**
+     * Get the client attached to this CommandKit instance.
+     */
+    get client() {
+        return this.#data.client;
+    }
+
+    /**
+     * Get command handler instance.
+     */
+    get commandHandler() {
+        return this.#data.commandHandler;
     }
 
     /**
@@ -70,6 +86,7 @@ export class CommandKit {
                 skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
                 commandkitInstance: this,
                 bulkRegister: this.#data.bulkRegister || false,
+                enableHooks: this.#data.experimental?.hooks ?? false,
             });
 
             await commandHandler.init();

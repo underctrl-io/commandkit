@@ -57,6 +57,10 @@ export interface CommandHandlerOptions {
      * A boolean indicating whether to register all commands in bulk.
      */
     bulkRegister: boolean;
+    /**
+     * Whether to enable hooks context.
+     */
+    enableHooks: boolean;
 }
 
 /**
@@ -91,16 +95,21 @@ export interface BuiltInValidationParams {
     /**
      * The interaction of the target command.
      */
-    interaction:
-        | ChatInputCommandInteraction
-        | ContextMenuCommandInteraction
-        | AutocompleteInteraction;
+    interaction: CommandKitInteraction;
 
     /**
      * The command handler's data.
      */
     handlerData: CommandHandlerData;
 }
+
+/**
+ * Represents a command interaction.
+ */
+export type CommandKitInteraction =
+    | ChatInputCommandInteraction
+    | ContextMenuCommandInteraction
+    | AutocompleteInteraction;
 
 /**
  * A built in validation. Returns a boolean or void.
