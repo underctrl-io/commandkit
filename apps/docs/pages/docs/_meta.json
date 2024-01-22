@@ -1,4 +1,5 @@
 {
-    "typedef": "Type Definitions",
-    "enums": "Enums"
+    "classes": "Classes",
+    "enums": "Enums",
+    "typedef": "Types"
 }
