@@ -1,6 +1,9 @@
 {
     "AutocompleteProps": "AutocompleteProps",
     "CommandData": "CommandData",
+    "CommandKitButtonBuilderInteractionCollectorDispatch": "CommandKitButtonBuilderInteractionCollectorDispatch",
+    "CommandKitButtonBuilderInteractionCollectorDispatchContextData": "CommandKitButtonBuilderInteractionCollectorDispatchContextData",
+    "CommandKitButtonBuilderOnEnd": "CommandKitButtonBuilderOnEnd",
     "CommandObject": "CommandObject",
     "CommandOptions": "CommandOptions",
     "ContextMenuCommandProps": "ContextMenuCommandProps",
