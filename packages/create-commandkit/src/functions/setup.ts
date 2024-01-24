@@ -27,8 +27,9 @@ export async function setup({ manager, type, token, dir, stdio = 'pipe' }: Setup
     packageJson.version = '0.0.0';
 
     packageJson.scripts = {
-        start: 'node ./src/index.js',
-        dev: 'nodemon --ext js,json,ts ./src/index.js',
+        dev: 'commandkit dev',
+        build: 'commandkit build',
+        start: 'commandkit start',
     };
 
     await fs.writeJSON(packageJsonPath, packageJson, { spaces: 4 });
