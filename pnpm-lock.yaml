@@ -112,6 +112,9 @@ importers:
       '@types/node':
         specifier: ^20.11.6
         version: 20.11.6
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
       tsup:
         specifier: ^8.0.1
         version: 8.0.1(typescript@5.3.3)
