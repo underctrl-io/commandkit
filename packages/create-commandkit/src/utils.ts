@@ -26,9 +26,9 @@ export const textColors = {
 export const commands = {
     init: { npm: 'npm init -y', yarn: 'yarn init -y', pnpm: 'pnpm init' },
     install: {
-        npm: 'npm install commandkit discord.js dotenv nodemon',
-        yarn: 'yarn add commandkit discord.js dotenv nodemon',
-        pnpm: 'pnpm add commandkit discord.js dotenv nodemon',
+        npm: 'npm install commandkit discord.js dotenv',
+        yarn: 'yarn add commandkit discord.js dotenv',
+        pnpm: 'pnpm add commandkit discord.js dotenv',
     },
 };
 
