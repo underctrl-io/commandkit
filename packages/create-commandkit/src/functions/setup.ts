@@ -1,12 +1,21 @@
-const { execSync: ex } = require('child_process');
-const { commands } = require('../constants');
+import type { ModuleType, PackageManager } from '../types';
+import { type IOType, execSync } from 'child_process';
+import { commands } from '../utils';
 
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'path';
 
-module.exports = async ({ manager, dir, token, type, stdio = 'pipe' }) => {
+interface SetupProps {
+    manager: PackageManager;
+    type: ModuleType;
+    token: string;
+    dir: string;
+    stdio?: IOType;
+}
+
+export async function setup({ manager, type, token, dir, stdio = 'pipe' }: SetupProps) {
     await fs.emptyDir(dir);
-    ex(commands.init[manager], { cwd: dir, stdio });
+    execSync(commands.init[manager], { cwd: dir, stdio });
 
     const packageJsonPath = path.join(dir, 'package.json');
     const packageJson = await fs.readJSON(packageJsonPath);
@@ -23,5 +32,5 @@ module.exports = async ({ manager, dir, token, type, stdio = 'pipe' }) => {
     };
 
     await fs.writeJSON(packageJsonPath, packageJson, { spaces: 4 });
-    await fs.writeFile(`${dir}/.env`, `TOKEN = ${token}`);
-};
+    await fs.writeFile(`${dir}/.env`, `TOKEN=${token}`);
+}
