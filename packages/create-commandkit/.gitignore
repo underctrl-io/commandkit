@@ -1,7 +1,0 @@
-node_modules/
-other/
-test/
-
-yarn.lock
-.DS_Store
-*.log

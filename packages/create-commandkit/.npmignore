@@ -1,8 +1,0 @@
-node_modules/
-other/
-test/
-
-pnpm-lock.yaml
-.gitignore
-.DS_Store
-*.log
