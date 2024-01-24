@@ -29,7 +29,9 @@
         "test:prod": "cd ./tests && node ../bin/index.mjs start"
     },
     "repository": {
-        "url": "git+https://github.com/underctrl-io/commandkit.git"
+        "type": "git",
+        "url": "https://github.com/underctrl-io/commandkit",
+        "directory": "packages/commandkit"
     },
     "homepage": "https://commandkit.js.org",
     "keywords": [
