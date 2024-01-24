@@ -9,8 +9,13 @@
     "license": "MIT",
     "keywords": [
         "commandkit",
+        "create-commandkit",
         "discord.js",
-        "cli"
+        "discord",
+        "node",
+        "client",
+        "cli",
+        "commands"
     ],
     "files": [
         "dist",
