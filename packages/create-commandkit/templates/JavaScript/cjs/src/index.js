@@ -2,6 +2,7 @@ require('dotenv/config');
 
 const { Client, IntentsBitField } = require('discord.js');
 const { CommandKit } = require('commandkit');
+const { join } = require('path');
 
 const client = new Client({
     intents: [
@@ -14,8 +15,8 @@ const client = new Client({
 
 new CommandKit({
     client,
-    eventsPath: `${__dirname}/events`,
-    commandsPath: `${__dirname}/commands`,
+    eventsPath: join(__dirname, 'events'),
+    commandsPath: join(__dirname, 'commands'),
 });
 
 client.login(process.env.TOKEN);

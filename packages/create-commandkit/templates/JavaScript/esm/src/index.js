@@ -3,10 +3,10 @@ import 'dotenv/config';
 import { Client, IntentsBitField } from 'discord.js';
 import { CommandKit } from 'commandkit';
 
-import { dirname as dn } from 'node:path';
+import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const dirname = dn(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client = new Client({
     intents: [
@@ -19,8 +19,8 @@ const client = new Client({
 
 new CommandKit({
     client,
-    eventsPath: `${dirname}/events`,
-    commandsPath: `${dirname}/commands`,
+    eventsPath: join(__dirname, 'events'),
+    commandsPath: join(__dirname, 'commands'),
 });
 
 client.login(process.env.TOKEN);
