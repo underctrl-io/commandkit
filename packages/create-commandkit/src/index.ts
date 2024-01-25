@@ -3,7 +3,7 @@ console.clear();
 
 import type { ModuleType, PackageManager } from './types';
 
-import { intro, text, select, password, outro } from '@clack/prompts';
+import { intro, text, select, password, confirm, outro } from '@clack/prompts';
 import { commandkit, hints, outroMsg } from './utils';
 import { setup } from './functions/setup';
 import { installDeps } from './functions/installDeps';
@@ -59,10 +59,18 @@ const token = (await password({
     mask: colors.gray('*'),
 })) as string;
 
+const installNow = await confirm({
+    message: 'Install dependencies now?',
+    initialValue: true,
+});
+
 outro(colors.cyan('Setup complete.'));
 
 await setup({ manager, dir, token, type });
 await copyTemplates({ type, dir, lang: 'js' });
-await installDeps({ manager, dir, lang: 'js', stdio: 'inherit' });
+
+if (installNow) {
+    await installDeps({ manager, dir, lang: 'js', stdio: 'inherit' });
+}
 
 console.log(outroMsg);
