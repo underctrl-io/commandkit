@@ -29,7 +29,7 @@ export const dependencies = {
 export const commands = {
     init: {
         npm: 'npm init -y',
-        yarn: 'yarn init -2; yarn config set nodeLinker node-modules',
+        yarn: 'yarn init -y; yarn config set nodeLinker node-modules',
         pnpm: 'pnpm init',
     },
 };
