@@ -20,10 +20,9 @@ export async function setup({ manager, type, token, dir, stdio = 'pipe' }: Setup
     const packageJsonPath = path.join(dir, 'package.json');
     const packageJson = await fs.readJSON(packageJsonPath);
 
+    delete packageJson.main;
     packageJson.name = packageJson.name.toLowerCase();
     packageJson.type = type == 'esm' ? 'module' : 'commonjs';
-
-    packageJson.main = './src/index.js';
     packageJson.version = '0.0.0';
 
     packageJson.scripts = {
