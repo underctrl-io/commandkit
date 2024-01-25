@@ -63,6 +63,6 @@ outro(colors.cyan('Setup complete.'));
 
 await setup({ manager, dir, token, type });
 await copyTemplates({ type, dir, lang: 'js' });
-await installDeps({ manager, dir, stdio: 'inherit' });
+await installDeps({ manager, dir, lang: 'js', stdio: 'inherit' });
 
 console.log(outroMsg);

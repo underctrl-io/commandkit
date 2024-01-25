@@ -22,16 +22,15 @@ export const textColors = {
     ts: ['#2480c5', '#2480c5'],
 };
 
+export const dependencies = {
+    js: ['commandkit', 'discord.js', 'dotenv'],
+};
+
 export const commands = {
     init: {
         npm: 'npm init -y',
         yarn: 'yarn init -2; yarn config set nodeLinker node-modules',
         pnpm: 'pnpm init',
-    },
-    install: {
-        npm: 'npm install commandkit discord.js dotenv',
-        yarn: 'yarn add commandkit discord.js dotenv',
-        pnpm: 'pnpm add commandkit discord.js dotenv',
     },
 };
 
