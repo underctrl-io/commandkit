@@ -6,6 +6,9 @@ build
 out
 dist
 
+# commandkit
+.commandkit
+
 # env
 **/*.env*
 !**/*.env.example*
