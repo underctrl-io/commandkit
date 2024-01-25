@@ -31,6 +31,6 @@ export async function setup({ manager, type, token, dir, stdio = 'pipe' }: Setup
         start: 'commandkit start',
     };
 
-    await fs.writeJSON(packageJsonPath, packageJson, { spaces: 4 });
+    await fs.writeJSON(packageJsonPath, packageJson, { spaces: 2 });
     await fs.writeFile(`${dir}/.env`, `TOKEN="${token}"`);
 }
