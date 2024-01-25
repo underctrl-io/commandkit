@@ -24,7 +24,11 @@ export const textColors = {
 };
 
 export const commands = {
-    init: { npm: 'npm init -y', yarn: 'yarn init -y', pnpm: 'pnpm init' },
+    init: {
+        npm: 'npm init -y',
+        yarn: 'yarn init -2; yarn config set nodeLinker node-modules',
+        pnpm: 'pnpm init',
+    },
     install: {
         npm: 'npm install commandkit discord.js dotenv',
         yarn: 'yarn add commandkit discord.js dotenv',
