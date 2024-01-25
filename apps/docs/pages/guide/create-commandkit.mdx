@@ -1,0 +1,27 @@
+# create-commandkit
+
+Besides installing CommandKit to your existing project, you can also start a new one with `create-commandkit` — a command-line utility used for creating new discord.js bots with CommandKit.
+
+## Usage
+
+If you want to create a new CommandKit application, simply run the following command:
+
+```sh copy
+npm create commandkit@latest
+```
+
+This will start the CLI in the current directory.
+
+## Prompts
+
+When running create-commandkit, you should be asked the following questions:
+
+-   **Project Directory:** Defines where your project will be located. It defaults to the current working directory.
+
+-   **Package Manager:** Lets you choose which package manager to use — npm, pnpm, or Yarn.
+
+-   **Module Type:** Allows you to pick between CommonJS (using require and module.exports), and ESM (using import and export).
+
+-   **Bot Token:** Asks you for your bot token, and writes it into the `.env` file where it will be stored.
+
+After these questions are answered, your project solution should appear in the selected folder.
