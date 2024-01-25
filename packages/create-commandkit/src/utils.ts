@@ -3,8 +3,7 @@ import gradient from 'gradient-string';
 import path from 'path';
 import url from 'url';
 
-const getDirname = (meta: ImportMeta) => path.dirname(url.fileURLToPath(meta.url));
-const __dirname = getDirname(import.meta);
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 export const templates = {
     js: {
