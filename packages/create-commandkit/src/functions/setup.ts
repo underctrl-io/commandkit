@@ -32,5 +32,5 @@ export async function setup({ manager, type, token, dir, stdio = 'pipe' }: Setup
     };
 
     await fs.writeJSON(packageJsonPath, packageJson, { spaces: 4 });
-    await fs.writeFile(`${dir}/.env`, `TOKEN=${token}`);
+    await fs.writeFile(`${dir}/.env`, `TOKEN="${token}"`);
 }
