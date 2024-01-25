@@ -1,8 +1,6 @@
-import type { IOType } from 'child_process';
 import type { Language, PackageManager } from '../types';
-
+import { type IOType, execSync } from 'node:child_process';
 import { dependencies } from '../utils';
-import { execSync } from 'child_process';
 
 interface InstallDepsProps {
     manager: PackageManager;

@@ -9,7 +9,7 @@ import { setup } from './functions/setup';
 import { installDeps } from './functions/installDeps';
 import { copyTemplates } from './functions/copyTemplates';
 
-import path from 'path';
+import path from 'node:path';
 import colors from 'colors';
 import fs from 'fs-extra';
 

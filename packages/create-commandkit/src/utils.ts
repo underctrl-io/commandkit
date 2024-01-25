@@ -1,7 +1,7 @@
 import colors from 'colors';
 import gradient from 'gradient-string';
-import path from 'path';
-import url from 'url';
+import path from 'node:path';
+import url from 'node:url';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 

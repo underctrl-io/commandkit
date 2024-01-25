@@ -3,7 +3,7 @@ import { type IOType, execSync } from 'child_process';
 import { commands } from '../utils';
 
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 interface SetupProps {
     manager: PackageManager;
