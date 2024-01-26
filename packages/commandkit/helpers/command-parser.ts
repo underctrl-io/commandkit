@@ -1,4 +1,4 @@
-import { dirname, join } from 'node:path';
+import { basename, dirname, join, resolve, sep } from 'node:path';
 import { readdir } from 'node:fs/promises';
 
 export interface CommandParserOptions {
@@ -9,15 +9,15 @@ export interface CommandParserOptions {
 }
 
 export const enum CommandEntityKind {
-    Command,
-    ContextMenuCommand,
-    Category,
-    Subcommand,
-    DynamicCommand,
-    Validator,
+    Command = 'COMMAND',
+    CommandFile = 'COMMAND_FILE',
+    ContextMenuCommand = 'CONTEXT_MENU_COMMAND',
+    Category = 'CATEGORY',
+    Subcommand = 'SUBCOMMAND',
+    DynamicCommand = 'DYNAMIC_COMMAND',
+    Validator = 'VALIDATOR',
 }
 
-const IGNORE_PATTERN = /^_/;
 const CATEGORY_PATTERN = /^\([a-z0-9-_]{1,}\)$/;
 const DYNAMIC_PATTERN = /^\[[a-z0-9-_]{1,}\]$/;
 
@@ -52,16 +52,6 @@ export class CommandParser {
         return files;
     }
 
-    public map(): Map<string, CommandEntity> {
-        const map = new Map<string, CommandEntity>();
-
-        for (const command of this.#data) {
-            map.set(command.name, command);
-        }
-
-        return map;
-    }
-
     async #scanDir(dir: string, depth: number) {
         const files: CommandEntity[] = [];
 
@@ -86,32 +76,35 @@ export class CommandParser {
                         });
                     } else {
                         const path = join(dir, dirent.name);
-
-                        const nearestCategory =
-                            path
-                                .split('/')
-                                .reverse()
-                                .find((e) => CATEGORY_PATTERN.test(e)) ?? null;
+                        const pattern = /\([a-z0-9-_]{1,}\)/;
+                        const nearestCategory = pattern.test(path)
+                            ? path
+                                  .split('/')
+                                  .reverse()
+                                  .find((e) => pattern.test(e)) ?? null
+                            : null;
 
                         // ignoring category pattern, if path is nested more than once, it is a subcommand
                         const isSubcommand =
                             path
-                                .replace(this.options.src, '')
-                                .split('/')
-                                .filter((e) => !IGNORE_PATTERN.test(e)).length > 1;
+                                .replace(resolve(this.options.src), '')
+                                .split(sep)
+                                .filter((e) => e && !e.startsWith('_') && !e.startsWith('('))
+                                .length > 1;
 
                         const isDynamic = DYNAMIC_PATTERN.test(dirent.name);
 
                         files.push({
                             name: dirent.name,
-                            kind: isSubcommand
-                                ? CommandEntityKind.Subcommand
-                                : isDynamic
+                            kind: isDynamic
                                 ? CommandEntityKind.DynamicCommand
+                                : isSubcommand
+                                ? CommandEntityKind.Subcommand
                                 : CommandEntityKind.Command,
                             path,
                             children: [...(await this.#scanDir(path, depth - 1))],
-                            category: nearestCategory,
+                            category:
+                                nearestCategory?.match(pattern)?.[0].replace(/\(|\)/g, '') ?? null,
                         });
                     }
                 }
@@ -125,12 +118,12 @@ export class CommandParser {
 
                 switch (name) {
                     case 'command':
-                        kind = CommandEntityKind.Command;
+                        kind = CommandEntityKind.CommandFile;
                         break;
                     case 'validator':
                         kind = CommandEntityKind.Validator;
                         break;
-                    case 'context':
+                    case 'context-menu':
                         kind = CommandEntityKind.ContextMenuCommand;
                         break;
                     default:
@@ -139,18 +132,20 @@ export class CommandParser {
 
                 if (kind === null) continue;
 
-                const nearestCategory =
-                    fullPath
-                        .split('/')
-                        .reverse()
-                        .find((e) => CATEGORY_PATTERN.test(e)) ?? null;
+                const pattern = /\([a-z0-9-_]{1,}\)/;
+                const nearestCategory = pattern.test(fullPath)
+                    ? fullPath
+                          .split('/')
+                          .reverse()
+                          .find((e) => pattern.test(e)) ?? null
+                    : null;
 
                 files.push({
-                    name: dirname(fullPath),
+                    name: basename(dirname(fullPath)),
                     path: fullPath,
                     kind,
                     children: [],
-                    category: nearestCategory,
+                    category: nearestCategory?.match(pattern)?.[0].replace(/\(|\)/g, '') ?? null,
                 });
             }
         }

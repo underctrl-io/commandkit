@@ -13,7 +13,7 @@ describe('CommandParser', () => {
         await parser.scan();
     });
 
-    test('should scan all files', () => {
+    test('should scan all files', async () => {
         expect(parser.getCommands().length).toBeGreaterThan(0);
     });
 
