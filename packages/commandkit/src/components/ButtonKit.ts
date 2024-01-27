@@ -149,6 +149,11 @@ export class ButtonKit extends ButtonBuilder {
         });
     }
 
+    public dispose() {
+        this.#destroyCollector();
+        return this;
+    }
+
     #destroyCollector() {
         this.#collector?.stop('end');
         this.#collector?.removeAllListeners();
