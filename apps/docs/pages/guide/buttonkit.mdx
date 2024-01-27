@@ -195,3 +195,30 @@ myButton
         message.edit({ components: [row] });
     });
 ```
+
+## Dispose button collector
+
+<Callout type="warning">
+    This feature is currently only available in the [development
+    version](/guide/installation#development-version).
+</Callout>
+
+To dispose the button collector, you can make use of the `dispose` method.
+
+```js copy {15}
+myButton
+    .onClick(
+        (buttonInteraction) => {
+            buttonInteraction.reply('You clicked a button!');
+        },
+        { message },
+    )
+    .onEnd(() => {
+        console.log('Button collector ended.');
+
+        myButton.setDisabled(true);
+        message.edit({ components: [row] });
+    });
+
+myButton.dispose();
+```
