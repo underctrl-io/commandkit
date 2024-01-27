@@ -151,6 +151,7 @@ export class ButtonKit extends ButtonBuilder {
 
     public dispose() {
         this.#destroyCollector();
+        this.#onEndHandler?.();
         return this;
     }
 
