@@ -1,8 +1,10 @@
 import { defineConfig } from 'tsup';
+import { esbuildPluginVersionInjector } from 'esbuild-plugin-version-injector';
 
 export default defineConfig({
     format: ['cjs', 'esm'],
-    entry: ['./src/index.ts'],
+    entry: ['./src'],
+    sourcemap: true,
     minifyIdentifiers: false,
     minifySyntax: true,
     minifyWhitespace: true,
@@ -11,4 +13,5 @@ export default defineConfig({
     shims: true,
     skipNodeModulesBundle: true,
     clean: true,
+    esbuildPlugins: [esbuildPluginVersionInjector()],
 });

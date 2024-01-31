@@ -1,4 +1,4 @@
-import type { ValidationProps } from '../../../src';
+import type { ValidationProps } from '../../../dist';
 
 export default function ({ interaction, commandObj, handler }: ValidationProps) {
     if (interaction.isAutocomplete()) return;

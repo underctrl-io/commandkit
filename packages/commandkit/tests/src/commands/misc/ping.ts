@@ -5,7 +5,7 @@ import {
     CommandData,
     ButtonKit,
     AutocompleteProps,
-} from '../../../../src/index';
+} from '../../../../dist/index.mjs';
 
 export const data: CommandData = {
     name: 'ping',

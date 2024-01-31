@@ -1,12 +1,14 @@
+import type { ClientOptions } from 'discord.js';
+
 export interface CommandKitConfig {
     /**
-     * The source directory of the project.
+     * The Discord client options.
      */
-    src: string;
+    clientOptions: ClientOptions;
     /**
-     * The main "javascript" file of the project.
+     * The Discord bot token. Defaults to `process.env.DISCORD_TOKEN`.
      */
-    main: string;
+    token?: string;
     /**
      * Whether or not to use the watch mode. Defaults to `true`.
      */
@@ -55,13 +57,14 @@ let globalConfig: Partial<CommandKitConfig> = {
     nodeOptions: [],
     antiCrash: true,
     requirePolyfill: true,
+    token: process.env.DISCORD_TOKEN,
 };
 
 export function getConfig(): CommandKitConfig {
     return globalConfig as CommandKitConfig;
 }
 
-const requiredProps = ['src', 'main'] as const;
+const requiredProps = ['clientOptions'] as const;
 
 type R = (typeof requiredProps)[number];
 
