@@ -1,13 +1,7 @@
-import { CommandKit } from '../../src/index';
-import { Client } from 'discord.js';
-// require('dotenv').config();
-
-const client = new Client({
-    intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent'],
-});
+import { client, CommandKit } from '../../dist/index.mjs';
 
 new CommandKit({
-    client,
+    client: client(),
     commandsPath: `${__dirname}/commands`,
     eventsPath: `${__dirname}/events`,
     validationsPath: `${__dirname}/validations`,
@@ -15,5 +9,3 @@ new CommandKit({
     // devUserIds: process.env.DEV_USER_ID?.split(',') ?? [],
     bulkRegister: true,
 });
-
-await client.login(process.env.TOKEN);
