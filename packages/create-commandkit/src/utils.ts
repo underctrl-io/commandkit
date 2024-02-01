@@ -7,8 +7,12 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 export const templates = {
     js: {
-        esm: `${__dirname}/../templates/JavaScript/esm`,
-        cjs: `${__dirname}/../templates/JavaScript/cjs`,
+        esm: path.join(__dirname, '..', 'templates', 'JavaScript', 'esm'),
+        cjs: path.join(__dirname, '..', 'templates', 'JavaScript', 'cjs'),
+    },
+    ts: {
+        esm: path.join(__dirname, '..', 'templates', 'TypeScript', 'esm'),
+        cjs: path.join(__dirname, '..', 'templates', 'TypeScript', 'cjs'),
     },
 };
 
@@ -22,8 +26,16 @@ export const textColors = {
     ts: ['#2480c5', '#2480c5'],
 };
 
+const baseDependencies = ['commandkit', 'discord.js', 'dotenv'];
+
 export const dependencies = {
-    js: ['commandkit', 'discord.js', 'dotenv'],
+    js: {
+        dependencies: baseDependencies,
+    },
+    ts: {
+        dependencies: baseDependencies,
+        devDependencies: ['@types/node', 'typescript'],
+    },
 };
 
 export const commands = {

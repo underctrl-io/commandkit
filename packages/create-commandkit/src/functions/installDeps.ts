@@ -10,5 +10,12 @@ interface InstallDepsProps {
 }
 
 export function installDeps({ manager, dir, lang, stdio = 'pipe' }: InstallDepsProps) {
-    execSync(`${manager} add ${dependencies[lang].join(' ')}`, { cwd: dir, stdio });
+    const depsCommand = `${manager} add ${dependencies[lang].dependencies.join(' ')}`;
+    const devDepsCommand = `${manager} add ${dependencies.ts.devDependencies.join(' ')}`;
+
+    execSync(depsCommand, { cwd: dir, stdio });
+
+    if (lang == 'ts') {
+        execSync(devDepsCommand, { cwd: dir, stdio });
+    }
 }

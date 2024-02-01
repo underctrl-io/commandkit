@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 console.clear();
 
-import type { ModuleType, PackageManager } from './types';
+import type { Language, ModuleType, PackageManager } from './types';
 
 import { intro, text, select, password, confirm, outro } from '@clack/prompts';
 import { commandkit, hints, outroMsg } from './utils';
@@ -12,6 +12,12 @@ import { copyTemplates } from './functions/copyTemplates';
 import path from 'node:path';
 import colors from 'colors';
 import fs from 'fs-extra';
+
+process.on('exit', () => {
+    console.clear();
+    console.log(colors.red('Exiting.'));
+    process.exit(0);
+});
 
 await intro(`Welcome to ${commandkit}!`);
 
@@ -46,11 +52,19 @@ const manager = (await select({
     ],
 })) as PackageManager;
 
+const lang = (await select({
+    message: 'Select the language to use:',
+    options: [
+        { label: 'JavaScript', value: 'js' },
+        { label: 'TypeScript', value: 'ts' },
+    ],
+})) as Language;
+
 const type = (await select({
     message: 'Select a module type:',
     options: [
-        { label: 'CommonJS', value: 'cjs', hint: `${hints.require} & ${hints.module}` },
         { label: 'ES Modules', value: 'esm', hint: `${hints.import} & ${hints.export}` },
+        { label: 'CommonJS', value: 'cjs', hint: `${hints.require} & ${hints.module}` },
     ],
 })) as ModuleType;
 
@@ -67,10 +81,10 @@ const installNow = await confirm({
 outro(colors.cyan('Setup complete.'));
 
 await setup({ manager, dir, token, type });
-await copyTemplates({ type, dir, lang: 'js' });
+await copyTemplates({ type, dir, lang });
 
 if (installNow) {
-    await installDeps({ manager, dir, lang: 'js', stdio: 'inherit' });
+    await installDeps({ manager, dir, lang, stdio: 'inherit' });
 }
 
 console.log(outroMsg);
