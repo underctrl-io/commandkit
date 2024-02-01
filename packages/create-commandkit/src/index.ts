@@ -13,12 +13,6 @@ import path from 'node:path';
 import colors from 'colors';
 import fs from 'fs-extra';
 
-process.on('exit', () => {
-    console.clear();
-    console.log(colors.red('Exiting.'));
-    process.exit(0);
-});
-
 await intro(`Welcome to ${commandkit}!`);
 
 const dir = path.resolve(
