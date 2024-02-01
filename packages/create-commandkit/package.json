@@ -29,7 +29,7 @@
     "homepage": "https://commandkit.js.org",
     "scripts": {
         "build": "tsup",
-        "lint": "tsc"
+        "lint": "tsc --noEmit"
     },
     "dependencies": {
         "@clack/prompts": "^0.7.0",
