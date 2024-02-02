@@ -18,3 +18,9 @@ pnpm-debug.log*
 
 .env
 .env.production
+.env.*
+
+.gitignore
+.npmignore
+
+turbo-lint.log

@@ -278,27 +278,27 @@ Here's an example of how to use the `autocomplete` function:
 
 ### `data`
 
--   Type: [`CommandData`](/docs/typedef/CommandData) | [`SlashCommandBuilder`](https://discord.js.org/docs/packages/builders/main/SlashCommandBuilder:Class) | [`ContextMenuCommandBuilder`](https://discord.js.org/docs/packages/builders/main/ContextMenuCommandBuilder:Class)
+- Type: [`CommandData`](/docs/typedef/CommandData) | [`SlashCommandBuilder`](https://discord.js.org/docs/packages/builders/main/SlashCommandBuilder:Class) | [`ContextMenuCommandBuilder`](https://discord.js.org/docs/packages/builders/main/ContextMenuCommandBuilder:Class)
 
 This property contains the command's structural information, and is required to register and handle commands.
 
 ### `run`
 
--   Type: `void`
+- Type: `void`
 
--   Props Type: [`SlashCommandProps`](/docs/typedef/SlashCommandProps) | [`ContextMenuCommandProps`](/docs/typedef/ContextMenuCommandProps)
+- Props Type: [`SlashCommandProps`](/docs/typedef/SlashCommandProps) | [`ContextMenuCommandProps`](/docs/typedef/ContextMenuCommandProps)
 
 This function will be called when the command is executed.
 
 ### `autocomplete`
 
--   Type: `void`
--   Props Type: [`AutocompleteProps`](/docs/typedef/AutocompleteProps)
+- Type: `void`
+- Props Type: [`AutocompleteProps`](/docs/typedef/AutocompleteProps)
 
 This function will be called when an autocomplete interaction event is triggered for any option set as autocomplete in this command's `data` object.
 
 ### `options` (optional)
 
--   Type: [`CommandOptions`](/docs/typedef/CommandOptions)
+- Type: [`CommandOptions`](/docs/typedef/CommandOptions)
 
 This property contains the command's registration/handling behaviour.

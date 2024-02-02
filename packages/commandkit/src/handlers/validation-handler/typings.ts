@@ -2,12 +2,12 @@
  * Validation handler options (validationsPath).
  */
 export interface ValidationHandlerOptions {
-    validationsPath: string;
+  validationsPath: string;
 }
 
 /**
  * Private validation handler data.
  */
 export interface ValidationHandlerData extends ValidationHandlerOptions {
-    validations: Function[];
+  validations: Function[];
 }

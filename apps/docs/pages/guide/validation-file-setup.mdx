@@ -7,8 +7,9 @@ Validations are functions that are called before the `run` function from a comma
 Validation functions are called on every command trigger, so it's important to keep them as lightweight as possible.
 
 <Callout>
-    Custom validation functions are called before the built-in validations provided by CommandKit.
-    This provides you with more control over the flow of commands.
+  Custom validation functions are called before the built-in validations
+  provided by CommandKit. This provides you with more control over the flow of
+  commands.
 </Callout>
 
 <Tabs items={['CommonJS', 'ESM', 'TypeScript']}>
@@ -79,7 +80,8 @@ The `handler` object is the current CommandKit instance.
 You may notice that the code above is returning `true`. This is important as it tells the command handler to not run any other validations and to not run the command. If you do not return `true` (or any truthy value), the command will run as normal.
 
 <Callout type="warning">
-    Interactions (commands in this case) must be handled within 3 seconds, so make sure your
-    validations are not using up much of that time. If you're using a database or an external API,
-    it's recommended to implement caching to keep things quick.
+  Interactions (commands in this case) must be handled within 3 seconds, so make
+  sure your validations are not using up much of that time. If you're using a
+  database or an external API, it's recommended to implement caching to keep
+  things quick.
 </Callout>

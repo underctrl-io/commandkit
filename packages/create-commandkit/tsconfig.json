@@ -1,10 +1,10 @@
 {
-    "extends": "tsconfig/base.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "module": "ESNext",
-        "target": "ESNext"
-    },
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules", "templates"]
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "ESNext",
+    "target": "ESNext"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "templates"]
 }
