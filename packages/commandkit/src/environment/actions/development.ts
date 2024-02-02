@@ -3,10 +3,21 @@ import { findConfigPath, importConfig } from '../common/config';
 import colors from '../../utils/colors';
 import { Logger } from '../common/logger';
 import { loadEnv } from '../../bootstrap/loadEnv';
-import { createClient, getClient } from '../../bootstrap/client';
+import {
+    DisposableCallbacksRegistry,
+    createClient,
+    getClient,
+    getCommandKit,
+    setupCommandKit,
+} from '../../bootstrap/client';
 import { bundle } from '../bundler/bundle';
+import { EventEmitter } from 'node:events';
+import { CKitActionType, CKitNotification } from './common';
+import { CKitInternalEnvState } from '../env';
 
 const commandkitVersion = '[VI]{{inject}}[/VI]';
+
+export const notification = new EventEmitter();
 
 function printBanner() {
     const banner = colors.magenta(`${String.fromCharCode(9670)} CommandKit ${commandkitVersion}`);
@@ -27,7 +38,9 @@ export async function initializeDevelopmentEnvironment(
         return;
     }
 
-    const envErr = loadEnv('development');
+    CKitInternalEnvState.$env__type = 'development';
+
+    const envErr = loadEnv();
 
     if (envErr) {
         Logger.Warning('Failed to load .env', envErr);
@@ -40,8 +53,7 @@ export async function initializeDevelopmentEnvironment(
         const msg = `Could not locate the commandkit config file${
             args.config ? ' at ' + args.config : ' in the current working directory'
         }.`;
-        Logger.Fatal(msg);
-        return;
+        return Logger.Fatal(msg);
     }
 
     try {
@@ -54,15 +66,51 @@ export async function initializeDevelopmentEnvironment(
     }
 
     const client = createClient();
+    setupCommandKit(client);
 
-    // build the project
-    const entrypoint = await bundle('development');
+    notification.once(CKitNotification.ReloadAck, async () => {
+        await client.login(config.token);
+    });
 
     try {
-        // load the client entrypoint
-        await import(`file://${entrypoint}`);
-        await client.login(config.token);
+        notification.emit(CKitNotification.Reload, CKitActionType.ReloadAll);
     } catch (e) {
         Logger.Fatal('Failed to load the client entrypoint', e);
     }
 }
+
+const ensureCommandKit = () => {
+    const commandkit = getCommandKit();
+
+    if (!commandkit) {
+        return Logger.Fatal('CommandKit is not initialized.');
+    }
+
+    return commandkit;
+};
+
+notification.on(CKitNotification.Reload, async (action: CKitActionType) => {
+    const entrypoint = await bundle();
+
+    try {
+        switch (action) {
+            case CKitActionType.ReloadAll:
+                // dispose before reloading to clean up any resources
+                await Promise.all([...DisposableCallbacksRegistry.values()].map((cb) => cb()));
+                await import(`file://${entrypoint}?t=${Date.now()}`);
+                notification.emit(CKitNotification.ReloadAck);
+                break;
+            case CKitActionType.ReloadCommands:
+                await ensureCommandKit().reloadCommands();
+                break;
+            case CKitActionType.ReloadEvents:
+                await ensureCommandKit().reloadEvents();
+                break;
+            case CKitActionType.ReloadValidators:
+                await ensureCommandKit().reloadValidations();
+                break;
+        }
+    } catch (e) {
+        Logger.Fatal('Failed to load the client entrypoint', e);
+    }
+});

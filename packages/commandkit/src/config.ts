@@ -1,10 +1,18 @@
 import type { ClientOptions } from 'discord.js';
+import { CommandKitOptions } from './typings';
 
 export interface CommandKitConfig {
     /**
      * The Discord client options.
      */
     clientOptions: ClientOptions;
+    /**
+     * The command handler options.
+     */
+    commandHandler?: Omit<
+        CommandKitOptions,
+        'client' | 'commandsPath' | 'validationsPath' | 'eventsPath'
+    >;
     /**
      * The Discord bot token. Defaults to `process.env.DISCORD_TOKEN`.
      */
@@ -57,7 +65,7 @@ let globalConfig: Partial<CommandKitConfig> = {
     nodeOptions: [],
     antiCrash: true,
     requirePolyfill: true,
-    token: process.env.DISCORD_TOKEN,
+    token: undefined,
 };
 
 export function getConfig(): CommandKitConfig {

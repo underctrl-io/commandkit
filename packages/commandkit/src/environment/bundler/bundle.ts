@@ -1,10 +1,12 @@
 import { build } from 'tsup';
 import { getConfig } from '../../config';
 import { join } from 'path';
+import { injectShims } from './shims';
+import { Environment } from '../env';
 
-export function bundle(mode: 'development' | 'production') {
-    switch (mode) {
-        case 'development':
+export function bundle() {
+    switch (true) {
+        case Environment.isDevelopment():
             return buildDevelopment();
         default:
             throw new Error('Not implemented');
@@ -12,28 +14,27 @@ export function bundle(mode: 'development' | 'production') {
 }
 
 function buildDevelopment() {
-    const { watch } = getConfig();
+    return new Promise<string>((resolve) => {
+        const { requirePolyfill } = getConfig();
 
-    const outDir = join(process.cwd(), '.commandkit');
-
-    return build({
-        clean: true,
-        format: ['esm'],
-        bundle: false,
-        dts: false,
-        skipNodeModulesBundle: true,
-        minify: false,
-        shims: true,
-        sourcemap: 'inline',
-        keepNames: true,
-        outDir: '.commandkit',
-        silent: true,
-        entry: ['src'],
-        watch,
-        async onSuccess() {
-            // return await injectShims('.commandkit', main, false, requirePolyfill);
-        },
-    }).then(() => {
-        return join(outDir, 'client.mjs');
+        return build({
+            clean: true,
+            format: ['esm'],
+            bundle: false,
+            dts: false,
+            skipNodeModulesBundle: true,
+            minify: false,
+            shims: true,
+            sourcemap: 'inline',
+            keepNames: true,
+            outDir: '.commandkit',
+            silent: true,
+            entry: ['src'],
+            async onSuccess() {
+                const root = join(process.cwd(), '.commandkit');
+                await injectShims(root, 'client.mjs', false, requirePolyfill);
+                resolve(join(root, 'client.mjs'));
+            },
+        });
     });
 }
