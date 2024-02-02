@@ -47,11 +47,11 @@ const manager = (await select({
 })) as PackageManager;
 
 const lang = (await select({
-    message: 'Select the language to use:',
-    options: [
-        { label: 'JavaScript', value: 'js' },
-        { label: 'TypeScript', value: 'ts' },
-    ],
+  message: 'Select the language to use:',
+  options: [
+    { label: 'JavaScript', value: 'js' },
+    { label: 'TypeScript', value: 'ts' },
+  ],
 })) as Language;
 
 const type = (await select({

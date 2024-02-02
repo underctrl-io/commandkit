@@ -9,9 +9,18 @@ interface InstallDepsProps {
   stdio: IOType;
 }
 
-export function installDeps({ manager, dir, lang, stdio = 'pipe' }: InstallDepsProps) {
-  const depsCommand = `${manager} add ${dependencies[lang].dependencies.join(' ')}`;
-  const devDepsCommand = `${manager} add ${dependencies.ts.devDependencies.join(' ')}`;
+export function installDeps({
+  manager,
+  dir,
+  lang,
+  stdio = 'pipe',
+}: InstallDepsProps) {
+  const depsCommand = `${manager} add ${dependencies[lang].dependencies.join(
+    ' ',
+  )}`;
+  const devDepsCommand = `${manager} add ${dependencies.ts.devDependencies.join(
+    ' ',
+  )}`;
 
   execSync(depsCommand, { cwd: dir, stdio });
 

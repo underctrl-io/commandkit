@@ -7,13 +7,13 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 export const templates = {
   js: {
-      esm: path.join(__dirname, '..', 'templates', 'JavaScript', 'esm'),
-      cjs: path.join(__dirname, '..', 'templates', 'JavaScript', 'cjs'),
+    esm: path.join(__dirname, '..', 'templates', 'JavaScript', 'esm'),
+    cjs: path.join(__dirname, '..', 'templates', 'JavaScript', 'cjs'),
   },
   ts: {
-      esm: path.join(__dirname, '..', 'templates', 'TypeScript', 'esm'),
-      cjs: path.join(__dirname, '..', 'templates', 'TypeScript', 'cjs'),
-    },
+    esm: path.join(__dirname, '..', 'templates', 'TypeScript', 'esm'),
+    cjs: path.join(__dirname, '..', 'templates', 'TypeScript', 'cjs'),
+  },
 };
 
 export const textColors = {
@@ -30,20 +30,20 @@ const baseDependencies = ['commandkit', 'discord.js', 'dotenv'];
 
 export const dependencies = {
   js: {
-      dependencies: baseDependencies,
+    dependencies: baseDependencies,
   },
   ts: {
-      dependencies: baseDependencies,
-      devDependencies: ['@types/node', 'typescript'],
+    dependencies: baseDependencies,
+    devDependencies: ['@types/node', 'typescript'],
   },
 };
 
 export const commands = {
-    init: {
-        npm: 'npm init -y',
-        yarn: 'yarn init -y; yarn config set nodeLinker node-modules; yarn set version stable',
-        pnpm: 'pnpm init',
-    },
+  init: {
+    npm: 'npm init -y',
+    yarn: 'yarn init -y; yarn config set nodeLinker node-modules; yarn set version stable',
+    pnpm: 'pnpm init',
+  },
 };
 
 export const hints = {
