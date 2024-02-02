@@ -1,7 +1,7 @@
 {
   "name": "create-commandkit",
   "description": "Effortlessly create a CommandKit project",
-  "version": "2.0.0",
+  "version": "1.1.4",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "bin": "./dist/index.js",
@@ -28,8 +28,10 @@
   },
   "homepage": "https://commandkit.js.org",
   "scripts": {
+    "lint": "tsc --noEmit",
+    "dev": "tsup --watch",
     "build": "tsup",
-    "lint": "tsc"
+    "deploy": "npm publish"
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",

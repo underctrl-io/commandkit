@@ -28,7 +28,6 @@
     "dev": "tsup --watch",
     "build": "tsup",
     "deploy": "npm publish",
-    "deploy-dev": "npm publish --access public --tag dev",
     "test": "vitest",
     "test:dev": "cd ./tests && node ../bin/index.mjs dev",
     "test:build": "cd ./tests && node ../bin/index.mjs build",
