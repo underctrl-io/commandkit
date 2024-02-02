@@ -40,7 +40,7 @@ jobs:
 
       - name: 🚚 Publish
         run: |
-          cd packages/create-commandkit
+          cd packages/commandkit
           npm publish --access public --tag dev
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
