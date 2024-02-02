@@ -1,9 +1,9 @@
 import { getContext, prepareHookInvocationError } from './common';
 
 export function useCommandData() {
-    const data = getContext().getStore();
+  const data = getContext().getStore();
 
-    if (!data) throw prepareHookInvocationError('useCommandData');
+  if (!data) throw prepareHookInvocationError('useCommandData');
 
-    return data.command;
+  return data.command;
 }

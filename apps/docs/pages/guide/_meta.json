@@ -1,13 +1,13 @@
 {
-    "installation": "Installation",
-    "create-commandkit": "create-commandkit",
-    "commandkit-setup": "CommandKit Setup",
-    "command-file-setup": "Commands Setup",
-    "event-file-setup": "Events Setup",
-    "validation-file-setup": "Validations Setup",
-    "buttonkit": "Using ButtonKit",
-    "using-cli": "Using CommandKit CLI",
-    "commandkit-config": "CommandKit Config",
-    "using-signals": "Using Signals",
-    "migrating-from-djs-commander": "Migrating from DJS-Commander"
+  "installation": "Installation",
+  "create-commandkit": "create-commandkit",
+  "commandkit-setup": "CommandKit Setup",
+  "command-file-setup": "Commands Setup",
+  "event-file-setup": "Events Setup",
+  "validation-file-setup": "Validations Setup",
+  "buttonkit": "Using ButtonKit",
+  "using-cli": "Using CommandKit CLI",
+  "commandkit-config": "CommandKit Config",
+  "using-signals": "Using Signals",
+  "migrating-from-djs-commander": "Migrating from DJS-Commander"
 }

@@ -3,19 +3,19 @@ import { type IOType, execSync } from 'node:child_process';
 import { dependencies } from '../utils';
 
 interface InstallDepsProps {
-    manager: PackageManager;
-    dir: string;
-    lang: Language;
-    stdio: IOType;
+  manager: PackageManager;
+  dir: string;
+  lang: Language;
+  stdio: IOType;
 }
 
 export function installDeps({ manager, dir, lang, stdio = 'pipe' }: InstallDepsProps) {
-    const depsCommand = `${manager} add ${dependencies[lang].dependencies.join(' ')}`;
-    const devDepsCommand = `${manager} add ${dependencies.ts.devDependencies.join(' ')}`;
+  const depsCommand = `${manager} add ${dependencies[lang].dependencies.join(' ')}`;
+  const devDepsCommand = `${manager} add ${dependencies.ts.devDependencies.join(' ')}`;
 
-    execSync(depsCommand, { cwd: dir, stdio });
+  execSync(depsCommand, { cwd: dir, stdio });
 
-    if (lang == 'ts') {
-        execSync(devDepsCommand, { cwd: dir, stdio });
-    }
+  if (lang == 'ts') {
+    execSync(devDepsCommand, { cwd: dir, stdio });
+  }
 }

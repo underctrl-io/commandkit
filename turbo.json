@@ -1,13 +1,13 @@
 {
-    "$schema": "https://turbo.build/schema.json",
-    "pipeline": {
-        "lint": {},
-        "build": {},
-        "deploy": {},
-        "deploy-dev": {},
-        "dev": {
-            "cache": false,
-            "persistent": true
-        }
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "lint": {},
+    "build": {},
+    "deploy": {},
+    "deploy-dev": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
     }
+  }
 }

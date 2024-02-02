@@ -7,8 +7,8 @@ Firstly, thank you for considering contributing to CommandKit! Whether you're lo
 ### Prerequisites
 
 1. Ensure you have `Node.js` and `pnpm` installed.
-    - Node.js: [Download here](https://nodejs.org/)
-    - pnpm: Install via `npm install -g pnpm` if you haven't.
+   - Node.js: [Download here](https://nodejs.org/)
+   - pnpm: Install via `npm install -g pnpm` if you haven't.
 
 ### Fork & Clone
 
@@ -40,8 +40,8 @@ git checkout -b your-feature-or-bugfix
 
 3. Ensure that your changes don't break any existing functionality. You can test the functionality of your code depending on where you've made changes:
 
-    1. If you've made changes to the CommandKit package, you can use the "tests" folder in the "packages/commandkit" directory to test your own bot. Just make sure to create a new `.env` file with the template from the `.env.example` file provided. You can run the application using `pnpm test`.
-    2. If you've made changes to the docs, you can run `pnpm dev` inside "apps/docs" to spin up a local development server.
+   1. If you've made changes to the CommandKit package, you can use the "tests" folder in the "packages/commandkit" directory to test your own bot. Just make sure to create a new `.env` file with the template from the `.env.example` file provided. You can run the application using `pnpm test`.
+   2. If you've made changes to the docs, you can run `pnpm dev` inside "apps/docs" to spin up a local development server.
 
 4. Run `pnpm lint` from the root directory to ensure all lint scripts and formatting is valid.
 
