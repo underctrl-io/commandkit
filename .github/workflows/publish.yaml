@@ -25,6 +25,9 @@ jobs:
       - name: 🍳 Prepare
         run: pnpm install
 
+      - name: 🧱 Build
+        run: pnpm --filter './packages/*' run build
+
       - name: 🚚 Publish
         run: pnpm run deploy:package
         env:
