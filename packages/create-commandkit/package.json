@@ -1,6 +1,6 @@
 {
   "name": "create-commandkit",
-  "description": "Effortlessly create a CommandKit project",
+  "description": "Effortlessly create a CommandKit project!",
   "version": "1.2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
