@@ -1,4 +1,4 @@
-name: Publish Dev Build
+name: (CommandKit) Publish Dev Build
 
 on:
   push:
@@ -39,7 +39,9 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
 
       - name: 🚚 Publish
-        run: pnpm run deploy:package-dev
+        run: |
+          cd packages/commandkit
+          npm publish --access public --tag dev
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
 
