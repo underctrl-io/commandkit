@@ -27,7 +27,7 @@
     "lint": "tsc --noEmit",
     "dev": "tsup --watch",
     "build": "tsup",
-    "deploy": "npm publish",
+    "deploy:package": "npm publish",
     "test": "vitest",
     "test:dev": "cd ./tests && node ../bin/index.mjs dev",
     "test:build": "cd ./tests && node ../bin/index.mjs build",

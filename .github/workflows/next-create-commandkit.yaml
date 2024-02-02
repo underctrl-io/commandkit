@@ -38,6 +38,9 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
 
+      - name: 🧱 Build
+        run: pnpm --filter './packages/create-commandkit' run build
+
       - name: 🚚 Publish
         run: |
           cd packages/create-commandkit
