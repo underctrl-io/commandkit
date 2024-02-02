@@ -1,31 +1,31 @@
 name: Publish to NPM
 
 on:
-    release:
-        types: [created]
+  release:
+    types: [created]
 
 jobs:
-    release:
-        name: 🚀 Publish
-        runs-on: ubuntu-latest
-        steps:
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 8
+  release:
+    name: 🚀 Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
-            - name: 📚 Checkout
-              uses: actions/checkout@v3
+      - name: 📚 Checkout
+        uses: actions/checkout@v3
 
-            - name: 🟢 Node
-              uses: actions/setup-node@v2
-              with:
-                  node-version: 16
-                  registry-url: https://registry.npmjs.org
+      - name: 🟢 Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org
 
-            - name: 🍳 Prepare
-              run: pnpm install
+      - name: 🍳 Prepare
+        run: pnpm install
 
-            - name: 🚚 Publish
-              run: pnpm run deploy:package
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+      - name: 🚚 Publish
+        run: pnpm run deploy:package
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

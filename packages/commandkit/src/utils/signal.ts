@@ -2,9 +2,9 @@ export type CommandKitEffectCallback = () => void;
 export type CommandKitSignalInitializer<T> = T | (() => T);
 export type CommandKitSignalUpdater<T> = T | ((prev: T) => T);
 export type CommandKitSignal<T> = readonly [
-    () => T,
-    (value: CommandKitSignalUpdater<T>) => void,
-    () => void,
+  () => T,
+  (value: CommandKitSignalUpdater<T>) => void,
+  () => void,
 ];
 
 const context: CommandKitEffectCallback[] = [];
@@ -14,36 +14,38 @@ const context: CommandKitEffectCallback[] = [];
  * @param value - The initial value to use.
  * @returns An array of functions: a getter, a setter, and a disposer.
  */
-export function createSignal<T = unknown>(value?: CommandKitSignalInitializer<T>) {
-    const subscribers = new Set<() => void>();
+export function createSignal<T = unknown>(
+  value?: CommandKitSignalInitializer<T>,
+) {
+  const subscribers = new Set<() => void>();
 
-    let disposed = false;
-    let val: T | undefined = value instanceof Function ? value() : value;
+  let disposed = false;
+  let val: T | undefined = value instanceof Function ? value() : value;
 
-    const getter = () => {
-        if (!disposed) {
-            const running = getCurrentObserver();
-            if (running) subscribers.add(running);
-        }
+  const getter = () => {
+    if (!disposed) {
+      const running = getCurrentObserver();
+      if (running) subscribers.add(running);
+    }
 
-        return val;
-    };
+    return val;
+  };
 
-    const setter = (newValue: CommandKitSignalUpdater<T>) => {
-        if (disposed) return;
-        val = newValue instanceof Function ? newValue(val!) : newValue;
+  const setter = (newValue: CommandKitSignalUpdater<T>) => {
+    if (disposed) return;
+    val = newValue instanceof Function ? newValue(val!) : newValue;
 
-        for (const subscriber of subscribers) {
-            subscriber();
-        }
-    };
+    for (const subscriber of subscribers) {
+      subscriber();
+    }
+  };
 
-    const dispose = () => {
-        subscribers.clear();
-        disposed = true;
-    };
+  const dispose = () => {
+    subscribers.clear();
+    disposed = true;
+  };
 
-    return [getter, setter, dispose] as CommandKitSignal<T>;
+  return [getter, setter, dispose] as CommandKitSignal<T>;
 }
 
 /**
@@ -51,22 +53,22 @@ export function createSignal<T = unknown>(value?: CommandKitSignalInitializer<T>
  * @param callback - The callback function to execute.
  */
 export function createEffect(callback: CommandKitEffectCallback) {
-    const execute = () => {
-        context.push(execute);
+  const execute = () => {
+    context.push(execute);
 
-        try {
-            callback();
-        } finally {
-            context.pop();
-        }
-    };
+    try {
+      callback();
+    } finally {
+      context.pop();
+    }
+  };
 
-    execute();
+  execute();
 }
 
 /**
  * Get the current observer.
  */
 function getCurrentObserver() {
-    return context[context.length - 1];
+  return context[context.length - 1];
 }

@@ -1,9 +1,9 @@
 import { config } from 'dotenv-cra';
 
 export function loadEnv(type: 'development' | 'production') {
-    process.env.NODE_ENV = type;
+  process.env.NODE_ENV = type;
 
-    const result = config();
+  const result = config();
 
-    return result.error?.message;
+  return result.error?.message;
 }
