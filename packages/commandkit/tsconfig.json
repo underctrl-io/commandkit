@@ -1,10 +1,10 @@
 {
-    "extends": "tsconfig/base.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "skipLibCheck": true,
-        "skipDefaultLibCheck": true
-    },
-    "include": ["src/**/*.ts", "helpers/**/*.ts", "spec"],
-    "exclude": ["node_modules"]
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
+  },
+  "include": ["src/**/*.ts", "helpers/**/*.ts", "spec"],
+  "exclude": ["node_modules"]
 }

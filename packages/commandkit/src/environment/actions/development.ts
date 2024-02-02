@@ -20,33 +20,35 @@ const commandkitVersion = '[VI]{{inject}}[/VI]';
 export const notification = new EventEmitter();
 
 function printBanner() {
-    const banner = colors.magenta(`${String.fromCharCode(9670)} CommandKit ${commandkitVersion}`);
-    Logger.Log(banner);
-    Logger.Info('Initializing the development environment...');
+  const banner = colors.magenta(
+    `${String.fromCharCode(9670)} CommandKit ${commandkitVersion}`,
+  );
+  Logger.Log(banner);
+  Logger.Info('Initializing the development environment...');
 }
 
 export async function initializeDevelopmentEnvironment(
-    args: yargs.ArgumentsCamelCase<{
-        config?: string | undefined;
-        nodeOptions?: string | undefined;
-    }>,
+  args: yargs.ArgumentsCamelCase<{
+    config?: string | undefined;
+    nodeOptions?: string | undefined;
+  }>,
 ) {
-    printBanner();
+  printBanner();
 
-    if (getClient()) {
-        Logger.Fatal('The development environment is already initialized.');
-        return;
-    }
+  if (getClient()) {
+    Logger.Fatal('The development environment is already initialized.');
+    return;
+  }
 
     CKitInternalEnvState.$env__type = 'development';
 
     const envErr = loadEnv();
 
-    if (envErr) {
-        Logger.Warning('Failed to load .env', envErr);
-    } else {
-        Logger.Debug('Loaded .env');
-    }
+  if (envErr) {
+    Logger.Warning('Failed to load .env', envErr);
+  } else {
+    Logger.Debug('Loaded .env');
+  }
 
     const configPath = await findConfigPath(args.config ?? process.cwd());
     if (!configPath) {
@@ -56,14 +58,14 @@ export async function initializeDevelopmentEnvironment(
         return Logger.Fatal(msg);
     }
 
-    try {
-        var config = await importConfig(configPath);
-        Logger.Debug('Loaded config from', colors.yellow(configPath));
-    } catch (e) {
-        Logger.Warning('Failed to load config');
-        Logger.Fatal(colors.red((e as Error).stack ?? `${e}`));
-        return;
-    }
+  try {
+    var config = await importConfig(configPath);
+    Logger.Debug('Loaded config from', colors.yellow(configPath));
+  } catch (e) {
+    Logger.Warning('Failed to load config');
+    Logger.Fatal(colors.red((e as Error).stack ?? `${e}`));
+    return;
+  }
 
     const client = createClient();
     setupCommandKit(client);

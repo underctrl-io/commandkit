@@ -90,8 +90,9 @@ It is not recommended to use this to listen for button clicks forever since it c
 In the above example, you may notice how similar `ButtonKit` is to the native Discord.js `ButtonBuilder` class. That's because it's built on top of it. It introduces a new method called `onClick` which will allow you to quickly handle button interactions without having to create collectors. CommandKit does that for you!
 
 <Callout type="warning">
-    ButtonKit doesn't work without a custom ID, so ensure you provide one whenever instantiating a
-    button. This is required to keep track of what button was clicked.
+  ButtonKit doesn't work without a custom ID, so ensure you provide one whenever
+  instantiating a button. This is required to keep track of what button was
+  clicked.
 </Callout>
 
 ### Arguments Explained
@@ -100,9 +101,9 @@ Here's an empty `onClick` method without any arguments:
 
 ```js copy
 const myButton = new ButtonKit()
-    .setCustomId('custom_button')
-    .setLabel('Click me!')
-    .setStyle(ButtonStyle.Primary);
+  .setCustomId('custom_button')
+  .setLabel('Click me!')
+  .setStyle(ButtonStyle.Primary);
 
 myButton.onClick();
 ```
@@ -111,7 +112,7 @@ The first argument required by this function is your handler function which will
 
 ```js copy
 myButton.onClick((buttonInteraction) => {
-    buttonInteraction.reply('You clicked a button!');
+  buttonInteraction.reply('You clicked a button!');
 });
 ```
 
@@ -122,10 +123,10 @@ const row = new ActionRowBuilder().addComponents(myButton);
 const message = await channel.send({ components: [row] });
 
 myButton.onClick(
-    (buttonInteraction) => {
-        buttonInteraction.reply('You clicked a button!');
-    },
-    { message },
+  (buttonInteraction) => {
+    buttonInteraction.reply('You clicked a button!');
+  },
+  { message },
 );
 ```
 
@@ -133,13 +134,16 @@ This also works with interaction replies. Just ensure you pass `fetchReply` alon
 
 ```js copy
 const row = new ActionRowBuilder().addComponents(myButton);
-const message = await interaction.reply({ components: [row], fetchReply: true });
+const message = await interaction.reply({
+  components: [row],
+  fetchReply: true,
+});
 
 myButton.onClick(
-    (buttonInteraction) => {
-        buttonInteraction.reply('You clicked a button!');
-    },
-    { message },
+  (buttonInteraction) => {
+    buttonInteraction.reply('You clicked a button!');
+  },
+  { message },
 );
 ```
 
@@ -147,26 +151,26 @@ myButton.onClick(
 
 ### `message`
 
--   Type: [`Message`](https://old.discordjs.dev/#/docs/discord.js/main/class/Message)
+- Type: [`Message`](https://old.discordjs.dev/#/docs/discord.js/main/class/Message)
 
 The message object that ButtonKit uses to listen for button clicks (interactions).
 
 ### `time` (optional)
 
--   Type: `number`
--   Default: `86400000`
+- Type: `number`
+- Default: `86400000`
 
 The duration (in ms) the collector should run for and listen for button clicks.
 
 ### `autoReset` (optional)
 
--   Type: `boolean`
+- Type: `boolean`
 
 Whether or not the collector should automatically reset the timer when a button is clicked.
 
 ### Additional optional options
 
--   Type: [`InteractionCollectorOptions`](https://old.discordjs.dev/#/docs/discord.js/main/typedef/InteractionCollectorOptions)
+- Type: [`InteractionCollectorOptions`](https://old.discordjs.dev/#/docs/discord.js/main/typedef/InteractionCollectorOptions)
 
 ## Handle collector end
 
@@ -174,51 +178,54 @@ When setting up an `onClick()` method using ButtonKit, you may also want to run 
 
 ```js copy {16-21}
 const myButton = new ButtonKit()
-    .setCustomId('custom_button')
-    .setLabel('Click me!')
-    .setStyle(ButtonStyle.Primary);
+  .setCustomId('custom_button')
+  .setLabel('Click me!')
+  .setStyle(ButtonStyle.Primary);
 
 const row = new ActionRowBuilder().addComponents(myButton);
-const message = await interaction.reply({ components: [row], fetchReply: true });
+const message = await interaction.reply({
+  components: [row],
+  fetchReply: true,
+});
 
 myButton
-    .onClick(
-        (buttonInteraction) => {
-            buttonInteraction.reply('You clicked a button!');
-        },
-        { message },
-    )
-    .onEnd(() => {
-        console.log('Button collector ended.');
+  .onClick(
+    (buttonInteraction) => {
+      buttonInteraction.reply('You clicked a button!');
+    },
+    { message },
+  )
+  .onEnd(() => {
+    console.log('Button collector ended.');
 
-        myButton.setDisabled(true);
-        message.edit({ components: [row] });
-    });
+    myButton.setDisabled(true);
+    message.edit({ components: [row] });
+  });
 ```
 
 ## Dispose button collector
 
 <Callout type="warning">
-    This feature is currently only available in the [development
-    version](/guide/installation#development-version).
+  This feature is currently only available in the [development
+  version](/guide/installation#development-version).
 </Callout>
 
 To dispose the button collector, you can make use of the `dispose` method. By disposing the collector like this, your `onEnd` handler (if any) will be called automatically.
 
 ```js copy {15}
 myButton
-    .onClick(
-        (buttonInteraction) => {
-            buttonInteraction.reply('You clicked a button!');
-        },
-        { message },
-    )
-    .onEnd(() => {
-        console.log('Button collector ended.');
+  .onClick(
+    (buttonInteraction) => {
+      buttonInteraction.reply('You clicked a button!');
+    },
+    { message },
+  )
+  .onEnd(() => {
+    console.log('Button collector ended.');
 
-        myButton.setDisabled(true);
-        message.edit({ components: [row] });
-    });
+    myButton.setDisabled(true);
+    message.edit({ components: [row] });
+  });
 
 myButton.dispose();
 ```

@@ -6,6 +6,6 @@ import path from 'path';
  * @returns - The converted file URL.
  */
 export function toFileURL(filePath: string) {
-    const resolvedPath = path.resolve(filePath);
-    return 'file://' + resolvedPath.replace(/\\\\|\\/g, '/');
+  const resolvedPath = path.resolve(filePath);
+  return 'file://' + resolvedPath.replace(/\\\\|\\/g, '/');
 }

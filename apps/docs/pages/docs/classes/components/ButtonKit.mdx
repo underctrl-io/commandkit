@@ -3,17 +3,17 @@ import { Callout } from 'nextra/components';
 # ButtonKit
 
 <Callout type="info">
-    ButtonKit extends the
-    [ButtonBuilder](https://discord.js.org/docs/packages/discord.js/main/ButtonBuilder:Class) class,
-    provided by discord.js.
+  ButtonKit extends the
+  [ButtonBuilder](https://discord.js.org/docs/packages/discord.js/main/ButtonBuilder:Class)
+  class, provided by discord.js.
 </Callout>
 
 ### `onClick`
 
--   Return type: `ButtonKit`
--   Arguments:
-    -   handler: [`CommandKitButtonBuilderInteractionCollectorDispatch`](/docs/typedef/CommandKitButtonBuilderInteractionCollectorDispatch)
-    -   data?: [`CommandKitButtonBuilderInteractionCollectorDispatchContextData`](/docs/typedef/CommandKitButtonBuilderInteractionCollectorDispatch) | `undefined`
+- Return type: `ButtonKit`
+- Arguments:
+  - handler: [`CommandKitButtonBuilderInteractionCollectorDispatch`](/docs/typedef/CommandKitButtonBuilderInteractionCollectorDispatch)
+  - data?: [`CommandKitButtonBuilderInteractionCollectorDispatchContextData`](/docs/typedef/CommandKitButtonBuilderInteractionCollectorDispatch) | `undefined`
 
 Sets up an inline interaction collector for this button. This collector by default allows as many interactions as possible if it is actively used. If unused, this expires after 24 hours or custom time if specified.
 
@@ -21,22 +21,22 @@ Sets up an inline interaction collector for this button. This collector by defau
 
 ```ts
 const button = new ButtonKit()
-    .setLabel('Click me')
-    .setStyle(ButtonStyle.Primary)
-    .setCustomId('click_me');
+  .setLabel('Click me')
+  .setStyle(ButtonStyle.Primary)
+  .setCustomId('click_me');
 
 const row = new ActionRowBuilder().addComponents(button);
 
 const message = await channel.send({
-    content: 'Click the button',
-    components: [row],
+  content: 'Click the button',
+  components: [row],
 });
 
 button.onClick(
-    async (interaction) => {
-        await interaction.reply('You clicked me!');
-    },
-    { message },
+  async (interaction) => {
+    await interaction.reply('You clicked me!');
+  },
+  { message },
 );
 
 // Remove onClick handler and destroy the interaction collector
@@ -45,5 +45,5 @@ button.onClick(null);
 
 ### onEnd
 
--   Return type: `ButtonKit`
--   Props type: [`CommandKitButtonBuilderOnEnd`](/docs/typedef/CommandKitButtonBuilderOnEnd)
+- Return type: `ButtonKit`
+- Props type: [`CommandKitButtonBuilderOnEnd`](/docs/typedef/CommandKitButtonBuilderOnEnd)

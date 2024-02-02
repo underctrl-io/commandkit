@@ -6,7 +6,7 @@ export function loadEnv() {
 
     process.env.NODE_ENV = type;
 
-    const result = config();
+  const result = config();
 
-    return result.error?.message;
+  return result.error?.message;
 }

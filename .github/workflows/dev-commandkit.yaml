@@ -1,0 +1,65 @@
+name: (CommandKit) Publish Dev Build
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'packages/commandkit/**'
+
+jobs:
+  release:
+    name: 🚀 Publish Dev Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 📚 Checkout
+        uses: actions/checkout@v3
+
+      - name: 🟢 Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org
+
+      - name: 🍳 Prepare
+        run: pnpm install
+
+      - name: 🔢 Update Version
+        run: |
+          cd packages/commandkit
+          node -e "const pkg = require('./package.json'); \
+          const newVersion = pkg.version + '-dev.' + new Date().toISOString().replace(/[:\-T]/g, '').substr(0,14); \
+          pkg.version = newVersion; \
+          require('fs').writeFileSync('./package.json', JSON.stringify(pkg, null, 2));"
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
+      - name: 🧱 Build
+        run: pnpm --filter './packages/commandkit' run build
+
+      - name: 🚚 Publish
+        run: |
+          cd packages/commandkit
+          npm publish --access public --tag dev
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+
+      - name: 🚫 Deprecate Previous Dev Version
+        run: |
+          PACKAGE_NAME=$(node -e "console.log(require('./packages/commandkit/package.json').name);")
+          ALL_VERSIONS=$(npm info $PACKAGE_NAME versions -json)
+          VERSION_TO_DEPRECATE=$(echo $ALL_VERSIONS | node -e "
+              const versions = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8'));
+              const devVersions = versions.filter(v => v.includes('-dev.'));
+              const versionToDeprecate = devVersions[devVersions.length - 2];
+              console.log(versionToDeprecate);
+          ")
+          echo Deprecating version $VERSION_TO_DEPRECATE
+          npm deprecate $PACKAGE_NAME@$VERSION_TO_DEPRECATE "Deprecated dev version."
+
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

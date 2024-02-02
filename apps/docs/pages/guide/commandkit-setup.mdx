@@ -100,38 +100,38 @@ This is a simple overview of how to set up CommandKit with all the available opt
 </Tabs>
 
 <Callout type="warning">
-    Some Discord.js properties are only accessible using the correct intents.
+  Some Discord.js properties are only accessible using the correct intents.
 </Callout>
 
 ## CommandKit options
 
 ### `client`
 
--   Type: [`Client`](https://old.discordjs.dev/#/docs/discord.js/main/class/Client)
+- Type: [`Client`](https://old.discordjs.dev/#/docs/discord.js/main/class/Client)
 
 This is your Discord.js client object. This is required to register and handle application commands and events.
 
 ### `commandsPath` (optional)
 
--   Type: `string`
+- Type: `string`
 
 This is the path to your commands directory. It's used to fetch, register, and listen for application commands.
 
 ### `eventsPath` (optional)
 
--   Type: `string`
+- Type: `string`
 
 This is the path to your events directory. It's used to fetch and set event listeners based on the folder names inside of it.
 
 ### `validationsPath` (optional)
 
--   Type: `string`
+- Type: `string`
 
 This is the path to your validations directory. It's used to fetch and call validation functions before running application commands.
 
 ### `devGuildIds` (optional)
 
--   Type: `string[]`
+- Type: `string[]`
 
 This is a list of development server IDs. It's used to restrict commands marked with `devOnly` to specific servers.
 
@@ -139,7 +139,7 @@ If there is at least 1 guild ID provided, CommandKit will register any commands 
 
 ### `devUserIds` (optional)
 
--   Type: `string[]`
+- Type: `string[]`
 
 This is a list of developer user IDs. It's used to restrict commands marked with `devOnly` to specific users.
 
@@ -147,7 +147,7 @@ Trying to execute a command when this is set to at-least 1 user ID will call a b
 
 ### `devRoleIds` (optional)
 
--   Type: `string[]`
+- Type: `string[]`
 
 This is a list of developer role IDs. It's used to restrict commands marked with `devOnly` to specific roles.
 
@@ -155,14 +155,14 @@ Trying to execute a command when this is set to at-least 1 role ID will call a b
 
 ### `skipBuiltInValidations` (optional)
 
--   Type: `boolean`
--   Default: `false`
+- Type: `boolean`
+- Default: `false`
 
 This is used to disable CommandKit's built-in validation functions. Setting this to `true` will ignore the default behaviour of validating who is running commands marked with `devOnly`.
 
 ### `bulkRegister` (optional)
 
--   Type: `boolean`
--   Default: `false`
+- Type: `boolean`
+- Default: `false`
 
 This is used to change the behaviour of how CommandKit loads application commands. By default it's one-by-one while comparing changes. Setting this option to `true` will load application commands all at once on every restart, and when [`reloadCommands()`](/docs/typedef/CommandKit#reloadcommands) is called.
