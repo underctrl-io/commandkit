@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 console.clear();
 
-import type { ModuleType, PackageManager } from './types';
+import type { Language, ModuleType, PackageManager } from './types';
 
 import { intro, text, select, password, confirm, outro } from '@clack/prompts';
 import { commandkit, hints, outroMsg } from './utils';
@@ -46,6 +46,14 @@ const manager = (await select({
   ],
 })) as PackageManager;
 
+const lang = (await select({
+  message: 'Select the language to use:',
+  options: [
+    { label: 'JavaScript', value: 'js' },
+    { label: 'TypeScript', value: 'ts' },
+  ],
+})) as Language;
+
 const type = (await select({
   message: 'Select a module type:',
   options: [
@@ -75,7 +83,7 @@ const installNow = await confirm({
 outro(colors.cyan('Setup complete.'));
 
 await setup({ manager, dir, token, type });
-await copyTemplates({ type, dir, lang: 'js' });
+await copyTemplates({ type, dir, lang });
 
 if (installNow) {
   await installDeps({ manager, dir, lang: 'js', stdio: 'inherit' });
