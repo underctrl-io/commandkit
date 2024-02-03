@@ -4,7 +4,7 @@ import { Callout } from 'nextra/components';
 
 <Callout type="info">
   ButtonKit extends the
-  [ButtonBuilder](https://discord.js.org/docs/packages/discord.js/main/ButtonBuilder:Class)
+  [`ButtonBuilder`](https://discord.js.org/docs/packages/discord.js/main/ButtonBuilder:Class)
   class, provided by discord.js.
 </Callout>
 
@@ -40,10 +40,14 @@ button.onClick(
 );
 
 // Remove onClick handler and destroy the interaction collector
-button.onClick(null);
+button.dispose();
 ```
 
-### onEnd
+### `onEnd`
 
 - Return type: `ButtonKit`
 - Props type: [`CommandKitButtonBuilderOnEnd`](/docs/typedef/CommandKitButtonBuilderOnEnd)
+
+### `dispose`
+
+- Return type: `void`
