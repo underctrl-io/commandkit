@@ -56,9 +56,6 @@ importers:
 
   packages/commandkit:
     dependencies:
-      chokidar:
-        specifier: ^3.5.3
-        version: 3.5.3
       dotenv-cra:
         specifier: ^3.0.3
         version: 3.0.3
