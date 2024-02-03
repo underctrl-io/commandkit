@@ -1,11 +1,11 @@
 export enum CKitActionType {
-    ReloadAll,
-    ReloadCommands,
-    ReloadEvents,
-    ReloadValidators,
+  ReloadAll,
+  ReloadCommands,
+  ReloadEvents,
+  ReloadValidators,
 }
 
 export enum CKitNotification {
-    Reload = 'reload',
-    ReloadAck = 'reload-ack',
+  Reload = 'reload',
+  ReloadAck = 'reload-ack',
 }

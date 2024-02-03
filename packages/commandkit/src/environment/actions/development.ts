@@ -4,11 +4,11 @@ import colors from '../../utils/colors';
 import { Logger } from '../common/logger';
 import { loadEnv } from '../../bootstrap/loadEnv';
 import {
-    DisposableCallbacksRegistry,
-    createClient,
-    getClient,
-    getCommandKit,
-    setupCommandKit,
+  DisposableCallbacksRegistry,
+  createClient,
+  getClient,
+  getCommandKit,
+  setupCommandKit,
 } from '../../bootstrap/client';
 import { bundle } from '../bundler/bundle';
 import { EventEmitter } from 'node:events';
@@ -40,9 +40,9 @@ export async function initializeDevelopmentEnvironment(
     return;
   }
 
-    CKitInternalEnvState.$env__type = 'development';
+  CKitInternalEnvState.$env__type = 'development';
 
-    const envErr = loadEnv();
+  const envErr = loadEnv();
 
   if (envErr) {
     Logger.Warning('Failed to load .env', envErr);
@@ -50,13 +50,13 @@ export async function initializeDevelopmentEnvironment(
     Logger.Debug('Loaded .env');
   }
 
-    const configPath = await findConfigPath(args.config ?? process.cwd());
-    if (!configPath) {
-        const msg = `Could not locate the commandkit config file${
-            args.config ? ' at ' + args.config : ' in the current working directory'
-        }.`;
-        return Logger.Fatal(msg);
-    }
+  const configPath = await findConfigPath(args.config ?? process.cwd());
+  if (!configPath) {
+    const msg = `Could not locate the commandkit config file${
+      args.config ? ' at ' + args.config : ' in the current working directory'
+    }.`;
+    return Logger.Fatal(msg);
+  }
 
   try {
     var config = await importConfig(configPath);
@@ -67,52 +67,54 @@ export async function initializeDevelopmentEnvironment(
     return;
   }
 
-    const client = createClient();
-    setupCommandKit(client);
+  const client = createClient();
+  setupCommandKit(client);
 
-    notification.once(CKitNotification.ReloadAck, async () => {
-        await client.login(config.token);
-    });
+  notification.once(CKitNotification.ReloadAck, async () => {
+    await client.login(config.token);
+  });
 
-    try {
-        notification.emit(CKitNotification.Reload, CKitActionType.ReloadAll);
-    } catch (e) {
-        Logger.Fatal('Failed to load the client entrypoint', e);
-    }
+  try {
+    notification.emit(CKitNotification.Reload, CKitActionType.ReloadAll);
+  } catch (e) {
+    Logger.Fatal('Failed to load the client entrypoint', e);
+  }
 }
 
 const ensureCommandKit = () => {
-    const commandkit = getCommandKit();
+  const commandkit = getCommandKit();
 
-    if (!commandkit) {
-        return Logger.Fatal('CommandKit is not initialized.');
-    }
+  if (!commandkit) {
+    return Logger.Fatal('CommandKit is not initialized.');
+  }
 
-    return commandkit;
+  return commandkit;
 };
 
 notification.on(CKitNotification.Reload, async (action: CKitActionType) => {
-    const entrypoint = await bundle();
+  const entrypoint = await bundle();
 
-    try {
-        switch (action) {
-            case CKitActionType.ReloadAll:
-                // dispose before reloading to clean up any resources
-                await Promise.all([...DisposableCallbacksRegistry.values()].map((cb) => cb()));
-                await import(`file://${entrypoint}?t=${Date.now()}`);
-                notification.emit(CKitNotification.ReloadAck);
-                break;
-            case CKitActionType.ReloadCommands:
-                await ensureCommandKit().reloadCommands();
-                break;
-            case CKitActionType.ReloadEvents:
-                await ensureCommandKit().reloadEvents();
-                break;
-            case CKitActionType.ReloadValidators:
-                await ensureCommandKit().reloadValidations();
-                break;
-        }
-    } catch (e) {
-        Logger.Fatal('Failed to load the client entrypoint', e);
+  try {
+    switch (action) {
+      case CKitActionType.ReloadAll:
+        // dispose before reloading to clean up any resources
+        await Promise.all(
+          [...DisposableCallbacksRegistry.values()].map((cb) => cb()),
+        );
+        await import(`file://${entrypoint}?t=${Date.now()}`);
+        notification.emit(CKitNotification.ReloadAck);
+        break;
+      case CKitActionType.ReloadCommands:
+        await ensureCommandKit().reloadCommands();
+        break;
+      case CKitActionType.ReloadEvents:
+        await ensureCommandKit().reloadEvents();
+        break;
+      case CKitActionType.ReloadValidators:
+        await ensureCommandKit().reloadValidations();
+        break;
     }
+  } catch (e) {
+    Logger.Fatal('Failed to load the client entrypoint', e);
+  }
 });

@@ -7,7 +7,9 @@ export async function injectShims(
   antiCrash: boolean,
   polyfillRequire: boolean,
 ) {
-    const path = isAbsolute(outDir) ? join(outDir, main) : join(process.cwd(), outDir, main);
+  const path = isAbsolute(outDir)
+    ? join(outDir, main)
+    : join(process.cwd(), outDir, main);
 
   const head = ['\n\n;await (async()=>{', "  'use strict';"].join('\n');
   const tail = '\n})();';

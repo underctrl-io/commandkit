@@ -3,7 +3,10 @@ import { watch } from 'chokidar';
 import { CommandKitConfig, getConfig } from '../config';
 import { CommandKit, Environment } from '..';
 import { notification } from '../environment/actions/development';
-import { CKitActionType, CKitNotification } from '../environment/actions/common';
+import {
+  CKitActionType,
+  CKitNotification,
+} from '../environment/actions/common';
 import { join } from 'path';
 
 let discord_client: Client, commandkit: CommandKit;
@@ -17,15 +20,15 @@ type DisposableCallback = () => Awaited<void>;
  * This will only be executed in development mode.
  */
 export function disposable(callback: DisposableCallback) {
-    const cb = async () => {
-        try {
-            await callback();
-        } finally {
-            DisposableCallbacksRegistry.delete(cb);
-        }
-    };
+  const cb = async () => {
+    try {
+      await callback();
+    } finally {
+      DisposableCallbacksRegistry.delete(cb);
+    }
+  };
 
-    DisposableCallbacksRegistry.add(cb);
+  DisposableCallbacksRegistry.add(cb);
 }
 
 /**
@@ -39,16 +42,16 @@ export function getClient() {
  * @internal
  */
 export function getCommandKit() {
-    return commandkit;
+  return commandkit;
 }
 
 export function registerClient(client: Client) {
-    if (discord_client) return;
-    if (Environment.isDevelopment()) {
-        throw new Error('Cannot register client in development mode.');
-    }
+  if (discord_client) return;
+  if (Environment.isDevelopment()) {
+    throw new Error('Cannot register client in development mode.');
+  }
 
-    discord_client = client;
+  discord_client = client;
 }
 
 /**
@@ -73,77 +76,81 @@ export function createClient() {
 }
 
 export function setupCommandKit(client: Client) {
-    const config = getConfig();
+  const config = getConfig();
 
-    const getPath = (to: string) => join(process.cwd(), '.commandkit', to);
+  const getPath = (to: string) => join(process.cwd(), '.commandkit', to);
 
-    commandkit = new CommandKit({
-        ...config.commandHandler,
-        commandsPath: getPath('commands'),
-        eventsPath: getPath('events'),
-        validationsPath: getPath('validations'),
-        client,
-    });
+  commandkit = new CommandKit({
+    ...config.commandHandler,
+    commandsPath: getPath('commands'),
+    eventsPath: getPath('events'),
+    validationsPath: getPath('validations'),
+    client,
+  });
 
-    registerWatcher(commandkit, config);
+  registerWatcher(commandkit, config);
 
-    return commandkit;
+  return commandkit;
 }
 
 function registerWatcher(commandkit: CommandKit, config: CommandKitConfig) {
-    if (!config.watch) return;
+  if (!config.watch) return;
 
-    // handles changes made to commands
-    _initCommandsWatcher(commandkit);
-    // handles changes made to events
-    _initEventsWatcher(commandkit);
-    // handles changes made to validations
-    _initValidationsWatcher(commandkit);
+  // handles changes made to commands
+  _initCommandsWatcher(commandkit);
+  // handles changes made to events
+  _initEventsWatcher(commandkit);
+  // handles changes made to validations
+  _initValidationsWatcher(commandkit);
 }
 
-const _ignorable = (str: string) => /^_/.test(str) || /\.(map|d\.ts)$/.test(str);
+const _ignorable = (str: string) =>
+  /^_/.test(str) || /\.(map|d\.ts)$/.test(str);
 
 function _initEventsWatcher(commandkit: CommandKit) {
-    if (!commandkit.eventsPath) return;
+  if (!commandkit.eventsPath) return;
 
-    const watcher = watch(commandkit.eventsPath, {
-        ignoreInitial: true,
-        ignored: (testString) => _ignorable(testString),
-    });
+  const watcher = watch(commandkit.eventsPath, {
+    ignoreInitial: true,
+    ignored: (testString) => _ignorable(testString),
+  });
 
-    watcher.on('all', async (event) => {
-        if (event === 'change') {
-            notification.emit(CKitNotification.Reload, CKitActionType.ReloadEvents);
-        }
-    });
+  watcher.on('all', async (event) => {
+    if (event === 'change') {
+      notification.emit(CKitNotification.Reload, CKitActionType.ReloadEvents);
+    }
+  });
 }
 
 function _initValidationsWatcher(commandkit: CommandKit) {
-    if (!commandkit.validationsPath) return;
+  if (!commandkit.validationsPath) return;
 
-    const watcher = watch(commandkit.validationsPath, {
-        ignoreInitial: true,
-        ignored: (testString) => _ignorable(testString),
-    });
+  const watcher = watch(commandkit.validationsPath, {
+    ignoreInitial: true,
+    ignored: (testString) => _ignorable(testString),
+  });
 
-    watcher.on('all', async (event) => {
-        if (event === 'change') {
-            notification.emit(CKitNotification.Reload, CKitActionType.ReloadValidators);
-        }
-    });
+  watcher.on('all', async (event) => {
+    if (event === 'change') {
+      notification.emit(
+        CKitNotification.Reload,
+        CKitActionType.ReloadValidators,
+      );
+    }
+  });
 }
 
 function _initCommandsWatcher(commandkit: CommandKit) {
-    if (!commandkit.commandsPath) return;
+  if (!commandkit.commandsPath) return;
 
-    const watcher = watch(commandkit.commandsPath, {
-        ignoreInitial: true,
-        ignored: (testString) => _ignorable(testString),
-    });
+  const watcher = watch(commandkit.commandsPath, {
+    ignoreInitial: true,
+    ignored: (testString) => _ignorable(testString),
+  });
 
-    watcher.on('all', async (event) => {
-        if (event === 'change') {
-            notification.emit(CKitNotification.Reload, CKitActionType.ReloadCommands);
-        }
-    });
+  watcher.on('all', async (event) => {
+    if (event === 'change') {
+      notification.emit(CKitNotification.Reload, CKitActionType.ReloadCommands);
+    }
+  });
 }
