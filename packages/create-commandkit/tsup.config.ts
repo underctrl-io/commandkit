@@ -6,7 +6,7 @@ export default defineConfig({
   outDir: 'dist',
   skipNodeModulesBundle: true,
   minifyIdentifiers: false,
-  minifySyntax: true,
+  minifySyntax: false,
   minifyWhitespace: true,
   keepNames: true,
   clean: true,
