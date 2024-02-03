@@ -1,3 +1,5 @@
+import { Callout } from 'nextra/components';
+
 # create-commandkit
 
 Besides installing CommandKit to your existing project, you can also start a new one with `create-commandkit` — a command-line utility used for creating new discord.js bots with CommandKit.
@@ -12,13 +14,27 @@ npm create commandkit@latest
 
 This will start the CLI in the current directory.
 
+### Development version
+
+Similar to the main package, you could try the `dev` or `next` versions of create-commandkit:
+
+<Callout type="warning">
+  The development version is likely to have bugs.
+</Callout>
+
+```sh copy
+npm create commandkit@dev
+```
+
 ## Prompts
 
 When running create-commandkit, you should be asked the following questions:
 
-- **Project Directory:** Defines where your project will be located. It defaults to the current working directory.
+- **Directory:** Defines where your project will be located. It defaults to the current working directory.
 
 - **Package Manager:** Lets you choose which package manager to use — npm, pnpm, or Yarn.
+
+- **Language ([Development version](/guide/installation#development-version) only):** The language to use for your project — JavaScript or TypeScript.
 
 - **Module Type:** Allows you to pick between CommonJS (using require and module.exports), and ESM (using import and export).
 
