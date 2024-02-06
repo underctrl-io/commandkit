@@ -6,6 +6,8 @@
   <a href="https://www.npmjs.com/package/commandkit"><img src="https://img.shields.io/npm/dt/commandkit?maxAge=3600" alt="npm downloads" /></a>
 </div>
 
+<br />
+
 *You are currently looking at the next major version of CommandKit. You can view the `master` branch [here](https://github.com/underctrl-io/commandkit/tree/master)*
 
 ---
