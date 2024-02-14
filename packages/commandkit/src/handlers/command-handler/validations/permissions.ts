@@ -62,7 +62,7 @@ export default function ({
 
   let embedDescription = '';
 
-  const formatter = new Intl.ListFormat('en', {
+  const formatter = new Intl.ListFormat('pl-PL', {
     style: 'long',
     type: 'conjunction',
   });
@@ -74,22 +74,22 @@ export default function ({
     const formattedPermissions = missingUserPermissions.map((p) => `\`${p}\``);
     const permissionsString = formatter.format(formattedPermissions);
 
-    embedDescription += `- You must have the ${permissionsString} ${getPermissionWord(
+    embedDescription += `- Do wykonania tej komendy potrzebujsz uprawnienia: ${permissionsString} ${getPermissionWord(
       missingUserPermissions,
-    )} to be able to run this command.\n`;
+    )}.\n`;
   }
 
   if (missingBotPermissions.length) {
     const formattedPermissions = missingBotPermissions.map((p) => `\`${p}\``);
     const permissionsString = formatter.format(formattedPermissions);
 
-    embedDescription += `- I must have the ${permissionsString} ${getPermissionWord(
+    embedDescription += `- Do wykonania tej komendy potrzebuję uprawnienia: ${permissionsString} ${getPermissionWord(
       missingBotPermissions,
-    )} to be able to execute this command.\n`;
+    )}.\n`;
   }
 
   const embed = new EmbedBuilder()
-    .setTitle(`:x: Missing permissions!`)
+    .setTitle(`Brak uprawnień!`)
     .setDescription(embedDescription)
     .setColor('Red');
 

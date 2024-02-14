@@ -51,7 +51,7 @@ export class CommandHandler {
     if (devOnlyCommands.length && !this.#data.devGuildIds.length) {
       process.emitWarning(
         colors.yellow(
-          'You have commands marked as "devOnly", but "devGuildIds" have not been set.',
+          'Masz polecenia oznaczone jako „devOnly”, ale „devGuildIds” nie zostały ustawione.',
         ),
       );
     }
@@ -63,7 +63,7 @@ export class CommandHandler {
     ) {
       process.emitWarning(
         colors.yellow(
-          'You have commands marked as "devOnly", but "devUserIds" or "devRoleIds" have not been set.',
+          'Masz polecenia oznaczone jako „devOnly”, ale „devUserIds” lub „devRoleIds” nie zostały ustawione.',
         ),
       );
     }

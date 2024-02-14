@@ -13,7 +13,7 @@ export default function ({
       !handlerData.devGuildIds.includes(interaction.guildId)
     ) {
       interaction.reply({
-        content: '❌ This command can only be used inside development servers.',
+        content: '❌ Tego polecenia można używać wyłącznie na serwerze testowym.',
         ephemeral: true,
       });
 
@@ -38,7 +38,7 @@ export default function ({
 
     if (!isDevUser) {
       interaction.reply({
-        content: '❌ This command can only be used by developers.',
+        content: '❌ To polecenie może być używane tylko przez developera.',
         ephemeral: true,
       });
 

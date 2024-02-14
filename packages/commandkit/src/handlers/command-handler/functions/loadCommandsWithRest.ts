@@ -121,9 +121,9 @@ async function loadGlobalCommands(
 
   console.log(
     colors.green(
-      `${reloading ? 'Reloaded' : 'Loaded'} ${
+      `${reloading ? 'Załadowano ponownie' : 'Załadowano'} ${
         requestBody.length
-      } global commands.`,
+      } globalnych komend.`,
     ),
   );
 }
