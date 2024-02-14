@@ -74,7 +74,7 @@ export default function ({
     const formattedPermissions = missingUserPermissions.map((p) => `\`${p}\``);
     const permissionsString = formatter.format(formattedPermissions);
 
-    embedDescription += `- Do wykonania tej komendy potrzebujsz uprawnienia: ${permissionsString} ${getPermissionWord(
+    embedDescription += `- Do wykonania tej komendy potrzebujsz uprawnienia ${permissionsString} ${getPermissionWord(
       missingUserPermissions,
     )}.\n`;
   }
@@ -83,7 +83,7 @@ export default function ({
     const formattedPermissions = missingBotPermissions.map((p) => `\`${p}\``);
     const permissionsString = formatter.format(formattedPermissions);
 
-    embedDescription += `- Do wykonania tej komendy potrzebuję uprawnienia: ${permissionsString} ${getPermissionWord(
+    embedDescription += `- Do wykonania tej komendy potrzebuję uprawnienia ${permissionsString} ${getPermissionWord(
       missingBotPermissions,
     )}.\n`;
   }
