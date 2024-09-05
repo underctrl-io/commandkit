@@ -135,6 +135,63 @@ export class CommandHandler {
         continue;
       }
 
+      if (commandObj.data.type !== 2 && commandObj.data.type !== 3) {
+        const { data } = commandObj;
+        if (!/^[-_\p{L}\p{N}\p{sc=Deva}\p{sc=Thai}]{1,32}$/u.test(data.name)) {
+          process.emitWarning(
+            colors.yellow(
+              `Ignoring: Command name ${commandObj.data.name} is invalid`,
+            ),
+          );
+          continue;
+        }
+
+        if (
+          !('description' in data) ||
+          data.description.length < 1 ||
+          data.description.length > 100
+        ) {
+          process.emitWarning(
+            colors.yellow(
+              `Ignoring: Command description of ${commandObj.data.name} is invalid`,
+            ),
+          );
+          continue;
+        }
+
+        if (data.options) {
+          const isValid = data.options.map((option) => {
+            if (
+              !/^[-_\p{L}\p{N}\p{sc=Deva}\p{sc=Thai}]{1,32}$/u.test(data.name)
+            ) {
+              process.emitWarning(
+                colors.yellow(
+                  `Ignoring: Option ${option.name} of ${commandObj.data.name} is invalid`,
+                ),
+              );
+              return false;
+            }
+
+            if (
+              option.description.length < 1 ||
+              option.description.length > 100
+            ) {
+              process.emitWarning(
+                colors.yellow(
+                  `Ignoring: Option ${option.description} of ${commandObj.data.name} is invalid`,
+                ),
+              );
+              return false;
+            }
+            return true;
+          });
+
+          if (isValid.includes(false)) {
+            continue;
+          }
+        }
+      }
+
       if (!commandObj.run) {
         process.emitWarning(
           colors.yellow(
