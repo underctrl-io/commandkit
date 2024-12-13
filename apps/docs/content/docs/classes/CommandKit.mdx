@@ -1,0 +1,67 @@
+---
+title: CommandKit
+description: CommandKit is a command handler for Discord.js that makes it easy to create and manage commands, events, and validations.
+---
+
+# CommandKit
+
+### `commands`
+
+- Type: [`CommandObject[]`](/docs/typedef/CommandObject)
+
+An array of all the command objects that CommandKit is handling. This includes all the properties and methods that are also set outside of CommandKit's configuration. It does however not include the `run` method since CommandKit handles that internally.
+
+### `commandsPath`
+
+- Type: `string` | `undefined`
+
+The path to the commands directory which was set when [instantiating CommandKit](/guide/commandkit-setup).
+
+### `eventsPath`
+
+- Type: `string` | `undefined`
+
+The path to the events directory which was set when [instantiating CommandKit](/guide/commandkit-setup).
+
+### `validationsPath`
+
+- Type: `string` | `undefined`
+
+The path to the validations directory which was set when [instantiating CommandKit](/guide/commandkit-setup).
+
+### `devUserIds`
+
+- Type: `string[]`
+
+The array of developer user IDs which was set when [instantiating CommandKit](/guide/commandkit-setup).
+
+### `devGuildIds`
+
+- Type: `string[]`
+
+The array of development server IDs which was set when [instantiating CommandKit](/guide/commandkit-setup).
+
+### `devRoleIds`
+
+- Type: `string[]`
+
+The array of developer role IDs which was set when [instantiating CommandKit](/guide/commandkit-setup).
+
+### `reloadCommands`
+
+- Props type: `'dev'` | `'global'` | [`ReloadType`](/docs/enums/ReloadType) (optional)
+- Return type: `Promise<void>`
+
+Reloads application commands. Using "dev" will only reload commands marked with `devOnly`, and using "global" will do the opposite. Not passing in a property will reload both dev and global commands. The reload behaviour depends on [`bulkRegister`](/guide/commandkit-setup#bulkregister-optional).
+
+### `reloadEvents`
+
+- Return type: `Promise<void>`
+
+Resets and reloads application events.
+
+### `reloadValidations`
+
+- Return type: `Promise<void>`
+
+Reloads application commands validations.

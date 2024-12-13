@@ -1,0 +1,26 @@
+---
+title: CommandKitButtonBuilderInteractionCollectorDispatchContextData
+description: The context data required to dispatch a button interaction collector.
+---
+
+# CommandKitButtonBuilderInteractionCollectorDispatchContextData
+
+Extends `Omit<InteractionCollectorOptions<ButtonInteraction>, 'filter' | 'componentType'>`
+
+### `message`
+
+The message to listen for button interactions on.
+
+- Type: [`Message`](https://discord.js.org/docs/packages/discord.js/main/Message:Class)
+
+### `time`
+
+The duration (in ms) that the collector should run for.
+
+- Type: `number` | `undefined`
+
+### `autoReset`
+
+If the collector should automatically reset the timer when a button is clicked.
+
+- Type: `boolean` | `undefined`

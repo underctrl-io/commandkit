@@ -1,0 +1,90 @@
+---
+title: Validations Setup
+description: Learn how to set up validations for your commands.
+---
+
+# Validations Setup
+
+Validations are functions that are called before the `run` function from a command object is called. They can be used for many things, including validating your command object, or even implementing features such as cooldowns where the user will not be able to run the command if a validation functions says so.
+
+Validation functions are called on every command trigger, so it's important to keep them as lightweight as possible.
+
+<Callout>
+  Custom validation functions are called before the built-in validations
+  provided by CommandKit. This provides you with more control over the flow of
+  commands.
+</Callout>
+
+<Tabs items={['CommonJS', 'ESM', 'TypeScript']} group="language" persist>
+    <Tab value="CommonJS">
+        ```js title="validations/cooldowns.js"
+        const cooldowns = require('../cooldowns-cache');
+
+        module.exports = ({ interaction, commandObj, handler }) => {
+            if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
+                interaction.reply({
+                    content: "You're on cooldown, please wait some time before running this command again.",
+                    ephemeral: true,
+                });
+
+                return true; // This is important
+            }
+        };
+        ```
+    </Tab>
+
+    <Tab value="ESM">
+        ```js title="validations/cooldowns.js"
+        import cooldowns from '../cooldowns-cache';
+
+        export default function ({ interaction, commandObj, handler }) {
+            if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
+                interaction.reply({
+                    content: "You're on cooldown, please wait some time before running this command again.",
+                    ephemeral: true,
+                });
+
+                return true; // This is important
+            }
+        };
+        ```
+    </Tab>
+
+    <Tab value="TypeScript">
+        ```ts title="validations/cooldowns.ts"
+        import type { ValidationProps } from 'commandkit';
+        import cooldowns from '../cooldowns-cache';
+
+        export default function ({ interaction, commandObj, handler }: ValidationProps) {
+            if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
+                interaction.reply({
+                    content: "You're on cooldown, please wait some time before running this command again.",
+                    ephemeral: true,
+                });
+
+                return true; // This is important
+            }
+        };
+        ```
+    </Tab>
+
+</Tabs>
+
+### Parameters explained
+
+Within every validation function, you have the ability to check what command is trying to be executed using `commandObj` and the `interaction` object from the parameters and respond accordingly.
+
+The `commandObj` object is what's being exported from your command file (excluding the `run` function). This means you can access the `data` and `options` property from within your validation function.
+
+The `handler` object is the current CommandKit instance.
+
+### Stopping the command from running
+
+You may notice that the code above is returning `true`. This is important as it tells the command handler to not run any other validations and to not run the command. If you do not return `true` (or any truthy value), the command will run as normal.
+
+<Callout type="warn">
+  Interactions (commands in this case) must be handled within 3 seconds, so make
+  sure your validations are not using up much of that time. If you're using a
+  database or an external API, it's recommended to implement caching to keep
+  things quick.
+</Callout>
