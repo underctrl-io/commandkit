@@ -18,15 +18,9 @@ import {
   NavbarMenuTrigger,
 } from './home/navbar';
 import { type LinkItemType } from './links';
-import {
-  LargeSearchToggle,
-  SearchToggle,
-} from './layout/search-toggle';
+import { LargeSearchToggle, SearchToggle } from './layout/search-toggle';
 import { ThemeToggle } from './layout/theme-toggle';
-import {
-  LanguageToggle,
-  LanguageToggleText,
-} from './layout/language-toggle';
+import { LanguageToggle, LanguageToggleText } from './layout/language-toggle';
 import { ChevronDown, Languages } from 'lucide-react';
 import { buttonVariants } from './ui/button';
 import { SearchOnly } from 'fumadocs-ui/provider';

@@ -6,11 +6,7 @@ import { cn } from '../../lib/cn';
 import { useI18n } from 'fumadocs-ui/provider';
 import { TocThumb } from './toc-thumb';
 import { ScrollArea, ScrollViewport } from '../ui/scroll-area';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '../ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import type {
   PopoverContentProps,
   PopoverTriggerProps,

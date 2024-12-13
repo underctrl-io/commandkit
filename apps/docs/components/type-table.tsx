@@ -4,11 +4,7 @@ import { InfoIcon } from 'lucide-react';
 import Link from 'next/link';
 import { cva } from 'class-variance-authority';
 import { cn } from '../lib/cn';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from './ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import type { ReactNode } from 'react';
 
 export function Info({ children }: { children: ReactNode }): ReactNode {

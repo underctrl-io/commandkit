@@ -10,11 +10,7 @@ import {
   useRef,
 } from 'react';
 import { cn } from '../lib/cn';
-import {
-  ScrollArea,
-  ScrollBar,
-  ScrollViewport,
-} from './ui/scroll-area';
+import { ScrollArea, ScrollBar, ScrollViewport } from './ui/scroll-area';
 import { useCopyButton } from '../lib/use-copy-button';
 import { buttonVariants } from './ui/button';
 import type { ScrollAreaViewportProps } from '@radix-ui/react-scroll-area';

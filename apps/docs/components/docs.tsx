@@ -15,27 +15,17 @@ import {
   SidebarPageTree,
 } from './docs/sidebar';
 import { replaceOrDefault, type SharedNavProps } from './shared';
-import {
-  type LinkItemType,
-  type IconItemType,
-  BaseLinkItem,
-} from './links';
+import { type LinkItemType, type IconItemType, BaseLinkItem } from './links';
 import { getSidebarTabs, type TabOptions } from '../lib/get-sidebar-tabs';
 import { RootToggle } from './layout/root-toggle';
 import { type BaseLayoutProps, getLinks } from './shared';
-import {
-  LanguageToggle,
-  LanguageToggleText,
-} from './layout/language-toggle';
+import { LanguageToggle, LanguageToggleText } from './layout/language-toggle';
 import { LayoutBody, LinksMenu } from './docs.client';
 import { TreeContextProvider } from 'fumadocs-ui/provider';
 import { NavProvider, Title } from './layout/nav';
 import { ThemeToggle } from './layout/theme-toggle';
 import { Navbar, NavbarSidebarTrigger } from './docs/navbar';
-import {
-  LargeSearchToggle,
-  SearchToggle,
-} from './layout/search-toggle';
+import { LargeSearchToggle, SearchToggle } from './layout/search-toggle';
 import { SearchOnly } from 'fumadocs-ui/provider';
 import {
   getSidebarTabsFromOptions,

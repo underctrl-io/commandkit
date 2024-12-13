@@ -48,7 +48,9 @@ export function Banner({
     >
       {changeLayout && open ? (
         <style>{`
-        :root:not(.${globalKey ?? 'nd-banner-never'}) { --fd-banner-height: 3rem; }
+        :root:not(.${
+          globalKey ?? 'nd-banner-never'
+        }) { --fd-banner-height: 3rem; }
         `}</style>
       ) : null}
       {globalKey ? (

@@ -9,11 +9,7 @@ import {
 import { usePathname } from 'next/navigation';
 import { useOnChange } from 'fumadocs-core/utils/use-on-change';
 import { cn } from '../lib/cn';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from './ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { BaseLinkItem, type LinkItemType } from './links';
 import {
   Collapsible,
