@@ -2,7 +2,7 @@ import {
   SlashCommandProps,
   CommandOptions,
   CommandData,
-} from '../../../../dist/index.mjs';
+} from '../../../../src/index';
 
 export const data: CommandData = {
   name: 'reload',

@@ -1,4 +1,4 @@
-import type { ValidationProps } from '../../../dist';
+import type { ValidationProps } from '../../../src';
 
 export default function ({
   interaction,
