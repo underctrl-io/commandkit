@@ -1,6 +1,6 @@
 // @ts-check
 
-import { defineConfig } from '../dist/index.mjs';
+import { defineConfig } from 'commandkit';
 
 export default defineConfig({
   main: 'index.mjs',

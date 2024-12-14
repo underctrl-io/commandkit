@@ -1,5 +1,9 @@
-import type { CommandKitData, CommandKitOptions, ReloadOptions } from './types';
-import type { CommandObject } from './types';
+import type {
+  CommandKitData,
+  CommandKitOptions,
+  ReloadOptions,
+  CommandObject,
+} from './types';
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 import colors from './utils/colors';
 
