@@ -6,7 +6,7 @@ description: No description provided
 ## ButtonKit extends ButtonBuilder
 
 ```typescript
-ButtonKit(data);
+new ButtonKit(data);
 ```
 
 | Parameter | Type                                                          | Optional |
@@ -23,7 +23,7 @@ The API data associated with this component.
 
 ### public dispose(): ButtonKit
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/6165e6a1296074517b13a566a6b705fa6b059dbc/packages/commandkit/src/components/ButtonKit.ts#L165)
+- [Source](https://github.com/underctrl-io/commandkit/blob/7e608cc8c859522925eced5a54de0a18e9cbc1e9/packages/commandkit/src/components/ButtonKit.ts#L165)
 
 ### public onClick(handler, data?): this
 
@@ -59,7 +59,7 @@ button.onClick(null);
 | handler   | CommandKitButtonBuilderInteractionCollectorDispatch            | ❌       | The handler to run when the button is clicked         |
 | data      | CommandKitButtonBuilderInteractionCollectorDispatchContextData | ✅       | The context data to use for the interaction collector |
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/6165e6a1296074517b13a566a6b705fa6b059dbc/packages/commandkit/src/components/ButtonKit.ts#L74)
+- [Source](https://github.com/underctrl-io/commandkit/blob/7e608cc8c859522925eced5a54de0a18e9cbc1e9/packages/commandkit/src/components/ButtonKit.ts#L74)
 
 ### public onEnd(handler): this
 
@@ -67,7 +67,7 @@ button.onClick(null);
 | --------- | ---------------------------- | -------- |
 | handler   | CommandKitButtonBuilderOnEnd | ❌       |
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/6165e6a1296074517b13a566a6b705fa6b059dbc/packages/commandkit/src/components/ButtonKit.ts#L98)
+- [Source](https://github.com/underctrl-io/commandkit/blob/7e608cc8c859522925eced5a54de0a18e9cbc1e9/packages/commandkit/src/components/ButtonKit.ts#L98)
 
 ### public setCustomId(customId): this
 
@@ -89,9 +89,9 @@ Sets whether this button is disabled.
 
 Sets the emoji to display on this button.
 
-| Parameter | Type                     | Optional | Description      |
-| --------- | ------------------------ | -------- | ---------------- |
-| emoji     | ComponentEmojiResolvable | ❌       | The emoji to use |
+| Parameter | Type                                                                                                                | Optional | Description      |
+| --------- | ------------------------------------------------------------------------------------------------------------------- | -------- | ---------------- |
+| emoji     | [ComponentEmojiResolvable](https://discord.js.org/docs/packages/discord.js/main/ComponentEmojiResolvable:TypeAlias) | ❌       | The emoji to use |
 
 ### public setLabel(label): this
 
@@ -113,9 +113,9 @@ Sets the SKU id that represents a purchasable SKU for this button.
 
 Sets the style of this button.
 
-| Parameter | Type        | Optional | Description      |
-| --------- | ----------- | -------- | ---------------- |
-| style     | ButtonStyle | ❌       | The style to use |
+| Parameter | Type                                                                                    | Optional | Description      |
+| --------- | --------------------------------------------------------------------------------------- | -------- | ---------------- |
+| style     | [ButtonStyle](https://discord-api-types.dev/api/discord-api-types-v10/enum/ButtonStyle) | ❌       | The style to use |
 
 ### public setURL(url): this
 
@@ -125,12 +125,12 @@ Sets the URL for this button.
 | --------- | ------------------------------------------------------------------------------------------------- | -------- | -------------- |
 | url       | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       | The URL to use |
 
-### public toJSON(): APIButtonComponent
+### public toJSON(): [APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent)
 
 ComponentBuilder.toJSON
 
 ### public static from(other): ButtonBuilder
 
-| Parameter | Type               | Optional                           |
-| --------- | ------------------ | ---------------------------------- | --- |
-| other     | APIButtonComponent | JSONEncodable\<APIButtonComponent> | ❌  |
+| Parameter | Type                                                                                             | Optional                                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | --- |
+| other     | [APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent) | JSONEncodable\<[APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent)> | ❌  |

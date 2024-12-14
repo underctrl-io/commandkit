@@ -41,6 +41,34 @@ const links = [
       'UserContextMenuCommandInteraction<CacheType>',
     ],
   },
+  {
+    link: 'https://discord.js.org/docs/packages/discord.js/main/Interaction:Class',
+    patterns: ['Interaction', 'Interaction<CacheType>'],
+  },
+  {
+    link: 'https://discord.js.org/docs/packages/discord.js/main/ButtonComponentData:TypeAlias',
+    patterns: ['ButtonComponentData'],
+  },
+  {
+    link: 'https://discord.js.org/docs/packages/discord.js/main/ComponentEmojiResolvable:TypeAlias',
+    patterns: ['ComponentEmojiResolvable'],
+  },
+  {
+    link: 'https://discord-api-types.dev/api/discord-api-types-v10#RESTPostAPIApplicationCommandsJSONBody',
+    patterns: ['RESTPostAPIApplicationCommandsJSONBody'],
+  },
+  {
+    link: 'https://discord-api-types.dev/api/discord-api-types-v10#RESTPutAPIApplicationCommandsJSONBody',
+    patterns: ['RESTPutAPIApplicationCommandsJSONBody'],
+  },
+  {
+    link: 'https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent',
+    patterns: ['APIButtonComponent'],
+  },
+  {
+    link: 'https://discord-api-types.dev/api/discord-api-types-v10/enum/ButtonStyle',
+    patterns: ['ButtonStyle'],
+  },
 ];
 
 const DiscordLinks: MicroDocgenLink = {};
