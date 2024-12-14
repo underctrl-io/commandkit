@@ -57,10 +57,6 @@ export interface CommandHandlerOptions {
    * A boolean indicating whether to register all commands in bulk.
    */
   bulkRegister: boolean;
-  /**
-   * Whether to enable hooks context.
-   */
-  enableHooks: boolean;
 }
 
 /**

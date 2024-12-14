@@ -1,20 +1,20 @@
 import type {
+  CommandData,
+  CommandFileObject,
+  ReloadOptions,
+} from '../../types';
+import { clone } from '../../utils/clone';
+import colors from '../../utils/colors';
+import { getFilePaths } from '../../utils/get-paths';
+import { toFileURL } from '../../utils/resolve-file-url';
+import loadCommandsWithRest from './functions/loadCommandsWithRest';
+import registerCommands from './functions/registerCommands';
+import type {
   CommandHandlerData,
   CommandHandlerOptions,
   CommandKitInteraction,
 } from './typings';
-import type { CommandFileObject, ReloadOptions } from '../../types';
-
-import { toFileURL } from '../../utils/resolve-file-url';
-import { getFilePaths } from '../../utils/get-paths';
-import { clone } from '../../utils/clone';
-
-import loadCommandsWithRest from './functions/loadCommandsWithRest';
-import registerCommands from './functions/registerCommands';
 import builtInValidationsFunctions from './validations';
-import colors from '../../utils/colors';
-import { AsyncLocalStorage } from 'async_hooks';
-import type { CommandData } from '../../types';
 
 export interface hCommandContext {
   interaction: CommandKitInteraction;
@@ -26,7 +26,6 @@ export interface hCommandContext {
  */
 export class CommandHandler {
   #data: CommandHandlerData;
-  context: AsyncLocalStorage<hCommandContext> | null = null;
 
   constructor({ ...options }: CommandHandlerOptions) {
     this.#data = {
@@ -37,9 +36,6 @@ export class CommandHandler {
   }
 
   async init() {
-    if (this.#data.enableHooks && !this.context) {
-      this.context = new AsyncLocalStorage();
-    }
     await this.#buildCommands();
 
     this.#buildBuiltInValidations();
@@ -178,8 +174,6 @@ export class CommandHandler {
   }
 
   handleCommands() {
-    const areHooksEnabled = this.#data.enableHooks;
-
     this.#data.client.on('interactionCreate', async (interaction) => {
       if (
         !interaction.isChatInputCommand() &&
@@ -251,28 +245,14 @@ export class CommandHandler {
 
         const command = targetCommand[isAutocomplete ? 'autocomplete' : 'run']!;
 
-        // if hooks are not enabled, pass the context to the command via its arguments
-        if (!areHooksEnabled) {
-          const context = {
-            interaction,
-            client: this.#data.client,
-            handler: this.#data.commandkitInstance,
-          };
-          return await command(context);
-        }
-
-        // @ts-expect-error - context data is not passed when hooks are enabled
-        return command();
+        const context = {
+          interaction,
+          client: this.#data.client,
+          handler: this.#data.commandkitInstance,
+        };
+        return await command(context);
       };
 
-      if (this.context)
-        return this.context.run(
-          {
-            command: targetCommand.data,
-            interaction,
-          },
-          executor,
-        );
       return executor();
     });
   }

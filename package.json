@@ -8,7 +8,7 @@
     "lint": "turbo lint && prettier --check ./ --ignore-path=.prettierignore",
     "build": "turbo lint && turbo build",
     "deploy:package": "turbo deploy:package --filter='commandkit' --filter='create-commandkit'",
-    "docgen": "tsx ./scripts/docgen.ts",
+    "docgen": "tsx ./scripts/docgen.ts && pnpm format",
     "format": "prettier --write ./ --ignore-path=.prettierignore"
   },
   "devDependencies": {
