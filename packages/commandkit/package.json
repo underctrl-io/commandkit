@@ -27,7 +27,7 @@
     "lint": "tsc --noEmit",
     "dev": "tsup --watch",
     "build": "tsup",
-    "deploy:package": "npm publish",
+    "publish-package": "npm publish",
     "test": "vitest"
   },
   "repository": {

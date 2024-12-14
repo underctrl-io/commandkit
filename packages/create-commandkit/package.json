@@ -31,7 +31,7 @@
     "lint": "tsc --noEmit",
     "dev": "tsup --watch",
     "build": "tsup",
-    "deploy:package": "npm publish"
+    "publish-package": "npm publish"
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",

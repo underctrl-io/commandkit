@@ -7,7 +7,7 @@
     "dev": "turbo dev",
     "lint": "turbo lint && prettier --check ./ --ignore-path=.prettierignore",
     "build": "turbo lint && turbo build",
-    "deploy:package": "turbo deploy:package --filter='commandkit' --filter='create-commandkit'",
+    "publish-package": "turbo publish-package",
     "docgen": "tsx ./scripts/docgen.ts && pnpm format",
     "format": "prettier --write ./ --ignore-path=.prettierignore"
   },

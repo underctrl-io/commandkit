@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"]
     },
-    "deploy:package": {},
+    "publish-package": {},
     "dev": {
       "cache": false,
       "persistent": true

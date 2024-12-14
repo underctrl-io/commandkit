@@ -29,6 +29,6 @@ jobs:
         run: pnpm --filter './packages/*' run build
 
       - name: 🚚 Publish
-        run: pnpm run deploy:package
+        run: pnpm run publish-package
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
