@@ -3,82 +3,65 @@ title: CommandKit
 description: No description provided
 ---
 
+
 ## CommandKit
 
-```typescript
-CommandKit(options);
-```
 
-| Parameter | Type              | Optional | Description                           |
-| --------- | ----------------- | -------- | ------------------------------------- |
-| options   | CommandKitOptions | ❌       | The default CommandKit configuration. |
+```typescript
+CommandKit(options)
+```
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| options | CommandKitOptions | ❌ | The default CommandKit configuration. |
+
 
 ## Properties
-
-### public static \_instance: any
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L8)
-
+### public static _instance: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L8)
 ### public client: any
-
 Get the client attached to this CommandKit instance.
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L38)
-
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L38)
 ### public commandHandler: any
-
 Get command handler instance.
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L45)
-
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L45)
 ### public commands: any
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L125)
-
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L125)
 ### public commandsPath: any
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L141)
-
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L141)
 ### public devGuildIds: any
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L169)
-
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L169)
 ### public devRoleIds: any
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L176)
-
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L176)
 ### public devUserIds: any
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L162)
-
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L162)
 ### public eventsPath: any
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L148)
-
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L148)
 ### public validationsPath: any
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L155)
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L155)
 
 ## Methods
-
 ### public reloadCommands(type?): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
-
 Updates application commands with the latest from "commandsPath".
 
-| Parameter | Type          | Optional |
-| --------- | ------------- | -------- |
-| type      | ReloadOptions | ✅       |
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L101)
 
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| type | ReloadOptions | ✅ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L101)
 ### public reloadEvents(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
-
 Updates application events with the latest from "eventsPath".
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L109)
 
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L109)
 ### public reloadValidations(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
-
 Updates application command validations with the latest from "validationsPath".
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L117)
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/fe9b9d88f8541b4758cc813e8505d26748e6e5bd/packages/commandkit/src/CommandKit.ts#L117)

@@ -10,6 +10,7 @@ async function main() {
     typeLinkerBasePath: '/docs',
     extension: 'mdx',
     includeMarkdownHeaders: true,
+    omitTypeLinkerExtension: true,
     output: './apps/docs/content/docs',
   });
 
