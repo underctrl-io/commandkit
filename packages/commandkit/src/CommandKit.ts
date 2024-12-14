@@ -1,10 +1,10 @@
+import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 import type {
   CommandKitData,
   CommandKitOptions,
-  ReloadOptions,
   CommandObject,
+  ReloadOptions,
 } from './types';
-import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 import colors from './utils/colors';
 
 export class CommandKit {
@@ -90,7 +90,6 @@ export class CommandKit {
         skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
         commandkitInstance: this,
         bulkRegister: this.#data.bulkRegister || false,
-        enableHooks: this.#data.experimental?.hooks ?? false,
       });
 
       await commandHandler.init();
