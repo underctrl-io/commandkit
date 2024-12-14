@@ -23,5 +23,6 @@ pnpm-debug.log*
 .gitignore
 .npmignore
 
+.turbo
 turbo-lint.log
 .source
