@@ -64,5 +64,8 @@
   },
   "peerDependencies": {
     "discord.js": "^14"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
