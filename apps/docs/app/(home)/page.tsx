@@ -80,7 +80,7 @@ export default function HomePage() {
               Guide
             </Link>
             <Link
-              href="/docs/typedef/AutocompleteProps"
+              href="/docs"
               className="font-semibold bg-blue-500 py-2 px-4 rounded-full"
             >
               Docs

@@ -8,10 +8,14 @@
     "lint": "turbo lint && prettier --check ./ --ignore-path=.prettierignore",
     "build": "turbo lint && turbo build",
     "deploy:package": "turbo deploy:package --filter='commandkit' --filter='create-commandkit'",
+    "docgen": "tsx ./scripts/docgen.ts",
     "format": "prettier --write ./ --ignore-path=.prettierignore"
   },
   "devDependencies": {
+    "@types/node": "^22.10.2",
+    "micro-docgen": "^0.3.2",
     "prettier": "^3.0.3",
+    "tsx": "^4.7.0",
     "turbo": "^2.3.3"
   },
   "packageManager": "pnpm@9.15.0"

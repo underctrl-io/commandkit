@@ -1,67 +1,84 @@
 ---
 title: CommandKit
-description: CommandKit is a command handler for Discord.js that makes it easy to create and manage commands, events, and validations.
+description: No description provided
 ---
 
-# CommandKit
+## CommandKit
 
-### `commands`
+```typescript
+CommandKit(options);
+```
 
-- Type: [`CommandObject[]`](/docs/typedef/CommandObject)
+| Parameter | Type              | Optional | Description                           |
+| --------- | ----------------- | -------- | ------------------------------------- |
+| options   | CommandKitOptions | ❌       | The default CommandKit configuration. |
 
-An array of all the command objects that CommandKit is handling. This includes all the properties and methods that are also set outside of CommandKit's configuration. It does however not include the `run` method since CommandKit handles that internally.
+## Properties
 
-### `commandsPath`
+### public static \_instance: any
 
-- Type: `string` | `undefined`
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L8)
 
-The path to the commands directory which was set when [instantiating CommandKit](/guide/commandkit-setup).
+### public client: any
 
-### `eventsPath`
+Get the client attached to this CommandKit instance.
 
-- Type: `string` | `undefined`
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L38)
 
-The path to the events directory which was set when [instantiating CommandKit](/guide/commandkit-setup).
+### public commandHandler: any
 
-### `validationsPath`
+Get command handler instance.
 
-- Type: `string` | `undefined`
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L45)
 
-The path to the validations directory which was set when [instantiating CommandKit](/guide/commandkit-setup).
+### public commands: any
 
-### `devUserIds`
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L125)
 
-- Type: `string[]`
+### public commandsPath: any
 
-The array of developer user IDs which was set when [instantiating CommandKit](/guide/commandkit-setup).
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L141)
 
-### `devGuildIds`
+### public devGuildIds: any
 
-- Type: `string[]`
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L169)
 
-The array of development server IDs which was set when [instantiating CommandKit](/guide/commandkit-setup).
+### public devRoleIds: any
 
-### `devRoleIds`
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L176)
 
-- Type: `string[]`
+### public devUserIds: any
 
-The array of developer role IDs which was set when [instantiating CommandKit](/guide/commandkit-setup).
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L162)
 
-### `reloadCommands`
+### public eventsPath: any
 
-- Props type: `'dev'` | `'global'` | [`ReloadType`](/docs/enums/ReloadType) (optional)
-- Return type: `Promise<void>`
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L148)
 
-Reloads application commands. Using "dev" will only reload commands marked with `devOnly`, and using "global" will do the opposite. Not passing in a property will reload both dev and global commands. The reload behaviour depends on [`bulkRegister`](/guide/commandkit-setup#bulkregister-optional).
+### public validationsPath: any
 
-### `reloadEvents`
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L155)
 
-- Return type: `Promise<void>`
+## Methods
 
-Resets and reloads application events.
+### public reloadCommands(type?): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 
-### `reloadValidations`
+Updates application commands with the latest from "commandsPath".
 
-- Return type: `Promise<void>`
+| Parameter | Type          | Optional |
+| --------- | ------------- | -------- |
+| type      | ReloadOptions | ✅       |
 
-Reloads application commands validations.
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L101)
+
+### public reloadEvents(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+
+Updates application events with the latest from "eventsPath".
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L109)
+
+### public reloadValidations(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+
+Updates application command validations with the latest from "validationsPath".
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/c462cc3d6f765a7ee19e33a651f0f2f4666b111b/packages/commandkit/src/CommandKit.ts#L117)

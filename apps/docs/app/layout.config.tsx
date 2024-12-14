@@ -19,7 +19,7 @@ export const baseOptions: BaseLayoutProps = {
     },
     {
       text: 'Documentation',
-      url: '/docs/typedef/AutocompleteProps',
+      url: '/docs',
       active: 'nested-url',
     },
     {
