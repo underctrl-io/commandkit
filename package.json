@@ -5,10 +5,10 @@
   "license": "MIT",
   "scripts": {
     "dev": "turbo dev",
-    "lint": "turbo lint && prettier ./ --check --ignore-path=.prettierignore",
+    "lint": "turbo lint && prettier --check ./ --ignore-path=.prettierignore",
     "build": "turbo lint && turbo build",
     "deploy:package": "turbo deploy:package --filter='commandkit' --filter='create-commandkit'",
-    "format": "prettier --write \"./{packages,apps}/**/*.{js,ts,jsx,tsx,mjs,mts,cjs,cts,css,md,mdx,json,yaml}\""
+    "format": "prettier --write ./ --ignore-path=.prettierignore"
   },
   "devDependencies": {
     "prettier": "^3.0.3",
