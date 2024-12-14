@@ -1,6 +1,6 @@
 # Contributing to CommandKit
 
-Firstly, thank you for considering contributing to CommandKit! Whether you're looking to fix bugs, add new features, or just ask questions, your input is valuable to us.
+Firstly, thank you for considering contributing to CommandKit! Whether you're looking to fix bugs, add new features, or just ask questions, your input is valuable to us. Before actually opening a pull request, we recommend that you first open an issue (or check existing ones) to discuss the feature/bug you intend to add/fix.
 
 ## Setup
 
@@ -40,7 +40,7 @@ git checkout -b your-feature-or-bugfix
 
 3. Ensure that your changes don't break any existing functionality. You can test the functionality of your code depending on where you've made changes:
 
-   1. If you've made changes to the CommandKit package, you can use the "tests" folder in the "packages/commandkit" directory to test your own bot. Just make sure to create a new `.env` file with the template from the `.env.example` file provided. You can run the application using `pnpm test`.
+   1. If you've made changes to the CommandKit package, you can use the "apps/test-bot" project to test your own bot. Just make sure to create a new `.env` file with the template from the `.env.example` file provided. This also requires you to build the commandkit package locally (after you make your changes) because it's symlinked with pnpm workspaces.
    2. If you've made changes to the docs, you can run `pnpm dev` inside "apps/docs" to spin up a local development server.
 
 4. Run `pnpm lint` from the root directory to ensure all lint scripts and formatting is valid.
@@ -57,7 +57,7 @@ git commit -m "Describe your change here"
 git push origin your-feature-or-bugfix
 ```
 
-7. Open a pull request in the main project repository (master branch). Describe your changes and any relevant information.
+7. Open a pull request in the main project repository (main branch). Describe your changes and any relevant information.
 
 ## Submitting Issues
 
