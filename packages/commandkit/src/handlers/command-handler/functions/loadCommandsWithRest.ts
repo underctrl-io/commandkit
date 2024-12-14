@@ -1,5 +1,5 @@
 import type { ApplicationCommandDataResolvable, Client } from 'discord.js';
-import type { CommandFileObject, ReloadOptions } from '../../../typings';
+import type { CommandFileObject, ReloadOptions } from '../../../types';
 
 import colors from '../../../utils/colors';
 

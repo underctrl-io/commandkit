@@ -5,7 +5,7 @@ import type {
   GuildApplicationCommandManager,
   ApplicationCommandDataResolvable,
 } from 'discord.js';
-import type { CommandFileObject, ReloadOptions } from '../../../typings';
+import type { CommandFileObject, ReloadOptions } from '../../../types';
 
 import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
 

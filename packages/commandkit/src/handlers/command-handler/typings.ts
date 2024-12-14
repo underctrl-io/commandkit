@@ -5,7 +5,7 @@ import type {
   ContextMenuCommandInteraction,
 } from 'discord.js';
 import type { CommandKit } from '../../CommandKit';
-import type { CommandFileObject } from '../../typings';
+import type { CommandFileObject } from '../../types';
 import type { ValidationHandler } from '../validation-handler/ValidationHandler';
 
 /**

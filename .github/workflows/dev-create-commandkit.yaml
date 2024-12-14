@@ -3,7 +3,7 @@ name: (Create CommandKit) Publish Dev Build
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'packages/create-commandkit/**'
 

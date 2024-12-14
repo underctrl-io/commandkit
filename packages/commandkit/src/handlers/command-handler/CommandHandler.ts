@@ -3,7 +3,7 @@ import type {
   CommandHandlerOptions,
   CommandKitInteraction,
 } from './typings';
-import type { CommandFileObject, ReloadOptions } from '../../typings';
+import type { CommandFileObject, ReloadOptions } from '../../types';
 
 import { toFileURL } from '../../utils/resolve-file-url';
 import { getFilePaths } from '../../utils/get-paths';
