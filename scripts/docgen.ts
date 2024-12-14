@@ -1,5 +1,6 @@
-import { createDocumentation } from 'micro-docgen';
+import { createDocumentation, DefaultLinksFactory } from 'micro-docgen';
 import { writeFile } from 'node:fs/promises';
+import { DiscordLinks } from './links';
 
 async function main() {
   const docs = await createDocumentation({
@@ -12,6 +13,7 @@ async function main() {
     includeMarkdownHeaders: true,
     omitTypeLinkerExtension: true,
     output: './apps/docs/content/docs',
+    links: { ...DefaultLinksFactory, ...DiscordLinks },
   });
 
   console.log(`Generated docs in ${docs.metadata.generationMs}`);

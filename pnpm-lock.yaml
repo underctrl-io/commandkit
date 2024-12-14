@@ -12,8 +12,8 @@ importers:
         specifier: ^22.10.2
         version: 22.10.2
       micro-docgen:
-        specifier: ^0.3.3
-        version: 0.3.3
+        specifier: ^0.3.4
+        version: 0.3.4
       prettier:
         specifier: ^3.0.3
         version: 3.0.3
@@ -2894,8 +2894,8 @@ packages:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
 
-  micro-docgen@0.3.3:
-    resolution: {integrity: sha512-bXSOu9R+7xic5jW3Ry5qIOgGZO+24f/fAQVnHAMU/siXT1EPOwHaxu5WBWfa2Te/mw8OVmEQxbzmVDsGr1L3yA==}
+  micro-docgen@0.3.4:
+    resolution: {integrity: sha512-PH4LL7wPc1n80FUhrRsYxYH9tF6od3ofnruiWbFl1yRfTUKggSpcbeEyOF6O5SAfjriQdoDNY0y4ENlM/SZ4Rg==}
     hasBin: true
 
   micromark-core-commonmark@2.0.2:
@@ -7197,7 +7197,7 @@ snapshots:
 
   merge2@1.4.1: {}
 
-  micro-docgen@0.3.3:
+  micro-docgen@0.3.4:
     dependencies:
       commander: 12.1.0
       common-tags: 1.8.2
