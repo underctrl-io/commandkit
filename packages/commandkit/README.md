@@ -24,7 +24,7 @@ CommandKit is a library that makes it easy to handle commands and events in your
 
 ## Documentation
 
-You can find the full documentation [here](https://commandkit.js.org).
+You can find the full documentation [here](https://commandkit.dev).
 
 ## Installation
 
@@ -62,7 +62,7 @@ npm install commandkit@dev
 
 ## Usage
 
-This is a simple overview of how to set up this library with all the options. You can read more in the [full documentation](https://commandkit.js.org)
+This is a simple overview of how to set up this library with all the options. You can read more in the [full documentation](https://commandkit.dev)
 
 ```js
 // index.js

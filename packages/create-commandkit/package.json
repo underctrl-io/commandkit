@@ -26,7 +26,7 @@
     "url": "https://github.com/underctrl-io/commandkit",
     "directory": "packages/create-commandkit"
   },
-  "homepage": "https://commandkit.js.org",
+  "homepage": "https://commandkit.dev",
   "scripts": {
     "lint": "tsc --noEmit",
     "dev": "tsup --watch",

@@ -15,7 +15,7 @@ export class CommandKit {
    * Create a new command and event handler with CommandKit.
    *
    * @param options - The default CommandKit configuration.
-   * @see {@link https://commandkit.js.org/guide/commandkit-setup}
+   * @see {@link https://commandkit.dev/guide/commandkit-setup}
    */
   constructor(options: CommandKitOptions) {
     if (!options.client) {

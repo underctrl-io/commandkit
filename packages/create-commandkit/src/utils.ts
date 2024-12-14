@@ -59,6 +59,6 @@ export const commandkit = gradient(textColors.commandkit)('CommandKit');
 export const outroMsg = `
 ${gradient(textColors.commandkit)('Thank you for choosing CommandKit!')}
 
-• Documentation: ${colors.blue('https://commandkit.js.org')}
+• Documentation: ${colors.blue('https://commandkit.dev')}
 • Join us on Discord: ${colors.blue('https://ctrl.lol/discord')}
 `;

@@ -35,7 +35,7 @@
     "url": "https://github.com/underctrl-io/commandkit",
     "directory": "packages/commandkit"
   },
-  "homepage": "https://commandkit.js.org",
+  "homepage": "https://commandkit.dev",
   "keywords": [
     "discord.js",
     "command handler",

@@ -14,6 +14,6 @@ module.exports = {
 
   /** @type {import('commandkit').CommandOptions} */
   options: {
-    // https://commandkit.js.org/typedef/CommandOptions
+    // https://commandkit.dev/docs/types/CommandOptions
   },
 };

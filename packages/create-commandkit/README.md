@@ -17,7 +17,7 @@ create-commandkit is a CLI utility to quickly instantiate a Discord bot with Com
 
 ## Documentation
 
-You can find the full documentation [here](https://commandkit.js.org).
+You can find the full documentation [here](https://commandkit.dev).
 
 ## Usage
 

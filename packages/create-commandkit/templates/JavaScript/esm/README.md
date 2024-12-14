@@ -6,5 +6,5 @@ Thanks for choosing CommandKit to build your Discord bot!
 
 ## Useful links
 
--   [Documentation](https://commandkit.js.org)
+-   [Documentation](https://commandkit.dev)
 -   [Discord](https://ctrl.lol/discord)
