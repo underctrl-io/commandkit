@@ -22,42 +22,34 @@ export interface CommandKitOptions {
    * The Discord.js client object to use with CommandKit.
    */
   client: Client;
-
   /**
    * The path to your commands directory.
    */
   commandsPath?: string;
-
   /**
    * The path to your events directory.
    */
   eventsPath?: string;
-
   /**
    * The path to the validations directory.
    */
   validationsPath?: string;
-
   /**
    * List of development guild IDs to restrict devOnly commands to.
    */
   devGuildIds?: string[];
-
   /**
    * List of developer user IDs to restrict devOnly commands to.
    */
   devUserIds?: string[];
-
   /**
    * List of developer role IDs to restrict devOnly commands to.
    */
   devRoleIds?: string[];
-
   /**
    * Skip CommandKit's built-in validations (for devOnly commands).
    */
   skipBuiltInValidations?: boolean;
-
   /**
    * Bulk register application commands instead of one-by-one.
    */
@@ -138,12 +130,10 @@ export interface CommandProps {
     | UserContextMenuCommandInteraction
     | MessageContextMenuCommandInteraction
     | AutocompleteInteraction;
-
   /**
    * The Discord.js client object that CommandKit is handling.
    */
   client: Client<true>;
-
   /**
    * The current CommandKit handler instance.
    */
@@ -205,17 +195,14 @@ export interface ValidationProps {
     | ChatInputCommandInteraction
     | ContextMenuCommandInteraction
     | AutocompleteInteraction;
-
   /**
    * The Discord.js client object that CommandKit is handling.
    */
   client: Client<true>;
-
   /**
    * The current (local) target command object.
    */
   commandObj: CommandObject;
-
   /**
    * The current CommandKit handler instance.
    */
@@ -233,18 +220,15 @@ export interface CommandOptions {
    * @deprecated Use `dm_permission` in the command's `data` object instead.
    */
   guildOnly?: boolean;
-
   /**
    * A boolean indicating whether the command is developer-only.
    * Used for registration and built-in validation.
    */
   devOnly?: boolean;
-
   /**
    * A boolean indicating whether the command is deleted/ignored on restart/reload.
    */
   deleted?: boolean;
-
   /**
    * A string or array of permissions that a user needs for the current command to be executed.
    * Used for built-in validation.
@@ -255,7 +239,6 @@ export interface CommandOptions {
    * userPermissions: ['BanMembers', 'KickMembers']
    */
   userPermissions?: PermissionsString | PermissionsString[];
-
   /**
    * A string or array of permissions that the bot needs to execute the current command.
    * Used for built-in validation.
@@ -277,17 +260,14 @@ export type CommandObject = {
    * An object which defines the structure of the application command.
    */
   data: CommandData;
-
   /**
    * Additional command configuration options.
    */
   options?: CommandOptions;
-
   /**
    * The path to the command file.
    */
   filePath: string;
-
   /**
    * The command's category. Determined based on the command folder.
    *
@@ -298,7 +278,6 @@ export type CommandObject = {
    * ```
    */
   category: string | null;
-
   [key: string]: any;
 };
 
@@ -307,7 +286,6 @@ export enum ReloadType {
    * Reload developer/guild commands.
    */
   Developer = 'dev',
-
   /**
    * Reload global commands.
    */

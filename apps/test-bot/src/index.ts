@@ -1,6 +1,6 @@
-import { CommandKit } from '../../src/index';
+import { CommandKit } from 'commandkit';
 import { Client } from 'discord.js';
-// require('dotenv').config();
+import 'dotenv/config';
 
 const client = new Client({
   intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent'],
@@ -11,7 +11,7 @@ new CommandKit({
   commandsPath: `${__dirname}/commands`,
   eventsPath: `${__dirname}/events`,
   validationsPath: `${__dirname}/validations`,
-  // devGuildIds: process.env.DEV_GUILD_ID?.split(',') ?? [],
+  devGuildIds: process.env.DEV_GUILD_ID?.split(',') ?? [],
   devUserIds: process.env.DEV_USER_ID?.split(',') ?? [],
   bulkRegister: true,
 });

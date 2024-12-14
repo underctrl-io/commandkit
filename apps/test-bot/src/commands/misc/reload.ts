@@ -1,8 +1,4 @@
-import {
-  SlashCommandProps,
-  CommandOptions,
-  CommandData,
-} from '../../../../src/index';
+import { SlashCommandProps, CommandOptions, CommandData } from 'commandkit';
 
 export const data: CommandData = {
   name: 'reload',

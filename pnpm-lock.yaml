@@ -142,6 +142,22 @@ importers:
         specifier: ^5.7.2
         version: 5.7.2
 
+  apps/test-bot:
+    dependencies:
+      commandkit:
+        specifier: workspace:*
+        version: link:../../packages/commandkit
+      discord.js:
+        specifier: ^14.16.3
+        version: 14.16.3
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
+    devDependencies:
+      tsx:
+        specifier: ^4.7.0
+        version: 4.7.0
+
   packages/commandkit:
     dependencies:
       commander:
@@ -2285,9 +2301,6 @@ packages:
   get-symbol-description@1.0.2:
     resolution: {integrity: sha512-g0QYk1dZBxGwk+Ngc+ltRH2IBp2f7zBkBMBJZCDerh6EhlhSR6+9irMCuT/09zD6qkarHUSn529sK/yL4S27mg==}
     engines: {node: '>= 0.4'}
-
-  get-tsconfig@4.7.2:
-    resolution: {integrity: sha512-wuMsz4leaj5hbGgg4IvDU0bqJagpftG5l5cXIAvo8uZrqn0NJqwtfupTN00VnkQJPcIRrxYrm1Ue24btpCha2A==}
 
   get-tsconfig@4.8.1:
     resolution: {integrity: sha512-k9PN+cFBmaLWtVz29SkUoqU5O0slLuHJXt/2P+tMVFT+phsSGXGkp9t3rQIqdz0e+06EHNGs3oM6ZX1s2zHxRg==}
@@ -6377,10 +6390,6 @@ snapshots:
       es-errors: 1.3.0
       get-intrinsic: 1.2.6
 
-  get-tsconfig@4.7.2:
-    dependencies:
-      resolve-pkg-maps: 1.0.0
-
   get-tsconfig@4.8.1:
     dependencies:
       resolve-pkg-maps: 1.0.0
@@ -8406,7 +8415,7 @@ snapshots:
   tsx@4.7.0:
     dependencies:
       esbuild: 0.19.12
-      get-tsconfig: 4.7.2
+      get-tsconfig: 4.8.1
     optionalDependencies:
       fsevents: 2.3.3
 

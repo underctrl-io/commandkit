@@ -1,0 +1,1 @@
+This app is used to test `/packages/commandkit`

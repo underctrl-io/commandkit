@@ -9,7 +9,7 @@ import {
   CommandData,
   ButtonKit,
   AutocompleteProps,
-} from '../../../../dist/index.mjs';
+} from 'commandkit';
 
 export const data: CommandData = {
   name: 'ping',

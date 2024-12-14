@@ -1,4 +1,4 @@
-import type { ValidationProps } from '../../../src';
+import type { ValidationProps } from 'commandkit';
 
 export default function ({
   interaction,
