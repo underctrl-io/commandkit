@@ -28,10 +28,7 @@
     "dev": "tsup --watch",
     "build": "tsup",
     "deploy:package": "npm publish",
-    "test": "vitest",
-    "test:dev": "cd ./tests && node ../bin/index.mjs dev",
-    "test:build": "cd ./tests && node ../bin/index.mjs build",
-    "test:prod": "cd ./tests && node ../bin/index.mjs start"
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
