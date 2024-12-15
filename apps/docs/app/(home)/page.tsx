@@ -1,24 +1,15 @@
 import { Card, Cards } from '@/components/card';
 import { Heading } from '@/components/heading';
+import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 
-// export default function HomePage() {
-//   return (
-//     <main className="flex flex-1 flex-col justify-center text-center">
-//       <h1 className="mb-4 text-2xl font-bold">Hello World</h1>
-//       <p className="text-fd-muted-foreground">
-//         You can open{' '}
-//         <Link
-//           href="/docs"
-//           className="text-fd-foreground font-semibold underline"
-//         >
-//           /docs
-//         </Link>{' '}
-//         and see the documentation.
-//       </p>
-//     </main>
-//   );
-// }
+export const metadata: Metadata = {
+  title: {
+    template: '%s | CommandKit',
+    default: 'CommandKit - A Discord.js handler',
+  },
+};
 
 const features = [
   {
@@ -52,7 +43,7 @@ export default function HomePage() {
     <>
       <section className="w-72 h-96 mx-auto text-center mt-20 mb-28 md:mb-16 flex items-center justify-center flex-col md:flex-row-reverse md:gap-2 md:text-left md:mt-12 md:w-[700px] lg:w-[850px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="/logo.png"
           alt="CommandKit Logo"
           className="md:w-[230px] lg:w-[280px] mb-10 md:mb-0"
@@ -96,7 +87,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <section className="max-w-[400px] md:max-w-none mx-auto md:w-[700px] lg:w-[850px] text-fd-foreground">
+      <section className="max-w-[400px] md:max-w-none mx-auto md:w-[700px] lg:w-[850px] text-fd-foreground p-5 sm:p-0 mb-20">
         <Heading as="h1" className="text-lg font-semibold mb-2">
           Features
         </Heading>
