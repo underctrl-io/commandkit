@@ -1,0 +1,122 @@
+---
+title: ButtonKit
+description: No description provided
+---
+
+
+## ButtonKit extends ButtonBuilder
+
+
+```typescript
+new ButtonKit(data)
+```
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| data | Partial\<ButtonComponentData> \| Partial\<APIButtonComponent> | ✅ |
+
+
+## Properties
+### public data: any
+The API data associated with this component.
+
+## Methods
+### public dispose(): ButtonKit
+- [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/components/ButtonKit.ts#L165)
+### public onClick(handler, data?): this
+Sets up an inline interaction collector for this button. This collector by default allows as many interactions as possible if it is actively used.
+If unused, this expires after 24 hours or custom time if specified.
+
+```ts
+const button = new ButtonKit()
+  .setLabel('Click me')
+  .setStyle(ButtonStyle.Primary)
+  .setCustomId('click_me');
+
+const row = new ActionRowBuilder().addComponents(button);
+
+const message = await channel.send({ content: 'Click the button', components: [row] });
+
+button.onClick(async (interaction) => {
+  await interaction.reply('You clicked me!');
+}, { message });
+
+// Remove onClick handler and destroy the interaction collector
+button.onClick(null);
+```
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | CommandKitButtonBuilderInteractionCollectorDispatch | ❌ | The handler to run when the button is clicked |
+| data | CommandKitButtonBuilderInteractionCollectorDispatchContextData | ✅ | The context data to use for the interaction collector |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/components/ButtonKit.ts#L74)
+### public onEnd(handler): this
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| handler | CommandKitButtonBuilderOnEnd | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/components/ButtonKit.ts#L98)
+### public setCustomId(customId): this
+Sets the custom id for this button.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| customId | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The custom id to use |
+### public setDisabled(disabled?): this
+Sets whether this button is disabled.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| disabled | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ✅ | Whether to disable this button |
+### public setEmoji(emoji): this
+Sets the emoji to display on this button.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| emoji | [ComponentEmojiResolvable](https://discord.js.org/docs/packages/discord.js/main/ComponentEmojiResolvable:TypeAlias) | ❌ | The emoji to use |
+### public setLabel(label): this
+Sets the label for this button.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| label | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The label to use |
+### public setSKUId(skuId): this
+Sets the SKU id that represents a purchasable SKU for this button.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| skuId | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The SKU id to use |
+### public setStyle(style): this
+Sets the style of this button.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| style | [ButtonStyle](https://discord-api-types.dev/api/discord-api-types-v10/enum/ButtonStyle) | ❌ | The style to use |
+### public setURL(url): this
+Sets the URL for this button.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| url | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The URL to use |
+### public toJSON(): [APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent)
+ComponentBuilder.toJSON
+### public static from(other): ButtonBuilder
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| other | [APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent) | JSONEncodable\<[APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent)> | ❌ |
