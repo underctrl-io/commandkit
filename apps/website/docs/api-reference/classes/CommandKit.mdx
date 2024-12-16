@@ -3,65 +3,82 @@ title: CommandKit
 description: No description provided
 ---
 
-
 ## CommandKit
 
-
 ```typescript
-new CommandKit(options)
+new CommandKit(options);
 ```
-| Parameter | Type | Optional | Description |
-| ----------- | ----------- | ----------- | ----------- |
-| options | CommandKitOptions | ❌ | The default CommandKit configuration. |
 
+| Parameter | Type              | Optional | Description                           |
+| --------- | ----------------- | -------- | ------------------------------------- |
+| options   | CommandKitOptions | ❌       | The default CommandKit configuration. |
 
 ## Properties
-### public static _instance: any
+
+### public static \_instance: any
+
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L12)
+
 ### public client: any
+
 Get the client attached to this CommandKit instance.
 
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L42)
+
 ### public commandHandler: any
+
 Get command handler instance.
 
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L49)
+
 ### public commands: any
+
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L128)
+
 ### public commandsPath: any
+
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L144)
+
 ### public devGuildIds: any
+
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L172)
+
 ### public devRoleIds: any
+
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L179)
+
 ### public devUserIds: any
+
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L165)
+
 ### public eventsPath: any
+
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L151)
+
 ### public validationsPath: any
+
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L158)
 
 ## Methods
+
 ### public reloadCommands(type?): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+
 Updates application commands with the latest from "commandsPath".
 
-
-
-| Parameter | Type | Optional |
-| ----------- | ----------- | ----------- |
-| type | ReloadOptions | ✅ |
-
+| Parameter | Type          | Optional |
+| --------- | ------------- | -------- |
+| type      | ReloadOptions | ✅       |
 
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L104)
+
 ### public reloadEvents(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+
 Updates application events with the latest from "eventsPath".
 
-
-
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L112)
+
 ### public reloadValidations(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+
 Updates application command validations with the latest from "validationsPath".
-
-
 
 - [Source](https://github.com/underctrl-io/commandkit/blob/d276a8377813631933aebfa66545130a52f7a7cb/packages/commandkit/src/CommandKit.ts#L120)
