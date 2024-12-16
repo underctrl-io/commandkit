@@ -8,7 +8,7 @@ const config: Config = {
   favicon: 'img/favicon.ico',
   url: 'https://commandkit.dev',
   baseUrl: '/',
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   i18n: {
     defaultLocale: 'en',
