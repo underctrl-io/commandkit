@@ -1,6 +1,7 @@
 node_modules
 
 **/docs/.next/
+**/website/docs/api-reference
 .astro
 dist
 .commandkit
