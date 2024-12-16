@@ -18,7 +18,7 @@ export type CommandKitButtonBuilderInteractionCollectorDispatch = (
   interaction: ButtonInteraction,
 ) => Awaitable<void>;
 
-export type CommandKitButtonBuilderOnEnd = () => Awaitable<void>;
+export type CommandKitButtonBuilderOnEnd = (reason: string) => Awaitable<void>;
 
 export type CommandKitButtonBuilderInteractionCollectorDispatchContextData = {
   /**
@@ -156,15 +156,15 @@ export class ButtonKit extends ButtonBuilder {
       return handler(interaction);
     });
 
-    this.#collector.on('end', () => {
+    this.#collector.on('end', (_, reason) => {
       this.#destroyCollector();
-      this.#onEndHandler?.();
+      this.#onEndHandler?.(reason);
     });
   }
 
   public dispose() {
     this.#destroyCollector();
-    this.#onEndHandler?.();
+    this.#onEndHandler?.('disposed');
     return this;
   }
 
