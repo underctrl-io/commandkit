@@ -20,6 +20,11 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
+          showLastUpdateAuthor: true,
+          showLastUpdateTime: true,
+          remarkPlugins: [
+            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
+          ],
           editUrl:
             'https://github.com/underctrl-io/commandkit/tree/main/apps/website/',
         },

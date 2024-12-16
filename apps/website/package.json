@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
+    "dev": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.6.3",
+    "@docusaurus/remark-plugin-npm2yarn": "^3.6.3",
     "@docusaurus/tsconfig": "3.6.3",
     "@docusaurus/types": "3.6.3",
     "typescript": "~5.6.2"
