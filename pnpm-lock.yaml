@@ -203,9 +203,18 @@ importers:
       '@docusaurus/types':
         specifier: 3.6.3
         version: 3.6.3(acorn@8.11.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.4.20(postcss@8.4.49)
       micro-docgen:
         specifier: ^0.3.5
         version: 0.3.5
+      postcss:
+        specifier: ^8.4.49
+        version: 8.4.49
+      tailwindcss:
+        specifier: ^3.4.16
+        version: 3.4.16
       typescript:
         specifier: ~5.6.2
         version: 5.6.3
