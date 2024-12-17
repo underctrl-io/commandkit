@@ -41,8 +41,6 @@ export default function Home(): React.JSX.Element {
             <Link
               href="https://github.com/underctrl-io/commandkit"
               className="font-semibold bg-[#fc7993] py-2 px-4 rounded-full"
-              // target="_blank"
-              // rel="noopener noreferrer"
             >
               GitHub
             </Link>

@@ -75,7 +75,21 @@ const config: Config = {
     },
     footer: {
       style: 'light',
-      copyright: `MIT © ${new Date().getFullYear()} CommandKit`,
+      copyright: `
+      <a
+        href="https://www.netlify.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mx-auto"
+      >
+        <img
+          src="https://www.netlify.com/v3/img/components/netlify-color-accent.svg"
+          alt="Deploys by Netlify"
+        />
+      </a>
+      <br/>
+      <br/>
+      MIT © ${new Date().getFullYear()} CommandKit`,
     },
     prism: {
       theme: prismThemes.github,
