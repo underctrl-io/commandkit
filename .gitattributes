@@ -1,1 +1,1 @@
-*.mjs linguist-language=TypeScript
+*.mdx linguist-detectable=false
