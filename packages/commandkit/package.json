@@ -53,10 +53,10 @@
     "@types/node": "^22.10.2",
     "@types/yargs": "^17.0.32",
     "discord.js": "^14.16.3",
-    "esbuild-plugin-version-injector": "^1.2.1",
     "tsconfig": "workspace:*",
     "tsx": "^4.7.0",
     "typescript": "^5.7.2",
+    "use-macro": "^1.0.1",
     "vitest": "^1.2.1"
   },
   "peerDependencies": {
