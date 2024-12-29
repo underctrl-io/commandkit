@@ -1,5 +1,5 @@
 import { defineConfig } from 'tsup';
-import { esbuildPluginVersionInjector } from 'esbuild-plugin-version-injector';
+import { esbuildPluginUseMacro } from 'use-macro';
 
 export default defineConfig({
   format: ['cjs', 'esm'],
@@ -13,5 +13,5 @@ export default defineConfig({
   shims: true,
   skipNodeModulesBundle: true,
   clean: true,
-  esbuildPlugins: [esbuildPluginVersionInjector()],
+  esbuildPlugins: [esbuildPluginUseMacro()],
 });
