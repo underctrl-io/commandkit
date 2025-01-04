@@ -30,7 +30,7 @@ export class CommandKit {
     }
 
     this.#data = options;
-    
+
     this.#init();
   }
 
