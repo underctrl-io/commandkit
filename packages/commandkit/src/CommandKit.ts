@@ -1,3 +1,4 @@
+import EventEmitter from 'node:events';
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
 import type {
   CommandKitData,
@@ -6,8 +7,10 @@ import type {
   ReloadOptions,
 } from './types';
 import colors from './utils/colors';
+import { CacheProvider } from './cache/CacheProvider';
+import { MemoryCache } from './cache/MemoryCache';
 
-export class CommandKit {
+export class CommandKit extends EventEmitter {
   #data: CommandKitData;
 
   /**
@@ -29,9 +32,39 @@ export class CommandKit {
       );
     }
 
+    super();
+
+    options.debugCommands ??= process.env.NODE_ENV !== 'production';
+
+    if (
+      options.cacheProvider !== null &&
+      (!options.cacheProvider ||
+        !(options.cacheProvider instanceof CacheProvider))
+    ) {
+      options.cacheProvider = new MemoryCache();
+    }
+
     this.#data = options;
 
-    this.#init();
+    this.#init().then(() => {
+      // Increment client listeners count, as commandkit registers internal event listeners.
+      this.incrementClientListenersCount();
+    });
+  }
+
+  /**
+   * Resolves the current cache provider.
+   */
+  getCacheProvider(): CacheProvider | null {
+    const provider = this.#data.cacheProvider;
+    return provider ?? null;
+  }
+
+  /**
+   * Whether or not to debug the command handler.
+   */
+  isDebuggingCommands() {
+    return this.#data.debugCommands || false;
   }
 
   /**
@@ -176,5 +209,19 @@ export class CommandKit {
    */
   get devRoleIds(): string[] {
     return this.#data.devRoleIds || [];
+  }
+
+  /**
+   * Increment the client listeners count.
+   */
+  incrementClientListenersCount() {
+    this.#data.client.setMaxListeners(this.#data.client.getMaxListeners() + 1);
+  }
+
+  /**
+   * Decrement the client listeners count.
+   */
+  decrementClientListenersCount() {
+    this.#data.client.setMaxListeners(this.#data.client.getMaxListeners() - 1);
   }
 }

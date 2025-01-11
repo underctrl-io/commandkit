@@ -11,6 +11,7 @@ import {
   write,
 } from './common.mjs';
 import ora from 'ora';
+import { esbuildPluginUseMacro } from 'use-macro';
 
 export async function bootstrapProductionBuild(config) {
   const {
@@ -44,7 +45,9 @@ export async function bootstrapProductionBuild(config) {
       outDir,
       silent: true,
       watch: false,
+      cjsInterop: true,
       entry: [src, '!dist', '!.commandkit', `!${outDir}`],
+      esbuildPlugins: [esbuildPluginUseMacro()],
     });
 
     await injectShims(outDir, main, antiCrash, polyfillRequire);

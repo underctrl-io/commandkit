@@ -1,7 +1,10 @@
 {
   "name": "test-bot",
+  "version": "1.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "commandkit dev",
+    "build": "commandkit build",
+    "start": "commandkit start"
   },
   "dependencies": {
     "commandkit": "workspace:*",

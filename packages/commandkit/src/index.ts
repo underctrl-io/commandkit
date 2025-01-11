@@ -1,6 +1,9 @@
 export * from './CommandKit';
 export * from './components';
 export * from './config';
+export * from './context/async-context';
+export * from './context/environment';
+export * from './cache/index';
 export type * from './types';
 
 function getCommandKitVersion(): string {

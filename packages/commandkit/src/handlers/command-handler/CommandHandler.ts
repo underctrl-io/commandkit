@@ -1,3 +1,4 @@
+import { CacheType, Interaction } from 'discord.js';
 import type {
   CommandData,
   CommandFileObject,
@@ -15,6 +16,15 @@ import type {
   CommandKitInteraction,
 } from './typings';
 import builtInValidationsFunctions from './validations';
+import {
+  makeContextAwareFunction,
+  useEnvironment,
+} from '../../context/async-context';
+import {
+  after,
+  CommandKitEnvironment,
+  CommandKitEnvironmentType,
+} from '../../context/environment';
 
 export interface hCommandContext {
   interaction: CommandKitInteraction;
@@ -173,87 +183,148 @@ export class CommandHandler {
     }
   }
 
-  handleCommands() {
-    this.#data.client.on('interactionCreate', async (interaction) => {
-      if (
-        !interaction.isChatInputCommand() &&
-        !interaction.isContextMenuCommand() &&
-        !interaction.isAutocomplete()
-      )
-        return;
+  async #commandFinalizer() {
+    const env = useEnvironment();
 
-      const isAutocomplete = interaction.isAutocomplete();
+    await env.runDeferredFunctions();
 
-      const targetCommand = this.#data.commands.find(
-        (cmd) => cmd.data.name === interaction.commandName,
-      );
+    // Clear all deferred functions if we somehow missed them
+    env.clearAllDeferredFunctions();
+  }
 
-      if (!targetCommand) return;
+  async #interactionHandler(interaction: Interaction<CacheType>) {
+    if (
+      !interaction.isChatInputCommand() &&
+      !interaction.isContextMenuCommand() &&
+      !interaction.isAutocomplete()
+    )
+      return;
 
-      const { data, options, run, autocomplete, ...rest } = targetCommand;
+    const isAutocomplete = interaction.isAutocomplete();
 
-      // Skip if autocomplete handler is not defined
-      if (isAutocomplete && !autocomplete) return;
+    const targetCommand = this.#data.commands.find(
+      (cmd) => cmd.data.name === interaction.commandName,
+    );
 
-      const executor = async () => {
-        const commandObj = {
-          data: targetCommand.data,
-          options: targetCommand.options,
-          ...rest,
-        };
+    if (!targetCommand) return;
 
-        if (this.#data.validationHandler) {
-          let canRun = true;
+    const env = useEnvironment();
 
-          for (const validationFunction of this.#data.validationHandler
-            .validations) {
-            const stopValidationLoop = await validationFunction({
-              interaction,
-              commandObj,
-              client: this.#data.client,
-              handler: this.#data.commandkitInstance,
-            });
+    env.variables.set('interaction', interaction);
 
-            if (stopValidationLoop) {
-              canRun = false;
-              break;
-            }
-          }
+    const { data, options, run, autocomplete, ...rest } = targetCommand;
 
-          if (!canRun) return;
-        }
+    // Skip if autocomplete handler is not defined
+    if (isAutocomplete && !autocomplete) return;
 
+    const executor = async () => {
+      const commandObj = {
+        data: targetCommand.data,
+        options: targetCommand.options,
+        ...rest,
+      };
+
+      if (this.#data.validationHandler) {
         let canRun = true;
 
-        // If custom validations pass and !skipBuiltInValidations, run built-in CommandKit validation functions
-        if (!this.#data.skipBuiltInValidations) {
-          for (const validation of this.#data.builtInValidations) {
-            const stopValidationLoop = validation({
-              targetCommand,
-              interaction,
-              handlerData: this.#data,
-            });
+        for (const validationFunction of this.#data.validationHandler
+          .validations) {
+          const stopValidationLoop = await validationFunction({
+            interaction,
+            commandObj,
+            client: this.#data.client,
+            handler: this.#data.commandkitInstance,
+          });
 
-            if (stopValidationLoop) {
-              canRun = false;
-              break;
-            }
+          if (stopValidationLoop) {
+            canRun = false;
+            break;
           }
         }
 
         if (!canRun) return;
+      }
 
-        const command = targetCommand[isAutocomplete ? 'autocomplete' : 'run']!;
+      let canRun = true;
 
-        const context = {
-          interaction,
-          client: this.#data.client,
-          handler: this.#data.commandkitInstance,
-        };
-        return await command(context);
+      // If custom validations pass and !skipBuiltInValidations, run built-in CommandKit validation functions
+      if (!this.#data.skipBuiltInValidations) {
+        for (const validation of this.#data.builtInValidations) {
+          const stopValidationLoop = validation({
+            targetCommand,
+            interaction,
+            handlerData: this.#data,
+          });
+
+          if (stopValidationLoop) {
+            canRun = false;
+            break;
+          }
+        }
+      }
+
+      if (!canRun) return;
+
+      const command = targetCommand[isAutocomplete ? 'autocomplete' : 'run']!;
+
+      const context = {
+        interaction,
+        client: this.#data.client,
+        handler: this.#data.commandkitInstance,
       };
 
-      return executor();
+      const shouldDebug = this.#data.commandkitInstance.isDebuggingCommands();
+
+      if (!shouldDebug) {
+        return command(context);
+      }
+
+      after((env) => {
+        const error = env.getExecutionError();
+        const marker = env.getMarker();
+        const time = env.getExecutionTime().toFixed(2);
+        const cached = !!env.variables.get('cacheHit');
+        const cachedMarker = cached ? ' (cached)' : '';
+
+        if (error) {
+          console.error(
+            colors.red(
+              `[${marker} - ${time}]${cachedMarker} Error executing command: ${error}`,
+            ),
+          );
+          return;
+        }
+
+        console.log(
+          colors.green(
+            `[${marker} - ${time}]${cachedMarker} Command executed successfully`,
+          ),
+        );
+      });
+
+      try {
+        env.markStart(interaction.commandName);
+        const res = await command(context);
+
+        return res;
+      } finally {
+        env.markEnd();
+      }
+    };
+
+    return executor();
+  }
+
+  handleCommands() {
+    this.#data.client.on('interactionCreate', (interaction) => {
+      const env = new CommandKitEnvironment(this.#data.commandkitInstance);
+      env.setType(CommandKitEnvironmentType.CommandHandler);
+
+      return makeContextAwareFunction(
+        env,
+        this.#interactionHandler.bind(this),
+        this.#commandFinalizer.bind(this),
+      )(interaction);
     });
   }
 

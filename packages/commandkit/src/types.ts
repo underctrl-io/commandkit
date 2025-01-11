@@ -13,6 +13,7 @@ import type {
 
 import type { CommandKit } from './CommandKit';
 import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
+import { CacheProvider } from './cache/CacheProvider';
 
 /**
  * Options for instantiating a CommandKit handler.
@@ -54,6 +55,15 @@ export interface CommandKitOptions {
    * Bulk register application commands instead of one-by-one.
    */
   bulkRegister?: boolean;
+  /**
+   * Whether or not to debug the command handler.
+   */
+  debugCommands?: boolean;
+  /**
+   * The cache provider to use with CommandKit. Defaults to MemoryCache provider.
+   * Set this to `null` to not use any cache provider.
+   */
+  cacheProvider?: CacheProvider | null;
 }
 
 /**
