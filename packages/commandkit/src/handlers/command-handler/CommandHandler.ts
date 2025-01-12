@@ -282,7 +282,7 @@ export class CommandHandler {
       after((env) => {
         const error = env.getExecutionError();
         const marker = env.getMarker();
-        const time = env.getExecutionTime().toFixed(2);
+        const time = `${env.getExecutionTime().toFixed(2)}ms`;
         const cached = !!env.variables.get('cacheHit');
         const cachedMarker = cached ? ' (cached)' : '';
 

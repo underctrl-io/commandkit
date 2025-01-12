@@ -1,4 +1,8 @@
-import { unstable_cache, SlashCommandProps, CommandData } from 'commandkit';
+import {
+  SlashCommandProps,
+  CommandData,
+  unstable_cacheTag as cacheTag,
+} from 'commandkit';
 import { setTimeout } from 'node:timers/promises';
 
 export const data: CommandData = {
@@ -6,36 +10,29 @@ export const data: CommandData = {
   description: 'This is a help command.',
 };
 
-function $botVersion() {
-  'use macro';
-  // this function is inlined in production build
-  const process = require('node:process');
-  return require(`${process.cwd()}/package.json`).version;
-}
-
 async function someExpensiveDatabaseCall() {
-  await setTimeout(3000);
+  'use cache';
+
+  await setTimeout(5000);
+
   return Date.now();
 }
 
-export async function run({ interaction }: SlashCommandProps) {
-  await unstable_cache({ name: interaction.commandName, ttl: 60_000 });
+cacheTag(15000, someExpensiveDatabaseCall);
 
+export async function run({ interaction }: SlashCommandProps) {
   await interaction.deferReply();
 
+  const dataRetrievalStart = Date.now();
   const time = await someExpensiveDatabaseCall();
-
-  const version = $botVersion();
+  const dataRetrievalEnd = Date.now() - dataRetrievalStart;
 
   return interaction.editReply({
     embeds: [
       {
         title: 'Help',
-        description: `This is a help command. The current time is \`${time}\``,
+        description: `This is a help command. The current time is \`${time}\`. Fetched in ${dataRetrievalEnd}ms.`,
         color: 0x7289da,
-        footer: {
-          text: `Bot Version: ${version}`,
-        },
         timestamp: new Date().toISOString(),
       },
     ],

@@ -1,7 +1,6 @@
 export const CommandKitErrorCodes = {
   GuildOnlyException: Symbol('kGuildOnlyException'),
   DMOnlyException: Symbol('kDMOnlyException'),
-  CacheHit: Symbol('kCacheHit'),
 } as const;
 
 export function isCommandKitError(

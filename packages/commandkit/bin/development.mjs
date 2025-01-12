@@ -13,6 +13,7 @@ import { parseEnv } from './parse-env.mjs';
 import child_process from 'node:child_process';
 import ora from 'ora';
 import { injectShims } from './build.mjs';
+import { cacheDirectivePlugin } from './esbuild-plugins/use-cache.mjs';
 
 const RESTARTING_MSG_PATTERN = /^Restarting '|".+'|"\n?$/;
 const FAILED_RUNNING_PATTERN = /^Failed running '.+'|"\n?$/;
@@ -73,6 +74,7 @@ export async function bootstrapDevelopmentServer(opts) {
       async onSuccess() {
         return await injectShims('.commandkit', main, false, requirePolyfill);
       },
+      esbuildPlugins: [cacheDirectivePlugin()],
     });
 
     status.succeed(

@@ -2,7 +2,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { CommandKitEnvironment } from './environment';
 import { CommandKitErrorCodes, isCommandKitError } from '../utils/error-codes';
 import { Interaction } from 'discord.js';
-import { warnUnstable } from '../utils/warn-unstable';
+import { CommandKit } from '../CommandKit';
 
 const context = new AsyncLocalStorage<CommandKitEnvironment>();
 
@@ -25,10 +25,6 @@ export function makeContextAwareFunction<
         // execute the target function
         const result = await fn(...args);
 
-        if (env.isCapturingResult() && result != null) {
-          env.setResult(result);
-        }
-
         return result;
       } catch (e) {
         // set the error in the environment data
@@ -38,20 +34,6 @@ export function makeContextAwareFunction<
           if (!interaction) return;
 
           switch (code) {
-            case CommandKitErrorCodes.CacheHit: {
-              const data = Reflect.get(e, 'data');
-              env.variables.set('cacheHit', true);
-
-              if (interaction.isCommand()) {
-                if (interaction.deferred) {
-                  await interaction.editReply(data);
-                } else if (interaction.isRepliable()) {
-                  await interaction.reply(data);
-                }
-              }
-
-              return;
-            }
             case CommandKitErrorCodes.GuildOnlyException: {
               if (interaction.isRepliable()) {
                 await interaction.reply({
@@ -90,6 +72,24 @@ export function makeContextAwareFunction<
   };
 
   return _fn as R;
+}
+
+/**
+ * Retrieves commandkit
+ * @private
+ * @internal
+ */
+export function getCommandKit(): CommandKit | undefined;
+export function getCommandKit(strict: true): CommandKit;
+export function getCommandKit(strict: false): CommandKit | undefined;
+export function getCommandKit(strict = false): CommandKit | undefined {
+  const kit = context.getStore()?.commandkit ?? CommandKit.instance;
+
+  if (!kit && strict) {
+    throw new Error('CommandKit instance not found.');
+  }
+
+  return kit;
 }
 
 /**

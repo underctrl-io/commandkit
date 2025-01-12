@@ -10,8 +10,6 @@ export interface CommandKitEnvironmentInternalData {
   marker: string;
   markStart: number;
   markEnd: number;
-  captureResult: boolean;
-  result: any;
 }
 
 export class CommandKitEnvironment {
@@ -23,8 +21,6 @@ export class CommandKitEnvironment {
     marker: '',
     markStart: 0,
     markEnd: 0,
-    captureResult: false,
-    result: null,
   };
 
   /**
@@ -32,38 +28,6 @@ export class CommandKitEnvironment {
    * @param commandkit - The commandkit instance.
    */
   public constructor(public readonly commandkit: CommandKit) {}
-
-  /**
-   * Capture the result of the command execution
-   * @internal
-   */
-  public captureResult(): void {
-    this.#data.captureResult = true;
-  }
-
-  /**
-   * Whether the result of the command execution is being captured.
-   * @internal
-   */
-  public isCapturingResult(): boolean {
-    return this.#data.captureResult;
-  }
-
-  /**
-   * Set the result of the command execution
-   * @internal
-   */
-  public setResult(result: any): void {
-    this.#data.result = result;
-  }
-
-  /**
-   * Get the result of the command execution
-   * @internal
-   */
-  public getResult(): any {
-    return this.#data.result;
-  }
 
   /**
    * Get the execution error.

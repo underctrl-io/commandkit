@@ -1,13 +1,7 @@
-import { CacheProvider } from './CacheProvider';
-
-export interface MemoryCacheEntry {
-  key: string;
-  value: any;
-  ttl?: number;
-}
+import { CacheEntry, CacheProvider } from './CacheProvider';
 
 export class MemoryCache extends CacheProvider {
-  #cache = new Map<string, MemoryCacheEntry>();
+  #cache = new Map<string, CacheEntry>();
 
   public async get<T>(key: string): Promise<T | undefined> {
     const entry = this.#cache.get(key);
@@ -42,5 +36,21 @@ export class MemoryCache extends CacheProvider {
 
   public async clear(): Promise<void> {
     this.#cache.clear();
+  }
+
+  public async expire(key: string, ttl: number): Promise<void> {
+    const entry = this.#cache.get(key);
+
+    if (!entry) return;
+
+    const _ttl = Date.now() + ttl;
+
+    // delete if _ttl is in the past
+    if (_ttl < Date.now()) {
+      this.#cache.delete(key);
+      return;
+    }
+
+    entry.ttl = _ttl;
   }
 }

@@ -13,6 +13,8 @@ import { MemoryCache } from './cache/MemoryCache';
 export class CommandKit extends EventEmitter {
   #data: CommandKitData;
 
+  static instance: CommandKit | undefined = undefined;
+
   /**
    * Create a new command and event handler with CommandKit.
    *
@@ -20,6 +22,15 @@ export class CommandKit extends EventEmitter {
    * @see {@link https://commandkit.dev/guide/commandkit-setup}
    */
   constructor(options: CommandKitOptions) {
+    if (CommandKit.instance) {
+      process.emitWarning(
+        'CommandKit instance already exists. Having multiple instance in same project is discouraged and it may lead to unexpected behavior.',
+        {
+          code: 'MultiInstanceWarning',
+        },
+      );
+    }
+
     if (!options.client) {
       throw new Error(
         colors.red('"client" is required when instantiating CommandKit.'),
@@ -50,6 +61,10 @@ export class CommandKit extends EventEmitter {
       // Increment client listeners count, as commandkit registers internal event listeners.
       this.incrementClientListenersCount();
     });
+
+    if (!CommandKit.instance) {
+      CommandKit.instance = this;
+    }
   }
 
   /**

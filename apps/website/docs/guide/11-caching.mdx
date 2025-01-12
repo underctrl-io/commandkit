@@ -1,0 +1,124 @@
+---
+title: Caching
+description: A guide on how to implement caching in your bot using CommandKit.
+---
+
+# Caching
+
+:::warning
+This feature is currently available in development version of CommandKit only.
+:::
+
+Caching is a technique used to store data in a temporary storage to reduce the time it takes to fetch the data from the original source. This can be useful in Discord bots to reduce the number of database queries or external API calls.
+
+CommandKit provides an easy way to implement caching in your bot without having to worry about the underlying implementation. This guide will show you how to use the caching feature in CommandKit.
+
+## Setting up the cache
+
+By default, commandkit enables in-memory caching. This means that the cache will be stored in the bot's memory and will be lost when the bot restarts.
+You can provide a custom cache store by specifying the `cacheProvider` option when instantiating CommandKit.
+
+```js
+const { CommandKit } = require('commandkit');
+
+new CommandKit({
+  client,
+  commandsPath,
+  eventsPath,
+  cacheProvider: new MyCustomCacheProvider(),
+});
+```
+
+The `MyCustomCacheProvider` class should extend `CacheProvider` from CommandKit and implement the required methods. You may use this to store the cache in redis, a database or a file system.
+
+## Using the cache
+
+### Using commandkit CLI
+
+If you are using the commandkit cli to run your bot, you can simply add `"use cache"` directive on a function that you want to cache the result of.
+
+```js
+async function fetchData() {
+  'use cache';
+
+  // Fetch data from an external source
+  const data = await fetch('https://my-example-api.com/data');
+
+  return data.json();
+}
+
+export async function run({ interaction }) {
+  await interaction.deferReply();
+
+  // Fetch data
+  const data = await fetchData();
+
+  // Send the data to the user
+  await interaction.editReply(data);
+}
+```
+
+### Using the cache manually
+
+To use the cache manually, you can import the `unstable_cache()` function from CommandKit and use it to cache the result of a function.
+
+```js
+import { unstable_cache as cache } from 'commandkit';
+
+const fetchData = cache(async () => {
+  // Fetch data from an external source
+  const data = await fetch('https://my-example-api.com/data');
+
+  return data.json();
+});
+
+export async function run({ interaction }) {
+  await interaction.deferReply();
+
+  // Fetch data
+  const data = await fetchData();
+
+  // Send the data to the user
+  await interaction.editReply(data);
+}
+```
+
+By default, the cached data will be stored forever until `unstable_revalidate()` or `unstable_invalidate()` is called on the cache object. You can also specify a custom TTL (time to live) for the cache by passing a second argument to the `cache` function.
+
+```js
+const fetchData = cache(
+  async () => {
+    // Fetch data from an external source
+    const data = await fetch('https://my-example-api.com/data');
+
+    return data.json();
+  },
+  {
+    name: 'fetchData', // name of the cache
+    ttl: 60_000, // cache for 1 minute
+  },
+);
+```
+
+You may want to specify the cache parameters when using `"use cache"` directive. When using this approach, you can use `unstable_cacheTag()` to tag the cache with custom parameters.
+
+```js
+import { unstable_cacheTag as cacheTag } from 'commandkit';
+
+async function fetchData() {
+  'use cache';
+
+  // Fetch data from an external source
+  const data = await fetch('https://my-example-api.com/data');
+
+  return data.json();
+}
+
+cacheTag(
+  {
+    name: 'fetchData', // name of the cache
+    ttl: 60_000, // cache for 1 minute
+  },
+  fetchData,
+);
+```

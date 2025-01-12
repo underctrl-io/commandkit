@@ -12,6 +12,7 @@ import {
 } from './common.mjs';
 import ora from 'ora';
 import { esbuildPluginUseMacro } from 'use-macro';
+import { cacheDirectivePlugin } from './esbuild-plugins/use-cache.mjs';
 
 export async function bootstrapProductionBuild(config) {
   const {
@@ -47,7 +48,7 @@ export async function bootstrapProductionBuild(config) {
       watch: false,
       cjsInterop: true,
       entry: [src, '!dist', '!.commandkit', `!${outDir}`],
-      esbuildPlugins: [esbuildPluginUseMacro()],
+      esbuildPlugins: [cacheDirectivePlugin()],
     });
 
     await injectShims(outDir, main, antiCrash, polyfillRequire);
