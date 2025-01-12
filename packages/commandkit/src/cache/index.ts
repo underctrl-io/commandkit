@@ -40,8 +40,8 @@ export function unstable_cacheTag(
     typeof options === 'string'
       ? { name: options }
       : typeof options === 'number'
-        ? { name: randomUUID(), ttl: options }
-        : options;
+      ? { name: randomUUID(), ttl: options }
+      : options;
 
   Reflect.set(fn, '__cache_params', opt);
 }

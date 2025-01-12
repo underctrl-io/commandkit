@@ -7,6 +7,7 @@ node_modules
 .docusaurus
 .astro
 dist
+build
 .commandkit
 
 .DS_Store
