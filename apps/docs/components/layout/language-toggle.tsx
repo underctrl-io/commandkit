@@ -56,8 +56,9 @@ export function LanguageToggleText(
   props: HTMLAttributes<HTMLSpanElement>,
 ): React.ReactElement {
   const context = useI18n();
-  const text = context.locales?.find((item) => item.locale === context.locale)
-    ?.name;
+  const text = context.locales?.find(
+    (item) => item.locale === context.locale,
+  )?.name;
 
   return <span {...props}>{text}</span>;
 }
