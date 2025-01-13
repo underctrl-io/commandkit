@@ -6,7 +6,8 @@ description: A guide on how to implement caching in your bot using CommandKit.
 # Caching
 
 :::warning
-This feature is currently available in development version of CommandKit only.
+This feature is currently available in development version of CommandKit only. Since it is an unstable feature, it may change in the future.
+You need to prefix the function with `unstable_` to use this feature until it is stable.
 :::
 
 Caching is a technique used to store data in a temporary storage to reduce the time it takes to fetch the data from the original source. This can be useful in Discord bots to reduce the number of database queries or external API calls.
@@ -60,7 +61,7 @@ export async function run({ interaction }) {
 
 ### Using the cache manually
 
-To use the cache manually, you can import the `unstable_cache()` function from CommandKit and use it to cache the result of a function.
+To use the cache manually, you can import the `cache()` function from CommandKit and use it to cache the result of a function.
 
 ```js
 import { unstable_cache as cache } from 'commandkit';
@@ -83,7 +84,7 @@ export async function run({ interaction }) {
 }
 ```
 
-By default, the cached data will be stored forever until `unstable_revalidate()` or `unstable_invalidate()` is called on the cache object. You can also specify a custom TTL (time to live) for the cache by passing a second argument to the `cache` function.
+By default, the cached data will be stored forever until `revalidate()` or `expire()` is called on the cache object. You can also specify a custom TTL (time to live) for the cache by passing a second argument to the `cache` function.
 
 ```js
 const fetchData = cache(
@@ -100,7 +101,7 @@ const fetchData = cache(
 );
 ```
 
-You may want to specify the cache parameters when using `"use cache"` directive. When using this approach, you can use `unstable_cacheTag()` to tag the cache with custom parameters.
+You may want to specify the cache parameters when using `"use cache"` directive. When using this approach, you can use `cacheTag()` to tag the cache with custom parameters.
 
 ```js
 import { unstable_cacheTag as cacheTag } from 'commandkit';
@@ -108,17 +109,47 @@ import { unstable_cacheTag as cacheTag } from 'commandkit';
 async function fetchData() {
   'use cache';
 
+  cacheTag({
+    name: 'fetchData', // name of the cache
+    ttl: 60_000, // cache for 1 minute
+  });
+
   // Fetch data from an external source
   const data = await fetch('https://my-example-api.com/data');
 
   return data.json();
 }
-
-cacheTag(
-  {
-    name: 'fetchData', // name of the cache
-    ttl: 60_000, // cache for 1 minute
-  },
-  fetchData,
-);
 ```
+
+:::tip
+`cacheTag()` will only tag the function when it first runs. Subsequent calls to the function will not tag the cache again.
+If not tagged manually, commandkit assigns random tag name with 15 minutes TTL.
+
+`cacheTag()` does not work with the `cache` function. It must be used with the `"use cache"` directive only.
+:::
+
+> You can alternatively use `cacheLife()` to set the TTL of the cache. Example: `cacheLife(10_000)` would set the TTL to 10 seconds.
+
+## Invalidating/Revalidating the cache
+
+Revalidating the cache is the process of updating the cached data with fresh data from the original source on demand. You can use the `unstable_revalidate()` function to revalidate the cache. CommandKit will not immediately revalidate the cache, but it will do so the next time the cached data is requested. Because of this, we can also term it as "lazy revalidation".
+
+```js
+import { unstable_revalidate as revalidate } from 'commandkit';
+
+// Revalidate the cache
+await revalidate('cache-tag-name');
+```
+
+## Expire the cache
+
+Expiring the cache is the process of removing the cached data or resetting the TTL of the cache. Use the `unstable_expire()` function to expire the cache.
+
+```js
+import { unstable_expire as expire } from 'commandkit';
+
+// Expire the cache
+await expire('cache-tag-name', /* optional ttl */ 60_000);
+```
+
+If no TTL is given or TTL is in the past, commandkit deletes the cache immediately.
