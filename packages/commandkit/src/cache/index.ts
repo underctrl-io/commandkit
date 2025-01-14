@@ -3,9 +3,8 @@ import { GenericFunction, getCommandKit } from '../context/async-context';
 import { warnUnstable } from '../utils/warn-unstable';
 import { randomUUID } from 'node:crypto';
 import ms from 'ms';
-
-const cacheContext = new AsyncLocalStorage<CacheOptions | null>();
-const CACHE_FN_STORE = new Map<GenericFunction, CacheOptions>();
+import { CacheProvider } from './CacheProvider';
+import { Collection } from 'discord.js';
 
 export * from './CacheProvider';
 export * from './MemoryCache';
@@ -21,231 +20,241 @@ export interface CacheOptions {
   ttl?: number;
 }
 
-/**
- * Assigns cache tag parameters to the current function that uses the "use cache" directive.
- * @param options The cache options or the name of the cache key.
- */
-export function unstable_cacheTag(options: string | CacheOptions): void {
-  warnUnstable('cacheTag()');
+interface CachedFunction extends CacheOptions {
+  /**
+   * The function to be cached.
+   */
+  fn: GenericFunction;
+}
 
-  const context = cacheContext.getStore();
+const cacheContext = new AsyncLocalStorage<CachedFunction>();
+const CACHE_FN_STORE = new Collection<GenericFunction, CachedFunction>();
+const DEFAULT_TTL = 900_000; // 15 minutes
 
-  if (context === undefined) {
+function getCacheProvider() {
+  const commandkit = getCommandKit(true);
+  const cacheProvider = commandkit.getCacheProvider();
+
+  if (!cacheProvider) {
     throw new Error(
-      'cacheTag() can only be used inside a function that use the "use cache" directive.',
+      'Cache api of commandkit cannot be used without setting a CacheProvider.',
     );
   }
 
-  // already tagged
-  if (context === null) return;
+  return cacheProvider;
+}
 
-  const opt = typeof options === 'string' ? { name: options } : options;
+function resolveCacheParams(options?: string | CacheOptions) {
+  const name = typeof options === 'string' ? options : options?.name;
+  const ttl = typeof options === 'string' ? undefined : options?.ttl;
 
-  if (opt.name) context.name = opt.name;
-  if (opt.ttl !== undefined) context.ttl = opt.ttl;
+  return {
+    name: name ?? randomUUID(),
+    ttl: (typeof ttl === 'string' ? ms(ttl) : (ttl ?? DEFAULT_TTL)) as number,
+  };
+}
+
+function memo<R, F extends (...args: any[]) => Promise<R>>(
+  fn: F,
+  cache: CacheProvider,
+  params?: CacheOptions,
+  fb?: GenericFunction,
+): F {
+  return (async (...args) => {
+    const parameters = params ?? CACHE_FN_STORE.get(fb || fn);
+
+    console.log({ parameters });
+
+    if (!parameters) {
+      return fn(...args);
+    }
+
+    const { name, ttl } = parameters;
+
+    const cachedValue = await cache.get(name);
+
+    if (cachedValue) {
+      console.log('Cache hit:', name);
+      return cachedValue.value;
+    }
+
+    console.log('Cache miss:', name);
+
+    const value = await fn(...args);
+
+    await cache.set(name, value, ttl);
+
+    return value;
+  }) as F;
 }
 
 /**
- * Assigns cache lifetime to the current function that uses the "use cache" directive.
+ * Create a cached function.
+ * @param fn The function to cache.
+ * @param options The cache options.
+ * @returns The cached function.
+ */
+function cache<R, F extends (...args: any[]) => Promise<R>>(
+  fn: F,
+  options?: string | CacheOptions | undefined,
+): F {
+  warnUnstable('cache()');
+
+  const provider = getCacheProvider();
+  const params = resolveCacheParams(options);
+
+  CACHE_FN_STORE.set(fn, {
+    ...params,
+    fn,
+  });
+
+  return memo(fn, provider, params);
+}
+
+/**
+ * Applies cache to a function using the "use cache" directive.
+ * @param fn The function to cache.
+ * @private
+ */
+function use_cache<R, F extends (...args: any[]) => Promise<R>>(fn: F): F {
+  warnUnstable('"use cache"');
+
+  const provider = getCacheProvider();
+  const params = resolveCacheParams();
+
+  const memoized = (async (...args) => {
+    const result = await cacheContext.run({ ...params, fn: memoized }, () => {
+      return memo(fn, provider, undefined, memoized)(...args);
+    });
+
+    return result;
+  }) as F;
+
+  CACHE_FN_STORE.set(memoized, {
+    ...params,
+    fn: memoized,
+  });
+
+  return memoized;
+}
+
+/**
+ * Tags the current cache function with a name (or both ttl and name). This only works inside a function that uses the "use cache" directive.
+ * @param tag The tag to apply.
+ */
+function cacheTag(tag: string | CacheOptions) {
+  warnUnstable('cacheTag()');
+
+  const params = cacheContext.getStore();
+
+  if (!params) {
+    throw new Error(
+      'cacheTag() must be used inside a function with "use cache" directive.',
+    );
+  }
+
+  const overwritten = resolveCacheParams(tag);
+
+  if (overwritten.name) {
+    params.name = overwritten.name;
+  }
+
+  if (overwritten.ttl !== undefined) {
+    params.ttl = overwritten.ttl;
+  }
+
+  CACHE_FN_STORE.set(params.fn, params);
+}
+
+/**
+ * Applies a new time-to-live to the current cache function. This only works inside a function that uses the "use cache" directive.
  * @param ttl The time-to-live of the cache key in milliseconds or milliseconds parsable string.
  */
-export function unstable_cacheLife(options: string | number): void {
+function cacheLife(ttl: string | number) {
   warnUnstable('cacheLife()');
 
   const context = cacheContext.getStore();
 
-  if (context === undefined) {
+  if (!context) {
     throw new Error(
       'cacheLife() can only be used inside a function that use the "use cache" directive.',
     );
   }
 
-  // already tagged
-  if (context === null) return;
+  const newTTL = typeof ttl === 'string' ? ms(ttl) : ttl;
 
-  const ttl = typeof options === 'string' ? ms(options) : options;
+  context.ttl = newTTL;
 
-  context.ttl = ttl;
+  CACHE_FN_STORE.set(context.fn, context);
 }
 
 /**
- * Cache a value.
- * @param options The cache options.
+ * Invalidates a cache key. This will cause the next call to the cache key to fetch fresh data.
+ * @param tag The cache key to invalidate.
  */
-export function unstable_cache<R, F extends (...args: any[]) => Promise<R>>(
-  fn: F,
-  options?: string | CacheOptions | undefined,
-): F {
-  warnUnstable('cache()');
-  const commandkit = getCommandKit(true);
-  const cache = commandkit.getCacheProvider();
+async function invalidate(tag: string) {
+  warnUnstable('invalidate()');
 
-  if (!cache) {
-    throw new Error('cache() cannot be used without a cache provider.');
-  }
+  if (!CACHE_FN_STORE.some((s) => s.name === tag)) return;
 
-  options ??= randomUUID();
+  const provider = getCacheProvider();
 
-  const params =
-    typeof options === 'string'
-      ? {
-          name: options,
-        }
-      : options;
-
-  // default ttl to 15 minutes
-  params.ttl ??= 900_000;
-
-  let firstRun = true;
-
-  const _fn = (async (...args: Parameters<F>): Promise<R> => {
-    const _context = CACHE_FN_STORE.get(_fn);
-
-    if (!firstRun && !_context) {
-      return await fn(...args);
-    }
-
-    firstRun = false;
-
-    const context = _context ?? params;
-
-    // check cache
-    const data = await cache.get(context.name);
-
-    if (data) return data as R;
-
-    // cache miss
-    const result = await fn(...args);
-
-    await cache.set(context.name, result, context.ttl);
-
-    return result;
-  }) as F;
-
-  CACHE_FN_STORE.set(_fn, params);
-
-  return _fn;
+  await provider.delete(tag);
 }
 
 /**
- * @private
- * @internal
+ * Revalidates a cache key. This will immediately fetch the fresh data and update the cache.
+ * @param tag The cache key to revalidate.
+ * @param args The arguments to pass to the cached function.
  */
-function use_cache<R, F extends (...args: any[]) => Promise<R>>(fn: F): F {
-  warnUnstable('"use cache"');
-
-  let tagged = false;
-  let originalFn: F;
-
-  const memo = (async (...args) => {
-    if (!originalFn) {
-      originalFn = unstable_cache(fn);
-    }
-
-    if (!tagged) {
-      // validate cacheTag() usage
-      const _params = CACHE_FN_STORE.get(originalFn);
-
-      if (!_params) return originalFn(...args);
-
-      const [params, data] = await cacheContext.run(
-        {
-          name: _params?.name ?? '',
-          ttl: _params?.ttl,
-        },
-        async () => {
-          const data = await originalFn(...args);
-          const maybeTaggedParams = cacheContext.getStore();
-          return [maybeTaggedParams, data];
-        },
-      );
-
-      if (params) {
-        CACHE_FN_STORE.set(originalFn, {
-          name: params.name ?? _params?.name ?? randomUUID(),
-          ttl: params.ttl ?? _params?.ttl,
-        });
-      }
-
-      tagged = true;
-
-      return data;
-    }
-
-    return cacheContext.run(null, () => originalFn(...args));
-  }) as F;
-
-  return memo;
-}
-
-// this is intentional, do not change or you will be fired
-export { use_cache as unstable_super_duper_secret_internal_for_use_cache_directive_of_commandkit_cli_do_not_use_it_directly_or_you_will_be_fired_kthxbai };
-
-/**
- * Revalidate a cache by its key.
- * @param cache The cache key to revalidate.
- */
-export async function unstable_revalidate(cache: string): Promise<void> {
+async function revalidate(tag: string, ...args: any[]) {
   warnUnstable('revalidate()');
-  const commandkit = getCommandKit(true);
-  const cacheProvider = commandkit.getCacheProvider();
 
-  if (!cacheProvider) {
-    throw new Error('revalidate() cannot be used without a cache provider.');
-  }
+  const target = CACHE_FN_STORE.find((s) => s.name === tag);
 
-  let target: GenericFunction | undefined = undefined;
+  if (!target) return;
 
-  for (const [fn, params] of CACHE_FN_STORE) {
-    if (params.name === cache) {
-      target = fn;
-      break;
-    }
-  }
+  const provider = getCacheProvider();
 
-  if (!target) {
-    throw new Error('Invalid cache key.');
-  }
+  await provider.delete(tag);
 
-  await cacheProvider.delete(cache);
+  await target.fn(...args);
 }
 
 /**
- * Manually expire a cache by its key.
- * @param cache The cache key.
- * @param ttl The new time-to-live of the cache key in milliseconds. If not provided, the cache key will be deleted.
+ * Expires a cache key.
+ * @param tag The cache key to expire.
+ * @param ttl The new time-to-live of the cache key in milliseconds or milliseconds parsable string. If not provided, the cache key will be deleted.
  */
-export async function unstable_expire(
-  cache: string,
-  ttl?: number | string,
-): Promise<void> {
+async function expire(tag: string, ttl?: string | number | null | undefined) {
   warnUnstable('expire()');
-  const commandkit = getCommandKit(true);
-  const cacheProvider = commandkit.getCacheProvider();
 
-  if (!cacheProvider) {
-    throw new Error('expire() cannot be used without a cache provider.');
+  const target = CACHE_FN_STORE.find((s) => s.name === tag);
+  if (!target) return;
+
+  const provider = getCacheProvider();
+
+  if (ttl == null) {
+    await provider.delete(tag);
+    return;
   }
 
-  let target: GenericFunction | undefined = undefined;
+  const resolvedTTL = typeof ttl === 'string' ? ms(ttl) : ttl;
 
-  for (const [fn, params] of CACHE_FN_STORE) {
-    if (params.name === cache) {
-      target = fn;
-      break;
-    }
-  }
+  await provider.expire(tag, resolvedTTL);
 
-  if (!target) {
-    throw new Error('Invalid cache key.');
-  }
-
-  const _ttl =
-    typeof ttl === 'string' ? ms(ttl) : typeof ttl === 'number' ? ttl : null;
-
-  if (_ttl !== null) {
-    await cacheProvider.expire(cache, _ttl);
-  } else {
-    await cacheProvider.delete(cache);
-  }
+  CACHE_FN_STORE.set(target.fn, {
+    ...target,
+    ttl: resolvedTTL,
+  });
 }
+
+export {
+  cache as unstable_cache,
+  use_cache as unstable_super_duper_secret_internal_for_use_cache_directive_of_commandkit_cli_do_not_use_it_directly_or_you_will_be_fired_kthxbai,
+  cacheTag as unstable_cacheTag,
+  cacheLife as unstable_cacheLife,
+  invalidate as unstable_invalidate,
+  revalidate as unstable_revalidate,
+  expire as unstable_expire,
+};

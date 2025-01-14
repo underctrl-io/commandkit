@@ -6,7 +6,7 @@ export * from './context/environment';
 export * from './cache/index';
 export type * from './types';
 
-function getCommandKitVersion(): string {
+function $version(): string {
   'use macro';
   return require('../package.json').version;
 }
@@ -14,4 +14,4 @@ function getCommandKitVersion(): string {
 /**
  * The current version of CommandKit.
  */
-export const version = getCommandKitVersion();
+export const version = $version();

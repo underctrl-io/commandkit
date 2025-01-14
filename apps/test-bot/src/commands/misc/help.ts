@@ -5,14 +5,32 @@ export const data: CommandData = {
   description: 'This is a help command.',
 };
 
-export async function run({ interaction }: SlashCommandProps) {
+function $botVersion(): string {
+  'use macro';
+  const { join } = require('node:path');
+  const path = join(process.cwd(), 'package.json');
+  return require(path).version;
+}
+
+export async function run({ interaction, handler }: SlashCommandProps) {
   await interaction.deferReply();
+
+  const botVersion = $botVersion();
+
+  const commands = handler.commands
+    .map((c, i) => {
+      return `${i + 1}. **\`/${c.data.name}\`**`;
+    })
+    .join('\n');
 
   return interaction.editReply({
     embeds: [
       {
         title: 'Help',
-        description: `This is a help command.`,
+        description: commands,
+        footer: {
+          text: `Bot Version: ${botVersion}`,
+        },
         color: 0x7289da,
         timestamp: new Date().toISOString(),
       },

@@ -283,22 +283,18 @@ export class CommandHandler {
         const error = env.getExecutionError();
         const marker = env.getMarker();
         const time = `${env.getExecutionTime().toFixed(2)}ms`;
-        const cached = !!env.variables.get('cacheHit');
-        const cachedMarker = cached ? ' (cached)' : '';
 
         if (error) {
           console.error(
             colors.red(
-              `[${marker} - ${time}]${cachedMarker} Error executing command: ${error}`,
+              `[${marker} - ${time}] Error executing command: ${error}`,
             ),
           );
           return;
         }
 
         console.log(
-          colors.green(
-            `[${marker} - ${time}]${cachedMarker} Command executed successfully`,
-          ),
+          colors.green(`[${marker} - ${time}] Command executed successfully`),
         );
       });
 

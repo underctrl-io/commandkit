@@ -3,7 +3,6 @@ import {
   CommandData,
   unstable_cacheTag as cacheTag,
 } from 'commandkit';
-import { setTimeout } from 'node:timers/promises';
 import { database } from '../../database/store';
 
 export const data: CommandData = {
