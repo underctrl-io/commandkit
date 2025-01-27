@@ -32,11 +32,185 @@ new CommandKit({
 
 The `MyCustomCacheProvider` class should extend `CacheProvider` from CommandKit and implement the required methods. You may use this to store the cache in redis, a database or a file system.
 
+CommandKit officially provides a `RedisCache` provider as well with `@commandkit/redis` package. You can use it as follows:
+
+```js
+import { CommandKit } from 'commandkit';
+import { RedisCache } from '@commandkit/redis';
+
+new CommandKit({
+  client,
+  commandsPath,
+  eventsPath,
+  // uses default redis connection options (ioredis package)
+  cacheProvider: new RedisCache(),
+});
+```
+
+## Real World Example: XP System
+
+Let's build a simple XP system using CommandKit's caching feature. We'll create:
+
+- A message event to give XP
+- A command to check XP
+- Commands to manage the XP cache
+
+### XP Command
+
+```js
+import {
+  SlashCommandProps,
+  CommandData,
+  unstable_cacheTag as cacheTag,
+} from 'commandkit';
+import { database } from '../database';
+
+export const data = {
+  name: 'xp',
+  description: 'Check your XP',
+};
+
+// This function will be cached
+async function getUserXP(guildId, userId) {
+  'use cache';
+
+  const key = `xp:${guildId}:${userId}`;
+  cacheTag(key); // Use the database key as cache tag
+
+  const xp = (await database.get(key)) ?? 0;
+  return xp;
+}
+
+export async function run({ interaction }) {
+  await interaction.deferReply();
+
+  const xp = await getUserXP(interaction.guildId, interaction.user.id);
+
+  return interaction.editReply(`You have ${xp} XP!`);
+}
+```
+
+### XP Event Handler
+
+```js
+import { unstable_invalidate as invalidate } from 'commandkit';
+import { database } from '../database';
+
+// Give XP when user sends a message
+export default async function (message) {
+  if (message.author.bot || !message.inGuild()) return;
+
+  const key = `xp:${message.guildId}:${message.author.id}`;
+  const oldXp = (await database.get(key)) ?? 0;
+  const xp = Math.floor(Math.random() * 10) + 1;
+
+  await database.set(key, oldXp + xp);
+  await invalidate(key); // Invalidate cache so next xp check is fresh
+}
+```
+
+In this example:
+
+1. The XP command caches user XP data to avoid database queries
+2. When a user sends a message, they get random XP
+3. The cache is invalidated after XP update so next check shows new value
+
+## Common Caching Patterns
+
+### Pattern 1: Cache with Auto-Expiry
+
+```js
+import { unstable_cache as cache } from 'commandkit';
+
+// Cache API results for 5 minutes
+const fetchPokemon = cache(
+  async (name) => {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    return response.json();
+  },
+  {
+    tag: 'pokemon-data',
+    ttl: '5m', // Expires after 5 minutes
+  },
+);
+```
+
+### Pattern 2: Manual Cache Control
+
+```js
+// Using "use cache" directive with manual control
+async function fetchUserProfile(userId) {
+  'use cache';
+
+  cacheTag({
+    tag: `user-${userId}`,
+    ttl: '1h',
+  });
+
+  return database.getUserProfile(userId);
+}
+
+// Invalidate cache when profile updates
+async function updateUserProfile(userId, data) {
+  await database.updateUserProfile(userId, data);
+  await invalidate(`user-${userId}`);
+}
+```
+
+### Pattern 3: Forced Refresh with Revalidation
+
+```js
+import { unstable_revalidate as revalidate } from 'commandkit';
+
+// Command to force refresh server stats
+export async function run({ interaction }) {
+  await interaction.deferReply();
+
+  // Force refresh and get new data
+  const newStats = await revalidate('server-stats');
+
+  return interaction.editReply({
+    content: `Stats refreshed! New member count: ${newStats.members}`,
+  });
+}
+```
+
+## Cache Duration Format
+
+You can specify cache duration in multiple formats:
+
+- As milliseconds: `ttl: 60000` (1 minute)
+- As string shortcuts:
+  - `'5s'` - 5 seconds
+  - `'1m'` - 1 minute
+  - `'2h'` - 2 hours
+  - `'1d'` - 1 day etc.
+
+## Best Practices
+
+1. **Choose Good Cache Keys:**
+
+   - Use meaningful, unique cache tags
+   - Include relevant IDs (like `user-123` or `guild-456`)
+
+2. **Set Appropriate TTL:**
+
+   - Short TTL for frequently changing data
+   - Longer TTL for static content
+   - Consider invalidating manually for important updates
+
+3. **Handle Cache Misses:**
+
+   - Cache functions should handle cases when data isn't found
+   - Provide default values when appropriate
+
+4. **Invalidate Strategically:**
+   - Invalidate cache when underlying data changes
+   - Consider using `revalidate()` for controlled updates
+
 ## Using the cache
 
 ### Using commandkit CLI
-
-If you are using the commandkit cli to run your bot, you can simply add `"use cache"` directive on a function that you want to cache the result of.
 
 ```js
 async function fetchData() {
@@ -47,61 +221,31 @@ async function fetchData() {
 
   return data.json();
 }
-
-export async function run({ interaction }) {
-  await interaction.deferReply();
-
-  // Fetch data
-  const data = await fetchData();
-
-  // Send the data to the user
-  await interaction.editReply(data);
-}
 ```
 
 ### Using the cache manually
 
-To use the cache manually, you can import the `cache()` function from CommandKit and use it to cache the result of a function.
-
 ```js
 import { unstable_cache as cache } from 'commandkit';
 
-const fetchData = cache(async () => {
-  // Fetch data from an external source
-  const data = await fetch('https://my-example-api.com/data');
-
-  return data.json();
-});
-
-export async function run({ interaction }) {
-  await interaction.deferReply();
-
-  // Fetch data
-  const data = await fetchData();
-
-  // Send the data to the user
-  await interaction.editReply(data);
-}
-```
-
-By default, the cached data will be stored forever until `revalidate()` or `expire()` is called on the cache object. You can also specify a custom TTL (time to live) for the cache by passing a second argument to the `cache` function.
-
-```js
 const fetchData = cache(
   async () => {
     // Fetch data from an external source
     const data = await fetch('https://my-example-api.com/data');
-
     return data.json();
   },
   {
-    name: 'fetchData', // name of the cache
-    ttl: 60_000, // cache for 1 minute
+    tag: 'user-data', // Optional cache tag name
+    ttl: '1m', // TTL as string or number (in ms)
   },
 );
 ```
 
-You may want to specify the cache parameters when using `"use cache"` directive. When using this approach, you can use `cacheTag()` to tag the cache with custom parameters.
+By default, the cached data will be stored for 15 minutes unless `revalidate()` or `invalidate()` is called. You can specify a custom TTL (time to live) either as milliseconds or as a time string.
+
+### Setting Cache Parameters
+
+When using the `"use cache"` directive, you can use `cacheTag()` to set cache parameters:
 
 ```js
 import { unstable_cacheTag as cacheTag } from 'commandkit';
@@ -110,46 +254,66 @@ async function fetchData() {
   'use cache';
 
   cacheTag({
-    name: 'fetchData', // name of the cache
-    ttl: 60_000, // cache for 1 minute
+    tag: 'user-data', // cache tag name
+    ttl: '1m', // TTL as string or number (in ms)
   });
+  // Or just set the tag name
+  cacheTag('user-data');
 
-  // Fetch data from an external source
   const data = await fetch('https://my-example-api.com/data');
+  return data.json();
+}
+```
 
+You can also set just the TTL using `cacheLife`:
+
+```js
+import { unstable_cacheLife as cacheLife } from 'commandkit';
+
+async function fetchData() {
+  'use cache';
+
+  cacheLife('1m'); // TTL as string
+  // or
+  cacheLife(60_000); // TTL in milliseconds
+
+  const data = await fetch('https://my-example-api.com/data');
   return data.json();
 }
 ```
 
 :::tip
-`cacheTag()` will only tag the function when it first runs. Subsequent calls to the function will not tag the cache again.
-If not tagged manually, commandkit assigns random tag name with 15 minutes TTL.
-
-`cacheTag()` does not work with the `cache` function. It must be used with the `"use cache"` directive only.
+`cacheTag()` will only tag the function when it first runs. If not tagged manually, CommandKit assigns a random tag name with 15 minutes TTL.
+`cacheTag()` must be used with the `cache()` function or a function with `"use cache"` directive only.
 :::
 
-> You can alternatively use `cacheLife()` to set the TTL of the cache. Example: `cacheLife(10_000)` would set the TTL to 10 seconds.
+## Managing Cache Data
 
-## Invalidating/Revalidating the cache
+### Invalidating Cache
 
-Revalidating the cache is the process of updating the cached data with fresh data from the original source on demand. You can use the `unstable_revalidate()` function to revalidate the cache. CommandKit will not immediately revalidate the cache, but it will do so the next time the cached data is requested. Because of this, we can also term it as "lazy revalidation".
+To immediately remove cached data:
+
+```js
+import { unstable_invalidate as invalidate } from 'commandkit';
+
+// Remove the cache entry immediately
+await invalidate('user-data');
+```
+
+### Revalidating Cache
+
+To force refresh the cached data:
 
 ```js
 import { unstable_revalidate as revalidate } from 'commandkit';
 
-// Revalidate the cache
-await revalidate('cache-tag-name');
+// Revalidate and get fresh data
+const freshData = await revalidate('user-data');
 ```
 
-## Expire the cache
+The revalidation process will:
 
-Expiring the cache is the process of removing the cached data or resetting the TTL of the cache. Use the `unstable_expire()` function to expire the cache.
-
-```js
-import { unstable_expire as expire } from 'commandkit';
-
-// Expire the cache
-await expire('cache-tag-name', /* optional ttl */ 60_000);
-```
-
-If no TTL is given or TTL is in the past, commandkit deletes the cache immediately.
+1. Remove the existing cache entry
+2. Re-execute the cached function to get fresh data
+3. Store the new data in cache
+4. Return the fresh data

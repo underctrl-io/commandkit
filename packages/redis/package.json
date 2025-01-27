@@ -1,0 +1,33 @@
+{
+  "name": "@commandkit/redis",
+  "version": "0.1.0",
+  "description": "Redis cache provider for CommandKit",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underctrl-io/commandkit.git"
+  },
+  "keywords": [
+    "commandkit",
+    "redis",
+    "cache"
+  ],
+  "author": "twilight <hello@twlite.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/underctrl-io/commandkit/issues"
+  },
+  "homepage": "https://github.com/underctrl-io/commandkit#readme",
+  "dependencies": {
+    "ioredis": "^5.4.2"
+  },
+  "devDependencies": {
+    "commandkit": "workspace:*",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.7.3"
+  }
+}

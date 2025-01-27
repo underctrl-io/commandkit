@@ -9,7 +9,7 @@ const generate = _generate.default || _generate;
 const IMPORT_PATH = 'commandkit';
 const DIRECTIVE = 'use cache';
 const CACHE_IDENTIFIER =
-  'unstable_super_duper_secret_internal_for_use_cache_directive_of_commandkit_cli_do_not_use_it_directly_or_you_will_be_fired_kthxbai';
+  'unstable_super_duper_secret_internal_for_use_cache_directive_of_commandkit_cli_do_not_use_it_directly_or_you_will_be_fired_from_your_job_kthxbai';
 
 const generateRandomString = (length = 6) => {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
