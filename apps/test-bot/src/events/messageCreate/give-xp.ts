@@ -1,5 +1,5 @@
 import type { Message } from 'discord.js';
-import { unstable_revalidate as revalidate } from 'commandkit';
+import { unstable_invalidate as invalidate } from 'commandkit';
 import { database } from '../../database/store';
 
 export default async function (message: Message) {
@@ -9,8 +9,9 @@ export default async function (message: Message) {
     (await database.get(`${message.guildId}:${message.author.id}`)) ?? 0;
   const xp = Math.floor(Math.random() * 10) + 1;
 
-  await database.set(`${message.guildId}:${message.author.id}`, oldXp + xp);
+  const key = `xp:${message.guildId}:${message.author.id}`;
+  await database.set(key, oldXp + xp);
 
-  // revalidate the cache
-  await revalidate(`xp:${message.guildId}:${message.author.id}`);
+  // invalidate the cache
+  await invalidate(key);
 }

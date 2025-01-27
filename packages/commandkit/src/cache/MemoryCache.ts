@@ -3,7 +3,7 @@ import { CacheEntry, CacheProvider } from './CacheProvider';
 export class MemoryCache extends CacheProvider {
   #cache = new Map<string, CacheEntry>();
 
-  public async get<T>(key: string): Promise<T | undefined> {
+  public async get<T>(key: string): Promise<CacheEntry<T> | undefined> {
     const entry = this.#cache.get(key);
 
     if (!entry) {
@@ -15,15 +15,16 @@ export class MemoryCache extends CacheProvider {
       return undefined;
     }
 
-    return entry.value;
+    return entry as CacheEntry<T>;
   }
 
   public async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-    this.#cache.set(key, {
-      key,
+    const entry: CacheEntry<T> = {
       value,
       ttl: ttl != null ? Date.now() + ttl : undefined,
-    });
+    };
+
+    this.#cache.set(key, entry);
   }
 
   public async exists(key: string): Promise<boolean> {

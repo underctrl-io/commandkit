@@ -13,9 +13,13 @@ export const data: CommandData = {
 async function getUserXP(guildId: string, userId: string) {
   'use cache';
 
-  cacheTag(`xp:${guildId}:${userId}`);
+  const key = `xp:${guildId}:${userId}`;
 
-  const xp: number = (await database.get(`${guildId}:${userId}`)) ?? 0;
+  cacheTag(key);
+
+  const xp: number = (await database.get(key)) ?? 0;
+
+  console.log(`Cached XP: ${xp} for ${key}`);
 
   return xp;
 }
