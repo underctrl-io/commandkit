@@ -9,6 +9,6 @@
     "moduleResolution": "Node",
     "module": "CommonJS",
     "declaration": true,
-    "isolatedModules": true,
+    "isolatedModules": true
   }
 }

@@ -1,5 +1,5 @@
 import type { Message } from 'discord.js';
-import { unstable_invalidate as invalidate } from 'commandkit';
+import { invalidate } from 'commandkit';
 import { database } from '../../database/store';
 
 export default async function (message: Message) {

@@ -1,8 +1,4 @@
-import {
-  SlashCommandProps,
-  CommandData,
-  unstable_invalidate as invalidate,
-} from 'commandkit';
+import { SlashCommandProps, CommandData, invalidate } from 'commandkit';
 
 export const data: CommandData = {
   name: 'invalidate-random',

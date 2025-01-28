@@ -1,8 +1,4 @@
-import {
-  SlashCommandProps,
-  CommandData,
-  unstable_cache as cache,
-} from 'commandkit';
+import { SlashCommandProps, CommandData, cache } from 'commandkit';
 
 export const data: CommandData = {
   name: 'random',

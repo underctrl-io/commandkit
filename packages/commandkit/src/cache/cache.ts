@@ -1,7 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import ms from 'ms';
 import { GenericFunction, getCommandKit } from '../context/async-context';
-import { warnUnstable } from '../utils/warn-unstable';
 import { randomUUID } from 'node:crypto';
 
 export type AsyncFunction<R extends any[] = any[], T = any> = (
@@ -49,7 +48,6 @@ function cache<R extends any[], F extends AsyncFunction<R>>(
   fn: F,
   params?: Partial<CacheTag>,
 ): F {
-  warnUnstable('cache');
   params = Object.assign({}, getDefaultCacheTag(), params);
 
   return useCache(fn, __identificationKey, params as CacheTag);
@@ -70,10 +68,6 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
   }
 
   const isLocal = id === __identificationKey;
-
-  if (!isLocal) {
-    warnUnstable('"use cache"');
-  }
 
   const memoized = (async (...args) => {
     const commandkit = getCommandKit(true);
@@ -173,8 +167,6 @@ function cacheTag(tag: CacheTag | string): void {
     throw new TypeError('cacheTag must be called with a tag.');
   }
 
-  warnUnstable('cacheTag');
-
   const context = cacheContext.getStore();
 
   if (context === undefined) {
@@ -208,8 +200,6 @@ function cacheLife(life: string | number) {
     throw new TypeError('cacheLife must be called with a time-to-live value.');
   }
 
-  warnUnstable('cacheLife');
-
   const context = cacheContext.getStore();
 
   if (context === undefined) {
@@ -231,7 +221,6 @@ function cacheLife(life: string | number) {
  * @param tag The cache tag to invalidate.
  */
 async function invalidate(tag: string) {
-  warnUnstable('invalidate');
   const commandkit = getCommandKit(true);
   const cache = commandkit.getCacheProvider();
 
@@ -255,7 +244,6 @@ async function revalidate<R = any>(
   tag: string,
   ...args: any[]
 ): Promise<R | undefined> {
-  warnUnstable('revalidate');
   const commandkit = getCommandKit(true);
   const cache = commandkit.getCacheProvider();
 
@@ -277,10 +265,10 @@ async function revalidate<R = any>(
 }
 
 export {
-  cache as unstable_cache,
-  useCache as unstable_super_duper_secret_internal_for_use_cache_directive_of_commandkit_cli_do_not_use_it_directly_or_you_will_be_fired_from_your_job_kthxbai,
-  cacheTag as unstable_cacheTag,
-  cacheLife as unstable_cacheLife,
-  invalidate as unstable_invalidate,
-  revalidate as unstable_revalidate,
+  cache,
+  useCache as super_duper_secret_internal_for_use_cache_directive_of_commandkit_cli_do_not_use_it_directly_or_you_will_be_fired_from_your_job_kthxbai,
+  cacheTag,
+  cacheLife,
+  invalidate,
+  revalidate,
 };

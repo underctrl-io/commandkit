@@ -1,8 +1,4 @@
-import {
-  SlashCommandProps,
-  CommandData,
-  unstable_cacheTag as cacheTag,
-} from 'commandkit';
+import { SlashCommandProps, CommandData, cacheTag } from 'commandkit';
 import { database } from '../../database/store';
 
 export const data: CommandData = {
