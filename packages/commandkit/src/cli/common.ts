@@ -7,34 +7,34 @@ import fs from 'node:fs';
 const resetColor = '\x1b[0m';
 
 export const Colors = {
-  reset: (text) => `${text}${resetColor}`,
-  bright: (text) => `\x1b[1m${text}${resetColor}`,
-  dim: (text) => `\x1b[2m${text}${resetColor}`,
-  underscore: (text) => `\x1b[4m${text}${resetColor}`,
-  blink: (text) => `\x1b[5m${text}${resetColor}`,
-  reverse: (text) => `\x1b[7m${text}${resetColor}`,
-  hidden: (text) => `\x1b[8m${text}${resetColor}`,
+  reset: (text: string) => `${text}${resetColor}`,
+  bright: (text: string) => `\x1b[1m${text}${resetColor}`,
+  dim: (text: string) => `\x1b[2m${text}${resetColor}`,
+  underscore: (text: string) => `\x1b[4m${text}${resetColor}`,
+  blink: (text: string) => `\x1b[5m${text}${resetColor}`,
+  reverse: (text: string) => `\x1b[7m${text}${resetColor}`,
+  hidden: (text: string) => `\x1b[8m${text}${resetColor}`,
 
-  black: (text) => `\x1b[30m${text}${resetColor}`,
-  red: (text) => `\x1b[31m${text}${resetColor}`,
-  green: (text) => `\x1b[32m${text}${resetColor}`,
-  yellow: (text) => `\x1b[33m${text}${resetColor}`,
-  blue: (text) => `\x1b[34m${text}${resetColor}`,
-  magenta: (text) => `\x1b[35m${text}${resetColor}`,
-  cyan: (text) => `\x1b[36m${text}${resetColor}`,
-  white: (text) => `\x1b[37m${text}${resetColor}`,
+  black: (text: string) => `\x1b[30m${text}${resetColor}`,
+  red: (text: string) => `\x1b[31m${text}${resetColor}`,
+  green: (text: string) => `\x1b[32m${text}${resetColor}`,
+  yellow: (text: string) => `\x1b[33m${text}${resetColor}`,
+  blue: (text: string) => `\x1b[34m${text}${resetColor}`,
+  magenta: (text: string) => `\x1b[35m${text}${resetColor}`,
+  cyan: (text: string) => `\x1b[36m${text}${resetColor}`,
+  white: (text: string) => `\x1b[37m${text}${resetColor}`,
 
-  bgBlack: (text) => `\x1b[40m${text}${resetColor}`,
-  bgRed: (text) => `\x1b[41m${text}${resetColor}`,
-  bgGreen: (text) => `\x1b[42m${text}${resetColor}`,
-  bgYellow: (text) => `\x1b[43m${text}${resetColor}`,
-  bgBlue: (text) => `\x1b[44m${text}${resetColor}`,
-  bgMagenta: (text) => `\x1b[45m${text}${resetColor}`,
-  bgCyan: (text) => `\x1b[46m${text}${resetColor}`,
-  bgWhite: (text) => `\x1b[47m${text}${resetColor}`,
+  bgBlack: (text: string) => `\x1b[40m${text}${resetColor}`,
+  bgRed: (text: string) => `\x1b[41m${text}${resetColor}`,
+  bgGreen: (text: string) => `\x1b[42m${text}${resetColor}`,
+  bgYellow: (text: string) => `\x1b[43m${text}${resetColor}`,
+  bgBlue: (text: string) => `\x1b[44m${text}${resetColor}`,
+  bgMagenta: (text: string) => `\x1b[45m${text}${resetColor}`,
+  bgCyan: (text: string) => `\x1b[46m${text}${resetColor}`,
+  bgWhite: (text: string) => `\x1b[47m${text}${resetColor}`,
 };
 
-export function write(message) {
+export function write(message: any) {
   process.stdout.write(message);
   process.stdout.write('\n');
 }
@@ -42,7 +42,7 @@ export function write(message) {
 /**
  * @returns {never}
  */
-export function panic(message) {
+export function panic(message: any) {
   write(Colors.red(`Error: ${message}`));
   process.exit(1);
 }
@@ -72,7 +72,7 @@ const possibleFileNames = [
   'commandkit.cts',
 ];
 
-export async function findCommandKitConfig(src) {
+export async function findCommandKitConfig(src: string) {
   const cwd = process.cwd();
   const locations = src
     ? [join(cwd, src)]
@@ -89,7 +89,7 @@ export async function findCommandKitConfig(src) {
   panic(`Could not locate commandkit config from ${cwd}`);
 }
 
-function ensureTypeScript(target) {
+function ensureTypeScript(target: string) {
   const isTypeScript = /\.(c|m)tsx?$/.test(target);
 
   if (isTypeScript && !process.features.typescript) {
@@ -99,7 +99,7 @@ function ensureTypeScript(target) {
   }
 }
 
-async function loadConfigInner(target) {
+async function loadConfigInner(target: string) {
   const isJSON = target.endsWith('.json');
 
   await ensureExists(target);
@@ -109,6 +109,7 @@ async function loadConfigInner(target) {
   /**
    * @type {import('..').CommandKitConfig}
    */
+  // @ts-ignore
   const config = await import(`file://${target}`, {
     assert: isJSON ? { type: 'json' } : undefined,
   }).then((conf) => conf.default || conf);
@@ -116,10 +117,10 @@ async function loadConfigInner(target) {
   return config;
 }
 
-async function ensureExists(loc) {
+async function ensureExists(loc: string) {
   await fs.promises.access(loc, fs.constants.F_OK);
 }
 
-export function erase(dir) {
+export function erase(dir: string) {
   rimrafSync(dir);
 }

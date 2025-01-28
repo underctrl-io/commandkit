@@ -3,7 +3,9 @@ import _traverse from '@babel/traverse';
 import _generate from '@babel/generator';
 import * as t from '@babel/types';
 
+// @ts-ignore
 const traverse = _traverse.default || _traverse;
+// @ts-ignore
 const generate = _generate.default || _generate;
 
 const IMPORT_PATH = 'commandkit';
@@ -19,7 +21,7 @@ const generateRandomString = (length = 6) => {
   ).join('');
 };
 
-export const cacheDirectivePlugin = async (source, args) => {
+export const cacheDirectivePlugin = async (source: string, args: any) => {
   const ast = parser.parse(source, {
     sourceType: 'module',
     plugins: ['typescript', 'jsx'],
@@ -35,7 +37,7 @@ export const cacheDirectivePlugin = async (source, args) => {
   // First pass: check for naming collisions and collect modifications
   traverse(ast, {
     Program: {
-      enter(path) {
+      enter(path: any) {
         const binding = path.scope.getBinding(CACHE_IDENTIFIER);
         if (binding) {
           state.cacheIdentifierName = `${CACHE_IDENTIFIER}_${generateRandomString()}`;
@@ -43,21 +45,24 @@ export const cacheDirectivePlugin = async (source, args) => {
       },
     },
 
-    ImportDeclaration(path) {
+    ImportDeclaration(path: any) {
       if (
         path.node.source.value === IMPORT_PATH &&
         path.node.specifiers.some(
-          (spec) =>
+          (spec: any) =>
             t.isImportSpecifier(spec) &&
+            // @ts-ignore
             spec.imported.name === CACHE_IDENTIFIER,
         )
       ) {
         state.hasExistingImport = true;
         if (state.cacheIdentifierName !== CACHE_IDENTIFIER) {
+          // @ts-ignore
           state.modifications.push(() => {
-            path.node.specifiers.forEach((spec) => {
+            path.node.specifiers.forEach((spec: any) => {
               if (
                 t.isImportSpecifier(spec) &&
+                // @ts-ignore
                 spec.imported.name === CACHE_IDENTIFIER
               ) {
                 spec.local.name = state.cacheIdentifierName;
@@ -68,19 +73,22 @@ export const cacheDirectivePlugin = async (source, args) => {
       }
     },
 
-    'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression'(path) {
+    'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression'(
+      path: any,
+    ) {
       const body = t.isBlockStatement(path.node.body) ? path.node.body : null;
       const hasUseCache = body?.directives?.some(
-        (d) => d.value.value === DIRECTIVE,
+        (d: any) => d.value.value === DIRECTIVE,
       );
 
       if (!hasUseCache && !t.isBlockStatement(path.node.body)) {
         const parentFunction = path.findParent(
-          (p) => (p.isFunction() || p.isProgram()) && 'directives' in p.node,
+          (p: any) =>
+            (p.isFunction() || p.isProgram()) && 'directives' in p.node,
         );
         if (
           !parentFunction?.node.directives?.some(
-            (d) => d.value.value === DIRECTIVE,
+            (d: any) => d.value.value === DIRECTIVE,
           )
         ) {
           return;
@@ -104,7 +112,7 @@ export const cacheDirectivePlugin = async (source, args) => {
           ? t.blockStatement(
               path.node.body.body,
               path.node.body.directives.filter(
-                (d) => d.value.value !== DIRECTIVE,
+                (d: any) => d.value.value !== DIRECTIVE,
               ),
             )
           : path.node.body;
@@ -114,6 +122,7 @@ export const cacheDirectivePlugin = async (source, args) => {
           [t.arrowFunctionExpression(path.node.params, newBody, true)],
         );
 
+        // @ts-ignore
         state.modifications.push(() => {
           if (name) {
             path.replaceWith(
@@ -149,6 +158,7 @@ export const cacheDirectivePlugin = async (source, args) => {
     }
 
     // Apply collected modifications
+    // @ts-ignore
     state.modifications.forEach((modify) => modify());
   }
 

@@ -15,7 +15,7 @@ const VALUE_PREFIXES = {
   DATE: 'DATE::',
 };
 
-function catcher(fn) {
+function catcher(fn: Function) {
   try {
     fn();
     return true;
@@ -24,7 +24,7 @@ function catcher(fn) {
   }
 }
 
-export function parseEnv(src) {
+export function parseEnv(src: any) {
   for (const key in src) {
     const value = src[key];
 
@@ -54,9 +54,12 @@ export function parseEnv(src) {
 
     if (value in valuesMap) {
       src[key] =
+        // @ts-ignore
         typeof valuesMap[value] === 'function'
-          ? valuesMap[value]()
-          : valuesMap[value];
+          ? // @ts-ignore
+            valuesMap[value]()
+          : // @ts-ignore
+            valuesMap[value];
       continue;
     }
   }

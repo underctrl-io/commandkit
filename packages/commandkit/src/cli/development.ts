@@ -2,23 +2,17 @@
 import { config as dotenv } from 'dotenv';
 import { join } from 'node:path';
 import { build } from 'tsup';
-import {
-  Colors,
-  erase,
-  findCommandKitConfig,
-  panic,
-  write,
-} from './common.mjs';
-import { parseEnv } from './parse-env.mjs';
+import { Colors, erase, findCommandKitConfig, panic, write } from './common';
+import { parseEnv } from './parse-env';
 import child_process from 'node:child_process';
 import ora from 'ora';
-import { injectShims } from './build.mjs';
-import { commandkitPlugin } from './esbuild-plugins/plugin.mjs';
+import { injectShims } from './build';
+import { commandkitPlugin } from './esbuild-plugins/plugin';
 
 const RESTARTING_MSG_PATTERN = /^Restarting '|".+'|"\n?$/;
 const FAILED_RUNNING_PATTERN = /^Failed running '.+'|"\n?$/;
 
-export async function bootstrapDevelopmentServer(opts) {
+export async function bootstrapDevelopmentServer(opts: any) {
   const {
     src,
     main,
@@ -93,7 +87,6 @@ export async function bootstrapDevelopmentServer(opts) {
 
     const env = dotenv({
       path: join(process.cwd(), '.env'),
-      // @ts-expect-error
       processEnv,
     });
 
@@ -109,25 +102,23 @@ export async function bootstrapDevelopmentServer(opts) {
       write(Colors.blue('[DOTENV] Loaded .env file!'));
     }
 
-    /**
-     * @type {child_process.ChildProcessWithoutNullStreams}
-     */
-    const ps = child_process.spawn(
-      'node',
-      [...nodeOptions, join(process.cwd(), '.commandkit', main)],
-      {
-        env: {
-          ...process.env,
-          ...processEnv,
-          NODE_ENV: 'development',
-          // @ts-expect-error
-          COMMANDKIT_DEV: true,
-          // @ts-expect-error
-          COMMANDKIT_PRODUCTION: false,
+    const ps: child_process.ChildProcessWithoutNullStreams =
+      child_process.spawn(
+        'node',
+        [...nodeOptions, join(process.cwd(), '.commandkit', main)],
+        {
+          env: {
+            ...process.env,
+            ...processEnv,
+            NODE_ENV: 'development',
+            // @ts-expect-error
+            COMMANDKIT_DEV: true,
+            // @ts-expect-error
+            COMMANDKIT_PRODUCTION: false,
+          },
+          cwd: process.cwd(),
         },
-        cwd: process.cwd(),
-      },
-    );
+      );
 
     let isLastLogRestarting = false,
       hasStarted = false;
@@ -182,6 +173,6 @@ export async function bootstrapDevelopmentServer(opts) {
     status.fail(
       `Error occurred after ${(performance.now() - start).toFixed(2)}ms!\n`,
     );
-    panic(e.stack ?? e);
+    panic(e instanceof Error ? e.stack : e);
   }
 }

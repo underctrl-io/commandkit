@@ -3,17 +3,11 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { build } from 'tsup';
-import {
-  Colors,
-  erase,
-  findCommandKitConfig,
-  panic,
-  write,
-} from './common.mjs';
+import { Colors, erase, findCommandKitConfig, panic, write } from './common.js';
 import ora from 'ora';
-import { commandkitPlugin } from './esbuild-plugins/plugin.mjs';
+import { commandkitPlugin } from './esbuild-plugins/plugin';
 
-export async function bootstrapProductionBuild(config) {
+export async function bootstrapProductionBuild(config: any) {
   const {
     sourcemap = false,
     minify = false,
@@ -72,7 +66,12 @@ export async function bootstrapProductionBuild(config) {
   }
 }
 
-export async function injectShims(outDir, main, antiCrash, polyfillRequire) {
+export async function injectShims(
+  outDir: string,
+  main: string,
+  antiCrash: boolean,
+  polyfillRequire: boolean,
+) {
   const path = join(process.cwd(), outDir, main);
 
   const head = ['\n\n;await (async()=>{', "  'use strict';"].join('\n');

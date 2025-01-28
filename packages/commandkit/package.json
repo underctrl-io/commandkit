@@ -7,18 +7,6 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "bin": "./bin/index.mjs",
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
-    },
-    "./cli": {
-      "require": "./dist/environment/cli.js",
-      "import": "./dist/environment/cli.mjs",
-      "types": "./dist/environment/cli.d.ts"
-    }
-  },
   "files": [
     "dist",
     "bin"
@@ -55,6 +43,8 @@
     "tsup": "^8.3.5"
   },
   "devDependencies": {
+    "@types/babel__generator": "^7.6.8",
+    "@types/babel__traverse": "^7.20.6",
     "@types/ms": "^0.7.34",
     "@types/node": "^22.10.2",
     "@types/yargs": "^17.0.32",

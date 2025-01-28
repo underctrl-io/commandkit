@@ -13,5 +13,6 @@ export default defineConfig({
   shims: true,
   skipNodeModulesBundle: true,
   clean: true,
+  target: 'node16',
   esbuildPlugins: [esbuildPluginUseMacro()],
 });

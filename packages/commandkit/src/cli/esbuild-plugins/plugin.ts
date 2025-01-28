@@ -1,5 +1,5 @@
 import { MacroTransformer } from 'use-macro';
-import { cacheDirectivePlugin } from './use-cache.mjs';
+import { cacheDirectivePlugin } from './use-cache';
 import { readFile } from 'node:fs/promises';
 
 const defaultConfig = {
@@ -7,22 +7,18 @@ const defaultConfig = {
   'use-cache': true,
 };
 
-/**
- * @typedef {Object} CommandKitEsbuildPluginConfig
- * @property {boolean} [use-macro]
- * @property {boolean} [use-cache]
- */
+interface CommandKitEsbuildPluginConfig {
+  'use-macro'?: boolean;
+  'use-cache'?: boolean;
+}
 
-/**
- * @param {CommandKitEsbuildPluginConfig} [config]
- */
-export const commandkitPlugin = (config) => {
+export const commandkitPlugin = (config?: CommandKitEsbuildPluginConfig) => {
   config = Object.assign({}, defaultConfig, config);
 
   const plugins = [
     {
       name: 'use-macro',
-      plugin: async (content, args) => {
+      plugin: async (content: string, args: any) => {
         const transformer = new MacroTransformer();
         const { contents } = await transformer.transform(content, args.path);
         return contents;
@@ -30,23 +26,23 @@ export const commandkitPlugin = (config) => {
     },
     {
       name: 'use-cache',
-      plugin: async (content, args) => {
+      plugin: async (content: string, args: any) => {
         const { contents } = await cacheDirectivePlugin(content, args);
         return contents;
       },
     },
   ].filter((p) => {
-    return !!config[p.name];
+    return !!config[p.name as keyof CommandKitEsbuildPluginConfig];
   });
 
   return {
     name: 'commandkit-transformer-plugin',
-    setup(build) {
+    setup(build: any) {
       if (!plugins.length) return;
 
       const fileFilter = /\.(c|m)?(t|j)sx?$/;
 
-      build.onLoad({ filter: fileFilter }, async (args) => {
+      build.onLoad({ filter: fileFilter }, async (args: any) => {
         const source = await readFile(args.path, 'utf8');
         const loader = args.path.split('.').pop();
 
@@ -58,7 +54,7 @@ export const commandkitPlugin = (config) => {
             contents = await plugin(contents, args);
           } catch (e) {
             const err = new Error(`Plugin ${name} failed with ${e}`);
-            err.stack = e.stack;
+            err.stack = e instanceof Error ? e.stack : '';
 
             throw err;
           }

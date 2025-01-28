@@ -2,11 +2,11 @@
 import { config as dotenv } from 'dotenv';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { Colors, findCommandKitConfig, panic, write } from './common.mjs';
-import { parseEnv } from './parse-env.mjs';
+import { Colors, findCommandKitConfig, panic, write } from './common';
+import { parseEnv } from './parse-env';
 import child_process from 'node:child_process';
 
-export async function bootstrapProductionServer(config) {
+export async function bootstrapProductionServer(config: any) {
   const {
     main,
     outDir = 'dist',
@@ -25,7 +25,6 @@ export async function bootstrapProductionServer(config) {
 
     const env = dotenv({
       path: join(process.cwd(), '.env'),
-      // @ts-expect-error
       processEnv,
     });
 
@@ -41,28 +40,26 @@ export async function bootstrapProductionServer(config) {
       write(Colors.blue('[DOTENV] Loaded .env file!'));
     }
 
-    /**
-     * @type {child_process.ChildProcessWithoutNullStreams}
-     */
-    const ps = child_process.spawn(
-      'node',
-      [
-        sourcemap ? '--enable-source-maps' : '',
-        join(process.cwd(), outDir, main),
-      ].filter(Boolean),
-      {
-        env: {
-          ...process.env,
-          ...processEnv,
-          NODE_ENV: 'production',
-          // @ts-expect-error
-          COMMANDKIT_DEV: false,
-          //  @ts-expect-error
-          COMMANDKIT_PROD: true,
+    const ps: child_process.ChildProcessWithoutNullStreams =
+      child_process.spawn(
+        'node',
+        [
+          sourcemap ? '--enable-source-maps' : '',
+          join(process.cwd(), outDir, main),
+        ].filter(Boolean),
+        {
+          env: {
+            ...process.env,
+            ...processEnv,
+            NODE_ENV: 'production',
+            // @ts-expect-error
+            COMMANDKIT_DEV: false,
+            //  @ts-expect-error
+            COMMANDKIT_PROD: true,
+          },
+          cwd: process.cwd(),
         },
-        cwd: process.cwd(),
-      },
-    );
+      );
 
     ps.stdout.on('data', (data) => {
       write(data.toString());

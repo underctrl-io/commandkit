@@ -15,3 +15,6 @@ function $version(): string {
  * The current version of CommandKit.
  */
 export const version = $version();
+
+// cli
+export { bootstrapCommandkitCLI } from './cli/init';
