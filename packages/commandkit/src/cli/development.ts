@@ -65,6 +65,8 @@ export async function bootstrapDevelopmentServer(opts: any) {
       entry: [src, '!dist', '!.commandkit', `!${outDir}`].filter(Boolean),
       watch: watchMode,
       cjsInterop: true,
+      jsxFactory: 'CommandKit.createElement',
+      jsxFragment: 'CommandKit.Fragment',
       async onSuccess() {
         return await injectShims('.commandkit', main, false, requirePolyfill);
       },

@@ -9,9 +9,15 @@ import type {
 import colors from './utils/colors';
 import { CacheProvider } from './cache/CacheProvider';
 import { MemoryCache } from './cache/MemoryCache';
+import { createElement, Fragment } from './components';
+import { EventInterceptor } from './components/common/EventInterceptor';
 
 export class CommandKit extends EventEmitter {
   #data: CommandKitData;
+  public readonly eventInterceptor: EventInterceptor;
+
+  public static readonly createElement = createElement;
+  public static readonly Fragment = Fragment;
 
   static instance: CommandKit | undefined = undefined;
 
@@ -54,6 +60,8 @@ export class CommandKit extends EventEmitter {
     ) {
       options.cacheProvider = new MemoryCache();
     }
+
+    this.eventInterceptor = new EventInterceptor(options.client);
 
     this.#data = options;
 

@@ -1,6 +1,7 @@
 {
   "name": "test-bot",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "dev": "commandkit dev",
     "build": "commandkit build",
@@ -8,7 +9,7 @@
   },
   "dependencies": {
     "commandkit": "workspace:*",
-    "discord.js": "^14.16.3",
+    "discord.js": "^14.17.3",
     "dotenv": "^16.4.7"
   },
   "devDependencies": {

@@ -8,6 +8,10 @@ const context = new AsyncLocalStorage<CommandKitEnvironment>();
 
 export type GenericFunction<A extends any[] = any[]> = (...args: A) => any;
 
+export function exitContext<T>(fn: () => T): T {
+  return context.exit(fn);
+}
+
 /**
  * Returns a context-aware version of the given function.
  * @param env - The commandkit environment data.

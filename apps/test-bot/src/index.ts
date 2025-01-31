@@ -7,6 +7,7 @@ const client = new Client({
 });
 
 new CommandKit({
+  // @ts-ignore
   client,
   commandsPath: `${__dirname}/commands`,
   eventsPath: `${__dirname}/events`,

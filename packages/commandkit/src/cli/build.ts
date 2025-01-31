@@ -42,6 +42,8 @@ export async function bootstrapProductionBuild(config: any) {
       cjsInterop: true,
       entry: [src, '!dist', '!.commandkit', `!${outDir}`],
       esbuildPlugins: [commandkitPlugin()],
+      jsxFactory: 'CommandKit.createElement',
+      jsxFragment: 'CommandKit.Fragment',
     });
 
     await injectShims(outDir, main, antiCrash, polyfillRequire);

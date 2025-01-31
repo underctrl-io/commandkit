@@ -3,6 +3,6 @@
 import { defineConfig } from 'commandkit';
 
 export default defineConfig({
-  main: 'index.mjs',
+  main: 'index.js',
   src: 'src',
 });

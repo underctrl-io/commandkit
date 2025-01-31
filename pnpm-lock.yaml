@@ -174,7 +174,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/commandkit
       discord.js:
-        specifier: ^14.16.3
+        specifier: ^14.17.3
         version: 14.17.3
       dotenv:
         specifier: ^16.4.7

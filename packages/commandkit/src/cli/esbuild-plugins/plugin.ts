@@ -5,10 +5,12 @@ import { readFile } from 'node:fs/promises';
 const defaultConfig = {
   'use-macro': true,
   'use-cache': true,
+  'jsx-importsource': true,
 };
 
 interface CommandKitEsbuildPluginConfig {
   'use-macro'?: boolean;
+  'jsx-importsource'?: boolean;
   'use-cache'?: boolean;
 }
 

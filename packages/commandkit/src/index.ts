@@ -1,3 +1,7 @@
+import { CommandKit } from './CommandKit';
+
+export default CommandKit;
+
 export * from './CommandKit';
 export * from './components';
 export * from './config';

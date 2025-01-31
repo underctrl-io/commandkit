@@ -287,7 +287,7 @@ export class CommandHandler {
         if (error) {
           console.error(
             colors.red(
-              `[${marker} - ${time}] Error executing command: ${error}`,
+              `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
             ),
           );
           return;

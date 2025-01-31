@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "lib": ["ESNext", "DOM"],
+    "jsx": "react",
+    "jsxFactory": "CommandKit.createElement",
+    "jsxFragmentFactory": "CommandKit.Fragment",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "allowJs": true,
+    "alwaysStrict": false,
+    "checkJs": false
+  },
+  "include": ["src"]
+}
