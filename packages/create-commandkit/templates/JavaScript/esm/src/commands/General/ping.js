@@ -13,5 +13,5 @@ export const run = ({ interaction }) => {
 
 /** @type {import('commandkit').CommandOptions} */
 export const options = {
-  // https://commandkit.dev/docs/types/CommandOptions
+  // https://commandkit.js.org/docs/api-reference/types/CommandOptions
 };

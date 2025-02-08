@@ -14,5 +14,5 @@ export const run = ({ interaction }: SlashCommandProps) => {
 };
 
 export const options: CommandOptions = {
-  // https://commandkit.dev/docs/types/CommandOptions
+  // https://commandkit.js.org/docs/api-reference/types/CommandOptions
 };
