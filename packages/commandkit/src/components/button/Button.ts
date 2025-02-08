@@ -6,6 +6,7 @@ import {
   type CommandKitButtonBuilderInteractionCollectorDispatchContextData,
 } from './ButtonKit';
 import { CommandKitElement } from '../common/element';
+import { MaybeArray } from '../common/types';
 
 export type ButtonChildrenLike = string | number | boolean;
 
@@ -20,7 +21,7 @@ export interface ButtonProps {
   onClick?: CommandKitButtonBuilderInteractionCollectorDispatch;
   options?: CommandKitButtonBuilderInteractionCollectorDispatchContextData;
   onEnd?: CommandKitButtonBuilderOnEnd;
-  children?: ButtonChildrenLike[] | ButtonChildrenLike;
+  children?: MaybeArray<ButtonChildrenLike>;
 }
 
 /**
@@ -36,11 +37,15 @@ export function Button(props: ButtonProps): CommandKitElement<'button-kit'> {
 
   // auto-generate customId if not provided (only if onClick is set)
   if (props.onClick) {
-    props.customId ??= crypto.randomUUID();
+    props.customId ??= `buttonkit::${crypto.randomUUID()}`;
   }
 
   if (props.customId) {
     button.setCustomId(props.customId);
+  }
+
+  if (props.onClick) {
+    button.onClick(props.onClick, props.options);
   }
 
   if (props.disabled) {
@@ -73,10 +78,6 @@ export function Button(props: ButtonProps): CommandKitElement<'button-kit'> {
           ? label
           : String(label),
     );
-  }
-
-  if (props.onClick) {
-    button.onClick(props.onClick, props.options);
   }
 
   if (props.onEnd) {

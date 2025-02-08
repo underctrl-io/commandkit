@@ -149,6 +149,11 @@ export class ButtonKit extends ButtonBuilder {
     return this;
   }
 
+  private get customId() {
+    // @ts-ignore
+    return this.data.custom_id ?? this.data.customId;
+  }
+
   #setupInteractionCollector() {
     if (
       this.data.style === ButtonStyle.Link ||
@@ -157,12 +162,7 @@ export class ButtonKit extends ButtonBuilder {
     )
       return;
 
-    const myCustomId =
-      'custom_id' in this.data
-        ? this.data.custom_id
-        : 'customId' in this.data
-          ? this.data.customId
-          : null;
+    const myCustomId = this.customId ?? null;
 
     if (myCustomId === null) {
       throw new TypeError(
@@ -177,12 +177,7 @@ export class ButtonKit extends ButtonBuilder {
       async (interaction) => {
         if (!interaction.isButton()) return;
 
-        const myCustomId =
-          'custom_id' in this.data
-            ? this.data.custom_id
-            : 'customId' in this.data
-              ? this.data.customId
-              : null;
+        const myCustomId = this.customId ?? null;
         const interactionCustomId = interaction.customId;
 
         if (myCustomId && interactionCustomId !== myCustomId) return;

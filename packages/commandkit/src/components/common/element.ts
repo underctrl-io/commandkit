@@ -1,10 +1,13 @@
-import { ActionRowBuilder } from 'discord.js';
+import { ActionRowBuilder, TextInputBuilder } from 'discord.js';
 import type { ButtonKit } from '../button/ButtonKit';
 import { warnUnstable } from '../../utils/warn-unstable';
+import { ModalKit } from '../modal/ModalKit';
 
 export const ElementType = {
   ActionRow: 'action-row',
   Button: 'button-kit',
+  Modal: 'modal',
+  TextInput: 'text-input',
 } as const;
 
 export type ElementType = (typeof ElementType)[keyof typeof ElementType];
@@ -12,6 +15,8 @@ export type ElementType = (typeof ElementType)[keyof typeof ElementType];
 export interface CommandKitElementData {
   [ElementType.ActionRow]: ActionRowBuilder;
   [ElementType.Button]: ButtonKit;
+  [ElementType.Modal]: ModalKit;
+  [ElementType.TextInput]: TextInputBuilder;
 }
 
 export type CommandKitElement<Type extends ElementType> =
