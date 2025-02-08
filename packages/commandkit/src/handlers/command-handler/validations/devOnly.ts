@@ -1,4 +1,5 @@
 import type { BuiltInValidationParams } from '../typings';
+import { MessageFlags } from 'discord.js';
 
 export default function ({
   interaction,
@@ -14,7 +15,7 @@ export default function ({
     ) {
       interaction.reply({
         content: '❌ This command can only be used inside development servers.',
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
 
       return true;
@@ -39,7 +40,7 @@ export default function ({
     if (!isDevUser) {
       interaction.reply({
         content: '❌ This command can only be used by developers.',
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
 
       return true;

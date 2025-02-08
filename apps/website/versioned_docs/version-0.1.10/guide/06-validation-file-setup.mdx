@@ -22,12 +22,13 @@ commands.
   <TabItem value='cjs' label='CommonJS' default>
     ```js title="src/validations/cooldowns.js"
     const cooldowns = require('../cooldowns-cache');
+    const { MessageFlags } = require('discord.js');
 
     module.exports = ({ interaction, commandObj, handler }) => {
       if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
         interaction.reply({
           content: "You're on cooldown, please wait some time before running this command again.",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
 
         return true; // This is important
@@ -39,12 +40,13 @@ commands.
   <TabItem value='esm' label='ESM'>
     ```js title="src/validations/cooldowns.js"
     import cooldowns from '../cooldowns-cache';
+    import { MessageFlags } from 'discord.js';
 
     export default function ({ interaction, commandObj, handler }) {
       if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
         interaction.reply({
           content: "You're on cooldown, please wait some time before running this command again.",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
 
         return true; // This is important
@@ -57,12 +59,13 @@ commands.
     ```ts title="src/validations/cooldowns.ts"
     import type { ValidationProps } from 'commandkit';
     import cooldowns from '../cooldowns-cache';
+    import { MessageFlags } from 'discord.js';
 
     export default function ({ interaction, commandObj, handler }: ValidationProps) {
       if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
         interaction.reply({
           content: "You're on cooldown, please wait some time before running this command again.",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
 
         return true; // This is important

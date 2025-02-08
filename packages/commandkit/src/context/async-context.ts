@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { CommandKitEnvironment } from './environment';
 import { CommandKitErrorCodes, isCommandKitError } from '../utils/error-codes';
-import { Interaction } from 'discord.js';
+import { Interaction, MessageFlags } from 'discord.js';
 import { CommandKit } from '../CommandKit';
 
 const context = new AsyncLocalStorage<CommandKitEnvironment>();
@@ -42,7 +42,7 @@ export function makeContextAwareFunction<
               if (interaction.isRepliable()) {
                 await interaction.reply({
                   content: 'This command is only available in guilds.',
-                  ephemeral: true,
+                  flags: MessageFlags.Ephemeral,
                 });
               }
               return;
@@ -51,7 +51,7 @@ export function makeContextAwareFunction<
               if (interaction.isRepliable()) {
                 await interaction.reply({
                   content: 'This command is only available in DMs.',
-                  ephemeral: true,
+                  flags: MessageFlags.Ephemeral,
                 });
               }
               return;

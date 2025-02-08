@@ -1,5 +1,5 @@
 import type { BuiltInValidationParams } from '../typings';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, MessageFlags } from 'discord.js';
 
 export default function ({
   interaction,
@@ -93,6 +93,6 @@ export default function ({
     .setDescription(embedDescription)
     .setColor('Red');
 
-  interaction.reply({ embeds: [embed], ephemeral: true });
+  interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
   return true;
 }

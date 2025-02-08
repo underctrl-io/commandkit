@@ -19,12 +19,13 @@ Validation functions are called on every command trigger, so it's important to k
     <Tab value="CommonJS">
         ```js title="validations/cooldowns.js"
         const cooldowns = require('../cooldowns-cache');
+        const { MessageFlags } = require('discord.js');
 
         module.exports = ({ interaction, commandObj, handler }) => {
             if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
                 interaction.reply({
                     content: "You're on cooldown, please wait some time before running this command again.",
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral
                 });
 
                 return true; // This is important
@@ -36,12 +37,13 @@ Validation functions are called on every command trigger, so it's important to k
     <Tab value="ESM">
         ```js title="validations/cooldowns.js"
         import cooldowns from '../cooldowns-cache';
+        import { MessageFlags } from 'discord.js';
 
         export default function ({ interaction, commandObj, handler }) {
             if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
                 interaction.reply({
                     content: "You're on cooldown, please wait some time before running this command again.",
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral
                 });
 
                 return true; // This is important
@@ -54,12 +56,13 @@ Validation functions are called on every command trigger, so it's important to k
         ```ts title="validations/cooldowns.ts"
         import type { ValidationProps } from 'commandkit';
         import cooldowns from '../cooldowns-cache';
+        import { MessageFlags } from 'discord.js';
 
         export default function ({ interaction, commandObj, handler }: ValidationProps) {
             if (cooldowns.has(`${interaction.user.id}-${commandObj.data.name}`)) {
                 interaction.reply({
                     content: "You're on cooldown, please wait some time before running this command again.",
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
 
                 return true; // This is important
