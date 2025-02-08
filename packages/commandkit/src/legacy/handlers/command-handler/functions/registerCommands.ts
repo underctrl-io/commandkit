@@ -5,11 +5,11 @@ import type {
   GuildApplicationCommandManager,
   ApplicationCommandDataResolvable,
 } from 'discord.js';
-import type { CommandFileObject, ReloadOptions } from '../../../types';
+import type { CommandFileObject, ReloadOptions } from '../../../../types';
 
 import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
 
-import colors from '../../../utils/colors';
+import colors from '../../../../utils/colors';
 
 type RegisterCommandProps = {
   client: Client;

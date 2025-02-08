@@ -1,5 +1,5 @@
 import type { Client } from 'discord.js';
-import type { CommandKit } from '../../CommandKit';
+import type { CommandKit } from '../../../CommandKit';
 
 /**
  * Event handler options.

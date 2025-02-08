@@ -7,6 +7,7 @@ import {
   OnModalKitEnd,
   OnModalKitSubmit,
 } from './ModalKit';
+import { EventInterceptorErrorHandler } from '../common/EventInterceptor';
 
 export interface ModalProps {
   customId?: string;
@@ -14,6 +15,7 @@ export interface ModalProps {
   children?: MaybeArray<TextInputBuilder | ActionRowBuilder>;
   onSubmit?: OnModalKitSubmit;
   onEnd?: OnModalKitEnd;
+  onError?: EventInterceptorErrorHandler;
   options?: CommandKitModalBuilderInteractionCollectorDispatchContextData;
 }
 
@@ -58,6 +60,10 @@ export function Modal(props: ModalProps): CommandKitElement<'modal'> {
 
   if (props.onEnd) {
     modal.onEnd(props.onEnd);
+  }
+
+  if (props.onError) {
+    modal.onError(props.onError);
   }
 
   return modal;

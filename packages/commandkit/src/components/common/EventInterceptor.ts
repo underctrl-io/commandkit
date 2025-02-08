@@ -1,4 +1,4 @@
-import { Awaitable, Client, ClientEvents } from 'discord.js';
+import { Awaitable, Client, ClientEvents, Events } from 'discord.js';
 
 export interface EventInterceptorContextData<E extends keyof ClientEvents> {
   /**
@@ -14,10 +14,20 @@ export interface EventInterceptorContextData<E extends keyof ClientEvents> {
    */
   autoReset?: boolean;
   /**
+   * Whether the collector should run only once.
+   */
+  once?: boolean;
+  /**
    * The handler to run when the collector ends.
    */
   onEnd?: (reason: string) => Awaitable<void>;
+  /**
+   * The handler to run upon an error.
+   */
+  onError?: EventInterceptorErrorHandler;
 }
+
+export type EventInterceptorErrorHandler = (error: Error) => Awaitable<void>;
 
 export class EventInterceptor {
   private subscribers = new Map<
@@ -205,7 +215,19 @@ export class EventInterceptor {
             continue;
           }
 
-          await subscriber(...args);
+          try {
+            await subscriber(...args);
+          } catch (e) {
+            if (options.onError) {
+              await options.onError(<Error>e);
+            } else {
+              throw e;
+            }
+          } finally {
+            if (options.once) {
+              this.unsubscribe(event, subscriber, 'once');
+            }
+          }
         }
       }
     };

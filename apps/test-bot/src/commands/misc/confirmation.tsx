@@ -12,18 +12,22 @@ export const data: CommandData = {
   description: 'This is a confirm command.',
 };
 
-const handleConfirm: OnButtonKitClick = async (interaction) => {
+const handleConfirm: OnButtonKitClick = async (interaction, context) => {
   await interaction.reply({
     content: 'The item was deleted successfully.',
     flags: MessageFlags.Ephemeral,
   });
+
+  context.dispose();
 };
 
-const handleCancel: OnButtonKitClick = async (interaction) => {
+const handleCancel: OnButtonKitClick = async (interaction, context) => {
   await interaction.reply({
     content: 'The item was not deleted.',
     flags: MessageFlags.Ephemeral,
   });
+
+  context.dispose();
 };
 
 export async function run({ interaction }: SlashCommandProps) {

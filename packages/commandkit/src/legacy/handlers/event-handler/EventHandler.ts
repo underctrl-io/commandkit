@@ -1,9 +1,9 @@
 import type { EventHandlerOptions, EventHandlerData } from './typings';
 import type { CommandHandler } from '../command-handler/CommandHandler';
-import { getFilePaths, getFolderPaths } from '../../utils/get-paths';
-import { toFileURL } from '../../utils/resolve-file-url';
-import { clone } from '../../utils/clone';
-import colors from '../../utils/colors';
+import { getFilePaths, getFolderPaths } from '../../../utils/get-paths';
+import { toFileURL } from '../../../utils/resolve-file-url';
+import { clone } from '../../../utils/clone';
+import colors from '../../../utils/colors';
 
 /**
  * A handler for client events.

@@ -111,7 +111,7 @@ async function loadConfigInner(target: string) {
    */
   // @ts-ignore
   const config = await import(`file://${target}`, {
-    assert: isJSON ? { type: 'json' } : undefined,
+    with: isJSON ? { type: 'json' } : undefined,
   }).then((conf) => conf.default || conf);
 
   return config;

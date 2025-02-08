@@ -3,11 +3,11 @@ import type {
   CommandData,
   CommandFileObject,
   ReloadOptions,
-} from '../../types';
-import { clone } from '../../utils/clone';
-import colors from '../../utils/colors';
-import { getFilePaths } from '../../utils/get-paths';
-import { toFileURL } from '../../utils/resolve-file-url';
+} from '../../../types';
+import { clone } from '../../../utils/clone';
+import colors from '../../../utils/colors';
+import { getFilePaths } from '../../../utils/get-paths';
+import { toFileURL } from '../../../utils/resolve-file-url';
 import loadCommandsWithRest from './functions/loadCommandsWithRest';
 import registerCommands from './functions/registerCommands';
 import type {
@@ -19,12 +19,12 @@ import builtInValidationsFunctions from './validations';
 import {
   makeContextAwareFunction,
   useEnvironment,
-} from '../../context/async-context';
+} from '../../../context/async-context';
 import {
   after,
   CommandKitEnvironment,
   CommandKitEnvironmentType,
-} from '../../context/environment';
+} from '../../../context/environment';
 
 export interface hCommandContext {
   interaction: CommandKitInteraction;

@@ -10,7 +10,10 @@ import {
   getCommandKit,
   getContext,
 } from '../../context/async-context';
-import { EventInterceptorContextData } from '../common/EventInterceptor';
+import {
+  EventInterceptorContextData,
+  EventInterceptorErrorHandler,
+} from '../common/EventInterceptor';
 
 export type ButtonKitPredicate = (
   interaction: ButtonInteraction,
@@ -35,6 +38,7 @@ export type OnButtonKitEnd = CommandKitButtonBuilderOnEnd;
  */
 export type CommandKitButtonBuilderInteractionCollectorDispatch = (
   interaction: ButtonInteraction,
+  context: ButtonKit,
 ) => Awaitable<void>;
 
 export type CommandKitButtonBuilderOnEnd = (reason: string) => Awaitable<void>;
@@ -49,6 +53,7 @@ export class ButtonKit extends ButtonBuilder {
     {
       autoReset: true,
       time: 5 * 60 * 1000,
+      once: false,
     };
   #unsub: (() => void) | null = null;
 
@@ -135,6 +140,24 @@ export class ButtonKit extends ButtonBuilder {
   }
 
   /**
+   * Sets the handler to run when the interaction collector ends.
+   * @param handler - The handler to run when the interaction collector ends.
+   * @returns This instance of the modal builder.
+   */
+  public onError(handler: EventInterceptorErrorHandler): this {
+    if (!handler) {
+      throw new TypeError(
+        'Cannot setup "onError" without a handler function parameter.',
+      );
+    }
+
+    this.#contextData ??= {};
+    this.#contextData.onError = handler;
+
+    return this;
+  }
+
+  /**
    * Sets a filter for the interaction collector.
    * @param predicate The filter to use for the interaction collector
    */
@@ -190,7 +213,7 @@ export class ButtonKit extends ButtonBuilder {
 
         if (!handler) return this.#unsub?.();
 
-        return handler(interaction);
+        return handler(interaction, this);
       },
       this.#contextData,
     );

@@ -12,7 +12,11 @@ import type {
 } from 'discord.js';
 
 import type { CommandKit } from './CommandKit';
-import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
+import {
+  CommandHandler,
+  EventHandler,
+  ValidationHandler,
+} from './legacy/handlers';
 import { CacheProvider } from './cache/CacheProvider';
 
 /**

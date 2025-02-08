@@ -9,7 +9,10 @@ import {
   getCommandKit,
   getContext,
 } from '../../context/async-context';
-import { EventInterceptorContextData } from '../common/EventInterceptor';
+import {
+  EventInterceptorContextData,
+  EventInterceptorErrorHandler,
+} from '../common/EventInterceptor';
 
 export type ModalKitPredicate = (
   interaction: ModalSubmitInteraction,
@@ -34,6 +37,7 @@ export type OnModalKitEnd = CommandKitModalBuilderOnEnd;
  */
 export type CommandKitModalBuilderInteractionCollectorDispatch = (
   interaction: ModalSubmitInteraction,
+  context: ModalKit,
 ) => Awaitable<void>;
 
 export type CommandKitModalBuilderOnEnd = (reason: string) => Awaitable<void>;
@@ -46,8 +50,9 @@ export class ModalKit extends ModalBuilder {
     null;
   #contextData: CommandKitModalBuilderInteractionCollectorDispatchContextData | null =
     {
-      autoReset: true,
+      autoReset: false,
       time: 5 * 60 * 1000,
+      once: true,
     };
   #unsub: (() => void) | null = null;
 
@@ -124,6 +129,24 @@ export class ModalKit extends ModalBuilder {
   }
 
   /**
+   * Sets the handler to run when the interaction collector ends.
+   * @param handler - The handler to run when the interaction collector ends.
+   * @returns This instance of the modal builder.
+   */
+  public onError(handler: EventInterceptorErrorHandler): this {
+    if (!handler) {
+      throw new TypeError(
+        'Cannot setup "onError" without a handler function parameter.',
+      );
+    }
+
+    this.#contextData ??= {};
+    this.#contextData.onError = handler;
+
+    return this;
+  }
+
+  /**
    * Sets a filter for the interaction collector.
    * @param predicate - The filter to use for the interaction collector.
    * @returns This instance of the modal builder.
@@ -174,7 +197,7 @@ export class ModalKit extends ModalBuilder {
 
         if (!handler) return this.#unsub?.();
 
-        return handler(interaction);
+        return handler(interaction, this);
       },
       this.#contextData,
     );

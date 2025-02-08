@@ -13,7 +13,7 @@ export const data: CommandData = {
   description: 'This is a prompt command.',
 };
 
-const handleSubmit: OnModalKitSubmit = async (interaction) => {
+const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
   const name = interaction.fields.getTextInputValue('name');
   const description = interaction.fields.getTextInputValue('description');
 
@@ -21,6 +21,8 @@ const handleSubmit: OnModalKitSubmit = async (interaction) => {
     content: `Name: ${name}\nDescription: ${description}`,
     flags: MessageFlags.Ephemeral,
   });
+
+  context.dispose();
 };
 
 export async function run({ interaction }: SlashCommandProps) {

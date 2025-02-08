@@ -1,5 +1,9 @@
 import EventEmitter from 'node:events';
-import { CommandHandler, EventHandler, ValidationHandler } from './handlers';
+import {
+  CommandHandler,
+  EventHandler,
+  ValidationHandler,
+} from './legacy/handlers';
 import type {
   CommandKitData,
   CommandKitOptions,

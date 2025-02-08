@@ -7,6 +7,7 @@ import {
 } from './ButtonKit';
 import { CommandKitElement } from '../common/element';
 import { MaybeArray } from '../common/types';
+import { EventInterceptorErrorHandler } from '../common/EventInterceptor';
 
 export type ButtonChildrenLike = string | number | boolean;
 
@@ -19,6 +20,7 @@ export interface ButtonProps {
   url?: string;
   skuId?: string;
   onClick?: CommandKitButtonBuilderInteractionCollectorDispatch;
+  onError?: EventInterceptorErrorHandler;
   options?: CommandKitButtonBuilderInteractionCollectorDispatchContextData;
   onEnd?: CommandKitButtonBuilderOnEnd;
   children?: MaybeArray<ButtonChildrenLike>;
@@ -82,6 +84,10 @@ export function Button(props: ButtonProps): CommandKitElement<'button-kit'> {
 
   if (props.onEnd) {
     button.onEnd(props.onEnd);
+  }
+
+  if (props.onError) {
+    button.onError(props.onError);
   }
 
   return button;

@@ -1,7 +1,7 @@
 import type { ApplicationCommandDataResolvable, Client } from 'discord.js';
-import type { CommandFileObject, ReloadOptions } from '../../../types';
+import type { CommandFileObject, ReloadOptions } from '../../../../types';
 
-import colors from '../../../utils/colors';
+import colors from '../../../../utils/colors';
 
 type LoadCommandsWithRestProps = {
   /**
