@@ -40,6 +40,7 @@ export async function bootstrapProductionBuild(config: any) {
       silent: true,
       watch: false,
       cjsInterop: true,
+      splitting: false,
       entry: [src, '!dist', '!.commandkit', `!${outDir}`],
       esbuildPlugins: [commandkitPlugin()],
       jsxFactory: 'CommandKit.createElement',

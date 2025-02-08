@@ -65,6 +65,7 @@ export async function bootstrapDevelopmentServer(opts: any) {
       entry: [src, '!dist', '!.commandkit', `!${outDir}`].filter(Boolean),
       watch: watchMode,
       cjsInterop: true,
+      splitting: false,
       jsxFactory: 'CommandKit.createElement',
       jsxFragment: 'CommandKit.Fragment',
       async onSuccess() {
