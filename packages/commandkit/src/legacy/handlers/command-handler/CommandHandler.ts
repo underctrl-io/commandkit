@@ -21,7 +21,7 @@ import {
   useEnvironment,
 } from '../../../context/async-context';
 import {
-  after,
+  afterCommand,
   CommandKitEnvironment,
   CommandKitEnvironmentType,
 } from '../../../context/environment';
@@ -279,7 +279,7 @@ export class CommandHandler {
         return command(context);
       }
 
-      after((env) => {
+      afterCommand((env) => {
         const error = env.getExecutionError();
         const marker = env.getMarker();
         const time = `${env.getExecutionTime().toFixed(2)}ms`;

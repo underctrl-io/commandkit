@@ -1,4 +1,4 @@
-import { SlashCommandProps, CommandData, after } from 'commandkit';
+import { SlashCommandProps, CommandData, afterCommand } from 'commandkit';
 
 export const data: CommandData = {
   name: 'run-after',
@@ -6,7 +6,7 @@ export const data: CommandData = {
 };
 
 export async function run({ interaction }: SlashCommandProps) {
-  after((env) => {
+  afterCommand((env) => {
     console.log(
       `The command ${interaction.commandName} was executed successfully in ${env
         .getExecutionTime()

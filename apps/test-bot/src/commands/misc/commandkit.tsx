@@ -21,7 +21,7 @@ const handleButtonClick: OnButtonKitClick = async (interaction) => {
   });
 };
 
-function ButtonGrid({ message }) {
+function ButtonGrid() {
   return (
     <>
       {Array.from({ length: 5 }, (_, i) => (
@@ -41,14 +41,10 @@ function ButtonGrid({ message }) {
 }
 
 export async function run({ interaction }: SlashCommandProps) {
-  const { resource } = await interaction.deferReply({
-    withResponse: true,
-  });
-
-  const buttons = <ButtonGrid message={resource.message} />;
+  await interaction.deferReply();
 
   await interaction.editReply({
     content: 'Click the button below to test CommandKit buttons.',
-    components: buttons,
+    components: <ButtonGrid />,
   });
 }

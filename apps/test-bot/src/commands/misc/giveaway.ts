@@ -52,10 +52,12 @@ export async function run({ interaction, client }: SlashCommandProps) {
 
   const row = new ActionRowBuilder<ButtonKit>().addComponents(button);
 
-  const message = await interaction.reply({
+  const {
+    resource: { message },
+  } = await interaction.reply({
     content: 'Click one of the buttons',
     components: [row],
-    fetchReply: true,
+    withResponse: true,
   });
 
   button
@@ -68,7 +70,7 @@ export async function run({ interaction, client }: SlashCommandProps) {
           ephemeral: true,
         });
       },
-      { message, time: 10_000, autoReset: true },
+      { time: 10_000, autoReset: true },
     )
     .onEnd(() => {
       console.log('onEnd called');

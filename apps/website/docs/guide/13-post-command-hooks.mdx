@@ -16,10 +16,10 @@ Post-command hooks allow you to run a function after a command has been executed
 To set up a post-command hook, you need to define a function that will be called after a command has been executed. This feature is dynamic and you must use this inside your command.
 
 ```ts
-import { after } from 'commandkit';
+import { afterCommand } from 'commandkit';
 
 export async function run({ interaction }) {
-  after(() => {
+  afterCommand(() => {
     // handle post-processing logic here
   });
 
@@ -27,4 +27,4 @@ export async function run({ interaction }) {
 }
 ```
 
-The `after()` function is guaranteed to be called after the command has been executed, regardless of whether the command was successful or not. The registered functions are called sequentially in the order they were defined.
+The `afterCommand()` function is guaranteed to be called after the command has been executed, regardless of whether the command was successful or not. The registered functions are called sequentially in the order they were defined. This will also run _after_ command middlewares.
