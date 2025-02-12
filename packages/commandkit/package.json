@@ -34,6 +34,7 @@
     "@babel/parser": "^7.26.5",
     "@babel/traverse": "^7.26.5",
     "@babel/types": "^7.26.5",
+    "@commandkit/router": "workspace:*",
     "commander": "^12.1.0",
     "dotenv": "^16.4.7",
     "ms": "^2.1.3",

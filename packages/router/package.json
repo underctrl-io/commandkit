@@ -1,0 +1,32 @@
+{
+  "name": "@commandkit/router",
+  "version": "0.1.0",
+  "description": "File system router for handling commands in CommandKit",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underctrl-io/commandkit.git"
+  },
+  "keywords": [
+    "commandkit",
+    "redis",
+    "cache"
+  ],
+  "author": "twilight <hello@twlite.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/underctrl-io/commandkit/issues"
+  },
+  "homepage": "https://github.com/underctrl-io/commandkit#readme",
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "typescript": "^5.7.3"
+  }
+}

@@ -15,6 +15,13 @@ import { CacheProvider } from './cache/CacheProvider';
 import { MemoryCache } from './cache/MemoryCache';
 import { createElement, Fragment } from './components';
 import { EventInterceptor } from './components/common/EventInterceptor';
+import { Locale } from 'discord.js';
+import { DefaultLocalizationStrategy } from './app/i18n/DefaultLocalizationStrategy';
+import { findAppDirectory } from './utils/utilities';
+import { join } from 'node:path';
+import { CommandsRouter, EventsRouter } from '@commandkit/router';
+import { COMMANDKIT_IS_DEV } from './utils/constants';
+import { AppCommandHandler } from './app/command-handler/AppCommandHandler';
 
 export class CommandKit extends EventEmitter {
   #data: CommandKitData;
@@ -22,6 +29,15 @@ export class CommandKit extends EventEmitter {
 
   public static readonly createElement = createElement;
   public static readonly Fragment = Fragment;
+
+  public readonly config = {
+    defaultLocale: Locale.EnglishUS,
+    localizationStrategy: new DefaultLocalizationStrategy(this),
+  };
+
+  public commandsRouter!: CommandsRouter;
+  public eventsRouter!: EventsRouter;
+  public appCommandsHandler = new AppCommandHandler(this);
 
   static instance: CommandKit | undefined = undefined;
 
@@ -112,6 +128,8 @@ export class CommandKit extends EventEmitter {
    * (Private) Initialize CommandKit.
    */
   async #init() {
+    await this.#initApp();
+
     // <!-- Setup event handler -->
     if (this.#data.eventsPath) {
       const eventHandler = new EventHandler({
@@ -154,6 +172,45 @@ export class CommandKit extends EventEmitter {
 
       this.#data.commandHandler = commandHandler;
     }
+  }
+
+  async #initApp() {
+    const appDir = this.getAppDirectory();
+    if (!appDir) return;
+
+    const commandsPath = this.getPath('commands')!;
+    const events = this.getPath('events')!;
+
+    this.commandsRouter = new CommandsRouter({
+      entrypoint: commandsPath,
+    });
+
+    this.eventsRouter = new EventsRouter({
+      entrypoint: events,
+    });
+
+    await this.#initEvents();
+    await this.#initCommands();
+  }
+
+  async #initCommands() {
+    if (this.commandsRouter.isValidPath()) {
+      await this.commandsRouter.scan();
+    }
+  }
+
+  async #initEvents() {
+    if (this.eventsRouter.isValidPath()) {
+      await this.eventsRouter.scan();
+    }
+
+    if (!this.#data.eventHandler) return;
+
+    for (const event of Object.values(this.eventsRouter.toJSON())) {
+      this.#data.eventHandler.registerExternal(event);
+    }
+
+    this.#data.eventHandler.resyncListeners();
   }
 
   /**
@@ -250,5 +307,31 @@ export class CommandKit extends EventEmitter {
    */
   decrementClientListenersCount() {
     this.#data.client.setMaxListeners(this.#data.client.getMaxListeners() - 1);
+  }
+
+  /**
+   * Path to the app directory. Returns `null` if not found.
+   * The lookup order is:
+   * - `./app`
+   * - `./src/app`
+   */
+  getAppDirectory() {
+    return findAppDirectory();
+  }
+
+  getPath(to: 'locales' | 'commands' | 'events') {
+    const appDir = this.getAppDirectory();
+    if (!appDir) return null;
+
+    switch (to) {
+      case 'locales':
+        return join(appDir, 'locales');
+      case 'commands':
+        return join(appDir, 'commands');
+      case 'events':
+        return join(appDir, 'events');
+      default:
+        return to satisfies never;
+    }
   }
 }

@@ -4,12 +4,15 @@ import { getFilePaths, getFolderPaths } from '../../../utils/get-paths';
 import { toFileURL } from '../../../utils/resolve-file-url';
 import { clone } from '../../../utils/clone';
 import colors from '../../../utils/colors';
+import { ParsedEvent } from '@commandkit/router';
+import { Events } from 'discord.js';
 
 /**
  * A handler for client events.
  */
 export class EventHandler {
   #data: EventHandlerData;
+  #listening = new Set<string>();
 
   constructor({ ...options }: EventHandlerOptions) {
     this.#data = {
@@ -79,6 +82,44 @@ export class EventHandler {
     }
   }
 
+  async registerExternal(entry: ParsedEvent) {
+    const { event, listeners } = entry;
+
+    const functions = await Promise.all(
+      listeners.map(async (l) =>
+        import(`${toFileURL(l)}?t=${Date.now()}`).then((m) => m.default),
+      ),
+    );
+
+    const eventObj = {
+      name: event,
+      functions,
+    };
+
+    this.#data.events.push(eventObj);
+  }
+
+  resyncListeners() {
+    const client = this.#data.client;
+    const handler = this.#data.commandKitInstance;
+
+    for (const eventObj of this.#data.events) {
+      if (this.#listening.has(eventObj.name)) continue;
+
+      client.on(eventObj.name, async (...params) => {
+        for (const eventFunction of eventObj.functions) {
+          const stopEventLoop = await eventFunction(...params, client, handler);
+
+          if (stopEventLoop) {
+            break;
+          }
+        }
+      });
+
+      this.#listening.add(eventObj.name);
+    }
+  }
+
   #registerEvents() {
     const client = this.#data.client;
     const handler = this.#data.commandKitInstance;
@@ -93,6 +134,8 @@ export class EventHandler {
           }
         }
       });
+
+      this.#listening.add(eventObj.name);
     }
   }
 
@@ -113,6 +156,7 @@ export class EventHandler {
 
     await this.#buildEvents();
 
+    this.#listening.clear();
     this.#data.client.removeAllListeners();
 
     this.#registerEvents();
