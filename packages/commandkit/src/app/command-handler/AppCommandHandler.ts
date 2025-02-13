@@ -1,4 +1,3 @@
-import { ParsedCommand, ParsedMiddleware } from '@commandkit/router';
 import type { CommandKit } from '../../CommandKit';
 import {
   Awaitable,
@@ -14,6 +13,7 @@ import { toFileURL } from '../../utils/resolve-file-url';
 import { TranslatableCommandOptions } from '../i18n/Translation';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
+import { ParsedCommand, ParsedMiddleware } from '../router';
 
 interface AppCommand {
   command: SlashCommandBuilder | Record<string, any>;

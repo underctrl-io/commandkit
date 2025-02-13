@@ -19,9 +19,9 @@ import { Awaitable, Locale, Message } from 'discord.js';
 import { DefaultLocalizationStrategy } from './app/i18n/DefaultLocalizationStrategy';
 import { findAppDirectory } from './utils/utilities';
 import { join } from 'node:path';
-import { CommandsRouter, EventsRouter } from '@commandkit/router';
 import { AppCommandHandler } from './app/command-handler/AppCommandHandler';
 import { LocalizationStrategy } from './app/i18n/LocalizationStrategy';
+import { CommandsRouter, EventsRouter } from './app/router';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;

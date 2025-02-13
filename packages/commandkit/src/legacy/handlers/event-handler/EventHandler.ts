@@ -4,8 +4,7 @@ import { getFilePaths, getFolderPaths } from '../../../utils/get-paths';
 import { toFileURL } from '../../../utils/resolve-file-url';
 import { clone } from '../../../utils/clone';
 import colors from '../../../utils/colors';
-import { ParsedEvent } from '@commandkit/router';
-import { Events } from 'discord.js';
+import { ParsedEvent } from '../../../app/router';
 
 /**
  * A handler for client events.

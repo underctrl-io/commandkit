@@ -250,9 +250,6 @@ importers:
       '@babel/types':
         specifier: ^7.26.5
         version: 7.26.5
-      '@commandkit/router':
-        specifier: workspace:*
-        version: link:../router
       commander:
         specifier: ^12.1.0
         version: 12.1.0
@@ -352,15 +349,6 @@ importers:
       commandkit:
         specifier: workspace:*
         version: link:../commandkit
-      tsconfig:
-        specifier: workspace:*
-        version: link:../tsconfig
-      typescript:
-        specifier: ^5.7.3
-        version: 5.7.3
-
-  packages/router:
-    devDependencies:
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
