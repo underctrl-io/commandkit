@@ -42,12 +42,23 @@ export class EventHandler {
         allowedExtensions.test(path),
       );
 
-      const eventObj = {
-        name: eventName,
-        functions: [] as Function[],
-      };
+      // const eventObj = {
+      //   name: eventName,
+      //   functions: [] as Function[],
+      // };
 
-      this.#data.events.push(eventObj);
+      // this.#data.events.push(eventObj);
+
+      let eventObj = this.#data.events.find((e) => e.name === eventName);
+
+      if (!eventObj) {
+        eventObj = {
+          name: eventName,
+          functions: [],
+        };
+
+        this.#data.events.push(eventObj);
+      }
 
       for (const eventFilePath of eventFilePaths) {
         const modulePath = toFileURL(eventFilePath);
@@ -91,12 +102,16 @@ export class EventHandler {
       ),
     );
 
-    const eventObj = {
-      name: event,
-      functions,
-    };
+    const existing = this.#data.events.find((e) => e.name === event);
 
-    this.#data.events.push(eventObj);
+    if (existing) {
+      existing.functions.unshift(...functions);
+    } else {
+      this.#data.events.unshift({
+        name: event,
+        functions,
+      });
+    }
   }
 
   resyncListeners() {

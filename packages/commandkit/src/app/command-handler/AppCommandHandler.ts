@@ -2,16 +2,26 @@ import { ParsedCommand, ParsedMiddleware } from '@commandkit/router';
 import type { CommandKit } from '../../CommandKit';
 import {
   Awaitable,
+  Collection,
   ContextMenuCommandBuilder,
+  Interaction,
   Locale,
+  Message,
   SlashCommandBuilder,
 } from 'discord.js';
 import { Context } from '../commands/Context';
 import { toFileURL } from '../../utils/resolve-file-url';
 import { TranslatableCommandOptions } from '../i18n/Translation';
+import { MessageCommandParser } from '../commands/MessageCommandParser';
+import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 
 interface AppCommand {
-  options: SlashCommandBuilder | Record<string, any>;
+  command: SlashCommandBuilder | Record<string, any>;
+  chatInput?: (ctx: Context) => Awaitable<unknown>;
+  autocomplete?: (ctx: Context) => Awaitable<unknown>;
+  message?: (ctx: Context) => Awaitable<unknown>;
+  messageContextMenu?: (ctx: Context) => Awaitable<unknown>;
+  userContextMenu?: (ctx: Context) => Awaitable<unknown>;
 }
 
 interface AppCommandMiddleware {
@@ -27,6 +37,12 @@ interface LoadedCommand {
 interface LoadedMiddleware {
   middleware: ParsedMiddleware;
   data: AppCommandMiddleware;
+}
+
+export interface PreparedAppCommandExecution {
+  command: LoadedCommand;
+  middlewares: LoadedMiddleware[];
+  messageCommandParser?: MessageCommandParser;
 }
 
 type CommandBuilderLike =
@@ -52,21 +68,96 @@ const middlewareDataSchema = {
 };
 
 export class AppCommandHandler {
-  private loadedCommands = new Map<string, LoadedCommand>();
-  private loadedMiddlewares = new Map<string, LoadedMiddleware>();
+  private loadedCommands = new Collection<string, LoadedCommand>();
+  private loadedMiddlewares = new Collection<string, LoadedMiddleware>();
 
   public constructor(public readonly commandkit: CommandKit) {}
 
-  public async prepareCommandRun(command: string) {
-    const loadedCommand = this.loadedCommands.get(command);
+  public getCommandsArray() {
+    return Array.from(this.loadedCommands.values()).map((v) => {
+      if ('toJSON' in v && typeof v.toJSON === 'function') return v.toJSON();
+      return v.data.command;
+    });
+  }
+
+  public async prepareCommandRun(
+    source: Interaction | Message,
+  ): Promise<PreparedAppCommandExecution | null> {
+    let cmd: string;
+    let parser: MessageCommandParser | undefined;
+
+    if (source instanceof Message) {
+      if (source.author.bot) return null;
+
+      const prefix =
+        await this.commandkit.config.getMessageCommandPrefix(source);
+
+      parser = new MessageCommandParser(
+        source,
+        Array.isArray(prefix) ? prefix : [prefix],
+        (command: string) => {
+          const loadedCommand = this.loadedCommands.find((c) => {
+            return c.data.command.name === command;
+          });
+
+          if (!loadedCommand) return null;
+
+          const json =
+            'toJSON' in loadedCommand.data.command
+              ? loadedCommand.data.command.toJSON()
+              : loadedCommand.data.command;
+
+          return json.options.reduce(
+            (acc: Record<string, unknown>, opt: Record<string, any>) => {
+              acc[opt.name] = opt.type;
+              return acc;
+            },
+            {} as Record<string, unknown>,
+          );
+        },
+      );
+
+      try {
+        cmd = parser.getFullCommand();
+      } catch (e) {
+        if (isErrorType(e, CommandKitErrorCodes.InvalidCommandPrefix)) {
+          return null;
+        }
+
+        console.error(e);
+        return null;
+      }
+    } else {
+      if (!source.isCommand()) return null;
+
+      cmd = source.commandName;
+
+      if (source.isChatInputCommand()) {
+        const subcommandGroup = source.options.getSubcommandGroup(false);
+        const subcommand = source.options.getSubcommand(false);
+
+        if (subcommandGroup) {
+          cmd += ` ${subcommandGroup}`;
+        }
+
+        if (subcommand) {
+          cmd += ` ${subcommand}`;
+        }
+      }
+    }
+
+    const loadedCommand = this.loadedCommands.find((c) => {
+      return c.data.command.name === cmd;
+    });
 
     if (!loadedCommand) return null;
 
     return {
       command: loadedCommand,
-      middlewares: loadedCommand.command.middlewares.map((m) =>
-        this.loadedMiddlewares.get(m),
-      ),
+      middlewares: loadedCommand.command.middlewares
+        .map((m) => this.loadedMiddlewares.get(m))
+        .filter((m): m is LoadedMiddleware => !!m),
+      messageCommandParser: parser,
     };
   }
 
@@ -130,9 +221,17 @@ export class AppCommandHandler {
         );
       }
 
-      data.command = await this.applyLocalizations(data.command);
+      const localizedCommand = await this.applyLocalizations({
+        ...data.command,
+      });
 
-      this.loadedCommands.set(name, { command, data });
+      this.loadedCommands.set(name, {
+        command,
+        data: {
+          ...data,
+          command: localizedCommand,
+        },
+      });
     }
   }
 
@@ -225,5 +324,7 @@ export class AppCommandHandler {
         }
       }
     }
+
+    return command;
   }
 }

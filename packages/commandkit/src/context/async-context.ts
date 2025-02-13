@@ -100,7 +100,7 @@ export function getCommandKit(strict = false): CommandKit | undefined {
  * Get the current commandkit context.
  * @internal
  */
-export function getContext(): CommandKitEnvironment | void {
+export function getContext(): CommandKitEnvironment | undefined {
   const ctx = context.getStore();
   return ctx;
 }

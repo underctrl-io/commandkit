@@ -3,7 +3,14 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { build } from 'tsup';
-import { Colors, erase, findCommandKitConfig, panic, write } from './common.js';
+import {
+  Colors,
+  copyLocaleFiles,
+  erase,
+  findCommandKitConfig,
+  panic,
+  write,
+} from './common.js';
 import ora from 'ora';
 import { commandkitPlugin } from './esbuild-plugins/plugin';
 
@@ -45,6 +52,9 @@ export async function bootstrapProductionBuild(config: any) {
       esbuildPlugins: [commandkitPlugin()],
       jsxFactory: 'CommandKit.createElement',
       jsxFragment: 'CommandKit.Fragment',
+      async onSuccess() {
+        await copyLocaleFiles(src, '.commandkit');
+      },
     });
 
     await injectShims(outDir, main, antiCrash, polyfillRequire);

@@ -15,13 +15,19 @@ import { CacheProvider } from './cache/CacheProvider';
 import { MemoryCache } from './cache/MemoryCache';
 import { createElement, Fragment } from './components';
 import { EventInterceptor } from './components/common/EventInterceptor';
-import { Locale } from 'discord.js';
+import { Awaitable, Locale, Message } from 'discord.js';
 import { DefaultLocalizationStrategy } from './app/i18n/DefaultLocalizationStrategy';
 import { findAppDirectory } from './utils/utilities';
 import { join } from 'node:path';
 import { CommandsRouter, EventsRouter } from '@commandkit/router';
-import { COMMANDKIT_IS_DEV } from './utils/constants';
 import { AppCommandHandler } from './app/command-handler/AppCommandHandler';
+import { LocalizationStrategy } from './app/i18n/LocalizationStrategy';
+
+export interface CommandKitConfiguration {
+  defaultLocale: Locale;
+  localizationStrategy: LocalizationStrategy;
+  getMessageCommandPrefix: (message: Message) => Awaitable<string | string[]>;
+}
 
 export class CommandKit extends EventEmitter {
   #data: CommandKitData;
@@ -30,9 +36,10 @@ export class CommandKit extends EventEmitter {
   public static readonly createElement = createElement;
   public static readonly Fragment = Fragment;
 
-  public readonly config = {
+  public readonly config: CommandKitConfiguration = {
     defaultLocale: Locale.EnglishUS,
     localizationStrategy: new DefaultLocalizationStrategy(this),
+    getMessageCommandPrefix: () => '!',
   };
 
   public commandsRouter!: CommandsRouter;
@@ -96,6 +103,35 @@ export class CommandKit extends EventEmitter {
   }
 
   /**
+   * Sets the prefix resolver for the command handler.
+   * @param resolver The resolver function.
+   */
+  setPrefixResolver(
+    resolver: (message: Message) => Awaitable<string | string[]>,
+  ) {
+    this.config.getMessageCommandPrefix = resolver;
+    return this;
+  }
+
+  /**
+   * Sets the default locale for the command handler.
+   * @param locale The default locale.
+   */
+  setDefaultLocale(locale: Locale) {
+    this.config.defaultLocale = locale;
+    return this;
+  }
+
+  /**
+   * Sets the localization strategy for the command handler.
+   * @param strategy The localization strategy.
+   */
+  setLocalizationStrategy(strategy: LocalizationStrategy) {
+    this.config.localizationStrategy = strategy;
+    return this;
+  }
+
+  /**
    * Resolves the current cache provider.
    */
   getCacheProvider(): CacheProvider | null {
@@ -128,8 +164,6 @@ export class CommandKit extends EventEmitter {
    * (Private) Initialize CommandKit.
    */
   async #init() {
-    await this.#initApp();
-
     // <!-- Setup event handler -->
     if (this.#data.eventsPath) {
       const eventHandler = new EventHandler({
@@ -168,9 +202,10 @@ export class CommandKit extends EventEmitter {
         bulkRegister: this.#data.bulkRegister || false,
       });
 
-      await commandHandler.init();
-
       this.#data.commandHandler = commandHandler;
+
+      await this.#initApp();
+      await commandHandler.init();
     }
   }
 
@@ -197,6 +232,8 @@ export class CommandKit extends EventEmitter {
     if (this.commandsRouter.isValidPath()) {
       await this.commandsRouter.scan();
     }
+
+    await this.appCommandsHandler.loadCommands();
   }
 
   async #initEvents() {

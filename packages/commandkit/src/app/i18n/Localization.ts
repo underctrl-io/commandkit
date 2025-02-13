@@ -19,7 +19,7 @@ export interface LocalizationConfig {
 
 export type Translator = (
   translatable: string,
-  args: TranslatableArguments,
+  args?: TranslatableArguments | undefined,
 ) => Promise<TranslationResult>;
 
 export class Localization {
@@ -41,6 +41,8 @@ export class Localization {
     const strategy = this.commandkit.config.localizationStrategy;
     const { locale, target } = this.config;
 
+    // we are doing this so that it can be destructured
+    // eg: const { t } = ctx.locale()
     this.t = (translatable, args) => {
       return strategy.translate({
         args,

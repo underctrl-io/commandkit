@@ -2,7 +2,14 @@
 import { config as dotenv } from 'dotenv';
 import { join } from 'node:path';
 import { build } from 'tsup';
-import { Colors, erase, findCommandKitConfig, panic, write } from './common';
+import {
+  Colors,
+  copyLocaleFiles,
+  erase,
+  findCommandKitConfig,
+  panic,
+  write,
+} from './common';
 import { parseEnv } from './parse-env';
 import child_process from 'node:child_process';
 import ora from 'ora';
@@ -69,6 +76,7 @@ export async function bootstrapDevelopmentServer(opts: any) {
       jsxFactory: 'CommandKit.createElement',
       jsxFragment: 'CommandKit.Fragment',
       async onSuccess() {
+        await copyLocaleFiles(src, '.commandkit');
         return await injectShims('.commandkit', main, false, requirePolyfill);
       },
       esbuildPlugins: [

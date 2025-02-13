@@ -1,0 +1,15 @@
+{
+  "command": {
+    "name": "avatar",
+    "description": "This is an avatar command.",
+    "options": [
+      {
+        "name": "user",
+        "description": "The user to get the avatar for."
+      }
+    ]
+  },
+  "translations": {
+    "avatar": "{user}'s avatar"
+  }
+}

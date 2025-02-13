@@ -1,4 +1,4 @@
-import { CacheType, Interaction } from 'discord.js';
+import { CacheType, Events, Interaction, Message } from 'discord.js';
 import type {
   CommandData,
   CommandFileObject,
@@ -25,6 +25,11 @@ import {
   CommandKitEnvironment,
   CommandKitEnvironmentType,
 } from '../../../context/environment';
+import {
+  CommandExecutionMode,
+  MiddlewareContext,
+} from '../../../app/commands/Context';
+import { CommandKitErrorCodes, isErrorType } from '../../../utils/error-codes';
 
 export interface hCommandContext {
   interaction: CommandKitInteraction;
@@ -175,6 +180,28 @@ export class CommandHandler {
 
       this.#data.commands.push(commandObj);
     }
+
+    if (this.#data.commandkitInstance.appCommandsHandler) {
+      const handler = this.#data.commandkitInstance.appCommandsHandler;
+
+      const commands = handler.getCommandsArray();
+
+      // this.#data.commands.push(...commands);
+
+      for (const cmd of commands) {
+        const idx = this.#data.commands.findIndex(
+          (c) => c.data.name === cmd.name,
+        );
+
+        if (idx !== -1) {
+          // @ts-ignore
+          this.#data.commands[idx] = { data: cmd };
+        } else {
+          // @ts-ignore
+          this.#data.commands.push({ data: cmd });
+        }
+      }
+    }
   }
 
   #buildBuiltInValidations() {
@@ -192,7 +219,199 @@ export class CommandHandler {
     env.clearAllDeferredFunctions();
   }
 
+  async #requestExternalHandler(interaction: Interaction<CacheType> | Message) {
+    const handler = this.#data.commandkitInstance.appCommandsHandler;
+    if (!handler) return false;
+
+    if (
+      !(interaction instanceof Message) &&
+      !(interaction.isCommand() || interaction.isAutocomplete())
+    ) {
+      return false;
+    }
+
+    const targetCommand = await handler.prepareCommandRun(interaction);
+
+    if (!targetCommand) return false;
+
+    const environment = useEnvironment();
+
+    environment.variables.set('commandHandlerType', 'app');
+
+    const { command, middlewares, messageCommandParser } = targetCommand;
+
+    const context = new MiddlewareContext(this.#data.commandkitInstance, {
+      executionMode:
+        interaction instanceof Message
+          ? CommandExecutionMode.Message
+          : interaction.isChatInputCommand()
+            ? CommandExecutionMode.SlashCommand
+            : interaction.isUserContextMenuCommand()
+              ? CommandExecutionMode.UserContextMenu
+              : interaction.isMessageContextMenuCommand()
+                ? CommandExecutionMode.MessageContextMenu
+                : interaction.isAutocomplete()
+                  ? CommandExecutionMode.Autocomplete
+                  : (null as never),
+      interaction: interaction instanceof Message ? <never>null : interaction,
+      message: interaction instanceof Message ? interaction : <never>null,
+      messageCommandParser,
+    });
+
+    const exec = async () => {
+      if (middlewares.length > 0) {
+        for (const middleware of middlewares) {
+          try {
+            await middleware.data.beforeExecute(context);
+          } catch (e) {
+            if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
+              break;
+            } else if (
+              isErrorType(e, [
+                CommandKitErrorCodes.DMOnlyException,
+                CommandKitErrorCodes.GuildOnlyException,
+                CommandKitErrorCodes.ForwardedCommand,
+              ])
+            ) {
+              // do nothing
+              return;
+            }
+            throw e;
+          }
+        }
+      }
+
+      let postStageRunner = true;
+
+      try {
+        const commandContext = context.clone({
+          environment,
+        });
+
+        if (interaction instanceof Message) {
+          environment.variables.set('execHandlerKind', 'message');
+          await command.data.message?.(commandContext);
+        } else {
+          switch (true) {
+            case interaction.isChatInputCommand():
+              {
+                environment.variables.set('execHandlerKind', 'chatInput');
+                await command.data.chatInput?.(commandContext);
+              }
+              break;
+            case interaction.isUserContextMenuCommand():
+              {
+                environment.variables.set('execHandlerKind', 'userContextMenu');
+                await command.data.userContextMenu?.(commandContext);
+              }
+              break;
+            case interaction.isMessageContextMenuCommand():
+              {
+                environment.variables.set(
+                  'execHandlerKind',
+                  'messageContextMenu',
+                );
+                await command.data.messageContextMenu?.(commandContext);
+              }
+              break;
+            case interaction.isAutocomplete():
+              {
+                environment.variables.set('execHandlerKind', 'autocomplete');
+                await command.data.autocomplete?.(commandContext);
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      } catch (e) {
+        console.log(e);
+        if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
+          postStageRunner = false;
+        } else if (
+          isErrorType(e, [
+            CommandKitErrorCodes.DMOnlyException,
+            CommandKitErrorCodes.GuildOnlyException,
+            CommandKitErrorCodes.ForwardedCommand,
+          ])
+        ) {
+          // do nothing
+          return;
+        } else {
+          throw e;
+        }
+      }
+
+      if (postStageRunner && middlewares.length > 0) {
+        for (const middleware of middlewares) {
+          try {
+            await middleware.data.afterExecute(context);
+          } catch (e) {
+            if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
+              break;
+            } else if (
+              isErrorType(e, [
+                CommandKitErrorCodes.DMOnlyException,
+                CommandKitErrorCodes.GuildOnlyException,
+                CommandKitErrorCodes.ForwardedCommand,
+              ])
+            ) {
+              // do nothing
+              return;
+            }
+            throw e;
+          }
+        }
+      }
+    };
+
+    const shouldDebug = this.#data.commandkitInstance.isDebuggingCommands();
+
+    if (!shouldDebug) {
+      return exec();
+    }
+
+    afterCommand((env) => {
+      const error = env.getExecutionError();
+      const marker = env.getMarker();
+      const time = `${env.getExecutionTime().toFixed(2)}ms`;
+
+      if (error) {
+        console.error(
+          colors.red(
+            `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
+          ),
+        );
+        return;
+      }
+
+      console.log(
+        colors.cyan('(app ✨)') +
+          colors.reset(' ') +
+          colors.green(`[${marker} - ${time}] Command executed successfully`),
+      );
+    });
+
+    try {
+      environment.markStart(`${command.data.command.name}`);
+      const res = await exec();
+
+      return res;
+    } finally {
+      environment.markEnd();
+    }
+  }
+
   async #interactionHandler(interaction: Interaction<CacheType>) {
+    // check if external handler can handle the interaction
+    try {
+      const result = await this.#requestExternalHandler(interaction);
+
+      if (result !== false) return;
+    } catch (e) {
+      console.error(e);
+    }
+
     if (
       !interaction.isChatInputCommand() &&
       !interaction.isContextMenuCommand() &&
@@ -210,6 +429,7 @@ export class CommandHandler {
 
     const env = useEnvironment();
 
+    env.variables.set('commandHandlerType', 'legacy');
     env.variables.set('interaction', interaction);
 
     const { data, options, run, autocomplete, ...rest } = targetCommand;
@@ -312,7 +532,7 @@ export class CommandHandler {
   }
 
   handleCommands() {
-    this.#data.client.on('interactionCreate', (interaction) => {
+    this.#data.client.on(Events.InteractionCreate, (interaction) => {
       const env = new CommandKitEnvironment(this.#data.commandkitInstance);
       env.setType(CommandKitEnvironmentType.CommandHandler);
 
@@ -321,6 +541,17 @@ export class CommandHandler {
         this.#interactionHandler.bind(this),
         this.#commandFinalizer.bind(this),
       )(interaction);
+    });
+
+    this.#data.client.on(Events.MessageCreate, (message) => {
+      const env = new CommandKitEnvironment(this.#data.commandkitInstance);
+      env.setType(CommandKitEnvironmentType.CommandHandler);
+
+      return makeContextAwareFunction(
+        env,
+        this.#requestExternalHandler.bind(this),
+        this.#commandFinalizer.bind(this),
+      )(message);
     });
   }
 

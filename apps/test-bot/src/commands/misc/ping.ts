@@ -68,7 +68,7 @@ export async function run({ interaction, client }: SlashCommandProps) {
           ephemeral: true,
         });
       },
-      { message, time: 10_000, autoReset: true },
+      { time: 10_000, autoReset: true },
     )
     .onEnd(() => {
       console.log('onEnd called');

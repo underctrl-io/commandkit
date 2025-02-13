@@ -108,8 +108,8 @@ export class CommandsRouter {
     }
 
     options.matcher ??= {};
-    options.matcher.command ??= /^command\.(m|c)?(j|t)sx?$/;
-    options.matcher.middleware ??= /^middleware\.(m|c)?(j|t)sx?$/;
+    options.matcher.command ??= /command\.(m|c)?(j|t)sx?$/;
+    options.matcher.middleware ??= /middleware\.(m|c)?(j|t)sx?$/;
   }
 
   /**

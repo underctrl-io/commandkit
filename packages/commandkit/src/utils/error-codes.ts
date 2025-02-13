@@ -1,11 +1,22 @@
 export const CommandKitErrorCodes = {
   GuildOnlyException: Symbol('kGuildOnlyException'),
   DMOnlyException: Symbol('kDMOnlyException'),
+  ExitMiddleware: Symbol('kExitMiddleware'),
+  ForwardedCommand: Symbol('kForwardedCommand'),
+  InvalidCommandPrefix: Symbol('kInvalidCommandPrefix'),
 } as const;
 
-export function isCommandKitError(
-  error: unknown,
-): error is Error & { code: symbol } {
+export type CommandKitError = Error & { code: symbol };
+
+export function createCommandKitError(code: symbol): CommandKitError {
+  const error = new Error() as CommandKitError;
+
+  Reflect.set(error, 'code', code);
+
+  return error;
+}
+
+export function isCommandKitError(error: unknown): error is CommandKitError {
   if (!(error instanceof Error)) return false;
   const code = Reflect.get(error, 'code');
 
@@ -15,4 +26,15 @@ export function isCommandKitError(
   }
 
   return false;
+}
+
+export function isErrorType(error: unknown, code: symbol | symbol[]): boolean {
+  if (!isCommandKitError(error)) return false;
+  const errorCode = Reflect.get(error, 'code');
+
+  if (!errorCode) return false;
+
+  if (Array.isArray(code)) return code.includes(errorCode);
+
+  return errorCode === code;
 }

@@ -1,0 +1,11 @@
+{
+  "command": {
+    "name": "prompt",
+    "description": "Ceci est une commande de prompt."
+  },
+  "translations": {
+    "modal.title": "Ma superbe modale",
+    "input.label": "Description",
+    "input.placeholder": "Ceci est une description"
+  }
+}

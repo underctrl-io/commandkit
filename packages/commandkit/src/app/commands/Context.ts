@@ -5,12 +5,32 @@ import {
   MessageContextMenuCommandInteraction,
   Message,
   Locale,
+  User,
+  Channel,
+  Role,
+  Attachment,
+  GuildMember,
+  Interaction,
+  UserContextMenuCommandInteraction,
 } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { Localization } from '../i18n/Localization';
+import {
+  MessageCommandOptions,
+  MessageCommandParser,
+} from './MessageCommandParser';
+import {
+  CommandKitErrorCodes,
+  createCommandKitError,
+} from '../../utils/error-codes';
+import { CommandKitEnvironment } from '../../context/environment';
+import { getContext } from '../../context/async-context';
 
 export const CommandExecutionMode = {
-  Interaction: 'interaction',
+  SlashCommand: 'chatInput',
+  MessageContextMenu: 'messageContextMenu',
+  UserContextMenu: 'userContextMenu',
+  Autocomplete: 'autocomplete',
   Message: 'message',
 } as const;
 
@@ -18,15 +38,60 @@ export type CommandExecutionMode =
   (typeof CommandExecutionMode)[keyof typeof CommandExecutionMode];
 
 export interface ContextParameters<T extends CommandExecutionMode> {
+  environment?: CommandKitEnvironment;
   executionMode: T;
-  interaction: T extends 'interaction'
-    ?
-        | ChatInputCommandInteraction
-        | ContextMenuCommandInteraction
-        | MessageContextMenuCommandInteraction
-    : never;
+  // interaction: T extends 'interaction'
+  //   ?
+  //       | ChatInputCommandInteraction
+  //       | ContextMenuCommandInteraction
+  //       | MessageContextMenuCommandInteraction
+  //   : never;
+  interaction: T extends 'chatInput'
+    ? ChatInputCommandInteraction
+    : T extends 'messageContextMenu'
+      ? MessageContextMenuCommandInteraction
+      : T extends 'userContextMenu'
+        ? UserContextMenuCommandInteraction
+        : T extends 'autocomplete'
+          ? AutocompleteInteraction
+          : never;
   message: T extends 'message' ? Message : never;
+  forwarded?: boolean;
+  messageCommandParser?: T extends 'message' ? MessageCommandParser : never;
 }
+
+export type MessageCommandContext = Context<'message'>;
+export type InteractionCommandContext = Context<
+  'autocomplete' | 'chatInput' | 'messageContextMenu' | 'userContextMenu'
+>;
+export type MessageCommandMiddlewareContext = MiddlewareContext<'message'>;
+export type InteractionCommandMiddlewareContext = MiddlewareContext<
+  'autocomplete' | 'chatInput' | 'messageContextMenu' | 'userContextMenu'
+>;
+export type SlashCommandContext = Context<'chatInput'>;
+export type SlashCommandMiddlewareContext = MiddlewareContext<'chatInput'>;
+export type AutocompleteCommandContext = Context<'autocomplete'>;
+export type AutocompleteCommandMiddlewareContext =
+  MiddlewareContext<'autocomplete'>;
+export type MessageContextMenuCommandContext = Context<'messageContextMenu'>;
+export type MessageContextMenuCommandMiddlewareContext =
+  MiddlewareContext<'messageContextMenu'>;
+export type UserContextMenuCommandContext = Context<'userContextMenu'>;
+export type UserContextMenuCommandMiddlewareContext =
+  MiddlewareContext<'userContextMenu'>;
+
+export type CommandContextOptions<T extends CommandExecutionMode> =
+  T extends 'message'
+    ? MessageCommandOptions
+    : T extends 'chatInput'
+      ? ChatInputCommandInteraction['options']
+      : T extends 'autocomplete'
+        ? AutocompleteInteraction['options']
+        : T extends 'messageContextMenu'
+          ? MessageContextMenuCommandInteraction['options']
+          : T extends 'userContextMenu'
+            ? UserContextMenuCommandInteraction['options']
+            : never;
 
 export class Context<
   ExecutionMode extends CommandExecutionMode = CommandExecutionMode,
@@ -56,6 +121,81 @@ export class Context<
     this.message = config.message;
   }
 
+  public get commandName(): string {
+    if (this.isInteraction()) {
+      return this.interaction.commandName;
+    } else {
+      return this.config.messageCommandParser!.getCommand();
+    }
+  }
+
+  public get options(): CommandContextOptions<ExecutionMode> {
+    if (this.isMessage()) {
+      const parser = this.config.messageCommandParser!;
+      // @ts-expect-error
+      return parser.options;
+    } else {
+      const interaction = (<InteractionCommandContext>this).interaction;
+      // @ts-expect-error
+      return interaction.options;
+    }
+  }
+
+  /**
+   * Whether this context was forwarded from another context. This happens when a command forwards its context to another command.
+   */
+  public get forwarded(): boolean {
+    return this.config.forwarded ?? false;
+  }
+
+  /**
+   * Forwards the context to another command. The target handler will be the same as current handler.
+   * @param command The command to forward to.
+   */
+  public async forwardCommand(command: string): Promise<never> {
+    const target = await this.commandkit.appCommandsHandler.prepareCommandRun(
+      (this.isInteraction() ? this.interaction : this.message) as Interaction,
+    );
+
+    if (!target) {
+      throw new Error(
+        `Command ${command} not found! If you are trying to forward to a legacy command, ctx.forwardCommand is not compatible with legacy commands.`,
+      );
+    }
+
+    const env = this.config.environment ?? getContext();
+
+    if (!env) {
+      throw new Error('No commandkit environment found.');
+    }
+
+    const handlers = {
+      chatInput: target.command.data.chatInput,
+      autocomplete: target.command.data.autocomplete,
+      message: target.command.data.message,
+      messageContextMenu: target.command.data.messageContextMenu,
+      userContextMenu: target.command.data.userContextMenu,
+    };
+
+    const handlerKind = env.variables.get(
+      'execHandlerKind',
+    ) as keyof typeof handlers;
+
+    if (!handlerKind) {
+      throw new Error('No execution handler kind found.');
+    }
+
+    const handler = handlers[handlerKind];
+
+    if (!handler) {
+      throw new Error(`No handler found for ${handlerKind}`);
+    }
+
+    await handler(this.clone({ forwarded: true }));
+
+    throw createCommandKitError(CommandKitErrorCodes.ForwardedCommand);
+  }
+
   /**
    * The execution mode of the command.
    */
@@ -66,8 +206,41 @@ export class Context<
   /**
    * Whether the command was triggered by an interaction.
    */
-  public isInteraction(): this is Context<'interaction'> {
-    return this.executionMode === CommandExecutionMode.Interaction;
+  public isInteraction(): this is InteractionCommandContext {
+    return (
+      this.executionMode === CommandExecutionMode.SlashCommand ||
+      this.executionMode === CommandExecutionMode.Autocomplete ||
+      this.executionMode === CommandExecutionMode.MessageContextMenu ||
+      this.executionMode === CommandExecutionMode.UserContextMenu
+    );
+  }
+
+  /**
+   * Whether the command was triggered by a slash command interaction.
+   */
+  public isSlashCommand(): this is SlashCommandContext {
+    return this.executionMode === CommandExecutionMode.SlashCommand;
+  }
+
+  /**
+   * Whether the command was triggered by an autocomplete interaction.
+   */
+  public isAutocomplete(): this is AutocompleteCommandContext {
+    return this.executionMode === CommandExecutionMode.Autocomplete;
+  }
+
+  /**
+   * Whether the command was triggered by a message context menu interaction.
+   */
+  public isMessageContextMenu(): this is MessageContextMenuCommandContext {
+    return this.executionMode === CommandExecutionMode.MessageContextMenu;
+  }
+
+  /**
+   * Whether the command was triggered by a user context menu interaction.
+   */
+  public isUserContextMenu(): this is UserContextMenuCommandContext {
+    return this.executionMode === CommandExecutionMode.UserContextMenu;
   }
 
   /**
@@ -146,5 +319,40 @@ export class Context<
       locale: selectedLocale,
       target: this.getCommandIdentifier(),
     });
+  }
+
+  /**
+   * Creates a clone of this context
+   */
+  public clone(
+    config?: Partial<ContextParameters<ExecutionMode>>,
+  ): Context<ExecutionMode> {
+    if (!config) return new Context(this.commandkit, this.config);
+
+    return new Context(this.commandkit, { ...this.config, ...config });
+  }
+
+  public isMiddleware(): this is MiddlewareContext<ExecutionMode> {
+    return this instanceof MiddlewareContext;
+  }
+}
+
+export class MiddlewareContext<
+  T extends CommandExecutionMode,
+> extends Context<T> {
+  #cancel = false;
+
+  /**
+   * Whether the command execution was cancelled.
+   */
+  public get cancelled(): boolean {
+    return this.#cancel;
+  }
+
+  /**
+   * Cancels the command execution.
+   */
+  public cancel(): void {
+    this.#cancel = true;
   }
 }

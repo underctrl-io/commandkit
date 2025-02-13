@@ -6,7 +6,7 @@ const client = new Client({
   intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent'],
 });
 
-new CommandKit({
+const commandkit = new CommandKit({
   // @ts-ignore
   client,
   commandsPath: `${__dirname}/commands`,

@@ -21,9 +21,13 @@ export class DefaultLocalizationStrategy implements LocalizationStrategy {
 
     const path = join(localesPath, locale, `${scope}.json`);
 
-    const data = await readFile(path, 'utf-8');
+    try {
+      const data = await readFile(path, 'utf-8');
 
-    return JSON.parse(data) as Translation;
+      return JSON.parse(data) as Translation;
+    } catch {
+      return null;
+    }
   }
 
   public async getTranslationStrict(scope: string, locale: Locale) {
@@ -63,18 +67,19 @@ export class DefaultLocalizationStrategy implements LocalizationStrategy {
 
     if (!translation) return `${scope}.${key}`;
 
-    const translated = this.applyTranslation(
-      translation.translations[key],
-      args,
-    );
+    const value = translation.translations[key];
+
+    const translated = this.applyTranslation(value, args);
 
     return translated || `${scope}.${key}`;
   }
 
   private applyTranslation(
     translation: string,
-    args: Record<string, any>,
+    args?: Record<string, any>,
   ): string {
+    if (!translation || !args) return translation;
+
     return translation.replace(/{([^}]+)}/g, (_, key) => {
       return String(args[key] ?? `{${key}}`);
     });
