@@ -14,7 +14,7 @@ const commandkit = new CommandKit({
   validationsPath: `${__dirname}/validations`,
   devGuildIds: process.env.DEV_GUILD_ID?.split(',') ?? [],
   devUserIds: process.env.DEV_USER_ID?.split(',') ?? [],
-  bulkRegister: false,
+  bulkRegister: true,
 });
 
 await client.login(process.env.TOKEN);

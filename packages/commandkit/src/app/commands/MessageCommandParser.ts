@@ -28,12 +28,18 @@ export type MessageCommandOptionsSchema = Record<
 export class MessageCommandParser {
   #parsed: ParsedMessageCommand | null = null;
   #options: MessageCommandOptions | null = null;
+  #args: string[] = [];
 
   public constructor(
     public message: Message,
     private prefix: string[],
     private schema: (command: string) => MessageCommandOptionsSchema,
   ) {}
+
+  public getArgs() {
+    void this.parse();
+    return this.#args;
+  }
 
   public get options() {
     if (!this.#options) {
@@ -89,6 +95,8 @@ export class MessageCommandParser {
     const parts = content.slice(prefix.length).trim().split(' ');
     const command = parts.shift();
 
+    this.#args = parts;
+
     let subcommandGroup: string | undefined;
     let subcommand: string | undefined;
 
@@ -109,49 +117,54 @@ export class MessageCommandParser {
 
     const options = parts
       .map((part) => {
-        const [name, value] = part.split(':');
+        try {
+          const [name, value] = part.split(':');
 
-        if (!(name in schema)) return null;
+          if (!(name in schema)) return null;
 
-        switch (schema[name]) {
-          case ApplicationCommandOptionType.Boolean:
-            return { name, value: value === 'true' };
-          case ApplicationCommandOptionType.Integer:
-            return { name, value: parseInt(value, 10) };
-          case ApplicationCommandOptionType.Number:
-            return { name, value: parseFloat(value) };
-          case ApplicationCommandOptionType.String:
-            return { name, value };
-          case ApplicationCommandOptionType.User:
-            return {
-              name,
-              value: this.message.mentions.users.find((u) => {
-                return u.id === value.replace(/[<@!>]/g, '');
-              }),
-            };
-          case ApplicationCommandOptionType.Channel:
-            return {
-              name,
-              value: this.message.mentions.channels.find((c) => {
-                return c.id === value.replace(/[<#>]/g, '');
-              }),
-            };
-          case ApplicationCommandOptionType.Role:
-            return {
-              name,
-              value: this.message.mentions.roles.find((r) => {
-                return r.id === value.replace(/[<@&>]/g, '');
-              }),
-            };
-          case ApplicationCommandOptionType.Attachment:
-            return {
-              name,
-              value: this.message.attachments.find((a) => {
-                return a.name === value;
-              }),
-            };
-          default:
-            return null;
+          switch (schema[name]) {
+            case ApplicationCommandOptionType.Boolean:
+              return { name, value: value === 'true' };
+            case ApplicationCommandOptionType.Integer:
+              return { name, value: parseInt(value, 10) };
+            case ApplicationCommandOptionType.Number:
+              return { name, value: parseFloat(value) };
+            case ApplicationCommandOptionType.String:
+              return { name, value };
+            case ApplicationCommandOptionType.User:
+              return {
+                name,
+                value: this.message.mentions.users.find((u) => {
+                  return u.id === value.replace(/[<@!>]/g, '');
+                }),
+              };
+            case ApplicationCommandOptionType.Channel:
+              return {
+                name,
+                value: this.message.mentions.channels.find((c) => {
+                  return c.id === value.replace(/[<#>]/g, '');
+                }),
+              };
+            case ApplicationCommandOptionType.Role:
+              return {
+                name,
+                value: this.message.mentions.roles.find((r) => {
+                  return r.id === value.replace(/[<@&>]/g, '');
+                }),
+              };
+            case ApplicationCommandOptionType.Attachment:
+              return {
+                name,
+                value: this.message.attachments.find((a) => {
+                  return a.name === value;
+                }),
+              };
+            default:
+              return null;
+          }
+        } catch {
+          // Invalid option
+          return null;
         }
       })
       .filter((v) => v !== null);

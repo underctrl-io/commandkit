@@ -335,6 +335,14 @@ export class Context<
   public isMiddleware(): this is MiddlewareContext<ExecutionMode> {
     return this instanceof MiddlewareContext;
   }
+
+  public args(): string[] {
+    if (this.isMessage()) {
+      return this.config.messageCommandParser!.getArgs();
+    }
+
+    return [];
+  }
 }
 
 export class MiddlewareContext<
