@@ -1,15 +1,9 @@
 import {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
-  ContextMenuCommandInteraction,
   MessageContextMenuCommandInteraction,
   Message,
   Locale,
-  User,
-  Channel,
-  Role,
-  Attachment,
-  GuildMember,
   Interaction,
   UserContextMenuCommandInteraction,
 } from 'discord.js';
@@ -346,7 +340,7 @@ export class Context<
 }
 
 export class MiddlewareContext<
-  T extends CommandExecutionMode,
+  T extends CommandExecutionMode = CommandExecutionMode,
 > extends Context<T> {
   #cancel = false;
 

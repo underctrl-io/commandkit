@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import path, { join } from 'node:path';
 
 /**
  * Matcher type for identifying command and middleware files.
@@ -249,7 +249,7 @@ export class CommandsRouter {
     for (const file of files) {
       if (this.execMatcher(this.matchers.command, file)) {
         const location = this.resolveRelativePath(file);
-        const parts = location.split('/');
+        const parts = location.split(path.sep);
 
         const parentSegments: string[] = [];
 
@@ -283,10 +283,14 @@ export class CommandsRouter {
       if (this.execMatcher(this.matchers.middleware, file)) {
         const location = this.resolveRelativePath(file);
         const name = location.replace(/\.(m|c)?(j|t)sx?$/, '');
+        const middlewareDir = path.dirname(location);
 
-        const command = Array.from(this.commands.values()).filter((command) =>
-          command.path.startsWith(location),
-        );
+        const command = Array.from(this.commands.values()).filter((command) => {
+          const commandDir = path.dirname(command.path);
+          return (
+            commandDir === middlewareDir || commandDir.startsWith(middlewareDir)
+          );
+        });
 
         const id = crypto.randomUUID();
 

@@ -107,12 +107,14 @@ export class AppCommandHandler {
               ? loadedCommand.data.command.toJSON()
               : loadedCommand.data.command;
 
-          return json.options.reduce(
-            (acc: Record<string, unknown>, opt: Record<string, any>) => {
-              acc[opt.name] = opt.type;
-              return acc;
-            },
-            {} as Record<string, unknown>,
+          return (
+            json.options?.reduce(
+              (acc: Record<string, unknown>, opt: Record<string, any>) => {
+                acc[opt.name] = opt.type;
+                return acc;
+              },
+              {} as Record<string, unknown>,
+            ) ?? {}
           );
         },
       );

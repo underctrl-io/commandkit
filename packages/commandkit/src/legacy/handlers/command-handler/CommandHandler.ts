@@ -36,6 +36,11 @@ export interface hCommandContext {
   command: CommandData;
 }
 
+enum CommandIndication {
+  Continue,
+  Stop,
+}
+
 /**
  * A handler for client application commands.
  */
@@ -219,20 +224,22 @@ export class CommandHandler {
     env.clearAllDeferredFunctions();
   }
 
-  async #requestExternalHandler(interaction: Interaction<CacheType> | Message) {
+  async #requestExternalHandler(
+    interaction: Interaction<CacheType> | Message,
+  ): Promise<CommandIndication> {
     const handler = this.#data.commandkitInstance.appCommandsHandler;
-    if (!handler) return false;
+    if (!handler) return CommandIndication.Continue;
 
     if (
       !(interaction instanceof Message) &&
       !(interaction.isCommand() || interaction.isAutocomplete())
     ) {
-      return false;
+      return CommandIndication.Continue;
     }
 
     const targetCommand = await handler.prepareCommandRun(interaction);
 
-    if (!targetCommand) return false;
+    if (!targetCommand) return CommandIndication.Continue;
 
     const environment = useEnvironment();
 
@@ -261,6 +268,9 @@ export class CommandHandler {
     const exec = async () => {
       if (middlewares.length > 0) {
         for (const middleware of middlewares) {
+          // command was cancelled by middleware
+          if (context.cancelled) return CommandIndication.Stop;
+
           try {
             await middleware.data.beforeExecute(context);
           } catch (e) {
@@ -280,6 +290,9 @@ export class CommandHandler {
           }
         }
       }
+
+      // command was cancelled by middleware
+      if (context.cancelled) return CommandIndication.Stop;
 
       let postStageRunner = true;
 
@@ -368,7 +381,8 @@ export class CommandHandler {
     const shouldDebug = this.#data.commandkitInstance.isDebuggingCommands();
 
     if (!shouldDebug) {
-      return exec();
+      await exec();
+      return CommandIndication.Stop;
     }
 
     afterCommand((env) => {
@@ -394,9 +408,8 @@ export class CommandHandler {
 
     try {
       environment.markStart(`${command.data.command.name}`);
-      const res = await exec();
-
-      return res;
+      await exec();
+      return CommandIndication.Stop;
     } finally {
       environment.markEnd();
     }
@@ -407,9 +420,10 @@ export class CommandHandler {
     try {
       const result = await this.#requestExternalHandler(interaction);
 
-      if (result !== false) return;
+      if (result === CommandIndication.Stop) return;
     } catch (e) {
       console.error(e);
+      return;
     }
 
     if (
@@ -486,6 +500,8 @@ export class CommandHandler {
       if (!canRun) return;
 
       const command = targetCommand[isAutocomplete ? 'autocomplete' : 'run']!;
+
+      if (!command) return;
 
       const context = {
         interaction,
