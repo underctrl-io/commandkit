@@ -2,6 +2,7 @@ import type { ApplicationCommandDataResolvable, Client } from 'discord.js';
 import type { CommandFileObject, ReloadOptions } from '../../../../types';
 
 import colors from '../../../../utils/colors';
+import { Logger } from '../../../../logger/Logger';
 
 type LoadCommandsWithRestProps = {
   /**
@@ -119,7 +120,7 @@ async function loadGlobalCommands(
       );
     });
 
-  console.log(
+  Logger.log(
     colors.green(
       `${reloading ? 'Reloaded' : 'Loaded'} ${
         requestBody.length
@@ -172,7 +173,7 @@ async function loadDevCommands(
         );
       });
 
-    console.log(
+    Logger.log(
       colors.green(
         `${reloading ? 'Reloaded' : 'Loaded'} ${
           requestBody.length

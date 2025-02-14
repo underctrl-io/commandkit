@@ -10,6 +10,7 @@ import type { CommandFileObject, ReloadOptions } from '../../../../types';
 import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
 
 import colors from '../../../../utils/colors';
+import { Logger } from '../../../../logger/Logger';
 
 type RegisterCommandProps = {
   client: Client;
@@ -98,7 +99,7 @@ async function registerGlobalCommands(
           );
         });
 
-        console.log(
+        Logger.log(
           colors.green(`Deleted command "${command.data.name}" globally.`),
         );
       }
@@ -125,7 +126,7 @@ async function registerGlobalCommands(
             );
           });
 
-        console.log(
+        Logger.log(
           colors.green(`Edited command "${command.data.name}" globally.`),
         );
 
@@ -147,7 +148,7 @@ async function registerGlobalCommands(
         );
       });
 
-    console.log(
+    Logger.log(
       colors.green(`Registered command "${command.data.name}" globally.`),
     );
   }
@@ -209,7 +210,7 @@ async function registerDevCommands(
             );
           });
 
-          console.log(
+          Logger.log(
             colors.green(
               `Deleted command "${command.data.name}" in ${guildCommands.guild.name}.`,
             ),
@@ -238,7 +239,7 @@ async function registerDevCommands(
               );
             });
 
-          console.log(
+          Logger.log(
             colors.green(
               `Edited command "${command.data.name}" in ${guildCommands.guild.name}.`,
             ),
@@ -262,7 +263,7 @@ async function registerDevCommands(
           );
         });
 
-      console.log(
+      Logger.log(
         colors.green(
           `Registered command "${command.data.name}" in ${guildCommands.guild.name}.`,
         ),

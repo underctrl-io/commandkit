@@ -17,4 +17,6 @@ const commandkit = new CommandKit({
   bulkRegister: true,
 });
 
+commandkit.setPrefixResolver(() => ['!', '?']);
+
 await client.login(process.env.TOKEN);

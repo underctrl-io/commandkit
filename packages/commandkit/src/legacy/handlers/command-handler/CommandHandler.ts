@@ -30,6 +30,7 @@ import {
   MiddlewareContext,
 } from '../../../app/commands/Context';
 import { CommandKitErrorCodes, isErrorType } from '../../../utils/error-codes';
+import { Logger } from '../../../logger/Logger';
 
 export interface hCommandContext {
   interaction: CommandKitInteraction;
@@ -265,6 +266,8 @@ export class CommandHandler {
       messageCommandParser,
     });
 
+    environment.variables.set('currentCommandName', context.commandName);
+
     const exec = async () => {
       if (middlewares.length > 0) {
         for (const middleware of middlewares) {
@@ -338,7 +341,7 @@ export class CommandHandler {
           }
         }
       } catch (e) {
-        console.log(e);
+        Logger.error(e);
         if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
           postStageRunner = false;
         } else if (
@@ -391,7 +394,7 @@ export class CommandHandler {
       const time = `${env.getExecutionTime().toFixed(2)}ms`;
 
       if (error) {
-        console.error(
+        Logger.error(
           colors.red(
             `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
           ),
@@ -399,10 +402,8 @@ export class CommandHandler {
         return;
       }
 
-      console.log(
-        colors.cyan('(app ✨)') +
-          colors.reset(' ') +
-          colors.green(`[${marker} - ${time}] Command executed successfully`),
+      Logger.log(
+        colors.green(`[${marker} - ${time}] Command executed successfully`),
       );
     });
 
@@ -443,8 +444,13 @@ export class CommandHandler {
 
     const env = useEnvironment();
 
+    env.variables.set('currentCommandName', interaction.commandName);
     env.variables.set('commandHandlerType', 'legacy');
     env.variables.set('interaction', interaction);
+    env.variables.set(
+      'execHandlerKind',
+      isAutocomplete ? 'autocomplete' : 'chatInput',
+    );
 
     const { data, options, run, autocomplete, ...rest } = targetCommand;
 
@@ -521,7 +527,7 @@ export class CommandHandler {
         const time = `${env.getExecutionTime().toFixed(2)}ms`;
 
         if (error) {
-          console.error(
+          Logger.error(
             colors.red(
               `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
             ),
@@ -529,7 +535,7 @@ export class CommandHandler {
           return;
         }
 
-        console.log(
+        Logger.log(
           colors.green(`[${marker} - ${time}] Command executed successfully`),
         );
       });
