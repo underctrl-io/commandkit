@@ -12,6 +12,7 @@ export * from './app/index';
 export * from './logger/DefaultLogger';
 export * from './logger/ILogger';
 export * from './logger/Logger';
+export * from './app/router/index';
 export type * from './types';
 
 function $version(): string {

@@ -73,7 +73,7 @@ export const cacheDirectivePlugin = async (source: string, args: any) => {
       }
     },
 
-    'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression'(
+    'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression|ObjectMethod'(
       path: any,
     ) {
       const body = t.isBlockStatement(path.node.body) ? path.node.body : null;
@@ -99,7 +99,7 @@ export const cacheDirectivePlugin = async (source: string, args: any) => {
         // Check if the function is async
         if (!path.node.async) {
           throw new Error(
-            `"${DIRECTIVE}" directive may only be used in async functions at ${args.path}`,
+            `"${DIRECTIVE}" directive may only be used in async functions at ${args.path}\n\n${path.toString()}\n^^^^${'-'.repeat(6)} This function must be async`,
           );
         }
 
@@ -124,7 +124,11 @@ export const cacheDirectivePlugin = async (source: string, args: any) => {
 
         // @ts-ignore
         state.modifications.push(() => {
-          if (name) {
+          if (t.isObjectMethod(path.node)) {
+            path.replaceWith(
+              t.objectProperty(t.identifier(path.node.key.name), wrapped),
+            );
+          } else if (name) {
             path.replaceWith(
               t.variableDeclaration('const', [
                 t.variableDeclarator(t.identifier(name), wrapped),

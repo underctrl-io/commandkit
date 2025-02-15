@@ -5,6 +5,7 @@ import { toFileURL } from '../../../utils/resolve-file-url';
 import { clone } from '../../../utils/clone';
 import colors from '../../../utils/colors';
 import { ParsedEvent } from '../../../app/router';
+import { COMMANDKIT_IS_TEST } from '../../../utils/constants';
 
 /**
  * A handler for client events.

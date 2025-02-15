@@ -14,11 +14,13 @@ import {
   MessageCommandParser,
 } from './MessageCommandParser';
 import {
-  CommandKitErrorCodes,
-  createCommandKitError,
-} from '../../utils/error-codes';
-import { CommandKitEnvironment } from '../../context/environment';
-import { getContext } from '../../context/async-context';
+  afterCommand,
+  cancelAfterCommand,
+  CommandKitEnvironment,
+} from '../../context/environment';
+import { GenericFunction, getContext } from '../../context/async-context';
+import { exitMiddleware, redirect } from '../middleware/signals';
+import { isCachedFunction } from '../../cache';
 
 export const CommandExecutionMode = {
   SlashCommand: 'chatInput',
@@ -34,12 +36,6 @@ export type CommandExecutionMode =
 export interface ContextParameters<T extends CommandExecutionMode> {
   environment?: CommandKitEnvironment;
   executionMode: T;
-  // interaction: T extends 'interaction'
-  //   ?
-  //       | ChatInputCommandInteraction
-  //       | ContextMenuCommandInteraction
-  //       | MessageContextMenuCommandInteraction
-  //   : never;
   interaction: T extends 'chatInput'
     ? ChatInputCommandInteraction
     : T extends 'messageContextMenu'
@@ -52,6 +48,7 @@ export interface ContextParameters<T extends CommandExecutionMode> {
   message: T extends 'message' ? Message : never;
   forwarded?: boolean;
   messageCommandParser?: T extends 'message' ? MessageCommandParser : never;
+  store?: Map<string, any>;
 }
 
 export type MessageCommandContext = Context<'message'>;
@@ -94,10 +91,13 @@ export class Context<
    * The interaction that triggered the command.
    */
   public readonly interaction: ContextParameters<ExecutionMode>['interaction'];
+
   /**
    * The message that triggered the command.
    */
   public readonly message: ContextParameters<ExecutionMode>['message'];
+
+  #store: Map<string, any>;
 
   private _locale: Locale | null = null;
 
@@ -113,6 +113,15 @@ export class Context<
     // these are assigned to readonly properties to make them accessible via object destructuring
     this.interaction = config.interaction;
     this.message = config.message;
+    this.#store = config.store ?? new Map();
+  }
+
+  /**
+   * The shared key-value store for this context. This can be used to store data that needs to be shared between middlewares or commands.
+   * This store is shared across all contexts in the same command execution, including the cloned contexts and middleware contexts.
+   */
+  public get store() {
+    return this.#store;
   }
 
   public get commandName(): string {
@@ -187,7 +196,7 @@ export class Context<
 
     await handler(this.clone({ forwarded: true }));
 
-    throw createCommandKitError(CommandKitErrorCodes.ForwardedCommand);
+    redirect();
   }
 
   /**
@@ -323,7 +332,13 @@ export class Context<
   ): Context<ExecutionMode> {
     if (!config) return new Context(this.commandkit, this.config);
 
-    return new Context(this.commandkit, { ...this.config, ...config });
+    const ctx = new Context(this.commandkit, {
+      ...this.config,
+      ...config,
+      store: this.#store,
+    });
+
+    return ctx;
   }
 
   public isMiddleware(): this is MiddlewareContext<ExecutionMode> {
@@ -336,6 +351,41 @@ export class Context<
     }
 
     return [];
+  }
+
+  /**
+   * Stops upcoming middleware or current command execution.
+   * If this is called inside pre-stage middleware, the next run will be the actual command, skipping all other pre-stage middlewares.
+   * If this is called inside a command itself, it will skip all post-stage middlewares.
+   * If this is called inside post-stage middleware, it will skip all other post-stage middlewares.
+   */
+  public exit() {
+    exitMiddleware();
+  }
+
+  /**
+   * Defers the given function to be executed after this command's execution.
+   * @param fn The function to defer.
+   * @returns A unique identifier for the deferred function.
+   */
+  public defer(fn: GenericFunction<[CommandKitEnvironment]>): string {
+    return afterCommand(fn);
+  }
+
+  /**
+   * Cancels the deferred function with the given identifier.
+   * @param id The identifier of the deferred function.
+   */
+  public cancelDeferred(id: string): void {
+    cancelAfterCommand(id);
+  }
+
+  /**
+   * Validates if the given function is a cached function.
+   * @param fn The function to validate.
+   */
+  public isCached(fn: GenericFunction): boolean {
+    return isCachedFunction(fn);
   }
 }
 

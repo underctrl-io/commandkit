@@ -31,6 +31,7 @@ export interface CommandKitConfiguration {
 
 export class CommandKit extends EventEmitter {
   #data: CommandKitData;
+  #started = false;
   public readonly eventInterceptor: EventInterceptor;
 
   public static readonly createElement = createElement;
@@ -92,14 +93,36 @@ export class CommandKit extends EventEmitter {
 
     this.#data = options;
 
-    this.#init().then(() => {
-      // Increment client listeners count, as commandkit registers internal event listeners.
-      this.incrementClientListenersCount();
-    });
-
     if (!CommandKit.instance) {
       CommandKit.instance = this;
     }
+  }
+
+  /**
+   * Starts the commandkit application.
+   * @param token The application token to connect to the discord gateway. If not provided, it will use the `TOKEN` or `DISCORD_TOKEN` environment variable. If set to `false`, it will not login.
+   */
+  async start(token?: string | false) {
+    if (this.#started) return;
+
+    await this.#init();
+
+    this.incrementClientListenersCount();
+
+    if (token !== false && !this.#data.client.isReady()) {
+      await this.#data.client.login(
+        token ?? process.env.TOKEN ?? process.env.DISCORD_TOKEN,
+      );
+    }
+
+    this.#started = true;
+  }
+
+  /**
+   * Whether or not the commandkit application has started.
+   */
+  get started() {
+    return this.#started;
   }
 
   /**

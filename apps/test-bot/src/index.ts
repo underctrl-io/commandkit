@@ -19,4 +19,4 @@ const commandkit = new CommandKit({
 
 commandkit.setPrefixResolver(() => ['!', '?']);
 
-await client.login(process.env.TOKEN);
+await commandkit.start();

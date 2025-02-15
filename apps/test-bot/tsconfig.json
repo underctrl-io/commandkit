@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
     "lib": ["ESNext", "DOM"],
     "jsx": "react",
     "jsxFactory": "CommandKit.createElement",

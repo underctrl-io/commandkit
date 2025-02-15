@@ -1,274 +1,307 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import ms from 'ms';
 import { GenericFunction, getCommandKit } from '../context/async-context';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
+import ms from 'ms';
 
+const cacheContext = new AsyncLocalStorage<CacheContext>();
+const fnStore = new Map<
+  string,
+  {
+    key: string;
+    hash: string;
+    ttl: number;
+    original: GenericFunction;
+    memo: GenericFunction;
+  }
+>();
+const DEFAULT_TTL = ms('15m');
+const CACHE_FN_ID = `__cache_fn_id_${Date.now()}__${Math.random()}__`;
+const CACHED_FN_SYMBOL = Symbol('commandkit.cache.sentinel');
+
+/**
+ * Context for managing cache operations within an async scope
+ */
+export interface CacheContext {
+  params: {
+    /** Custom name for the cache entry */
+    name?: string;
+    /** Time-to-live in milliseconds */
+    ttl?: number;
+  };
+}
+
+/**
+ * Represents an async function that can be cached
+ * @template R - Array of argument types
+ * @template T - Return type
+ */
 export type AsyncFunction<R extends any[] = any[], T = any> = (
   ...args: R
 ) => Promise<T>;
 
-export interface CacheTag {
-  tag: string;
-  ttl: number | string;
-}
-
-export interface CacheParams extends CacheTag {
-  target: GenericFunction;
-  memo: GenericFunction;
-}
-
-interface CacheContext {
-  target: GenericFunction;
-  params: CacheTag;
-  memo?: GenericFunction;
-}
-
-const CACHED_FUNCTIONS_STORE = new WeakMap<Function, CacheParams>();
-const TAG_FUNCTION_MAP = new Map<string, Function>();
-const DEFAULT_TTL = ms('15m');
-
-const cacheContext = new AsyncLocalStorage<CacheContext>();
-
-const __identificationKey = `__cache_identification_key_${Date.now()}__${Math.random()}__`;
-
-const getDefaultCacheTag = (): CacheTag => {
-  return {
-    tag: randomUUID(),
-    ttl: DEFAULT_TTL,
-  };
-};
-
 /**
- * Cache a function with a specific tag and time-to-live.
- * @param fn The function to cache.
- * @param params The cache tag and time-to-live.
- * @returns The memoized function.
+ * Configuration options for cache behavior
  */
-function cache<R extends any[], F extends AsyncFunction<R>>(
-  fn: F,
-  params?: Partial<CacheTag>,
-): F {
-  params = Object.assign({}, getDefaultCacheTag(), params);
-
-  return useCache(fn, __identificationKey, params as CacheTag);
+export interface CacheMetadata {
+  /** Time-to-live duration in milliseconds or as a string (e.g., '1h', '5m') */
+  ttl?: number | string;
+  /** Custom name for the cache entry */
+  name?: string;
 }
 
 /**
- * **DO NOT USE THIS FUNCTION DIRECTLY**
+ * Generates an MD5 hash of the input string
+ * @internal
+ */
+function md5(data: string): string {
+  return createHash('md5').update(data).digest('hex');
+}
+
+/**
+ * Retrieves the configured cache provider from CommandKit context
+ * @internal
+ * @throws {Error} When no cache provider is configured
+ */
+function getCacheProvider() {
+  const commandkit = getCommandKit(true);
+  const provider = commandkit.getCacheProvider();
+
+  if (!provider) {
+    throw new Error(
+      `Cache provider was not found, please provide a cache provider to commandkit.`,
+    );
+  }
+
+  return provider;
+}
+
+/**
+ * Internal cache implementation
  * @internal
  * @private
  */
 function useCache<R extends any[], F extends AsyncFunction<R>>(
   fn: F,
   id?: string,
-  tag?: CacheTag,
+  params?: CacheMetadata,
 ): F {
-  if (id !== undefined && id !== __identificationKey) {
-    throw new TypeError('useCache may not be called directly.');
+  const isLocal = id === CACHE_FN_ID;
+
+  if (id && !isLocal) {
+    throw new Error('Illegal use of cache function.');
   }
 
-  const isLocal = id === __identificationKey;
+  const fnId = randomUUID();
 
-  const memoized = (async (...args) => {
-    const commandkit = getCommandKit(true);
-    const cache = commandkit.getCacheProvider();
-
-    if (!cache) {
-      throw new Error(
-        'CacheProvider was not found, please provide a cache provider to the CommandKit instance.',
-      );
-    }
-
-    const context = cacheContext.getStore();
-
-    if (context === undefined) {
-      throw new Error(
-        'useCache must be called inside a function decorated with "use cache" directive.',
-      );
-    }
-
-    const entryKey = context.params.tag;
-    const entry = await cache.get(entryKey);
-
-    // cache hit
-    if (entry !== undefined) {
-      return entry.value;
-    }
-
-    const ttl =
-      typeof context.params.ttl === 'string'
-        ? ms(context.params.ttl)
-        : context.params.ttl;
-
-    const writeCache = async (...args: any) => {
-      const result = await fn(...args);
-
-      CACHED_FUNCTIONS_STORE.set(fn, {
-        ...context.params,
-        target: fn,
-        memo: cacheContext.exit(() => wrapper),
-      });
-
-      if (entryKey !== context.params.tag) {
-        TAG_FUNCTION_MAP.delete(entryKey);
-      }
-
-      TAG_FUNCTION_MAP.set(context.params.tag, fn);
-
-      await cache.set(entryKey, result, ttl);
-
-      return result;
-    };
-
-    CACHED_FUNCTIONS_STORE.set(fn, {
-      ...context.params,
-      target: fn,
-      memo: cacheContext.exit(() => wrapper),
-    });
-
-    TAG_FUNCTION_MAP.set(entryKey, fn);
-
-    return writeCache(...args);
-  }) as F;
-
-  const wrapper = (async (...args: any) => {
-    const params =
-      CACHED_FUNCTIONS_STORE.get(fn) ??
-      ((isLocal ? tag : null) || getDefaultCacheTag());
+  const memo = ((...args) => {
+    const forcedName = isLocal ? params?.name : null;
+    const keyHash =
+      forcedName ?? md5(!args.length ? fnId : `${fnId}:${args.join(':')}`);
+    const resolvedTTL =
+      isLocal && params?.ttl != null
+        ? typeof params.ttl === 'string'
+          ? ms(params.ttl)
+          : params.ttl
+        : null;
 
     return cacheContext.run(
       {
-        params,
-        target: fn,
+        params: {
+          name: keyHash,
+          ttl: resolvedTTL ?? DEFAULT_TTL,
+        },
       },
-      () => memoized(...args),
+      async () => {
+        const provider = getCacheProvider();
+        const context = cacheContext.getStore();
+
+        if (!context) {
+          throw new Error('Cache context was not found.');
+        }
+
+        // Get the effective cache key, preferring any existing association
+        const storedFn = fnStore.get(keyHash);
+        const effectiveKey = storedFn?.key ?? context.params.name!;
+
+        // Try to get cached value using effective key
+        const cached = await provider.get(effectiveKey);
+        if (cached) return cached.value;
+
+        // If we reach here, we need to cache the value
+        const result = await fn(...args);
+
+        // Get the final key name (might have been modified by cacheTag)
+        const finalKey = context.params.name!;
+        const ttl = context.params.ttl ?? DEFAULT_TTL;
+
+        // Store the result
+        await provider.set(finalKey, result, ttl);
+
+        // Update function store
+        fnStore.set(keyHash, {
+          key: finalKey,
+          hash: keyHash,
+          ttl,
+          original: fn,
+          memo,
+        });
+
+        return result;
+      },
     );
   }) as F;
 
-  return wrapper;
+  if (!Object.prototype.hasOwnProperty.call(fn, CACHED_FN_SYMBOL)) {
+    Object.defineProperty(memo, CACHED_FN_SYMBOL, {
+      get() {
+        return true;
+      },
+      configurable: false,
+      enumerable: false,
+    });
+  }
+
+  return memo;
 }
 
 /**
- * Tags the current function with the given cache tag name
- * @param tag The cache tag name.
+ * Wraps an async function with caching capability
+ * @template R - Array of argument types
+ * @template F - Type of the async function
+ * @param fn - The async function to cache
+ * @param params - Optional cache configuration
+ * @returns The wrapped function with caching behavior
+ * @example
+ * ```ts
+ * const cachedFetch = cache(async (id: string) => {
+ *   return await db.findOne(id);
+ * }, { ttl: '1h' });
+ * ```
  */
-function cacheTag(tag: string): void;
+export function cache<R extends any[], F extends AsyncFunction<R>>(
+  fn: F,
+  params?: CacheMetadata,
+): F {
+  return useCache(fn, CACHE_FN_ID, params);
+}
+
 /**
- * Tags the current function with the given cache tag parameters.
- * @param tag The cache tag parameters.
+ * Sets a custom identifier for the current cache operation
+ * @param tag - The custom cache tag
+ * @throws {Error} When called outside a cached function or without a tag
+ * @example
+ * ```ts
+ * const fetchUser = cache(async (id: string) => {
+ *   cacheTag(`user:${id}`);
+ *   return await db.users.findOne(id);
+ * });
+ * ```
  */
-function cacheTag(tag: CacheTag): void;
-/**
- * Tags the current function with the given cache tag name or parameters.
- * @param tag The cache tag name or parameters.
- */
-function cacheTag(tag: CacheTag | string): void {
+export function cacheTag(tag: string): void {
+  const context = cacheContext.getStore();
+
+  if (!context) {
+    throw new Error('cacheTag() must be called inside a cached function.');
+  }
+
   if (!tag) {
-    throw new TypeError('cacheTag must be called with a tag.');
+    throw new Error('cacheTag() must be called with a tag name.');
   }
 
+  context.params.name = tag;
+}
+
+/**
+ * Sets the TTL for the current cache operation
+ * @param ttl - Time-to-live in milliseconds or as a string (e.g., '1h', '5m')
+ * @throws {Error} When called outside a cached function or with invalid TTL
+ * @example
+ * ```ts
+ * const fetchData = cache(async () => {
+ *   cacheLife('30m');
+ *   return await expensiveOperation();
+ * });
+ * ```
+ */
+export function cacheLife(ttl: number | string): void {
   const context = cacheContext.getStore();
 
-  if (context === undefined) {
-    throw new Error(
-      'cacheTag must be called inside cache() or a function decorated with "use cache" directive.',
-    );
+  if (!context) {
+    throw new Error('cacheLife() must be called inside a cached function.');
   }
 
-  let tagObj: CacheTag;
-
-  if (typeof tag === 'string') {
-    tagObj = {
-      tag,
-      ttl: context.params?.ttl ?? DEFAULT_TTL,
-    };
-  } else {
-    tagObj = tag;
+  if (ttl == null || !['string', 'number'].includes(typeof ttl)) {
+    throw new Error('cacheLife() must be called with a ttl.');
   }
 
-  context.params = tagObj;
+  context.params.ttl = typeof ttl === 'string' ? ms(ttl) : ttl;
 }
 
 /**
- * Sets the time-to-live for the current cache tag.
- * @param life The time-to-live value in milliseconds or a string.
+ * Removes a cached value by its tag
+ * @param tag - The cache tag to invalidate
+ * @throws {Error} When the cache key is not found
+ * @example
+ * ```ts
+ * await invalidate('user:123');
+ * ```
  */
-function cacheLife(life: string): void;
-function cacheLife(life: number): void;
-function cacheLife(life: string | number) {
-  if (life == null) {
-    throw new TypeError('cacheLife must be called with a time-to-live value.');
+export async function invalidate(tag: string): Promise<void> {
+  const provider = getCacheProvider();
+  const entry = Array.from(fnStore.values()).find(
+    (v) => v.key === tag || v.hash === tag,
+  );
+
+  if (!entry) {
+    throw new Error(`Cache key ${tag} was not found.`);
   }
 
-  const context = cacheContext.getStore();
-
-  if (context === undefined) {
-    throw new Error(
-      'cacheLife must be called inside cache() or a function decorated with "use cache" directive.',
-    );
-  }
-
-  if (typeof life === 'string') {
-    context.params.ttl = ms(life);
-  } else {
-    context.params.ttl = life;
-  }
+  await provider.delete(entry.key);
 }
 
 /**
- * Invalidates the cache with the given tag.
- * This will immediately remove the cache entry. The next time cache is requested, it will be re-fetched.
- * @param tag The cache tag to invalidate.
+ * Forces a refresh of cached data by its tag (on-demand revalidation)
+ * @template T - Type of the cached value
+ * @param tag - The cache tag to revalidate
+ * @param args - Arguments to pass to the cached function
+ * @returns Fresh data from the cached function
+ * @throws {Error} When the cache key or function is not found
+ * @example
+ * ```ts
+ * const freshData = await revalidate('user:123');
+ * ```
  */
-async function invalidate(tag: string) {
-  const commandkit = getCommandKit(true);
-  const cache = commandkit.getCacheProvider();
-
-  if (!cache) {
-    throw new Error(
-      'CacheProvider was not found, please provide a cache provider to the CommandKit instance.',
-    );
-  }
-
-  await cache.delete(tag);
-}
-
-/**
- * Revalidates the cache with the given tag.
- * This will immediately remove the cache entry and re-fetch the value.
- * @param tag The cache tag to revalidate.
- * @param args The arguments to pass to the memoized function (if any).
- * @returns The new value of the cache.
- */
-async function revalidate<R = any>(
+export async function revalidate<T = unknown>(
   tag: string,
   ...args: any[]
-): Promise<R | undefined> {
-  const commandkit = getCommandKit(true);
-  const cache = commandkit.getCacheProvider();
+): Promise<T> {
+  const provider = getCacheProvider();
+  const entry = Array.from(fnStore.values()).find(
+    (v) => v.key === tag || v.hash === tag,
+  );
 
-  if (!cache) {
-    throw new Error(
-      'CacheProvider was not found, please provide a cache provider to the CommandKit instance.',
-    );
+  if (!entry) {
+    throw new Error(`Cache key ${tag} was not found.`);
   }
 
-  await cache.delete(tag);
+  await provider.delete(entry.key);
 
-  const tagFn = TAG_FUNCTION_MAP.get(tag);
-  if (!tagFn) return undefined;
-
-  const ctx = CACHED_FUNCTIONS_STORE.get(tagFn);
-  if (!ctx) return undefined;
-
-  return ctx.memo(...args) as R;
+  return entry.memo(...args);
 }
 
-export {
-  cache,
-  useCache as super_duper_secret_internal_for_use_cache_directive_of_commandkit_cli_do_not_use_it_directly_or_you_will_be_fired_from_your_job_kthxbai,
-  cacheTag,
-  cacheLife,
-  invalidate,
-  revalidate,
-};
+/**
+ * Checks if a function is wrapped with cache functionality
+ * @param fn - Function to check
+ * @returns True if the function is cached
+ * @example
+ * ```ts
+ * if (isCachedFunction(myFunction)) {
+ *   console.log('Function is cached');
+ * }
+ * ```
+ */
+export function isCachedFunction(fn: GenericFunction): boolean {
+  return Object.prototype.hasOwnProperty.call(fn, CACHED_FN_SYMBOL);
+}
+
+export { useCache as super_duper_secret_internal_for_use_cache_directive_of_commandkit_cli_do_not_use_it_directly_or_you_will_be_fired_from_your_job_kthxbai };

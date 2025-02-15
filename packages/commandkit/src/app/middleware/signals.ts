@@ -21,3 +21,10 @@ export function exitMiddleware(): never {
 export function rethrow(error: unknown): void {
   if (isCommandKitError(error)) throw error;
 }
+
+/**
+ * Stops current command assuming it has been redirected to another command.
+ */
+export function redirect(): never {
+  throw createCommandKitError(CommandKitErrorCodes.ForwardedCommand);
+}

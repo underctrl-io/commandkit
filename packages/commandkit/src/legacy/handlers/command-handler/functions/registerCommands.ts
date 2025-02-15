@@ -11,6 +11,7 @@ import areSlashCommandsDifferent from '../utils/areSlashCommandsDifferent';
 
 import colors from '../../../../utils/colors';
 import { Logger } from '../../../../logger/Logger';
+import { COMMANDKIT_IS_TEST } from '../../../../utils/constants';
 
 type RegisterCommandProps = {
   client: Client;
@@ -25,6 +26,8 @@ type RegisterCommandProps = {
  * @param props
  */
 export default async function registerCommands(props: RegisterCommandProps) {
+  if (COMMANDKIT_IS_TEST) return;
+
   if (props.reloading) {
     if (props.client.isReady()) {
       await handleRegistration(
