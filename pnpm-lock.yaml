@@ -314,15 +314,15 @@ importers:
       '@clack/prompts':
         specifier: ^0.7.0
         version: 0.7.0
-      colors:
-        specifier: ^1.4.0
-        version: 1.4.0
       fs-extra:
         specifier: ^11.1.1
         version: 11.2.0
       gradient-string:
         specifier: ^2.0.2
         version: 2.0.2
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
     devDependencies:
       '@types/fs-extra':
         specifier: ^11.0.4
@@ -3571,10 +3571,6 @@ packages:
 
   colorette@2.0.20:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
-
-  colors@1.4.0:
-    resolution: {integrity: sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==}
-    engines: {node: '>=0.1.90'}
 
   combine-promises@1.2.0:
     resolution: {integrity: sha512-VcQB1ziGD0NXrhKxiwyNbCDmRzs/OShMs2GqW2DlU2A/Sd0nQxE1oWDAE5O0ygSx5mgQOn9eIFh7yKPgFRVkPQ==}
@@ -12113,8 +12109,6 @@ snapshots:
   colord@2.9.3: {}
 
   colorette@2.0.20: {}
-
-  colors@1.4.0: {}
 
   combine-promises@1.2.0: {}
 

@@ -1,7 +1,8 @@
-import colors from 'colors';
+import colors from 'picocolors';
 import gradient from 'gradient-string';
 import path from 'node:path';
 import url from 'node:url';
+import { PackageManager } from './types';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -85,6 +86,7 @@ export const commands = {
     npm: 'npm init -y',
     yarn: 'yarn init -y; yarn config set nodeLinker node-modules; yarn set version stable',
     pnpm: 'pnpm init',
+    bun: 'bun init -y',
   },
 };
 
@@ -95,15 +97,26 @@ export const hints = {
   module: gradient(textColors.module)('exports'),
   javascript: gradient(textColors.js)('JavaScript'),
   typescript: gradient(textColors.ts)('TypeScript'),
-  app: gradient(textColors.app)('app'),
-  legacy: gradient(textColors.legacy)('legacy'),
 };
 
 export const commandkit = gradient(textColors.commandkit)('CommandKit');
-export const outroMsg = `
+
+interface OutroMessageProps {
+  manager: PackageManager;
+}
+
+export const outroMsg = ({ manager }: OutroMessageProps) => `
 ${gradient(textColors.commandkit)('Thank you for choosing CommandKit!')}
+
+To start your bot, use the following commands:
+  ${colors.magenta(`${manager} run dev`)}     - Run your bot in development mode
+  ${colors.magenta(`${manager} run build`)}   - Build your bot for production
+  ${colors.magenta(`${manager} run start`)}   - Run your bot in production mode
 
 • Documentation: ${colors.blue('https://commandkit.dev')}
 • GitHub: ${colors.blue('https://github.com/underctrl-io/commandkit')}
+• UnderCtrl: ${colors.blue('https://underctrl.io')}
 • Join us on Discord: ${colors.blue('https://ctrl.lol/discord')}
+
+Happy coding! 🚀
 `;
