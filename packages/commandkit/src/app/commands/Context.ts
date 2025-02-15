@@ -6,6 +6,7 @@ import {
   Locale,
   Interaction,
   UserContextMenuCommandInteraction,
+  Client,
 } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { Localization } from '../i18n/Localization';
@@ -97,6 +98,11 @@ export class Context<
    */
   public readonly message: ContextParameters<ExecutionMode>['message'];
 
+  /**
+   * The client instance.
+   */
+  public readonly client: Client;
+
   #store: Map<string, any>;
 
   private _locale: Locale | null = null;
@@ -113,6 +119,7 @@ export class Context<
     // these are assigned to readonly properties to make them accessible via object destructuring
     this.interaction = config.interaction;
     this.message = config.message;
+    this.client = commandkit.client;
     this.#store = config.store ?? new Map();
   }
 

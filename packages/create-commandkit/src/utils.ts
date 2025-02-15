@@ -7,12 +7,52 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 export const templates = {
   js: {
-    esm: path.join(__dirname, '..', 'templates', 'JavaScript', 'esm'),
-    cjs: path.join(__dirname, '..', 'templates', 'JavaScript', 'cjs'),
+    app: {
+      esm: path.join(__dirname, '..', 'templates', 'JavaScript', 'app', 'esm'),
+      cjs: path.join(__dirname, '..', 'templates', 'JavaScript', 'app', 'cjs'),
+    },
+    legacy: {
+      esm: path.join(
+        __dirname,
+        '..',
+        'templates',
+        'JavaScript',
+        'legacy',
+        'esm',
+      ),
+      cjs: path.join(
+        __dirname,
+        '..',
+        'templates',
+        'JavaScript',
+        'legacy',
+        'cjs',
+      ),
+    },
   },
   ts: {
-    esm: path.join(__dirname, '..', 'templates', 'TypeScript', 'esm'),
-    cjs: path.join(__dirname, '..', 'templates', 'TypeScript', 'cjs'),
+    app: {
+      esm: path.join(__dirname, '..', 'templates', 'TypeScript', 'app', 'esm'),
+      cjs: path.join(__dirname, '..', 'templates', 'TypeScript', 'app', 'cjs'),
+    },
+    legacy: {
+      esm: path.join(
+        __dirname,
+        '..',
+        'templates',
+        'TypeScript',
+        'legacy',
+        'esm',
+      ),
+      cjs: path.join(
+        __dirname,
+        '..',
+        'templates',
+        'TypeScript',
+        'legacy',
+        'cjs',
+      ),
+    },
   },
 };
 
@@ -24,9 +64,11 @@ export const textColors = {
   module: ['#4ec9b0', '#4ec9b0'],
   js: ['#f7e01c', '#f7e01c'],
   ts: ['#2480c5', '#2480c5'],
+  app: ['#e4a5a2', '#e4a5a2'],
+  legacy: ['#dcdcaa', '#dcdcaa'],
 };
 
-const baseDependencies = ['commandkit', 'discord.js', 'dotenv'];
+const baseDependencies = ['commandkit', 'discord.js'];
 
 export const dependencies = {
   js: {
@@ -53,6 +95,8 @@ export const hints = {
   module: gradient(textColors.module)('exports'),
   javascript: gradient(textColors.js)('JavaScript'),
   typescript: gradient(textColors.ts)('TypeScript'),
+  app: gradient(textColors.app)('app'),
+  legacy: gradient(textColors.legacy)('legacy'),
 };
 
 export const commandkit = gradient(textColors.commandkit)('CommandKit');
@@ -60,5 +104,6 @@ export const outroMsg = `
 ${gradient(textColors.commandkit)('Thank you for choosing CommandKit!')}
 
 • Documentation: ${colors.blue('https://commandkit.dev')}
+• GitHub: ${colors.blue('https://github.com/underctrl-io/commandkit')}
 • Join us on Discord: ${colors.blue('https://ctrl.lol/discord')}
 `;

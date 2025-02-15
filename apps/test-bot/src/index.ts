@@ -1,6 +1,6 @@
 import { CommandKit } from 'commandkit';
 import { Client } from 'discord.js';
-import 'dotenv/config';
+process.loadEnvFile();
 
 const client = new Client({
   intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent'],

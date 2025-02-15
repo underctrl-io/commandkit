@@ -4,7 +4,6 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { build } from 'tsup';
 import {
-  Colors,
   copyLocaleFiles,
   erase,
   findCommandKitConfig,
@@ -13,6 +12,7 @@ import {
 } from './common.js';
 import ora from 'ora';
 import { commandkitPlugin } from './esbuild-plugins/plugin';
+import colors from '../utils/colors.js';
 
 export async function bootstrapProductionBuild(config: any) {
   const {
@@ -60,13 +60,13 @@ export async function bootstrapProductionBuild(config: any) {
     await injectShims(outDir, main, antiCrash, polyfillRequire);
 
     status.succeed(
-      Colors.green(
+      colors.green(
         `Build completed in ${(performance.now() - start).toFixed(2)}ms!`,
       ),
     );
     write(
-      Colors.green(
-        `\nRun ${Colors.magenta(`commandkit start`)} ${Colors.green(
+      colors.green(
+        `\nRun ${colors.magenta(`commandkit start`)} ${colors.green(
           'to start your bot.',
         )}`,
       ),

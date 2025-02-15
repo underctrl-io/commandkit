@@ -252,9 +252,11 @@ export async function invalidate(tag: string): Promise<void> {
     (v) => v.key === tag || v.hash === tag,
   );
 
-  if (!entry) {
-    throw new Error(`Cache key ${tag} was not found.`);
-  }
+  // if (!entry) {
+  //   throw new Error(`Cache key ${tag} was not found.`);
+  // }
+
+  if (!entry) return;
 
   await provider.delete(entry.key);
 }
@@ -280,9 +282,11 @@ export async function revalidate<T = unknown>(
     (v) => v.key === tag || v.hash === tag,
   );
 
-  if (!entry) {
-    throw new Error(`Cache key ${tag} was not found.`);
-  }
+  // if (!entry) {
+  //   throw new Error(`Cache key ${tag} was not found.`);
+  // }
+
+  if (!entry) return undefined as T;
 
   await provider.delete(entry.key);
 

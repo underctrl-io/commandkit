@@ -18,9 +18,28 @@ const execHandlerKind = {
   message: 'Message',
 };
 
-const commandHandlerType = {
-  legacy: 'Legacy',
-  app: 'App',
+const TextColorMap = {
+  [LogLevel.DEBUG]: colors.blue,
+  [LogLevel.INFO]: colors.green,
+  [LogLevel.WARN]: colors.yellow,
+  [LogLevel.ERROR]: colors.red,
+  [LogLevel.DEFAULT]: colors.white,
+};
+
+const TextBgColorMap = {
+  [LogLevel.DEBUG]: colors.bgBlue,
+  [LogLevel.INFO]: colors.bgGreen,
+  [LogLevel.WARN]: colors.bgYellow,
+  [LogLevel.ERROR]: colors.bgRed,
+  [LogLevel.DEFAULT]: colors.bgWhite,
+};
+
+const BoxChars = {
+  vertical: '│',
+  horizontalDown: '┬',
+  horizontalUp: '┴',
+  verticalRight: '├',
+  corner: '└',
 };
 
 export class DefaultLogger implements ILogger {
@@ -31,6 +50,14 @@ export class DefaultLogger implements ILogger {
     public stderr = process.stderr,
   ) {
     this.logger = new console.Console(this.stdout, this.stderr);
+  }
+
+  private _formatTime(date: Date): string {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const millis = date.getMilliseconds().toString().padStart(3, '0');
+    return `${hours}:${minutes}:${seconds}.${millis}`;
   }
 
   private _getContext(): string {
@@ -47,31 +74,63 @@ export class DefaultLogger implements ILogger {
     if (!h && !commandHandler) return '';
 
     const t = commandHandler === 'app' ? '(app ✨) ' : '';
+    const cmdText = command ? colors.magenta(`/${command}`) + ' ' : '';
 
-    return `${colors.green(`${t}${command} ${h ? colors.gray(h) : ''}`.trim())}`;
+    return (
+      colors.dim(`${BoxChars.vertical} `) +
+      colors.cyanBright(
+        `${t}${cmdText}${h ? colors.gray(`[${h}]`) : ''}`.trim(),
+      )
+    );
+  }
+
+  private _getLevelLabel(level: LogLevel): string {
+    let label: string;
+    switch (level) {
+      case LogLevel.DEBUG:
+        label = '[DEBUG]';
+        break;
+      case LogLevel.INFO:
+        label = '[INFO]';
+        break;
+      case LogLevel.WARN:
+        label = '[WARN]';
+        break;
+      case LogLevel.ERROR:
+        label = '[ERROR]';
+        break;
+      default:
+        label = '[LOG]';
+    }
+
+    const coloredLabel = TextBgColorMap[level](
+      colors.whiteBright(` ${label} `),
+    );
+    return `${coloredLabel}   `;
   }
 
   private _getPrefix(level: LogLevel): string {
-    const timestamp = new Date().toISOString();
-    const ctx = this._getContext();
-
-    switch (level) {
-      case LogLevel.DEBUG:
-        return `${colors.bgBlue(colors.black('[DEBUG]'))} | ${colors.gray(timestamp)} | ${ctx} - `;
-      case LogLevel.INFO:
-        return `${colors.bgGreen(colors.black('[INFO]'))} | ${colors.gray(timestamp)} | ${ctx} - `;
-      case LogLevel.WARN:
-        return `${colors.bgYellow(colors.black('[WARN]'))} | ${colors.gray(timestamp)} | ${ctx} - `;
-      case LogLevel.ERROR:
-        return `${colors.bgRed(colors.black('[ERROR]'))} | ${colors.gray(timestamp)} | ${ctx} - `;
-      default:
-        return `${colors.bgWhite(colors.black('[LOG]'))} | ${colors.gray(timestamp)} | ${ctx} - `;
-    }
+    const timestamp = this._formatTime(new Date());
+    const label = this._getLevelLabel(level);
+    return `${label}${colors.dim(BoxChars.vertical)} ${colors.dim(timestamp)}`;
   }
 
   private _log(level: LogLevel, ...args: any[]): void {
     const prefix = this._getPrefix(level);
-    this.logger.log(prefix, ...args);
+    const context = this._getContext();
+    const colorFn = TextColorMap[level];
+
+    if (context) {
+      this.logger.log(
+        `${prefix}\n${context} ${colors.dim(BoxChars.corner)}`,
+        ...args.map((arg) => colorFn(arg)),
+      );
+    } else {
+      this.logger.log(
+        `${prefix} ${colors.dim(BoxChars.corner)}`,
+        ...args.map((arg) => colorFn(arg)),
+      );
+    }
   }
 
   public debug(...args: any[]): void {

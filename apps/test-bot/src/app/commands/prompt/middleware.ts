@@ -1,8 +1,8 @@
-import { MiddlewareContext } from 'commandkit';
+import { Logger, MiddlewareContext } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
 export function beforeExecute(ctx: MiddlewareContext) {
-  console.log('Pre-command middleware');
+  Logger.info('Pre-command middleware');
 
   const user = ctx.isInteraction() ? ctx.interaction.user : ctx.message.author;
 
@@ -21,5 +21,5 @@ export function beforeExecute(ctx: MiddlewareContext) {
 }
 
 export function afterExecute(ctx: MiddlewareContext) {
-  console.log('Post-command middleware executed');
+  Logger.info('Post-command middleware executed');
 }

@@ -22,3 +22,15 @@ new CommandKit({
   cacheProvider: new RedisCache(),
 });
 ```
+
+Now the cache functions such as the following will be cached in Redis:
+
+```ts
+async function getCachedData() {
+  'use cache';
+
+  const data = await getFromDatabase();
+
+  return data;
+}
+```

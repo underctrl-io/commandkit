@@ -38,5 +38,5 @@ export async function setup({
   };
 
   await fs.writeJSON(packageJsonPath, packageJson, { spaces: 2 });
-  await fs.writeFile(`${dir}/.env`, `TOKEN="${token}"`);
+  await fs.writeFile(`${dir}/.env`, `DISCORD_TOKEN="${token}"`);
 }

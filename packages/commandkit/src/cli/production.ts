@@ -2,9 +2,10 @@
 import { config as dotenv } from 'dotenv';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { Colors, findCommandKitConfig, panic, write } from './common';
+import { findCommandKitConfig, panic, write } from './common';
 import { parseEnv } from './parse-env';
 import child_process from 'node:child_process';
+import colors from '../utils/colors';
 
 export async function bootstrapProductionServer(config: any) {
   const {
@@ -33,11 +34,11 @@ export async function bootstrapProductionServer(config: any) {
     }
 
     if (env.error) {
-      write(Colors.yellow(`[DOTENV] Warning: ${env.error.message}`));
+      write(colors.yellow(`[DOTENV] Warning: ${env.error.message}`));
     }
 
     if (env.parsed) {
-      write(Colors.blue('[DOTENV] Loaded .env file!'));
+      write(colors.blue('[DOTENV] Loaded .env file!'));
     }
 
     const ps: child_process.ChildProcessWithoutNullStreams =
@@ -66,7 +67,7 @@ export async function bootstrapProductionServer(config: any) {
     });
 
     ps.stderr.on('data', (data) => {
-      write(Colors.red(data.toString()));
+      write(colors.red(data.toString()));
     });
 
     ps.on('close', (code) => {

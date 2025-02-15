@@ -3,7 +3,6 @@ import { config as dotenv } from 'dotenv';
 import { join } from 'node:path';
 import { build } from 'tsup';
 import {
-  Colors,
   copyLocaleFiles,
   erase,
   findCommandKitConfig,
@@ -15,6 +14,7 @@ import child_process from 'node:child_process';
 import ora from 'ora';
 import { injectShims } from './build';
 import { commandkitPlugin } from './esbuild-plugins/plugin';
+import colors from '../utils/colors';
 
 const RESTARTING_MSG_PATTERN = /^Restarting '|".+'|"\n?$/;
 const FAILED_RUNNING_PATTERN = /^Failed running '.+'|"\n?$/;
@@ -41,7 +41,7 @@ export async function bootstrapDevelopmentServer(opts: any) {
 
   const watchMode = watch;
   const status = ora(
-    Colors.green('Starting a development server...\n'),
+    colors.green('Starting a development server...\n'),
   ).start();
   const start = performance.now();
 
@@ -87,12 +87,12 @@ export async function bootstrapDevelopmentServer(opts: any) {
     });
 
     status.succeed(
-      Colors.green(
+      colors.green(
         `Dev server started in ${(performance.now() - start).toFixed(2)}ms!\n`,
       ),
     );
 
-    if (watchMode) write(Colors.cyan('Watching for file changes...\n'));
+    if (watchMode) write(colors.cyan('Watching for file changes...\n'));
 
     const processEnv = {};
 
@@ -106,11 +106,11 @@ export async function bootstrapDevelopmentServer(opts: any) {
     }
 
     if (env.error) {
-      write(Colors.yellow(`[DOTENV] Warning: ${env.error.message}`));
+      write(colors.yellow(`[DOTENV] Warning: ${env.error.message}`));
     }
 
     if (env.parsed) {
-      write(Colors.blue('[DOTENV] Loaded .env file!'));
+      write(colors.blue('[DOTENV] Loaded .env file!'));
     }
 
     const ps: child_process.ChildProcessWithoutNullStreams =
@@ -138,7 +138,7 @@ export async function bootstrapDevelopmentServer(opts: any) {
       const message = data.toString();
 
       if (FAILED_RUNNING_PATTERN.test(message)) {
-        write(Colors.cyan('Failed running the bot, waiting for changes...'));
+        write(colors.cyan('Failed running the bot, waiting for changes...'));
         isLastLogRestarting = false;
         if (!hasStarted) hasStarted = true;
         return;
@@ -152,7 +152,7 @@ export async function bootstrapDevelopmentServer(opts: any) {
           if (!hasStarted) hasStarted = true;
           return;
         }
-        write(Colors.cyan('⌀ Restarting the bot...'));
+        write(colors.cyan('⌀ Restarting the bot...'));
         isLastLogRestarting = true;
       }
 
@@ -169,7 +169,7 @@ export async function bootstrapDevelopmentServer(opts: any) {
       )
         return;
 
-      write(Colors.red(message));
+      write(colors.red(message));
     });
 
     ps.on('close', (code) => {

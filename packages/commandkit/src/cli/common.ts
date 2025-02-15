@@ -3,36 +3,9 @@
 import { rimrafSync } from 'rimraf';
 import { join } from 'node:path';
 import fs from 'node:fs';
+import colors from '../utils/colors';
 
-const resetColor = '\x1b[0m';
-
-export const Colors = {
-  reset: (text: string) => `${text}${resetColor}`,
-  bright: (text: string) => `\x1b[1m${text}${resetColor}`,
-  dim: (text: string) => `\x1b[2m${text}${resetColor}`,
-  underscore: (text: string) => `\x1b[4m${text}${resetColor}`,
-  blink: (text: string) => `\x1b[5m${text}${resetColor}`,
-  reverse: (text: string) => `\x1b[7m${text}${resetColor}`,
-  hidden: (text: string) => `\x1b[8m${text}${resetColor}`,
-
-  black: (text: string) => `\x1b[30m${text}${resetColor}`,
-  red: (text: string) => `\x1b[31m${text}${resetColor}`,
-  green: (text: string) => `\x1b[32m${text}${resetColor}`,
-  yellow: (text: string) => `\x1b[33m${text}${resetColor}`,
-  blue: (text: string) => `\x1b[34m${text}${resetColor}`,
-  magenta: (text: string) => `\x1b[35m${text}${resetColor}`,
-  cyan: (text: string) => `\x1b[36m${text}${resetColor}`,
-  white: (text: string) => `\x1b[37m${text}${resetColor}`,
-
-  bgBlack: (text: string) => `\x1b[40m${text}${resetColor}`,
-  bgRed: (text: string) => `\x1b[41m${text}${resetColor}`,
-  bgGreen: (text: string) => `\x1b[42m${text}${resetColor}`,
-  bgYellow: (text: string) => `\x1b[43m${text}${resetColor}`,
-  bgBlue: (text: string) => `\x1b[44m${text}${resetColor}`,
-  bgMagenta: (text: string) => `\x1b[45m${text}${resetColor}`,
-  bgCyan: (text: string) => `\x1b[46m${text}${resetColor}`,
-  bgWhite: (text: string) => `\x1b[47m${text}${resetColor}`,
-};
+let ts: typeof import('typescript') | undefined;
 
 export function write(message: any) {
   process.stdout.write(message);
@@ -42,8 +15,8 @@ export function write(message: any) {
 /**
  * @returns {never}
  */
-export function panic(message: any) {
-  write(Colors.red(`Error: ${message}`));
+export function panic(message: any): never {
+  write(colors.red(`Error: ${message}`));
   process.exit(1);
 }
 
@@ -59,17 +32,10 @@ export function findPackageJSON() {
 }
 
 const possibleFileNames = [
-  'commandkit.json',
-  'commandkit.config.json',
   'commandkit.js',
-  'commandkit.config.js',
   'commandkit.mjs',
-  'commandkit.config.mjs',
   'commandkit.cjs',
-  'commandkit.config.cjs',
   'commandkit.ts',
-  'commandkit.mts',
-  'commandkit.cts',
 ];
 
 export async function findCommandKitConfig(src: string) {
@@ -89,36 +55,71 @@ export async function findCommandKitConfig(src: string) {
   panic(`Could not locate commandkit config from ${cwd}`);
 }
 
-function ensureTypeScript(target: string) {
-  const isTypeScript = /\.(c|m)tsx?$/.test(target);
+async function ensureTypeScript(target: string) {
+  const isTypeScript = /\.(c|m)?tsx?$/.test(target);
 
-  if (isTypeScript && !process.features.typescript) {
-    panic(
-      'You are trying to load commandkit config file that is written in typescript. The current Node.js version does not have TypeScript feature enabled.',
-    );
+  if (!isTypeScript) return false;
+  if (process.features.typescript) return true;
+
+  if (!ts) {
+    try {
+      ts = await import('typescript');
+    } catch {
+      panic('TypeScript must be installed to use TypeScript config files.');
+    }
   }
+
+  return true;
 }
 
 async function loadConfigInner(target: string) {
-  const isJSON = target.endsWith('.json');
-
   await ensureExists(target);
 
-  ensureTypeScript(target);
+  const isTs = await ensureTypeScript(target);
+
+  if (isTs && ts) {
+    const { transpileModule } = ts;
+    const src = fs.readFileSync(target, 'utf8');
+    const { outputText } = transpileModule(src, {
+      compilerOptions: {
+        module: ts.ModuleKind.ESNext,
+        target: ts.ScriptTarget.ESNext,
+        moduleResolution: ts.ModuleResolutionKind.NodeNext,
+      },
+      fileName: target,
+    });
+
+    const nodeModulesPath = join(
+      process.cwd(),
+      'node_modules',
+      '.commandkit_tmp',
+    );
+
+    fs.mkdirSync(nodeModulesPath, { recursive: true });
+
+    const tmpFile = join(nodeModulesPath, 'compiled-commandkit.config.mjs');
+
+    fs.writeFileSync(tmpFile, outputText);
+
+    target = tmpFile;
+  }
 
   /**
    * @type {import('..').CommandKitConfig}
    */
-  // @ts-ignore
-  const config = await import(`file://${target}`, {
-    with: isJSON ? { type: 'json' } : undefined,
-  }).then((conf) => conf.default || conf);
+  const config = await import(`file://${target}`)
+    .then((conf) => conf.default || conf)
+    .catch(console.log);
 
   return config;
 }
 
 async function ensureExists(loc: string) {
-  await fs.promises.access(loc, fs.constants.F_OK);
+  const exists = fs.existsSync(loc);
+
+  if (!exists) {
+    throw new Error(`File not found: ${loc}`);
+  }
 }
 
 export function erase(dir: string) {
