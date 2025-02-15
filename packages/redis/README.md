@@ -29,7 +29,8 @@ Now the cache functions such as the following will be cached in Redis:
 async function getCachedData() {
   'use cache';
 
-  const data = await getFromDatabase();
+  // imaginary database function
+  const data = await getFromDatabase('something');
 
   return data;
 }
