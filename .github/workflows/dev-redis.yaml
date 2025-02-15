@@ -39,7 +39,9 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
 
       - name: 🧱 Build
-        run: pnpm --filter './packages/redis' run build
+        run: |
+          pnpm --filter './packages/commandkit' run build
+          pnpm --filter './packages/redis' run build
 
       - name: 🚚 Publish
         run: |
