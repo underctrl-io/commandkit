@@ -1,0 +1,15 @@
+---
+title: CommandsRouterMatcher
+description: Matcher type for identifying command and middleware files. Can be a string suffix (e.g. '.cmd.js'), RegExp pattern, or custom matcher function.
+---
+
+## CommandsRouterMatcher
+
+Matcher type for identifying command and middleware files.
+Can be a string suffix (e.g. '.cmd.js'), RegExp pattern, or custom matcher function.
+
+- Type: string \| RegExp \| (
+  path: string
+) => boolean
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L9)

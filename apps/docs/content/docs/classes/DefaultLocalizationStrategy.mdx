@@ -1,0 +1,51 @@
+---
+title: DefaultLocalizationStrategy
+description: No description provided
+---
+
+## DefaultLocalizationStrategy implements LocalizationStrategy
+
+```typescript
+new DefaultLocalizationStrategy(commandkit);
+```
+
+| Parameter  | Type                                   | Optional |
+| ---------- | -------------------------------------- | -------- |
+| commandkit | [CommandKit](/docs/classes/CommandKit) | ❌       |
+
+## Methods
+
+### public getTranslation(scope, locale): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<null | Translation>
+
+| Parameter | Type                                                                                              | Optional |
+| --------- | ------------------------------------------------------------------------------------------------- | -------- |
+| scope     | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       |
+| locale    | Locale                                                                                            | ❌       |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/i18n/DefaultLocalizationStrategy.ts#L50)
+
+### public getTranslationStrict(scope, locale): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Translation>
+
+| Parameter | Type                                                                                              | Optional |
+| --------- | ------------------------------------------------------------------------------------------------- | -------- |
+| scope     | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       |
+| locale    | Locale                                                                                            | ❌       |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/i18n/DefaultLocalizationStrategy.ts#L33)
+
+### public locateTranslation(scope, locale): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<null | Translation>
+
+| Parameter | Type                                                                                              | Optional |
+| --------- | ------------------------------------------------------------------------------------------------- | -------- |
+| scope     | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       |
+| locale    | Locale                                                                                            | ❌       |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/i18n/DefaultLocalizationStrategy.ts#L17)
+
+### public translate(request): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+
+| Parameter | Type                           | Optional |
+| --------- | ------------------------------ | -------- |
+| request   | LocalizationTranslationRequest | ❌       |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/i18n/DefaultLocalizationStrategy.ts#L61)

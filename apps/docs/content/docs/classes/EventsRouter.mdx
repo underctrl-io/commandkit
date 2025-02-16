@@ -1,0 +1,67 @@
+---
+title: EventsRouter
+description: Router for discovering and managing event handler files in a directory structure. Events are represented by directories, and handlers are files within those directories.
+---
+
+## EventsRouter
+
+Router for discovering and managing event handler files in a directory structure.
+Events are represented by directories, and handlers are files within those directories.
+
+```typescript
+new EventsRouter(options);
+```
+
+| Parameter | Type                | Optional | Description                          |
+| --------- | ------------------- | -------- | ------------------------------------ |
+| options   | EventsRouterOptions | ❌       | Configuration options for the router |
+
+## Properties
+
+### public entrypoint: any
+
+Get the entrypoint directory path
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/EventsRouter.ts#L62)
+
+## Methods
+
+### public clear(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Clear all parsed events
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/EventsRouter.ts#L76)
+
+### public isValidPath(): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+Checks if the entrypoint path is valid
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/EventsRouter.ts#L69)
+
+### public match(event): null | ParsedEvent
+
+Find a parsed event by its name
+
+| Parameter | Type                                                                                              | Optional | Description               |
+| --------- | ------------------------------------------------------------------------------------------------- | -------- | ------------------------- |
+| event     | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       | Name of the event to find |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/EventsRouter.ts#L54)
+
+### public reload(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<EventsTree>
+
+Reload and re-scan the entrypoint directory for events
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/EventsRouter.ts#L84)
+
+### public scan(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<EventsTree>
+
+Scan the entrypoint directory for events and their handlers
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/EventsRouter.ts#L93)
+
+### public toJSON(): EventsTree
+
+Convert the internal events map to a plain object
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/EventsRouter.ts#L111)

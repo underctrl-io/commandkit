@@ -1,0 +1,46 @@
+---
+title: AppCommandHandler
+description: No description provided
+---
+
+## AppCommandHandler
+
+```typescript
+new AppCommandHandler(commandkit);
+```
+
+| Parameter  | Type       | Optional |
+| ---------- | ---------- | -------- |
+| commandkit | CommandKit | ❌       |
+
+## Properties
+
+### public commandkit: any
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L74)
+
+## Methods
+
+### public applyLocalizations(command): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<RESTPostAPIContextMenuApplicationCommandsJSONBody | CommandBuilderLike>
+
+| Parameter | Type               | Optional |
+| --------- | ------------------ | -------- |
+| command   | CommandBuilderLike | ❌       |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L240)
+
+### public getCommandsArray(): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L76)
+
+### public loadCommands(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L166)
+
+### public prepareCommandRun(source): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<null | PreparedAppCommandExecution>
+
+| Parameter | Type                                                                                  | Optional |
+| --------- | ------------------------------------------------------------------------------------- | -------- | --- |
+| source    | [Interaction](https://discord.js.org/docs/packages/discord.js/main/Interaction:Class) | Message  | ❌  |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L83)

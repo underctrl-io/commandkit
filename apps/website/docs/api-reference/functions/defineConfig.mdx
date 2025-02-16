@@ -4,11 +4,21 @@ description: No description provided
 ---
 
 
-### defineConfig(config): Partial\<[CommandKitConfig](/docs/api-reference/types/CommandKitConfig)>
+### defineConfig(config): \{
+  antiCrash | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
+  clearRestartLogs | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
+  envExtra | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
+  minify | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
+  nodeOptions | : [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>;
+  outDir | : [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ;
+  requirePolyfill | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
+  sourcemap | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)'inline';
+  watch | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
+}
 
 | Parameter | Type | Optional |
 | ----------- | ----------- | ----------- |
-| config | PartialConfig\<[CommandKitConfig](/docs/api-reference/types/CommandKitConfig)> | ❌ |
+| config | Partial\<[CommandKitConfig](/next/api-reference/types/CommandKitConfig)> | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/6e189b13079ad78949d9ad2ddda0cbfd45677e1d/packages/commandkit/src/config.ts#L71)
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/config.ts#L56)

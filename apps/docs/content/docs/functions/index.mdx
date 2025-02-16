@@ -1,10 +1,187 @@
 ---
 title: Functions
-description: Functions provided by CommandKit
+description: 'Functions provided by CommandKit'
 ---
 
 # Functions
 
-<Cards><Card title="defineConfig" description="No description available." href="/docs/functions/defineConfig" />
+<Cards><Card title="ActionRow" description="The action row component." href="/docs/functions/ActionRow" />
 
-<Card title="getConfig" description="No description available." href="/docs/functions/getConfig" /></Cards>
+<Card
+  title="afterCommand"
+  description="Runs the given function after the current command has finished executing."
+  href="/docs/functions/afterCommand"
+/>
+
+<Card
+  title="bootstrapCommandkitCLI"
+  description="Creates a command line interface for CommandKit."
+  href="/docs/functions/bootstrapCommandkitCLI"
+/>
+
+<Card
+  title="Button"
+  description="The button component."
+  href="/docs/functions/Button"
+/>
+
+<Card
+  title="cache"
+  description="Wraps an async function with caching capability"
+  href="/docs/functions/cache"
+/>
+
+<Card
+  title="cacheLife"
+  description="Sets the TTL for the current cache operation"
+  href="/docs/functions/cacheLife"
+/>
+
+<Card
+  title="cacheTag"
+  description="Sets a custom identifier for the current cache operation"
+  href="/docs/functions/cacheTag"
+/>
+
+<Card
+  title="cancelAfterCommand"
+  description="Cancels a deferred function registered with `afterCommand`."
+  href="/docs/functions/cancelAfterCommand"
+/>
+
+<Card
+  title="createElement"
+  description="No description available."
+  href="/docs/functions/createElement"
+/>
+
+<Card
+  title="createLogger"
+  description="No description available."
+  href="/docs/functions/createLogger"
+/>
+
+<Card
+  title="defineConfig"
+  description="No description available."
+  href="/docs/functions/defineConfig"
+/>
+
+<Card
+  title="dmOnly"
+  description="Ensures the command is only available in DMs."
+  href="/docs/functions/dmOnly"
+/>
+
+<Card
+  title="exitContext"
+  description="No description available."
+  href="/docs/functions/exitContext"
+/>
+
+<Card
+  title="exitMiddleware"
+  description="Cancel upcoming middleware execution.
+If this is called inside pre-stage middleware, the next run will be the actual command, skipping all other pre-stage middlewares.
+If this is called inside a command itself, it will skip all post-stage middlewares.
+If this is called inside post-stage middleware, it will skip all other post-stage middlewares."
+  href="/docs/functions/exitMiddleware"
+/>
+
+<Card
+  title="Fragment"
+  description="No description available."
+  href="/docs/functions/Fragment"
+/>
+
+<Card
+  title="getConfig"
+  description="No description available."
+  href="/docs/functions/getConfig"
+/>
+
+<Card
+  title="getContext"
+  description="Get the current commandkit context."
+  href="/docs/functions/getContext"
+/>
+
+<Card
+  title="getElement"
+  description="No description available."
+  href="/docs/functions/getElement"
+/>
+
+<Card
+  title="guildOnly"
+  description="Ensures the command is only available in guilds."
+  href="/docs/functions/guildOnly"
+/>
+
+<Card
+  title="invalidate"
+  description="Removes a cached value by its tag"
+  href="/docs/functions/invalidate"
+/>
+
+<Card
+  title="isCachedFunction"
+  description="Checks if a function is wrapped with cache functionality"
+  href="/docs/functions/isCachedFunction"
+/>
+
+<Card
+  title="isCommandKitElement"
+  description="No description available."
+  href="/docs/functions/isCommandKitElement"
+/>
+
+<Card
+  title="makeContextAwareFunction"
+  description="Returns a context-aware version of the given function."
+  href="/docs/functions/makeContextAwareFunction"
+/>
+
+<Card
+  title="Modal"
+  description="The modal component."
+  href="/docs/functions/Modal"
+/>
+
+<Card
+  title="ParagraphInput"
+  description="The paragraph text input component."
+  href="/docs/functions/ParagraphInput"
+/>
+
+<Card
+  title="redirect"
+  description="Stops current command assuming it has been redirected to another command."
+  href="/docs/functions/redirect"
+/>
+
+<Card
+  title="rethrow"
+  description="Rethrow the error if it is a CommandKit error."
+  href="/docs/functions/rethrow"
+/>
+
+<Card
+  title="revalidate"
+  description="Forces a refresh of cached data by its tag (on-demand revalidation)"
+  href="/docs/functions/revalidate"
+/>
+
+<Card
+  title="ShortInput"
+  description="The short text input component."
+  href="/docs/functions/ShortInput"
+/>
+
+<Card
+  title="TextInput"
+  description="The text input component."
+  href="/docs/functions/TextInput"
+/>
+
+<Card title="useEnvironment" description="Use current commandkit context. Throws an error if no context is found." href="/docs/functions/useEnvironment" /></Cards>

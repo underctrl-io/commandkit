@@ -1,0 +1,49 @@
+---
+title: Localization
+description: No description provided
+---
+
+## Localization
+
+```typescript
+new Localization(commandkit, config);
+```
+
+| Parameter  | Type                                   | Optional | Description                     |
+| ---------- | -------------------------------------- | -------- | ------------------------------- |
+| commandkit | [CommandKit](/docs/classes/CommandKit) | ❌       | The command kit instance.       |
+| config     | LocalizationConfig                     | ❌       | The localization configuration. |
+
+## Properties
+
+### public t: any
+
+Translates the given translatable object.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/i18n/Localization.ts#L30)
+
+## Methods
+
+### public getDefaultLocale(): Locale
+
+Get the default locale
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/i18n/Localization.ts#L66)
+
+### public getLocale(): Locale
+
+Get the current locale
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/i18n/Localization.ts#L73)
+
+### public getStrategy(): LocalizationStrategy
+
+Get the localization strategy.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/i18n/Localization.ts#L59)
+
+### public getTarget(): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+Get the localization target
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/i18n/Localization.ts#L80)

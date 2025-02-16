@@ -1,0 +1,82 @@
+---
+title: CommandsRouter
+description: CommandsRouter handles the discovery and routing of commands and middleware files in a directory structure. It supports nested commands and middleware inheritance.
+---
+
+## CommandsRouter
+
+CommandsRouter handles the discovery and routing of commands and middleware files
+in a directory structure. It supports nested commands and middleware inheritance.
+
+```typescript
+new CommandsRouter(options);
+```
+
+| Parameter | Type                  | Optional | Description                          |
+| --------- | --------------------- | -------- | ------------------------------------ |
+| options   | CommandsRouterOptions | ❌       | Configuration options for the router |
+
+## Properties
+
+### public entrypoint: any
+
+Gets the configured entrypoint directory
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L118)
+
+### public matchers: any
+
+Gets the configured matchers for command and middleware files
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L125)
+
+## Methods
+
+### public clear(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Clears the internal commands and middleware maps
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L237)
+
+### public getData(): \{
+
+commands | : [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ParsedCommand>;
+middleware | : [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ParsedMiddleware>;
+}
+Returns the cached data of the commands and middleware
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L132)
+
+### public isValidPath(): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+Checks if the entrypoint path is valid
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L142)
+
+### public match(commandOrSegment): null | CommandMatchResult
+
+Matches a command by name or path segments
+
+| Parameter        | Type                                                                                              | Optional                                                                                                                                                                                            | Description |
+| ---------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | -------------------------------------- |
+| commandOrSegment | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> | ❌          | Command name or array of path segments |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L178)
+
+### public reload(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<CommandsTree>
+
+Reloads the commands tree by re-scanning the entrypoint directory
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L229)
+
+### public scan(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<CommandsTree>
+
+Scans the entrypoint directory for commands and middleware
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L246)
+
+### public toJSON(): CommandsTree
+
+Converts the internal maps to a serializable object
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/router/CommandsRouter.ts#L319)

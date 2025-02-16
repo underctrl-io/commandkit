@@ -11,7 +11,7 @@ new ButtonKit(data);
 
 | Parameter | Type                                                          | Optional |
 | --------- | ------------------------------------------------------------- | -------- |
-| data      | Partial\<ButtonComponentData> \| Partial\<APIButtonComponent> | ✅       |
+| data      | Partial\<APIButtonComponent> \| Partial\<ButtonComponentData> | ✅       |
 
 ## Properties
 
@@ -23,7 +23,17 @@ The API data associated with this component.
 
 ### public dispose(): ButtonKit
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/7e608cc8c859522925eced5a54de0a18e9cbc1e9/packages/commandkit/src/components/ButtonKit.ts#L165)
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/components/button/ButtonKit.ts#L222)
+
+### public filter(predicate): this
+
+Sets a filter for the interaction collector.
+
+| Parameter | Type               | Optional | Description                                     |
+| --------- | ------------------ | -------- | ----------------------------------------------- |
+| predicate | ButtonKitPredicate | ❌       | The filter to use for the interaction collector |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/components/button/ButtonKit.ts#L164)
 
 ### public onClick(handler, data?): this
 
@@ -34,7 +44,11 @@ If unused, this expires after 24 hours or custom time if specified.
 const button = new ButtonKit()
   .setLabel('Click me')
   .setStyle(ButtonStyle.Primary)
-  .setCustomId('click_me');
+  .setCustomId('click_me')
+  .filter((interaction) => interaction.user.id === '1234567890')
+  .onClick(async (interaction) => {
+    await interaction.reply('You clicked me!');
+  });
 
 const row = new ActionRowBuilder().addComponents(button);
 
@@ -42,13 +56,6 @@ const message = await channel.send({
   content: 'Click the button',
   components: [row],
 });
-
-button.onClick(
-  async (interaction) => {
-    await interaction.reply('You clicked me!');
-  },
-  { message },
-);
 
 // Remove onClick handler and destroy the interaction collector
 button.onClick(null);
@@ -59,7 +66,7 @@ button.onClick(null);
 | handler   | CommandKitButtonBuilderInteractionCollectorDispatch            | ❌       | The handler to run when the button is clicked         |
 | data      | CommandKitButtonBuilderInteractionCollectorDispatchContextData | ✅       | The context data to use for the interaction collector |
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/7e608cc8c859522925eced5a54de0a18e9cbc1e9/packages/commandkit/src/components/ButtonKit.ts#L74)
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/components/button/ButtonKit.ts#L92)
 
 ### public onEnd(handler): this
 
@@ -67,7 +74,17 @@ button.onClick(null);
 | --------- | ---------------------------- | -------- |
 | handler   | CommandKitButtonBuilderOnEnd | ❌       |
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/7e608cc8c859522925eced5a54de0a18e9cbc1e9/packages/commandkit/src/components/ButtonKit.ts#L98)
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/components/button/ButtonKit.ts#L125)
+
+### public onError(handler): this
+
+Sets the handler to run when the interaction collector ends.
+
+| Parameter | Type                         | Optional | Description                                             |
+| --------- | ---------------------------- | -------- | ------------------------------------------------------- |
+| handler   | EventInterceptorErrorHandler | ❌       | The handler to run when the interaction collector ends. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/components/button/ButtonKit.ts#L147)
 
 ### public setCustomId(customId): this
 
@@ -131,6 +148,6 @@ ComponentBuilder.toJSON
 
 ### public static from(other): ButtonBuilder
 
-| Parameter | Type                                                                                                                                                                                                                 | Optional |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| other     | [APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent) \| JSONEncodable\<[APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent)> | ❌       |
+| Parameter | Type                                                                                             | Optional                                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | --- |
+| other     | [APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent) | JSONEncodable\<[APIButtonComponent](https://discord-api-types.dev/api/discord-api-types-v10#APIButtonComponent)> | ❌  |

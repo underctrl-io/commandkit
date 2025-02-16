@@ -8,11 +8,11 @@ async function main() {
     input: ['./packages/commandkit/src'],
     markdown: true,
     clean: true,
-    typeLinkerBasePath: '/docs',
+    typeLinkerBasePath: '/next/api-reference',
     extension: 'mdx',
     includeMarkdownHeaders: true,
     omitTypeLinkerExtension: true,
-    output: './apps/docs/content/docs',
+    output: './apps/website/docs/api-reference',
     links: { ...DefaultLinksFactory, ...DiscordLinks },
   });
 
@@ -23,9 +23,9 @@ async function main() {
   if (!mod) return;
 
   const heading = (name: string, description: string) =>
-    `---\ntitle: ${name}\ndescription: ${
+    `---\ntitle: ${name}\ndescription: "${
       description || 'No description available.'
-    }\n---\n\n`;
+    }"\n---\n\n`;
 
   const classes = Object.values(mod.classes).map((cls) => {
     return `<Card title="${cls.data.name}" description="${

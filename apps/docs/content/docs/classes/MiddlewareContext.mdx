@@ -1,0 +1,233 @@
+---
+title: MiddlewareContext
+description: No description provided
+---
+
+## MiddlewareContext extends Context\<T>
+
+```typescript
+new MiddlewareContext(commandkit, config);
+```
+
+| Parameter  | Type                                   | Optional | Description               |
+| ---------- | -------------------------------------- | -------- | ------------------------- |
+| commandkit | [CommandKit](/docs/classes/CommandKit) | ❌       | The command kit instance. |
+| config     | ContextParameters\<T>                  | ❌       | The context parameters.   |
+
+## Properties
+
+### public client: any
+
+The client instance.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L117)
+
+### public commandkit: any
+
+The command kit instance.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L129)
+
+### public interaction: any
+
+The interaction that triggered the command.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L107)
+
+### public message: any
+
+The message that triggered the command.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L112)
+
+### public cancelled: any
+
+Whether the command execution was cancelled.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L420)
+
+### public commandName: any
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L147)
+
+### public executionMode: any
+
+The execution mode of the command.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L225)
+
+### public forwarded: any
+
+Whether this context was forwarded from another context. This happens when a command forwards its context to another command.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L170)
+
+### public options: any
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L155)
+
+### public store: any
+
+The shared key-value store for this context. This can be used to store data that needs to be shared between middlewares or commands.
+This store is shared across all contexts in the same command execution, including the cloned contexts and middleware contexts.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L143)
+
+## Methods
+
+### public args(): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L368)
+
+### public cancel(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Cancels the command execution.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L427)
+
+### public cancelDeferred(id): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Cancels the deferred function with the given identifier.
+
+| Parameter | Type                                                                                              | Optional | Description                              |
+| --------- | ------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------- |
+| id        | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       | The identifier of the deferred function. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L399)
+
+### public clone(config?): [Context](/docs/classes/Context)\<T>
+
+Creates a clone of this context
+
+| Parameter | Type                            | Optional |
+| --------- | ------------------------------- | -------- |
+| config    | Partial\<ContextParameters\<T>> | ✅       |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L350)
+
+### public defer(fn): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+Defers the given function to be executed after this command's execution.
+
+| Parameter | Type                | Optional                                                     | Description |
+| --------- | ------------------- | ------------------------------------------------------------ | ----------- | --- | ---------------------- |
+| fn        | GenericFunction\<\[ | [CommandKitEnvironment](/docs/classes/CommandKitEnvironment) | ]>          | ❌  | The function to defer. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L391)
+
+### public exit(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Stops upcoming middleware or current command execution.
+If this is called inside pre-stage middleware, the next run will be the actual command, skipping all other pre-stage middlewares.
+If this is called inside a command itself, it will skip all post-stage middlewares.
+If this is called inside post-stage middleware, it will skip all other post-stage middlewares.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L382)
+
+### public forwardCommand(command): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<never>
+
+Forwards the context to another command. The target handler will be the same as current handler.
+
+| Parameter | Type                                                                                              | Optional | Description                |
+| --------- | ------------------------------------------------------------------------------------------------- | -------- | -------------------------- |
+| command   | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       | The command to forward to. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L178)
+
+### public getCommandIdentifier(): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+Returns the command identifier.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L279)
+
+### public getGuildLocale(): null | Locale
+
+Returns the locale of the guild where this command was triggered.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L290)
+
+### public getLocale(preferUser): Locale
+
+Returns the locale for this command.
+
+| Parameter  | Type                                                                                                | Optional | Description                                                  |
+| ---------- | --------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------ |
+| preferUser | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ❌       | Whether to prefer the user's locale over the guild's locale. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L314)
+
+### public getUserLocale(): null | Locale
+
+Returns the locale of the user who triggered this command.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L301)
+
+### public isAutocomplete(): is | AutocompleteCommandContext
+
+Whether the command was triggered by an autocomplete interaction.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L251)
+
+### public isCached(fn): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+Validates if the given function is a cached function.
+
+| Parameter | Type            | Optional | Description               |
+| --------- | --------------- | -------- | ------------------------- |
+| fn        | GenericFunction | ❌       | The function to validate. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L407)
+
+### public isInteraction(): is | InteractionCommandContext
+
+Whether the command was triggered by an interaction.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L232)
+
+### public isMessage(): is | [Context](/docs/classes/Context)\<'message'>
+
+Whether the command was triggered by a message.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L272)
+
+### public isMessageContextMenu(): is | MessageContextMenuCommandContext
+
+Whether the command was triggered by a message context menu interaction.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L258)
+
+### public isMiddleware(): is | MiddlewareContext\<T>
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L364)
+
+### public isSlashCommand(): is | SlashCommandContext
+
+Whether the command was triggered by a slash command interaction.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L244)
+
+### public isUserContextMenu(): is | UserContextMenuCommandContext
+
+Whether the command was triggered by a user context menu interaction.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L265)
+
+### public locale(locale?): [Localization](/docs/classes/Localization)
+
+Returns the i18n api for this command.
+
+| Parameter | Type   | Optional | Description                         |
+| --------- | ------ | -------- | ----------------------------------- |
+| locale    | Locale | ✅       | The locale to use for the i18n api. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L338)
+
+### public setLocale(locale): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Sets the locale for this command.
+
+| Parameter | Type | Optional | Description |
+| --------- | ---- | -------- | ----------- | ------------------ |
+| locale    | null | Locale   | ❌          | The locale to set. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L330)

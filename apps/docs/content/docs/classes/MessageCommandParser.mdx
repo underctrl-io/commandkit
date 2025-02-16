@@ -1,0 +1,64 @@
+---
+title: MessageCommandParser
+description: No description provided
+---
+
+## MessageCommandParser
+
+```typescript
+new MessageCommandParser(message, prefix, schema);
+```
+
+| Parameter | Type                                               | Optional |
+| --------- | -------------------------------------------------- | -------- |
+| message   | Message                                            | ❌       |
+| prefix    | Array\<string>                                     | ❌       |
+| schema    | ( command: string ) => MessageCommandOptionsSchema | ❌       |
+
+## Properties
+
+### public message: any
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L34)
+
+### public options: any
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L44)
+
+## Methods
+
+### public getArgs(): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L39)
+
+### public getCommand(): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L56)
+
+### public getFullCommand(): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L76)
+
+### public getOption(name): undefined | T
+
+| Parameter | Type                                                                                              | Optional |
+| --------- | ------------------------------------------------------------------------------------------------- | -------- |
+| name      | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L52)
+
+### public getPrefix(): undefined | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L68)
+
+### public getSubcommand(): undefined | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L60)
+
+### public getSubcommandGroup(): undefined | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L64)
+
+### public parse(): ParsedMessageCommand
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/MessageCommandParser.ts#L82)

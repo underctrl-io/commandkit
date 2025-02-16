@@ -1,0 +1,122 @@
+---
+title: CommandKitEnvironment
+description: No description provided
+---
+
+## CommandKitEnvironment
+
+```typescript
+new CommandKitEnvironment(commandkit);
+```
+
+| Parameter  | Type                                   | Optional | Description              |
+| ---------- | -------------------------------------- | -------- | ------------------------ |
+| commandkit | [CommandKit](/docs/classes/CommandKit) | ❌       | The commandkit instance. |
+
+## Properties
+
+### public commandkit: any
+
+The commandkit instance.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L30)
+
+### public variables: any
+
+The variables store for this environment.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L78)
+
+## Methods
+
+### public clearAllDeferredFunctions(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Clear all deferred functions.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L125)
+
+### public clearDeferredFunction(id): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Clear a deferred function by id.
+
+| Parameter | Type                                                                                              | Optional | Description                        |
+| --------- | ------------------------------------------------------------------------------------------------- | -------- | ---------------------------------- |
+| id        | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       | The deferred function id to clear. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L101)
+
+### public getExecutionError(): null | [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+
+Get the execution error.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L36)
+
+### public getExecutionTime(): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+Get the execution time in milliseconds.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L159)
+
+### public getMarker(): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+Get the marker.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L151)
+
+### public getType(): [CommandKitEnvironmentType](/docs/enums/CommandKitEnvironmentType)
+
+Get the environment type.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L56)
+
+### public markEnd(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Mark the end of a command execution.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L143)
+
+### public markStart(marker): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Mark the start of a command execution.
+
+| Parameter | Type                                                                                              | Optional | Description        |
+| --------- | ------------------------------------------------------------------------------------------------- | -------- | ------------------ |
+| marker    | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌       | The marker to set. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L134)
+
+### public registerDeferredFunction(fn): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+Register a deferred function.
+
+| Parameter | Type                | Optional              | Description |
+| --------- | ------------------- | --------------------- | ----------- | --- | ---------------------------------- |
+| fn        | GenericFunction\<\[ | CommandKitEnvironment | ]>          | ❌  | The deferred function to register. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L88)
+
+### public runDeferredFunctions(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+
+Run all deferred functions sequentially.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L109)
+
+### public setExecutionError(error): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Set the execution error.
+
+| Parameter | Type                                                                                            | Optional | Description       |
+| --------- | ----------------------------------------------------------------------------------------------- | -------- | ----------------- |
+| error     | [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) | ❌       | The error to set. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L45)
+
+### public setType(type): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Set the environment type.
+
+| Parameter | Type                                                               | Optional | Description                  |
+| --------- | ------------------------------------------------------------------ | -------- | ---------------------------- |
+| type      | [CommandKitEnvironmentType](/docs/enums/CommandKitEnvironmentType) | ❌       | The environment type to set. |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/context/environment.ts#L71)

@@ -1,0 +1,21 @@
+---
+title: cacheLife
+description: Sets the TTL for the current cache operation
+---
+
+### cacheLife(ttl): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+Sets the TTL for the current cache operation
+
+```ts
+const fetchData = cache(async () => {
+  cacheLife('30m');
+  return await expensiveOperation();
+});
+```
+
+| Parameter | Type                                                                                              | Optional                                                                                          | Description |
+| --------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------- | -------------------------------------------------------------- |
+| ttl       | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌          | Time-to-live in milliseconds or as a string (e.g., '1h', '5m') |
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/cache/cache.ts#L238)

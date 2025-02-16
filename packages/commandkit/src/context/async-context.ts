@@ -121,7 +121,6 @@ export function useEnvironment(): CommandKitEnvironment {
 
 /**
  * Ensures the command is only available in guilds.
- * Note: do not wrap this function in a try/catch block.
  */
 export function guildOnly() {
   const env = useEnvironment();
@@ -141,7 +140,6 @@ export function guildOnly() {
 
 /**
  * Ensures the command is only available in DMs.
- * Note: do not wrap this function in a try/catch block.
  */
 export function dmOnly() {
   const env = useEnvironment();
