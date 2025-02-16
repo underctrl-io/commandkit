@@ -81,15 +81,19 @@ async function handleLoading(
   type?: ReloadOptions,
 ) {
   commands = commands.filter((cmd) => !cmd.options?.deleted);
-  const devOnlyCommands = commands.filter((cmd) => cmd.options?.devOnly);
-  const globalCommands = commands.filter((cmd) => !cmd.options?.devOnly);
+  const devOnlyCommands = commands.filter(
+    (cmd) => cmd.options?.devOnly || cmd.data?.guilds?.length,
+  );
+  const globalCommands = commands.filter(
+    (cmd) => !cmd.options?.devOnly && !cmd.data?.guilds?.length,
+  );
 
   if (type === 'dev') {
-    await loadDevCommands(client, devOnlyCommands, devGuildIds, reloading);
+    await loadGuildCommands(client, devOnlyCommands, devGuildIds, reloading);
   } else if (type === 'global') {
     await loadGlobalCommands(client, globalCommands, reloading);
   } else {
-    await loadDevCommands(client, devOnlyCommands, devGuildIds, reloading);
+    await loadGuildCommands(client, devOnlyCommands, devGuildIds, reloading);
     await loadGlobalCommands(client, globalCommands, reloading);
   }
 }
@@ -130,6 +134,25 @@ async function loadGlobalCommands(
   );
 }
 
+async function loadGuildCommands(
+  client: Client<true>,
+  commands: CommandFileObject[],
+  guildIds: string[],
+  reloading?: boolean,
+) {
+  const guildDefined = commands.filter((cmd) => cmd.data.guilds?.length);
+  const guildNotDefined = commands.filter((cmd) => !cmd.data.guilds?.length);
+
+  await loadDevCommands(client, guildNotDefined, guildIds, reloading);
+  await loadDevCommands(
+    client,
+    guildDefined,
+    guildDefined.flatMap((c) => c.data.guilds).filter((c) => c !== undefined),
+    reloading,
+    'guild',
+  );
+}
+
 /**
  * Load commands for dev guilds.
  * @param client - The discord.js client instance.
@@ -142,8 +165,12 @@ async function loadDevCommands(
   commands: CommandFileObject[],
   guildIds: string[],
   reloading?: boolean,
+  type = 'developer',
 ) {
-  const requestBody = commands.map((cmd) => cmd.data);
+  const requestBody = commands.map((cmd) => {
+    delete cmd.data.guilds;
+    return cmd.data;
+  });
 
   for (const guildId of guildIds) {
     const targetGuild =
@@ -166,7 +193,7 @@ async function loadDevCommands(
           colors.red(
             `Error ${
               reloading ? 'reloading' : 'loading'
-            } developer application commands in guild "${
+            } ${type || 'developer'} application commands in guild "${
               targetGuild?.name || guildId
             }".\n`,
           ),
@@ -178,7 +205,7 @@ async function loadDevCommands(
       colors.green(
         `${reloading ? 'Reloaded' : 'Loaded'} ${
           requestBody.length
-        } developer commands in guild "${targetGuild.name}".`,
+        } ${type || 'developer'} commands in guild "${targetGuild.name}".`,
       ),
     );
   }

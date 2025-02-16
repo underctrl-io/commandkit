@@ -59,15 +59,19 @@ async function handleRegistration(
   devGuildIds: string[],
   type?: ReloadOptions,
 ) {
-  const devOnlyCommands = commands.filter((cmd) => cmd.options?.devOnly);
-  const globalCommands = commands.filter((cmd) => !cmd.options?.devOnly);
+  const devOnlyCommands = commands.filter(
+    (cmd) => cmd.options?.devOnly || cmd.data?.guilds?.length,
+  );
+  const globalCommands = commands.filter(
+    (cmd) => !cmd.options?.devOnly && !cmd.data?.guilds?.length,
+  );
 
   if (type === 'dev') {
-    await registerDevCommands(client, devOnlyCommands, devGuildIds);
+    await registerGuildCommands(client, devOnlyCommands, devGuildIds);
   } else if (type === 'global') {
     await registerGlobalCommands(client, globalCommands);
   } else {
-    await registerDevCommands(client, devOnlyCommands, devGuildIds);
+    await registerGuildCommands(client, devOnlyCommands, devGuildIds);
     await registerGlobalCommands(client, globalCommands);
   }
 }
@@ -255,16 +259,17 @@ async function registerDevCommands(
       // <!-- Register guild command -->
       if (targetCommand) continue;
 
-      await guildCommands
-        .create(command.data as ApplicationCommandDataResolvable)
-        .catch((error) => {
-          throw new Error(
-            colors.red(
-              `Failed to register command "${command.data.name}" in ${guildCommands.guild.name}.\n`,
-            ),
-            error,
-          );
-        });
+      delete command.data.guilds;
+      const commandData = command.data as ApplicationCommandDataResolvable;
+
+      await guildCommands.create(commandData).catch((error) => {
+        throw new Error(
+          colors.red(
+            `Failed to register command "${command.data.name}" in ${guildCommands.guild.name}.\n`,
+          ),
+          error,
+        );
+      });
 
       Logger.log(
         colors.green(
@@ -273,4 +278,20 @@ async function registerDevCommands(
       );
     }
   }
+}
+
+async function registerGuildCommands(
+  client: Client<true>,
+  commands: CommandFileObject[],
+  devGuildIds: string[],
+) {
+  const guildCommands = commands.filter((c) => c.data.guilds?.length);
+  const notGuildCommands = commands.filter((c) => c.options?.devOnly);
+
+  await registerDevCommands(client, notGuildCommands, devGuildIds);
+  await registerDevCommands(
+    client,
+    guildCommands,
+    guildCommands.flatMap((c) => c.data.guilds).filter((c) => c !== undefined),
+  );
 }

@@ -32,6 +32,7 @@ interface AppCommandMiddleware {
 interface LoadedCommand {
   command: ParsedCommand;
   data: AppCommand;
+  guilds?: string[];
 }
 
 interface LoadedMiddleware {
@@ -98,6 +99,13 @@ export class AppCommandHandler {
           });
 
           if (!loadedCommand) return null;
+
+          if (
+            source.guildId &&
+            loadedCommand.guilds?.length &&
+            !loadedCommand.guilds.includes(source.guildId!)
+          )
+            return null;
 
           const json =
             'toJSON' in loadedCommand.data.command
@@ -226,6 +234,7 @@ export class AppCommandHandler {
 
       this.loadedCommands.set(name, {
         command,
+        guilds: data.guilds,
         data: {
           ...data,
           command: localizedCommand,

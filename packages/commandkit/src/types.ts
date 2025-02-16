@@ -258,7 +258,9 @@ export interface CommandOptions {
   [key: string]: any;
 }
 
-export type CommandData = RESTPostAPIApplicationCommandsJSONBody;
+export type CommandData = RESTPostAPIApplicationCommandsJSONBody & {
+  guilds?: string[];
+};
 
 export type CommandObject = {
   /**
