@@ -206,7 +206,7 @@ export class CommandsRouter {
       if (commandSegments.length !== segments.length) return false;
 
       return commandSegments.every((segment, index) => {
-        if (segment === '[name]') return true;
+        if (/^\[.+\]$/.test(segment)) return true;
         return segment === segments[index];
       });
     });
@@ -266,7 +266,7 @@ export class CommandsRouter {
         });
 
         const parent = parentSegments.join(' ');
-        const name = parts[parts.length - 1].replace(/\.(m|c)?(j|t)sx?$/, '');
+        const name = parts[parts.length - 2];
 
         const command: ParsedCommand = {
           name,

@@ -15,7 +15,7 @@ export async function bootstrapProductionServer(configPath: string) {
     panic('Could not find production build, run `commandkit build` first');
   }
 
-  const spinner = createSpinner('Starting production server...');
+  const spinner = await createSpinner('Starting production server...');
 
   try {
     const processEnv = {};

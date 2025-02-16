@@ -1,8 +1,36 @@
-import type { CommandData, SlashCommand, MessageCommand } from 'commandkit';
+import type {
+  CommandData,
+  SlashCommand,
+  MessageCommand,
+  MessageContextMenuCommand,
+} from 'commandkit';
+import {
+  ApplicationIntegrationType,
+  InteractionContextType,
+  MessageFlags,
+} from 'discord.js';
 
-export const data: CommandData = {
+export const command: CommandData = {
   name: 'cat',
   description: 'cat command',
+  integration_types: [
+    ApplicationIntegrationType.GuildInstall,
+    ApplicationIntegrationType.UserInstall,
+  ],
+  contexts: [
+    InteractionContextType.Guild,
+    InteractionContextType.BotDM,
+    InteractionContextType.PrivateChannel,
+  ],
+};
+
+export const messageContextMenu: MessageContextMenuCommand = async (ctx) => {
+  const content = ctx.interaction.targetMessage.content || 'No content found';
+
+  await ctx.interaction.reply({
+    content,
+    flags: MessageFlags.Ephemeral,
+  });
 };
 
 export const chatInput: SlashCommand = async (ctx) => {

@@ -115,8 +115,9 @@ async function loadGlobalCommands(
           `Error ${
             reloading ? 'reloading' : 'loading'
           } global application commands.\n`,
-        ),
-        error,
+        ) +
+          '\n' +
+          error?.stack || error,
       );
     });
 

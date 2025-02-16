@@ -24,7 +24,7 @@ export async function generateCommand(name: string, customPath?: string) {
   const commandFile = `
 import type { CommandData, SlashCommand, MessageCommand } from 'commandkit';
 
-export const data: CommandData = {
+export const command: CommandData = {
   name: '${name}',
   description: '${name} command',
 };
@@ -34,7 +34,7 @@ export const chatInput: SlashCommand = async (ctx) => {
 };
 
 export const message: MessageCommand = async (ctx) => {
-    await ctx.message.reply('Hello from ${name}!');
+  await ctx.message.reply('Hello from ${name}!');
 };
 `.trim();
 

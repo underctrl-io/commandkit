@@ -10,7 +10,7 @@ export async function bootstrapDevelopmentServer(opts: any) {
   const config = await findCommandKitConfig(opts.config);
   const { watch = true, nodeOptions = [], clearRestartLogs = true } = config;
 
-  const spinner = createSpinner('Starting development server...');
+  const spinner = await createSpinner('Starting development server...');
   const start = performance.now();
 
   try {

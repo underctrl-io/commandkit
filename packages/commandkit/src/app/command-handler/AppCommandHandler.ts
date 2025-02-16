@@ -74,10 +74,7 @@ export class AppCommandHandler {
   public constructor(public readonly commandkit: CommandKit) {}
 
   public getCommandsArray() {
-    return Array.from(this.loadedCommands.values()).map((v) => {
-      if ('toJSON' in v && typeof v.toJSON === 'function') return v.toJSON();
-      return v.data.command;
-    });
+    return Array.from(this.loadedCommands.values());
   }
 
   public async prepareCommandRun(

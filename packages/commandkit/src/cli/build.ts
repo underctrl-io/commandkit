@@ -17,7 +17,7 @@ import { BuildOptions } from './types';
 
 export async function bootstrapProductionBuild(configPath: string) {
   const config = await findCommandKitConfig(configPath);
-  const spinner = createSpinner('Creating optimized production build...');
+  const spinner = await createSpinner('Creating optimized production build...');
   const start = performance.now();
 
   try {
@@ -104,13 +104,15 @@ async function buildProject(options: BuildOptions) {
       !!polyfillRequire,
     );
 
-    write(
-      colors.green(
-        `\nRun ${colors.magenta(`commandkit start`)} ${colors.green(
-          'to start your bot.',
-        )}`,
-      ),
-    );
+    if (!options.isDevelopment) {
+      write(
+        colors.green(
+          `\nRun ${colors.magenta(`commandkit start`)} ${colors.green(
+            'to start your bot.',
+          )}`,
+        ),
+      );
+    }
   } catch (e) {
     panic(e);
   }

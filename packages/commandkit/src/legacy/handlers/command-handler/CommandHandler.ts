@@ -1,4 +1,10 @@
-import { CacheType, Events, Interaction, Message } from 'discord.js';
+import {
+  ApplicationCommandType,
+  CacheType,
+  Events,
+  Interaction,
+  Message,
+} from 'discord.js';
 import type {
   CommandData,
   CommandFileObject,
@@ -185,6 +191,8 @@ export class CommandHandler {
         commandObj.category = commandCategory;
       }
 
+      Logger.info(`Loaded command: ${commandObj.data.name}`);
+
       this.#data.commands.push(commandObj);
     }
 
@@ -193,19 +201,56 @@ export class CommandHandler {
 
       const commands = handler.getCommandsArray();
 
-      // this.#data.commands.push(...commands);
-
       for (const cmd of commands) {
-        const idx = this.#data.commands.findIndex(
-          (c) => c.data.name === cmd.name,
-        );
+        const json: CommandData =
+          'toJSON' in cmd.data.command
+            ? cmd.data.command.toJSON()
+            : cmd.data.command;
 
-        if (idx !== -1) {
-          // @ts-ignore
-          this.#data.commands[idx] = { data: cmd };
-        } else {
-          // @ts-ignore
-          this.#data.commands.push({ data: cmd });
+        const additionals: CommandData[] = [json];
+
+        if (
+          cmd.data.userContextMenu &&
+          json.type !== ApplicationCommandType.User
+        ) {
+          additionals.push({
+            ...json,
+            type: ApplicationCommandType.User,
+            options: undefined,
+            description_localizations: undefined,
+            // @ts-ignore
+            description: undefined,
+          });
+        }
+
+        if (
+          cmd.data.messageContextMenu &&
+          json.type !== ApplicationCommandType.Message
+        ) {
+          additionals.push({
+            ...json,
+            type: ApplicationCommandType.Message,
+            description_localizations: undefined,
+            // @ts-ignore
+            description: undefined,
+            options: undefined,
+          });
+        }
+
+        for (const variant of additionals) {
+          const idx = this.#data.commands.findIndex(
+            (c) => c.data.name === variant.name && c.data.type === variant.type,
+          );
+
+          if (idx !== -1) {
+            // @ts-ignore
+            this.#data.commands[idx] = { data: variant };
+          } else {
+            // @ts-ignore
+            this.#data.commands.push({ data: variant });
+          }
+
+          Logger.info(`(app ✨) Loaded command: ${variant.name}`);
         }
       }
     }

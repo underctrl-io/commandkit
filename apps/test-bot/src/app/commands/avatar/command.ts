@@ -1,4 +1,8 @@
-import { MessageCommandContext, SlashCommandContext } from 'commandkit';
+import {
+  MessageCommandContext,
+  SlashCommandContext,
+  UserContextMenuCommandContext,
+} from 'commandkit';
 import { ApplicationCommandOptionType } from 'discord.js';
 
 export const command = {
@@ -12,6 +16,26 @@ export const command = {
     },
   ],
 };
+
+export async function userContextMenu(ctx: UserContextMenuCommandContext) {
+  const target = ctx.interaction.targetUser;
+
+  const { t } = ctx.locale();
+
+  const msg = await t('avatar', { user: target.username });
+
+  await ctx.interaction.reply({
+    embeds: [
+      {
+        title: msg,
+        image: {
+          url: target.displayAvatarURL({ size: 2048 }),
+        },
+        color: 0x7289da,
+      },
+    ],
+  });
+}
 
 export async function chatInput(ctx: SlashCommandContext) {
   const user = ctx.options.getUser('user') ?? ctx.interaction.user;

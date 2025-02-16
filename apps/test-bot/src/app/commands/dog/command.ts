@@ -1,6 +1,6 @@
 import type { CommandData, SlashCommand, MessageCommand } from 'commandkit';
 
-export const data: CommandData = {
+export const command: CommandData = {
   name: 'dog',
   description: 'dog command',
 };

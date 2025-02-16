@@ -4,7 +4,9 @@ import { parseEnv } from './parse-env';
 import { ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
 import colors from '../utils/colors';
 import { CLIOptions } from './types';
-import ora, { Ora } from 'ora';
+import type { Ora } from 'ora';
+
+let ora: typeof import('ora') | undefined;
 
 export function createNodeProcess(
   options: CLIOptions,
@@ -50,8 +52,10 @@ export function loadEnvFiles(options: CLIOptions) {
   return processEnv;
 }
 
-export function createSpinner(text: string): Ora {
-  return ora({
+export async function createSpinner(text: string): Promise<Ora> {
+  if (!ora) ora = await import('ora');
+
+  return (ora.default || ora)({
     text,
     color: 'cyan',
   });
