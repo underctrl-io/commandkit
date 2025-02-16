@@ -188,17 +188,15 @@ export class CommandKit extends EventEmitter {
    */
   async #init() {
     // <!-- Setup event handler -->
-    if (this.#data.eventsPath) {
-      const eventHandler = new EventHandler({
-        client: this.#data.client,
-        eventsPath: this.#data.eventsPath,
-        commandKitInstance: this,
-      });
+    const eventHandler = new EventHandler({
+      client: this.#data.client,
+      eventsPath: this.#data.eventsPath,
+      commandKitInstance: this,
+    });
 
-      await eventHandler.init();
+    await eventHandler.init();
 
-      this.#data.eventHandler = eventHandler;
-    }
+    this.#data.eventHandler = eventHandler;
 
     // <!-- Setup validation handler -->
     if (this.#data.validationsPath) {
@@ -212,24 +210,22 @@ export class CommandKit extends EventEmitter {
     }
 
     // <!-- Setup command handler -->
-    if (this.#data.commandsPath) {
-      const commandHandler = new CommandHandler({
-        client: this.#data.client,
-        commandsPath: this.#data.commandsPath,
-        devGuildIds: this.#data.devGuildIds || [],
-        devUserIds: this.#data.devUserIds || [],
-        devRoleIds: this.#data.devRoleIds || [],
-        validationHandler: this.#data.validationHandler,
-        skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
-        commandkitInstance: this,
-        bulkRegister: this.#data.bulkRegister || false,
-      });
+    const commandHandler = new CommandHandler({
+      client: this.#data.client,
+      commandsPath: this.#data.commandsPath,
+      devGuildIds: this.#data.devGuildIds || [],
+      devUserIds: this.#data.devUserIds || [],
+      devRoleIds: this.#data.devRoleIds || [],
+      validationHandler: this.#data.validationHandler,
+      skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
+      commandkitInstance: this,
+      bulkRegister: this.#data.bulkRegister || false,
+    });
 
-      this.#data.commandHandler = commandHandler;
+    this.#data.commandHandler = commandHandler;
 
-      await this.#initApp();
-      await commandHandler.init();
-    }
+    await this.#initApp();
+    await commandHandler.init();
   }
 
   async #initApp() {

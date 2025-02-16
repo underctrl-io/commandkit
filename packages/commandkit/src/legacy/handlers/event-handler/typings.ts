@@ -6,7 +6,7 @@ import type { CommandKit } from '../../../CommandKit';
  */
 export interface EventHandlerOptions {
   client: Client;
-  eventsPath: string;
+  eventsPath?: string;
   commandKitInstance: CommandKit;
 }
 

@@ -27,6 +27,7 @@ export class EventHandler {
   }
 
   async #buildEvents() {
+    if (!this.#data.eventsPath) return;
     const eventFolderPaths = await getFolderPaths(this.#data.eventsPath);
 
     for (const eventFolderPath of eventFolderPaths) {

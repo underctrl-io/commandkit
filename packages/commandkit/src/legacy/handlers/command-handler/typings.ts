@@ -21,7 +21,7 @@ export interface CommandHandlerOptions {
   /**
    * Path to the user's commands.
    */
-  commandsPath: string;
+  commandsPath?: string;
 
   /**
    * An array of developer guild IDs.
