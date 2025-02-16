@@ -11,6 +11,9 @@ export async function bootstrapCommandkitCLI(
   const { bootstrapDevelopmentServer } = await import('./development');
   const { bootstrapProductionServer } = await import('./production');
   const { bootstrapProductionBuild } = await import('./build');
+  const { generateCommand, generateEvent, generateLocale } = await import(
+    './generators'
+  );
 
   const program = new Command('commandkit');
 
@@ -53,6 +56,30 @@ export async function bootstrapCommandkitCLI(
     .action(() => {
       const options = program.opts();
       bootstrapProductionBuild(options.config);
+    });
+
+  program
+    .command('create')
+    .description('Create new commands, events, or locale files')
+    .option('-c, --command <name>', 'Create a new command')
+    .option('-e, --event <name>', 'Create a new event')
+    .option(
+      '-l, --locale <locale> <command>',
+      'Create a new locale file for the given command',
+    )
+    .action(async (options) => {
+      if (options.command) {
+        await generateCommand(options.command);
+      } else if (options.event) {
+        await generateEvent(options.event);
+      } else if (options.locale) {
+        const [locale, command] = options.locale;
+        await generateLocale(locale, command);
+      } else {
+        console.error(
+          'Please specify what to create: --command, --event, or --locale',
+        );
+      }
     });
 
   await program.parseAsync(argv, options);

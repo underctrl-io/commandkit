@@ -15,7 +15,7 @@ export function findAppDirectory(): string | null {
 
   if (!existsSync(root)) root = process.cwd();
 
-  const dirs = ['app', 'src/app'].map((dir) => join(root, dir));
+  const dirs = ['src/app'].map((dir) => join(root, dir));
 
   for (const dir of dirs) {
     if (existsSync(dir)) {

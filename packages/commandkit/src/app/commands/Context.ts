@@ -7,6 +7,7 @@ import {
   Interaction,
   UserContextMenuCommandInteraction,
   Client,
+  Awaitable,
 } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { Localization } from '../i18n/Localization';
@@ -84,6 +85,18 @@ export type CommandContextOptions<T extends CommandExecutionMode> =
           : T extends 'userContextMenu'
             ? UserContextMenuCommandInteraction['options']
             : never;
+
+export type AnyCommandExecute<ContextType extends Context = Context> = (
+  ctx: ContextType,
+) => Awaitable<unknown>;
+
+export type SlashCommand = AnyCommandExecute<SlashCommandContext>;
+export type AutocompleteCommand = AnyCommandExecute<AutocompleteCommandContext>;
+export type MessageContextMenuCommand =
+  AnyCommandExecute<MessageContextMenuCommandContext>;
+export type UserContextMenuCommand =
+  AnyCommandExecute<UserContextMenuCommandContext>;
+export type MessageCommand = AnyCommandExecute<MessageCommandContext>;
 
 export class Context<
   ExecutionMode extends CommandExecutionMode = CommandExecutionMode,

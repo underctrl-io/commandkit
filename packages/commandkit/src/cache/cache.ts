@@ -79,6 +79,15 @@ function getCacheProvider() {
  * Internal cache implementation
  * @internal
  * @private
+ * This is used directly by the compiler if the function is annotated with `"use cache"` directive.
+ * @example
+ * ```ts
+ * async function myCachedFunction() {
+ *   "use cache";
+ *   // can use cacheTag() and cacheLife() here to customize cache behavior
+ *   return await db.query('SELECT * FROM users');
+ * }
+ * ```
  */
 function useCache<R extends any[], F extends AsyncFunction<R>>(
   fn: F,
@@ -125,26 +134,29 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
 
         // Try to get cached value using effective key
         const cached = await provider.get(effectiveKey);
-        if (cached) return cached.value;
+        if (cached && cached.value != null) return cached.value;
 
         // If we reach here, we need to cache the value
         const result = await fn(...args);
 
-        // Get the final key name (might have been modified by cacheTag)
-        const finalKey = context.params.name!;
-        const ttl = context.params.ttl ?? DEFAULT_TTL;
+        // Only cache if result is not null/undefined
+        if (result != null) {
+          // Get the final key name (might have been modified by cacheTag)
+          const finalKey = context.params.name!;
+          const ttl = context.params.ttl ?? DEFAULT_TTL;
 
-        // Store the result
-        await provider.set(finalKey, result, ttl);
+          // Store the result
+          await provider.set(finalKey, result, ttl);
 
-        // Update function store
-        fnStore.set(keyHash, {
-          key: finalKey,
-          hash: keyHash,
-          ttl,
-          original: fn,
-          memo,
-        });
+          // Update function store
+          fnStore.set(keyHash, {
+            key: finalKey,
+            hash: keyHash,
+            ttl,
+            original: fn,
+            memo,
+          });
+        }
 
         return result;
       },
@@ -252,10 +264,6 @@ export async function invalidate(tag: string): Promise<void> {
     (v) => v.key === tag || v.hash === tag,
   );
 
-  // if (!entry) {
-  //   throw new Error(`Cache key ${tag} was not found.`);
-  // }
-
   if (!entry) return;
 
   await provider.delete(entry.key);
@@ -281,10 +289,6 @@ export async function revalidate<T = unknown>(
   const entry = Array.from(fnStore.values()).find(
     (v) => v.key === tag || v.hash === tag,
   );
-
-  // if (!entry) {
-  //   throw new Error(`Cache key ${tag} was not found.`);
-  // }
 
   if (!entry) return undefined as T;
 

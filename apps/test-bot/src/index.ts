@@ -1,5 +1,6 @@
 import { CommandKit } from 'commandkit';
 import { Client } from 'discord.js';
+
 process.loadEnvFile();
 
 const client = new Client({

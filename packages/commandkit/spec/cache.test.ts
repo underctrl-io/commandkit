@@ -179,12 +179,6 @@ describe('Cache', () => {
     expect(await fn()).not.toBe(result1);
   });
 
-  test('Should throw when invalidating non-existent cache', async () => {
-    await expect(invalidate('non-existent')).rejects.toThrow(
-      'Cache key non-existent was not found',
-    );
-  });
-
   test('Should revalidate cache using tag', async () => {
     async function fn(multiplier: number) {
       'use cache';
@@ -198,12 +192,6 @@ describe('Cache', () => {
     const fresh = await revalidate('test-revalidate', 2);
     expect(fresh).not.toBe(result1);
     expect(await fn(2)).toBe(fresh);
-  });
-
-  test('Should throw when revalidating non-existent cache', async () => {
-    await expect(revalidate('non-existent')).rejects.toThrow(
-      'Cache key non-existent was not found',
-    );
   });
 
   test('Should cache with multiple arguments', async () => {

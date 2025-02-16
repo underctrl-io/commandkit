@@ -130,7 +130,7 @@ export async function copyLocaleFiles(_from: string, _to: string) {
   const resolvedFrom = join(process.cwd(), _from);
   const resolvedTo = join(process.cwd(), _to);
 
-  const localePaths = ['app/locales', 'src/app/locales'];
+  const localePaths = ['app/locales'];
   const srcLocalePaths = localePaths.map((path) => join(resolvedFrom, path));
   const destLocalePaths = localePaths.map((path) => join(resolvedTo, path));
 

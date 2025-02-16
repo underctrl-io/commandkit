@@ -1,20 +1,12 @@
 export interface CommandKitConfig {
   /**
-   * The source directory of the project.
+   * The output directory of the project. Defaults to `dist`.
    */
-  src: string;
-  /**
-   * The main "javascript" file of the project.
-   */
-  main: string;
+  outDir: string;
   /**
    * Whether or not to use the watch mode. Defaults to `true`.
    */
   watch: boolean;
-  /**
-   * The output directory of the project. Defaults to `dist`.
-   */
-  outDir: string;
   /**
    * Whether or not to include extra env utilities. Defaults to `true`.
    */
@@ -45,42 +37,22 @@ export interface CommandKitConfig {
   requirePolyfill: boolean;
 }
 
-let globalConfig: Partial<CommandKitConfig> = {
-  envExtra: true,
+const defaultConfig: CommandKitConfig = {
   outDir: 'dist',
   watch: true,
+  envExtra: true,
+  nodeOptions: [],
   clearRestartLogs: true,
   minify: false,
   sourcemap: false,
-  nodeOptions: [],
   antiCrash: true,
   requirePolyfill: true,
 };
 
 export function getConfig(): CommandKitConfig {
-  return globalConfig as CommandKitConfig;
+  return defaultConfig;
 }
 
-const requiredProps = ['src', 'main'] as const;
-
-type R = (typeof requiredProps)[number];
-
-type PartialConfig<T extends CommandKitConfig> = Partial<Omit<T, R>> &
-  Pick<T, R>;
-
-export function defineConfig(config: PartialConfig<CommandKitConfig>) {
-  for (const prop of requiredProps) {
-    if (!config[prop]) {
-      throw new Error(
-        `[CommandKit Config] Missing required config property: ${prop}`,
-      );
-    }
-  }
-
-  globalConfig = {
-    ...globalConfig,
-    ...config,
-  };
-
-  return globalConfig;
+export function defineConfig(config: Partial<CommandKitConfig>) {
+  return { ...defaultConfig, ...config };
 }

@@ -10,12 +10,22 @@ async function getUserXP(guildId: string, userId: string) {
   'use cache';
 
   const key = `xp:${guildId}:${userId}`;
-
-  cacheTag(key);
+  console.log('[getUserXP] Before database.get', {
+    key,
+    timestamp: Date.now(),
+  });
 
   const xp: number = (await database.get(key)) ?? 0;
 
-  console.log(`Cached XP: ${xp} for ${key}`);
+  console.log('[getUserXP] After database.get', {
+    key,
+    xp,
+    timestamp: Date.now(),
+  });
+
+  cacheTag(key);
+
+  console.log(`Cached XP: ${xp} for ${key} = ${xp}`);
 
   return xp;
 }

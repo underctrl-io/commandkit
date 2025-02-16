@@ -9,7 +9,7 @@ const random = cache(
   async () => {
     return Math.random();
   },
-  { tag: 'random', ttl: 60_000 },
+  { name: 'random', ttl: 60_000 },
 );
 
 export async function run({ interaction }: SlashCommandProps) {
