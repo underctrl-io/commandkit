@@ -26,5 +26,8 @@ jobs:
       - name: 🍳 Prepare
         run: pnpm install
 
+      - name: 👷 Build
+        run: pnpm run --filter commandkit build
+
       - name: ✨ Lint
         run: pnpm lint
