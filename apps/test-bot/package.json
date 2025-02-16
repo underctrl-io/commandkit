@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "commandkit": "commandkit",
     "dev": "commandkit dev",
     "build": "commandkit build",
     "start": "commandkit start"

@@ -61,20 +61,24 @@ export async function bootstrapCommandkitCLI(
   program
     .command('create')
     .description('Create new commands, events, or locale files')
-    .option('-c, --command <name>', 'Create a new command')
-    .option('-e, --event <name>', 'Create a new event')
+    .option('-c, --command', 'Create a new command')
+    .option('-e, --event', 'Create a new event')
     .option(
-      '-l, --locale <locale> <command>',
-      'Create a new locale file for the given command',
+      '-l, --locale <locale>',
+      'Specify the locale code (e.g. nl, es, fr)',
     )
-    .action(async (options) => {
+    .argument('<name>', 'The name of the command or event')
+    .action(async (name, options) => {
       if (options.command) {
-        await generateCommand(options.command);
+        await generateCommand(name);
       } else if (options.event) {
-        await generateEvent(options.event);
+        await generateEvent(name);
       } else if (options.locale) {
-        const [locale, command] = options.locale;
-        await generateLocale(locale, command);
+        if (!name) {
+          console.error('Please specify a command name for the locale file');
+          return;
+        }
+        await generateLocale(options.locale, name);
       } else {
         console.error(
           'Please specify what to create: --command, --event, or --locale',

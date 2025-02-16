@@ -10,6 +10,9 @@ const COMMANDS_DIR = join(BASE_PATH, 'src/app/commands');
 const EVENTS_DIR = join(BASE_PATH, 'src/app/events');
 const LOCALES_DIR = join(BASE_PATH, 'src/app/locales');
 
+const formatPath = (path: string) =>
+  path.replace(process.cwd(), '.').replace(/\\/g, '/');
+
 export async function generateCommand(name: string, customPath?: string) {
   const cmdPath = join(customPath || COMMANDS_DIR, name);
   if (!existsSync(cmdPath)) await mkdir(cmdPath, { recursive: true });
@@ -39,19 +42,19 @@ export const message: MessageCommand = async (ctx) => {
 
   console.log(
     colors.green(
-      `Command ${colors.magenta(name)} created at ${colors.blue(cmdPath)}/command.ts`,
+      `Command ${colors.magenta(name)} created at ${colors.blue(formatPath(cmdPath))}/command.ts`,
     ),
   );
 }
 
 export async function generateEvent(name: string, customPath?: string) {
   const eventPath = join(customPath || EVENTS_DIR, name);
-  if (!existsSync) await mkdir(eventPath, { recursive: true });
+  if (!existsSync(eventPath)) await mkdir(eventPath, { recursive: true });
 
   let filename = 'event.ts';
   if (existsSync(join(eventPath, filename))) {
     const count = (await readdir(eventPath)).length;
-    filename = `${String(count).padStart(2, '0')}_${filename}.ts`;
+    filename = `${String(count).padStart(2, '0')}_${filename}`;
   }
 
   const eventFile = `
@@ -64,7 +67,7 @@ export default async function on${name[0].toUpperCase() + name.slice(1)}() {
 
   console.log(
     colors.green(
-      `Event ${colors.magenta(name)} created at ${colors.blue(eventPath)}/${colors.magenta(filename)}`,
+      `Event ${colors.magenta(name)} created at ${colors.blue(formatPath(eventPath))}/${colors.magenta(filename)}`,
     ),
   );
 }
@@ -74,7 +77,11 @@ export async function generateLocale(
   commandName: string,
   customPath?: string,
 ) {
-  if (!Locale[locale] || /^\d+$/.test(locale)) {
+  const localeNames = Object.fromEntries(
+    Object.entries(Locale).map(([k, v]) => [v, k]),
+  );
+
+  if (!localeNames[locale]) {
     panic(`Invalid locale: ${locale}`);
   }
 
@@ -106,7 +113,7 @@ export async function generateLocale(
   console.log(
     colors.green(
       `Locale file for ${colors.magenta(commandName)} created at ${colors.blue(
-        localePath,
+        formatPath(localePath),
       )}/${colors.magenta(`${commandName}.json`)}`,
     ),
   );
