@@ -10,10 +10,11 @@ import {
   panic,
   write,
 } from './common.js';
-import { commandkitPlugin } from './esbuild-plugins/plugin';
 import colors from '../utils/colors.js';
 import { createSpinner } from './utils';
 import { BuildOptions } from './types';
+import { CompilerPluginRuntime } from '../plugins/runtime/CompilerPluginRuntime.js';
+import { isCompilerPlugin } from '../plugins/CompilerPlugin.js';
 
 export async function bootstrapProductionBuild(configPath: string) {
   const config = await findCommandKitConfig(configPath);
@@ -60,7 +61,11 @@ async function buildProject(options: BuildOptions) {
     requirePolyfill: polyfillRequire,
   } = options;
 
+  const config = await findCommandKitConfig(process.cwd());
+
   erase(outDir);
+
+  const compilerPlugins = config.plugins.filter((p) => !isCompilerPlugin(p));
 
   try {
     await build({
@@ -84,11 +89,8 @@ async function buildProject(options: BuildOptions) {
       splitting: true,
       entry: ['src', '!dist', '!.commandkit', `!${outDir}`],
       esbuildPlugins: [
-        commandkitPlugin({
-          'jsx-importsource': false,
-          'use-cache': true,
-          'use-macro': !!options.isDevelopment,
-        }),
+        // @ts-ignore
+        new CompilerPluginRuntime(compilerPlugins),
       ],
       jsxFactory: 'CommandKit.createElement',
       jsxFragment: 'CommandKit.Fragment',

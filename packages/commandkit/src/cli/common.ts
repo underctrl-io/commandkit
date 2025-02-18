@@ -4,6 +4,7 @@ import { rimrafSync } from 'rimraf';
 import { join } from 'node:path';
 import fs from 'node:fs';
 import colors from '../utils/colors';
+import { ResolvedCommandKitConfig } from '../config';
 
 let ts: typeof import('typescript') | undefined;
 
@@ -72,7 +73,9 @@ async function ensureTypeScript(target: string) {
   return true;
 }
 
-async function loadConfigInner(target: string) {
+async function loadConfigInner(
+  target: string,
+): Promise<ResolvedCommandKitConfig> {
   await ensureExists(target);
 
   const isTs = await ensureTypeScript(target);

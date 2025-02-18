@@ -1,5 +1,5 @@
 import { SlashCommandProps, CommandData, cacheTag } from 'commandkit';
-import { database } from '../../database/store';
+import { database } from '../../../database/store.ts';
 
 export const data: CommandData = {
   name: 'xp',

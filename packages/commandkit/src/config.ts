@@ -1,58 +1,152 @@
+import type { CommandKitPlugin } from './plugins';
+
 export interface CommandKitConfig {
   /**
-   * The output directory of the project. Defaults to `dist`.
+   * The plugins to use with CommandKit.
    */
-  outDir: string;
+  plugins?: CommandKitPlugin[];
   /**
-   * Whether or not to use the watch mode. Defaults to `true`.
+   * The compiler options to use with CommandKit.
    */
-  watch: boolean;
+  compilerOptions?: {
+    /**
+     * Macro compiler configuration.
+     */
+    macro?: {
+      /**
+       * Whether to enable macro function compilation in development mode.
+       * @default false
+       */
+      development?: boolean;
+    };
+    /**
+     * Cached function compiler configuration.
+     */
+    cache?: {
+      /**
+       * Whether to enable caching of compiled functions in development mode.
+       */
+      development?: boolean;
+    };
+  };
   /**
-   * Whether or not to include extra env utilities. Defaults to `true`.
+   * The typescript configuration to use with CommandKit.
    */
-  envExtra: boolean;
+  typescript?: {
+    /**
+     * Whether to ignore type checking during builds.
+     */
+    ignoreDuringBuilds?: boolean;
+  };
   /**
-   * Node.js cli options.
+   * Whether to generate static command handler data in production builds.
    */
-  nodeOptions: string[];
+  static?: boolean;
   /**
-   * Whether or not to clear default restart logs. Defaults to `true`.
+   * Statically define the environment variables to use.
    */
-  clearRestartLogs: boolean;
+  env?: Record<string, string>;
   /**
-   * Whether or not to minify the output. Defaults to `false`.
+   * The custom build directory name to use.
+   * @default `.commandkit`
    */
-  minify: boolean;
+  distDir?: string;
   /**
-   * Whether or not to include sourcemaps in production build. Defaults to `false`.
+   * Whether or not to enable the source map generation.
    */
-  sourcemap: boolean | 'inline';
+  sourceMap?: {
+    /**
+     * Whether to enable source map generation in development mode.
+     */
+    development?: boolean;
+    /**
+     * Whether to enable source map generation in production mode.
+     */
+    production?: boolean;
+  };
   /**
-   * Whether or not to include anti-crash handler in production. Defaults to `true`.
+   * Whether or not to enable typed locales.
+   * @default true
    */
-  antiCrash: boolean;
+  typedLocales?: boolean;
   /**
-   * Whether or not to polyfill `require` function. Defaults to `true`.
+   * Whether or not to enable the typed commands.
+   * @default true
    */
-  requirePolyfill: boolean;
+  typedCommands?: boolean;
 }
 
-const defaultConfig: CommandKitConfig = {
-  outDir: 'dist',
-  watch: true,
-  envExtra: true,
-  nodeOptions: [],
-  clearRestartLogs: true,
-  minify: false,
-  sourcemap: false,
-  antiCrash: true,
-  requirePolyfill: true,
+type DeepRequired<T> = {
+  [P in keyof T]-?: DeepRequired<T[P]>;
 };
 
-export function getConfig(): CommandKitConfig {
-  return defaultConfig;
+const mergeDeep = <T extends Record<string, any>>(target: T, source: T): T => {
+  const isObject = (obj: unknown) =>
+    obj && typeof obj === 'object' && !Array.isArray(obj);
+
+  const output: T = { ...target };
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach((key) => {
+      if (isObject(source[key])) {
+        if (!(key in target)) {
+          Object.assign(output, { [key]: source[key] });
+        } else {
+          output[key as keyof T] = mergeDeep(target[key], source[key]);
+        }
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
+  }
+  return output as T;
+};
+
+export type ResolvedCommandKitConfig = DeepRequired<CommandKitConfig>;
+
+const defaultConfig: ResolvedCommandKitConfig = {
+  plugins: [],
+  compilerOptions: {
+    macro: {
+      development: false,
+    },
+    cache: {
+      development: true,
+    },
+  },
+  static: true,
+  typescript: {
+    ignoreDuringBuilds: false,
+  },
+  distDir: '.commandkit',
+  env: {},
+  sourceMap: {
+    development: true,
+    production: true,
+  },
+  typedCommands: true,
+  typedLocales: true,
+};
+
+let defined: ResolvedCommandKitConfig = defaultConfig;
+
+/**
+ * Get the defined configuration for CommandKit.
+ */
+export function getConfig(): ResolvedCommandKitConfig {
+  return defined;
 }
 
-export function defineConfig(config: Partial<CommandKitConfig>) {
-  return { ...defaultConfig, ...config };
+/**
+ * Define the configuration for CommandKit.
+ * @param config The configuration to use.
+ */
+export function defineConfig(
+  config: Partial<CommandKitConfig>,
+): ResolvedCommandKitConfig {
+  defined = mergeDeep(
+    config as ResolvedCommandKitConfig,
+    mergeDeep({} as ResolvedCommandKitConfig, defaultConfig),
+  );
+
+  return defined;
 }
