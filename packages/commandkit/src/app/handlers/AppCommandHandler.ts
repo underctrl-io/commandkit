@@ -14,6 +14,7 @@ import { TranslatableCommandOptions } from '../i18n/Translation';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 import { ParsedCommand, ParsedMiddleware } from '../router';
+import { CommandRegistrar } from '../register/CommandRegistrar';
 
 interface AppCommand {
   command: SlashCommandBuilder | Record<string, any>;
@@ -29,7 +30,7 @@ interface AppCommandMiddleware {
   afterExecute: (ctx: Context) => Awaitable<unknown>;
 }
 
-interface LoadedCommand {
+export interface LoadedCommand {
   command: ParsedCommand;
   data: AppCommand;
   guilds?: string[];
@@ -71,11 +72,15 @@ const middlewareDataSchema = {
 export class AppCommandHandler {
   private loadedCommands = new Collection<string, LoadedCommand>();
   private loadedMiddlewares = new Collection<string, LoadedMiddleware>();
+  public readonly registrar: CommandRegistrar;
 
-  public constructor(public readonly commandkit: CommandKit) {}
+  public constructor(public readonly commandkit: CommandKit) {
+    this.registrar = new CommandRegistrar(this.commandkit);
+  }
 
   public getCommandsArray() {
-    return Array.from(this.loadedCommands.values());
+    const loaded = Array.from(this.loadedCommands.values());
+    return loaded;
   }
 
   public async prepareCommandRun(
@@ -166,6 +171,13 @@ export class AppCommandHandler {
         .filter((m): m is LoadedMiddleware => !!m),
       messageCommandParser: parser,
     };
+  }
+
+  public async reloadCommands() {
+    this.loadedCommands.clear();
+    this.loadedMiddlewares.clear();
+
+    await this.loadCommands();
   }
 
   public async loadCommands() {

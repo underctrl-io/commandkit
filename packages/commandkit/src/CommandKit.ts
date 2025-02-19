@@ -1,15 +1,5 @@
 import EventEmitter from 'node:events';
-import {
-  CommandHandler,
-  EventHandler,
-  ValidationHandler,
-} from './legacy/handlers';
-import type {
-  CommandKitData,
-  CommandKitOptions,
-  CommandObject,
-  ReloadOptions,
-} from './types';
+import type { CommandKitOptions } from './types';
 import colors from './utils/colors';
 import { CacheProvider } from './cache/CacheProvider';
 import { MemoryCache } from './cache/MemoryCache';
@@ -19,9 +9,10 @@ import { Awaitable, Locale, Message } from 'discord.js';
 import { DefaultLocalizationStrategy } from './app/i18n/DefaultLocalizationStrategy';
 import { findAppDirectory } from './utils/utilities';
 import { join } from 'node:path';
-import { AppCommandHandler } from './app/command-handler/AppCommandHandler';
+import { AppCommandHandler } from './app/handlers/AppCommandHandler';
 import { LocalizationStrategy } from './app/i18n/LocalizationStrategy';
 import { CommandsRouter, EventsRouter } from './app/router';
+import { AppEventsHandler } from './app/handlers/AppEventsHandler';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
@@ -30,7 +21,6 @@ export interface CommandKitConfiguration {
 }
 
 export class CommandKit extends EventEmitter {
-  #data: CommandKitData;
   #started = false;
   public readonly eventInterceptor: EventInterceptor;
 
@@ -45,7 +35,8 @@ export class CommandKit extends EventEmitter {
 
   public commandsRouter!: CommandsRouter;
   public eventsRouter!: EventsRouter;
-  public appCommandsHandler = new AppCommandHandler(this);
+  public commandHandler = new AppCommandHandler(this);
+  public eventHandler = new AppEventsHandler(this);
 
   static instance: CommandKit | undefined = undefined;
 
@@ -55,7 +46,7 @@ export class CommandKit extends EventEmitter {
    * @param options - The default CommandKit configuration.
    * @see {@link https://commandkit.js.org/docs/guide/commandkit-setup}
    */
-  constructor(options: CommandKitOptions) {
+  constructor(private options: CommandKitOptions) {
     if (CommandKit.instance) {
       process.emitWarning(
         'CommandKit instance already exists. Having multiple instance in same project is discouraged and it may lead to unexpected behavior.',
@@ -91,8 +82,6 @@ export class CommandKit extends EventEmitter {
 
     this.eventInterceptor = new EventInterceptor(options.client);
 
-    this.#data = options;
-
     if (!CommandKit.instance) {
       CommandKit.instance = this;
     }
@@ -109,13 +98,15 @@ export class CommandKit extends EventEmitter {
 
     this.incrementClientListenersCount();
 
-    if (token !== false && !this.#data.client.isReady()) {
-      await this.#data.client.login(
+    if (token !== false && !this.options.client.isReady()) {
+      await this.options.client.login(
         token ?? process.env.TOKEN ?? process.env.DISCORD_TOKEN,
       );
     }
 
     this.#started = true;
+
+    await this.commandHandler.registrar.register();
   }
 
   /**
@@ -158,7 +149,7 @@ export class CommandKit extends EventEmitter {
    * Resolves the current cache provider.
    */
   getCacheProvider(): CacheProvider | null {
-    const provider = this.#data.cacheProvider;
+    const provider = this.options.cacheProvider;
     return provider ?? null;
   }
 
@@ -166,69 +157,17 @@ export class CommandKit extends EventEmitter {
    * Whether or not to debug the command handler.
    */
   isDebuggingCommands() {
-    return this.#data.debugCommands || false;
+    return this.options.debugCommands || false;
   }
 
   /**
    * Get the client attached to this CommandKit instance.
    */
   get client() {
-    return this.#data.client;
+    return this.options.client;
   }
 
-  /**
-   * Get command handler instance.
-   */
-  get commandHandler() {
-    return this.#data.commandHandler;
-  }
-
-  /**
-   * (Private) Initialize CommandKit.
-   */
   async #init() {
-    // <!-- Setup event handler -->
-    const eventHandler = new EventHandler({
-      client: this.#data.client,
-      eventsPath: this.#data.eventsPath,
-      commandKitInstance: this,
-    });
-
-    await eventHandler.init();
-
-    this.#data.eventHandler = eventHandler;
-
-    // <!-- Setup validation handler -->
-    if (this.#data.validationsPath) {
-      const validationHandler = new ValidationHandler({
-        validationsPath: this.#data.validationsPath,
-      });
-
-      await validationHandler.init();
-
-      this.#data.validationHandler = validationHandler;
-    }
-
-    // <!-- Setup command handler -->
-    const commandHandler = new CommandHandler({
-      client: this.#data.client,
-      commandsPath: this.#data.commandsPath,
-      devGuildIds: this.#data.devGuildIds || [],
-      devUserIds: this.#data.devUserIds || [],
-      devRoleIds: this.#data.devRoleIds || [],
-      validationHandler: this.#data.validationHandler,
-      skipBuiltInValidations: this.#data.skipBuiltInValidations || false,
-      commandkitInstance: this,
-      bulkRegister: this.#data.bulkRegister || false,
-    });
-
-    this.#data.commandHandler = commandHandler;
-
-    await this.#initApp();
-    await commandHandler.init();
-  }
-
-  async #initApp() {
     const appDir = this.getAppDirectory();
     if (!appDir) return;
 
@@ -252,7 +191,7 @@ export class CommandKit extends EventEmitter {
       await this.commandsRouter.scan();
     }
 
-    await this.appCommandsHandler.loadCommands();
+    await this.commandHandler.loadCommands();
   }
 
   async #initEvents() {
@@ -260,109 +199,81 @@ export class CommandKit extends EventEmitter {
       await this.eventsRouter.scan();
     }
 
-    if (!this.#data.eventHandler) return;
-
-    for (const event of Object.values(this.eventsRouter.toJSON())) {
-      this.#data.eventHandler.registerExternal(event);
-    }
-
-    this.#data.eventHandler.resyncListeners();
+    await this.eventHandler.loadEvents();
   }
 
   /**
    * Updates application commands with the latest from "commandsPath".
    */
-  async reloadCommands(type?: ReloadOptions) {
-    if (!this.#data.commandHandler) return;
-    await this.#data.commandHandler.reloadCommands(type);
+  async reloadCommands() {
+    await this.commandHandler.reloadCommands();
   }
 
   /**
    * Updates application events with the latest from "eventsPath".
    */
   async reloadEvents() {
-    if (!this.#data.eventHandler) return;
-    await this.#data.eventHandler.reloadEvents(this.#data.commandHandler);
-  }
-
-  /**
-   * Updates application command validations with the latest from "validationsPath".
-   */
-  async reloadValidations() {
-    if (!this.#data.validationHandler) return;
-    await this.#data.validationHandler.reloadValidations();
-  }
-
-  /**
-   * @returns An array of objects of all the commands that CommandKit is handling.
-   */
-  get commands(): CommandObject[] {
-    if (!this.#data.commandHandler) {
-      return [];
-    }
-
-    const commands = this.#data.commandHandler.commands.map((cmd) => {
-      const { run, autocomplete, ...command } = cmd;
-      return command;
-    });
-
-    return commands;
+    await this.eventHandler.reloadEvents();
   }
 
   /**
    * @returns The path to the commands folder which was set when instantiating CommandKit.
    */
   get commandsPath(): string | undefined {
-    return this.#data.commandsPath;
+    return this.options.commandsPath;
   }
 
   /**
    * @returns The path to the events folder which was set when instantiating CommandKit.
    */
   get eventsPath(): string | undefined {
-    return this.#data.eventsPath;
+    return this.options.eventsPath;
   }
 
   /**
    * @returns The path to the validations folder which was set when instantiating CommandKit.
    */
   get validationsPath(): string | undefined {
-    return this.#data.validationsPath;
+    return this.options.validationsPath;
   }
 
   /**
    * @returns An array of all the developer user IDs which was set when instantiating CommandKit.
    */
   get devUserIds(): string[] {
-    return this.#data.devUserIds || [];
+    return this.options.devUserIds || [];
   }
 
   /**
    * @returns An array of all the developer guild IDs which was set when instantiating CommandKit.
    */
   get devGuildIds(): string[] {
-    return this.#data.devGuildIds || [];
+    return this.options.devGuildIds || [];
   }
 
   /**
    * @returns An array of all the developer role IDs which was set when instantiating CommandKit.
    */
   get devRoleIds(): string[] {
-    return this.#data.devRoleIds || [];
+    return this.options.devRoleIds || [];
   }
 
   /**
    * Increment the client listeners count.
    */
   incrementClientListenersCount() {
-    this.#data.client.setMaxListeners(this.#data.client.getMaxListeners() + 1);
+    this.options.client.setMaxListeners(
+      this.options.client.getMaxListeners() + 1,
+    );
   }
 
   /**
    * Decrement the client listeners count.
    */
   decrementClientListenersCount() {
-    this.#data.client.setMaxListeners(this.#data.client.getMaxListeners() - 1);
+    this.options.client.setMaxListeners(
+      this.options.client.getMaxListeners() - 1,
+    );
   }
 
   /**

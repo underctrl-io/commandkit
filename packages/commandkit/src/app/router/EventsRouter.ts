@@ -22,6 +22,8 @@ export interface ParsedEvent {
   path: string;
   /** Array of file paths to event listener handlers */
   listeners: string[];
+  /** Namespace of the event */
+  namespace: string | null;
 }
 
 /** Map of event names to their parsed metadata */
@@ -140,6 +142,15 @@ export class EventsRouter {
       }
     }
 
-    return { event, path, listeners };
+    const maybeNamespace = path
+      .replace(this.entrypoint, '')
+      .replaceAll('\\', '/')
+      .split('/')
+      .shift();
+
+    const namespace =
+      (maybeNamespace && /\(([^)]+)\)/.exec(maybeNamespace)?.[1]) || null;
+
+    return { event, path, listeners, namespace };
   }
 }
