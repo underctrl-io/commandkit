@@ -6,6 +6,7 @@ import {
 } from './runtime/types';
 import { PluginCommon, PluginOptions } from './PluginCommon';
 import { MaybeFalsey } from './types';
+import { CompilerPluginRuntime } from './runtime/CompilerPluginRuntime';
 
 export interface PluginTransformParameters {
   args: OnLoadArgs;
@@ -26,7 +27,7 @@ export interface ResolveResult {
 
 export abstract class CompilerPlugin<
   T extends PluginOptions = PluginOptions,
-> extends PluginCommon<T> {
+> extends PluginCommon<T, CompilerPluginRuntime> {
   /**
    * Called when transformation is requested to this plugin
    * @param params The parameters for the transformation

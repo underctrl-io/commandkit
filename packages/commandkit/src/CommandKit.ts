@@ -13,6 +13,7 @@ import { AppCommandHandler } from './app/handlers/AppCommandHandler';
 import { LocalizationStrategy } from './app/i18n/LocalizationStrategy';
 import { CommandsRouter, EventsRouter } from './app/router';
 import { AppEventsHandler } from './app/handlers/AppEventsHandler';
+import { CommandKitPluginRuntime } from './plugins/runtime/CommandKitPluginRuntime';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
@@ -35,8 +36,9 @@ export class CommandKit extends EventEmitter {
 
   public commandsRouter!: CommandsRouter;
   public eventsRouter!: EventsRouter;
-  public commandHandler = new AppCommandHandler(this);
-  public eventHandler = new AppEventsHandler(this);
+  public readonly commandHandler = new AppCommandHandler(this);
+  public readonly eventHandler = new AppEventsHandler(this);
+  public readonly plugins: CommandKitPluginRuntime;
 
   static instance: CommandKit | undefined = undefined;
 
@@ -81,6 +83,7 @@ export class CommandKit extends EventEmitter {
     }
 
     this.eventInterceptor = new EventInterceptor(options.client);
+    this.plugins = new CommandKitPluginRuntime(this);
 
     if (!CommandKit.instance) {
       CommandKit.instance = this;

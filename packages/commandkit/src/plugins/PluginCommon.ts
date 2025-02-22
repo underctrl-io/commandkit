@@ -1,20 +1,23 @@
-import { ResolvedCommandKitConfig } from '../config';
+import { CommonPluginRuntime } from './runtime/runtime';
 
 export type PluginOptions = Record<string, any>;
 
-export abstract class PluginCommon<T extends PluginOptions> {
+export abstract class PluginCommon<
+  T extends PluginOptions,
+  C extends CommonPluginRuntime = CommonPluginRuntime,
+> {
   public abstract readonly name: string;
   public constructor(protected readonly options: T) {}
 
   /**
    * Called when this plugin is activated
    */
-  public async activate(config: ResolvedCommandKitConfig): Promise<void> {}
+  public async activate(ctx: C): Promise<void> {}
 
   /**
    * Called when this plugin is deactivated
    */
-  public async deactivate(config: ResolvedCommandKitConfig): Promise<void> {}
+  public async deactivate(ctx: C): Promise<void> {}
 }
 
 export function isPlugin(

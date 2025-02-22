@@ -4,6 +4,7 @@ export const CommandKitErrorCodes = {
   ExitMiddleware: Symbol('kExitMiddleware'),
   ForwardedCommand: Symbol('kForwardedCommand'),
   InvalidCommandPrefix: Symbol('kInvalidCommandPrefix'),
+  PluginCaptureHandle: Symbol('kPluginCaptureHandle'),
 } as const;
 
 export type CommandKitError = Error & { code: symbol };

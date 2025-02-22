@@ -1,20 +1,29 @@
 import type { CommandKit } from '../../CommandKit';
 import {
   Awaitable,
+  ChatInputCommandInteraction,
   Collection,
   ContextMenuCommandBuilder,
+  Events,
   Interaction,
   Locale,
   Message,
+  PartialMessage,
   SlashCommandBuilder,
 } from 'discord.js';
-import { Context } from '../commands/Context';
+import {
+  CommandExecutionMode,
+  Context,
+  MiddlewareContext,
+} from '../commands/Context';
 import { toFileURL } from '../../utils/resolve-file-url';
 import { TranslatableCommandOptions } from '../i18n/Translation';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 import { ParsedCommand, ParsedMiddleware } from '../router';
 import { CommandRegistrar } from '../register/CommandRegistrar';
+import { GenericFunction } from '../../context/async-context';
+import { Logger } from '../../logger/Logger';
 
 interface AppCommand {
   command: SlashCommandBuilder | Record<string, any>;
@@ -73,6 +82,11 @@ export class AppCommandHandler {
   private loadedCommands = new Collection<string, LoadedCommand>();
   private loadedMiddlewares = new Collection<string, LoadedMiddleware>();
   public readonly registrar: CommandRegistrar;
+  private onInteraction: GenericFunction<[Interaction]> | null = null;
+  private onMessageCreate: GenericFunction<[Message]> | null = null;
+  private onMessageUpdate: GenericFunction<
+    [Message | PartialMessage, Message | PartialMessage]
+  > | null = null;
 
   public constructor(public readonly commandkit: CommandKit) {
     this.registrar = new CommandRegistrar(this.commandkit);
@@ -81,6 +95,154 @@ export class AppCommandHandler {
   public getCommandsArray() {
     const loaded = Array.from(this.loadedCommands.values());
     return loaded;
+  }
+
+  public registerCommandHandler() {
+    this.onInteraction ??= async (interaction: Interaction) => {
+      const success = await this.commandkit.plugins.execute(
+        async (ctx, plugin) => {
+          return plugin.onBeforeInteraction(ctx, interaction);
+        },
+      );
+
+      // plugin will handle the interaction
+      if (success) return;
+
+      const isCommandLike =
+        interaction.isCommand() ||
+        interaction.isAutocomplete() ||
+        interaction.isUserContextMenuCommand() ||
+        interaction.isMessageContextMenuCommand();
+
+      if (!isCommandLike) return;
+
+      const command = await this.prepareCommandRun(interaction);
+
+      if (!command) return;
+
+      return this.runCommand(command, interaction);
+    };
+
+    this.onMessageCreate ??= async (message: Message) => {
+      const success = await this.commandkit.plugins.execute(
+        async (ctx, plugin) => {
+          return plugin.onBeforeMessageCommand(ctx, message);
+        },
+      );
+
+      // plugin will handle the message
+      if (success) return;
+      if (message.author.bot) return;
+
+      const command = await this.prepareCommandRun(message);
+
+      if (!command) return;
+
+      return this.runCommand(command, message);
+    };
+
+    this.onMessageUpdate ??= async (
+      oldMessage: Message | PartialMessage,
+      newMessage: Message | PartialMessage,
+    ) => {
+      const success = await this.commandkit.plugins.execute(
+        async (ctx, plugin) => {
+          return plugin.onBeforeMessageUpdateCommand(
+            ctx,
+            oldMessage,
+            newMessage,
+          );
+        },
+      );
+
+      // plugin will handle the message
+      if (success) return;
+      if (oldMessage.partial || newMessage.partial) return;
+      if (oldMessage.author.bot) return;
+
+      const command = await this.prepareCommandRun(newMessage);
+
+      if (!command) return;
+
+      return this.runCommand(command, newMessage);
+    };
+
+    this.commandkit.client.on(Events.InteractionCreate, this.onInteraction);
+    this.commandkit.client.on(Events.MessageCreate, this.onMessageCreate);
+    this.commandkit.client.on(Events.MessageUpdate, this.onMessageUpdate);
+  }
+
+  public getExecutionMode(source: Interaction | Message): CommandExecutionMode {
+    if (source instanceof Message) return CommandExecutionMode.Message;
+    if (source.isChatInputCommand()) return CommandExecutionMode.SlashCommand;
+    if (source.isAutocomplete()) {
+      return CommandExecutionMode.Autocomplete;
+    }
+    if (source.isMessageContextMenuCommand()) {
+      return CommandExecutionMode.MessageContextMenu;
+    }
+    if (source.isUserContextMenuCommand()) {
+      return CommandExecutionMode.UserContextMenu;
+    }
+
+    return null as never;
+  }
+
+  public async runCommand(
+    command: PreparedAppCommandExecution,
+    source: Interaction | Message,
+  ) {
+    if (
+      source instanceof Message &&
+      (source.editedTimestamp || source.partial)
+    ) {
+      // TODO: handle message edit
+      return;
+    }
+
+    const executionMode = this.getExecutionMode(source);
+
+    const ctx = new MiddlewareContext(this.commandkit, {
+      executionMode,
+      interaction: !(source instanceof Message)
+        ? (source as ChatInputCommandInteraction)
+        : (null as never),
+      message: source instanceof Message ? source : (null as never),
+      forwarded: false,
+    });
+
+    for (const middleware of command.middlewares) {
+      await middleware.data.beforeExecute(ctx);
+    }
+
+    const fn = command.command.data[executionMode];
+
+    if (!fn) {
+      Logger.warn(
+        `Command ${command.command.command.name} has no handler for ${executionMode}`,
+      );
+    }
+
+    if (fn) {
+      try {
+        const executeCommand = async () => fn(ctx.clone());
+        const res = await this.commandkit.plugins.execute(
+          async (ctx, plugin) => {
+            return plugin.executeCommand(ctx, source, command, executeCommand);
+          },
+        );
+
+        if (!res) {
+          await executeCommand();
+        }
+      } catch (e) {
+        Logger.error(e);
+      }
+    }
+
+    for (const middleware of command.middlewares) {
+      await middleware.data.afterExecute(ctx);
+    }
   }
 
   public async prepareCommandRun(
