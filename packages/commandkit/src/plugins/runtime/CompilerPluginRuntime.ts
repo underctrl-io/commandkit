@@ -7,7 +7,7 @@ import {
   OnResolveResult,
   Setup,
 } from './types';
-import { getConfig } from '../../config';
+import { findCommandKitConfig } from '../../cli/common';
 
 const pattern = /\.(c|m)?(t|j)sx?$/;
 
@@ -15,6 +15,10 @@ export class CompilerPluginRuntime {
   public readonly name = 'CompilerPluginRuntime';
 
   public constructor(private readonly plugins: CompilerPlugin[]) {}
+
+  public getConfig() {
+    return findCommandKitConfig(process.cwd());
+  }
 
   private async onLoad(args: OnLoadArgs): Promise<OnLoadResult> {
     const source = await readFile(args.path, 'utf8');
@@ -116,7 +120,7 @@ export class CompilerPluginRuntime {
   private async onDispose() {
     for (const plugin of this.plugins) {
       try {
-        await plugin.deactivate?.(getConfig());
+        await plugin.deactivate?.(this);
       } catch (e: any) {
         console.error(
           `Plugin ${plugin.name} failed to deactivate with ${e?.stack || e}`,
@@ -128,7 +132,7 @@ export class CompilerPluginRuntime {
   private async onInit() {
     for (const plugin of this.plugins) {
       try {
-        await plugin.activate?.(getConfig());
+        await plugin.activate?.(this);
       } catch (e: any) {
         console.error(
           `Plugin ${plugin.name} failed to activate with ${e?.stack || e}`,

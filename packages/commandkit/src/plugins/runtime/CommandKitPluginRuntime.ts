@@ -1,19 +1,26 @@
-import { Collection, Interaction } from 'discord.js';
+import { Collection, Events } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { RuntimePlugin } from '../RuntimePlugin';
 import { AsyncFunction } from '../../cache';
 import {
   CommandKitErrorCodes,
   createCommandKitError,
-  isCommandKitError,
   isErrorType,
 } from '../../utils/error-codes';
 import { Logger } from '../../logger/Logger';
+import { PluginEvents } from './runtime-events';
 
-export class CommandKitPluginRuntime {
+export class CommandKitPluginRuntime extends EventTarget {
   private plugins = new Collection<string, RuntimePlugin>();
+  private onClientLogin = () => {
+    this.dispatchEvent(new PluginEvents.ClientLogin());
+  };
 
-  public constructor(public readonly commandkit: CommandKit) {}
+  public constructor(public readonly commandkit: CommandKit) {
+    super();
+
+    this.commandkit.client.on(Events.ClientReady, this.onClientLogin);
+  }
 
   public getPlugin(pluginName: string): RuntimePlugin | null {
     return this.plugins.get(pluginName) ?? null;
