@@ -6,11 +6,7 @@ import {
 } from '../../..';
 import { cacheDirectivePlugin } from './UseCacheTransformer';
 
-export interface CachePluginOptions {
-  enabled: boolean;
-}
-
-export class CachePlugin extends CompilerPlugin<CachePluginOptions> {
+export class CachePlugin extends CompilerPlugin {
   public readonly name = 'CachePlugin';
 
   public async transform(

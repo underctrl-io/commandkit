@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import type { CompilerPlugin, MaybeFalsey, TransformedResult } from '..';
+import { CompilerPlugin, MaybeFalsey, TransformedResult } from '..';
 import {
   OnLoadArgs,
   OnLoadResult,
@@ -7,7 +7,6 @@ import {
   OnResolveResult,
   Setup,
 } from './types';
-import { findCommandKitConfig } from '../../cli/common';
 
 const pattern = /\.(c|m)?(t|j)sx?$/;
 
@@ -16,8 +15,8 @@ export class CompilerPluginRuntime {
 
   public constructor(private readonly plugins: CompilerPlugin[]) {}
 
-  public getConfig() {
-    return findCommandKitConfig(process.cwd());
+  public isEmpty() {
+    return !this.plugins.length;
   }
 
   private async onLoad(args: OnLoadArgs): Promise<OnLoadResult> {
@@ -166,4 +165,29 @@ export class CompilerPluginRuntime {
 
     await build.onDispose(this.onDispose.bind(this));
   }
+}
+
+export function fromEsbuildPlugin(plugin: any): typeof CompilerPlugin {
+  class EsbuildPluginCompat extends CompilerPlugin {
+    public readonly name = plugin.name;
+
+    public onBuildEnd(): Promise<void> {
+      return plugin.onBuildEnd?.();
+    }
+
+    public onBuildStart(): Promise<void> {
+      return plugin.onBuildStart?.();
+    }
+
+    public async transform(params: any) {
+      return plugin.transform?.(params);
+    }
+
+    public async resolve(params: any) {
+      return plugin.resolve?.(params);
+    }
+  }
+
+  // @ts-ignore
+  return EsbuildPluginCompat;
 }

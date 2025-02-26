@@ -6,11 +6,7 @@ import {
   TransformedResult,
 } from '../..';
 
-export interface MacroPluginOptions {
-  enabled: boolean;
-}
-
-export class MacroPlugin extends CompilerPlugin<MacroPluginOptions> {
+export class MacroPlugin extends CompilerPlugin {
   public readonly name = 'MacroPlugin';
 
   private macroTransformer!: MacroTransformer;

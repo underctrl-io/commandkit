@@ -10,7 +10,7 @@ export async function bootstrapCommandkitCLI(
   const { Command } = await import('commander');
   const { bootstrapDevelopmentServer } = await import('./development');
   const { bootstrapProductionServer } = await import('./production');
-  const { bootstrapProductionBuild } = await import('./build');
+  const { buildApplication } = await import('./build');
   const { generateCommand, generateEvent, generateLocale } = await import(
     './generators'
   );
@@ -55,7 +55,7 @@ export async function bootstrapCommandkitCLI(
     )
     .action(() => {
       const options = program.opts();
-      bootstrapProductionBuild(options.config);
+      buildApplication({ configPath: options.config });
     });
 
   program

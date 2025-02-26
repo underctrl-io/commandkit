@@ -1,3 +1,3 @@
 import { defineConfig } from 'commandkit';
 
-export default defineConfig({});
+export default defineConfig();

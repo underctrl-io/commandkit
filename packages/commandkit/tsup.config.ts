@@ -11,7 +11,7 @@ export default defineConfig({
   keepNames: true,
   dts: true,
   shims: true,
-  splitting: false,
+  splitting: true,
   skipNodeModulesBundle: true,
   clean: true,
   target: 'node16',

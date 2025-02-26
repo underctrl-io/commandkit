@@ -3,7 +3,7 @@ import { CommonPluginRuntime } from './runtime/runtime';
 export type PluginOptions = Record<string, any>;
 
 export abstract class PluginCommon<
-  T extends PluginOptions,
+  T extends PluginOptions = PluginOptions,
   C extends CommonPluginRuntime = CommonPluginRuntime,
 > {
   public abstract readonly name: string;
