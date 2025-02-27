@@ -7,7 +7,7 @@ import CommandKit, {
 } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
-export const data: CommandData = {
+export const command: CommandData = {
   name: 'commandkit',
   description: 'This is a commandkit command.',
 };
@@ -40,7 +40,7 @@ function ButtonGrid() {
   );
 }
 
-export async function run({ interaction }: SlashCommandProps) {
+export async function chatInput({ interaction }: SlashCommandProps) {
   await interaction.deferReply();
 
   await interaction.editReply({

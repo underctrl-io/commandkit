@@ -1,5 +1,6 @@
 import { CommandKit } from '../../CommandKit';
 import { Logger } from '../../logger/Logger';
+import { toFileURL } from '../../utils/resolve-file-url';
 import { ParsedEvent } from '../router';
 
 export type EventListener = (...args: any[]) => any;
@@ -30,7 +31,7 @@ export class AppEventsHandler {
       const listeners: EventListener[] = [];
 
       for (const listener of event.listeners) {
-        const handler = await import(`file://${listener}?t=${Date.now()}`);
+        const handler = await import(toFileURL(listener, true));
 
         if (!handler.default || typeof handler.default !== 'function') {
           Logger.error(

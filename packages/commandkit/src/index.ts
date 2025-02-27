@@ -14,16 +14,7 @@ export * from './logger/ILogger';
 export * from './logger/Logger';
 export * from './app/router/index';
 export type * from './types';
-
-function $version(): string {
-  'use macro';
-  return require('../package.json').version;
-}
-
-/**
- * The current version of CommandKit.
- */
-export const version = $version();
+export * from './version';
 
 // cli
 export { bootstrapCommandkitCLI } from './cli/init';

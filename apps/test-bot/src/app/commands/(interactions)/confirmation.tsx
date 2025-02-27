@@ -7,7 +7,7 @@ import CommandKit, {
 } from 'commandkit';
 import { ButtonStyle, MessageFlags } from 'discord.js';
 
-export const data: CommandData = {
+export const command: CommandData = {
   name: 'confirm',
   description: 'This is a confirm command.',
 };
@@ -30,7 +30,7 @@ const handleCancel: OnButtonKitClick = async (interaction, context) => {
   context.dispose();
 };
 
-export async function run({ interaction }: SlashCommandProps) {
+export async function chatInput({ interaction }: SlashCommandProps) {
   const buttons = (
     <ActionRow>
       <Button onClick={handleCancel} style={ButtonStyle.Primary}>

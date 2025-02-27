@@ -140,6 +140,11 @@ export class CompilerPluginRuntime {
     }
   }
 
+  public async cleanup() {
+    await this.onEnd();
+    await this.onDispose();
+  }
+
   public async setup(build: Setup) {
     if (!this.plugins.length) return;
 
@@ -161,9 +166,20 @@ export class CompilerPluginRuntime {
 
     await build.onStart(this.onStart.bind(this));
 
-    await build.onEnd(this.onEnd.bind(this));
+    build.onEnd(async () => {
+      await this.onEnd();
+    });
 
-    await build.onDispose(this.onDispose.bind(this));
+    build.onDispose(async () => {
+      await this.onDispose();
+    });
+  }
+
+  public toEsbuildPlugin() {
+    return {
+      name: this.name,
+      setup: this.setup.bind(this),
+    };
   }
 }
 

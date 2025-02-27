@@ -17,7 +17,7 @@ export const defaultConfig: ResolvedCommandKitConfig = {
   typescript: {
     ignoreDuringBuilds: false,
   },
-  distDir: '.commandkit',
+  distDir: 'dist',
   env: {},
   sourceMap: {
     development: true,

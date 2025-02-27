@@ -14,6 +14,9 @@ import { LocalizationStrategy } from './app/i18n/LocalizationStrategy';
 import { CommandsRouter, EventsRouter } from './app/router';
 import { AppEventsHandler } from './app/handlers/AppEventsHandler';
 import { CommandKitPluginRuntime } from './plugins/runtime/CommandKitPluginRuntime';
+import { loadConfigFile } from './config/loader';
+import { COMMANDKIT_IS_DEV } from './utils/constants';
+import { registerDevHooks } from './utils/dev-hooks';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
@@ -95,6 +98,7 @@ export class CommandKit extends EventEmitter {
    * @param token The application token to connect to the discord gateway. If not provided, it will use the `TOKEN` or `DISCORD_TOKEN` environment variable. If set to `false`, it will not login.
    */
   async start(token?: string | false) {
+    await loadConfigFile();
     if (this.#started) return;
 
     await this.#init();
@@ -108,6 +112,10 @@ export class CommandKit extends EventEmitter {
     }
 
     this.#started = true;
+
+    if (COMMANDKIT_IS_DEV) {
+      registerDevHooks(this);
+    }
 
     await this.commandHandler.registrar.register();
   }

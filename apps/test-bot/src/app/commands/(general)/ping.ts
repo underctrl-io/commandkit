@@ -11,7 +11,7 @@ import {
   AutocompleteProps,
 } from 'commandkit';
 
-export const data: CommandData = {
+export const command: CommandData = {
   name: 'ping',
   description: 'Pong!',
   options: [
@@ -42,7 +42,7 @@ export async function autocomplete({ interaction }: AutocompleteProps) {
   interaction.respond(filtered);
 }
 
-export async function run({ interaction, client }: SlashCommandProps) {
+export async function chatInput({ interaction, client }: SlashCommandProps) {
   if (!interaction.channel) return;
 
   const button = new ButtonKit()

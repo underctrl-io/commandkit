@@ -1,6 +1,6 @@
 import { SlashCommandProps, CommandData } from 'commandkit';
 
-export const data: CommandData = {
+export const command: CommandData = {
   name: 'help',
   description: 'This is a help command.',
 };
@@ -12,7 +12,7 @@ function $botVersion(): string {
   return require(path).version;
 }
 
-export async function run({ interaction, handler }: SlashCommandProps) {
+export async function chatInput({ interaction, handler }: SlashCommandProps) {
   await interaction.deferReply();
 
   const botVersion = $botVersion();

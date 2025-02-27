@@ -1,11 +1,11 @@
 import { SlashCommandProps, CommandData, invalidate } from 'commandkit';
 
-export const data: CommandData = {
+export const command: CommandData = {
   name: 'invalidate-random',
   description: 'This is a random command invalidation.',
 };
 
-export async function run({ interaction }: SlashCommandProps) {
+export async function chatInput({ interaction }: SlashCommandProps) {
   await interaction.deferReply();
 
   await invalidate('random');

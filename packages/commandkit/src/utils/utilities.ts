@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { COMMANDKIT_IS_DEV } from './constants';
+import { getConfig } from '../config/config';
 
 let appDir: string | null = null;
 
@@ -11,7 +12,10 @@ let appDir: string | null = null;
 export function findAppDirectory(): string | null {
   if (appDir) return appDir;
 
-  let root = join(process.cwd(), COMMANDKIT_IS_DEV ? '.commandkit' : 'dist');
+  let root = join(
+    process.cwd(),
+    COMMANDKIT_IS_DEV ? '.commandkit' : getConfig().distDir,
+  );
 
   if (!existsSync(root)) root = process.cwd();
 
@@ -25,4 +29,28 @@ export function findAppDirectory(): string | null {
   }
 
   return null;
+}
+
+/**
+ * Debounces a function.
+ * @param fn The function to debounce.
+ * @param ms The debounce time in milliseconds.
+ * @returns The debounced function.
+ */
+export function debounce<R, F extends (...args: any[]) => R>(
+  fn: F,
+  ms: number,
+): F {
+  let timer: NodeJS.Timeout | null = null;
+
+  return ((...args: any[]) => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    timer = setTimeout(() => {
+      fn(...args);
+      timer = null;
+    }, ms);
+  }) as F;
 }

@@ -1,6 +1,6 @@
 import { SlashCommandProps, CommandData, cache } from 'commandkit';
 
-export const data: CommandData = {
+export const command: CommandData = {
   name: 'random',
   description: 'This is a random command.',
 };
@@ -12,7 +12,7 @@ const random = cache(
   { name: 'random', ttl: 60_000 },
 );
 
-export async function run({ interaction }: SlashCommandProps) {
+export async function chatInput({ interaction }: SlashCommandProps) {
   await interaction.deferReply();
 
   const xp = await random();
