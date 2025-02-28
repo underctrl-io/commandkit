@@ -26,12 +26,6 @@ export const ProdEnvFiles = [
   '.env.local',
 ];
 
-export const devEnvFileArgs = (cwd: string) =>
-  [...CommonEnvFiles, ...DevEnvFiles].map(
-    (file) => `--env-file-if-exists="${join(cwd, file)}"`,
-  );
+export const devEnvFileArgs = [...CommonEnvFiles, ...DevEnvFiles];
 
-export const prodEnvFileArgs = (cwd: string) =>
-  [...CommonEnvFiles, ...ProdEnvFiles].map(
-    (file) => `--env-file-if-exists=${join(cwd, file)}`,
-  );
+export const prodEnvFileArgs = [...CommonEnvFiles, ...ProdEnvFiles];

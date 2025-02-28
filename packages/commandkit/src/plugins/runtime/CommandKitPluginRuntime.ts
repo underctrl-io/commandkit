@@ -18,8 +18,7 @@ export class CommandKitPluginRuntime extends EventTarget {
 
   public constructor(public readonly commandkit: CommandKit) {
     super();
-
-    this.commandkit.client.on(Events.ClientReady, this.onClientLogin);
+    // this.commandkit.client.on(Events.ClientReady, this.onClientLogin);
   }
 
   public getPlugin(pluginName: string): RuntimePlugin | null {

@@ -11,18 +11,10 @@ export function registerDevHooks(commandkit: CommandKit) {
     const input = chunk.toString().trim();
 
     const match = input.match(EVENT_PATTERN);
-
-    console.log({ match });
-
     if (!match) return;
 
     const [, event, , path] = match;
-
-    void path;
-
     Logger.info(`Received HMR event: ${event}${path ? ` for ${path}` : ''}`);
-
-    // TODO: Implement reload logic
 
     switch (event) {
       case 'reload-commands':
@@ -33,6 +25,7 @@ export function registerDevHooks(commandkit: CommandKit) {
         break;
       case 'reload-locales':
         commandkit.commandHandler.reloadCommands();
+        break;
     }
   });
 }

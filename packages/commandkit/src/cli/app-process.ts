@@ -9,8 +9,6 @@ export function createAppProcess(
   cwd: string,
   isDev: boolean,
 ) {
-  const envFiles = isDev ? devEnvFileArgs(cwd) : prodEnvFileArgs(cwd);
-
   if (!existsSync(join(cwd, fileName))) {
     panic(`Could not locate the entrypoint file: ${fileName}`);
   }
@@ -18,7 +16,6 @@ export function createAppProcess(
   const ps = spawn(
     'node',
     [
-      ...envFiles,
       `--title="CommandKit ${isDev ? 'Development' : 'Production'}"`,
       '--enable-source-maps',
       fileName,
@@ -27,7 +24,7 @@ export function createAppProcess(
       cwd: cwd,
       windowsHide: true,
       env: DevEnv(),
-      stdio: 'pipe',
+      stdio: ['pipe', 'pipe', 'pipe'],
     },
   );
 

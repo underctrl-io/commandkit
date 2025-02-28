@@ -1,4 +1,3 @@
-import { MacroTransformer } from 'use-macro';
 import {
   CompilerPlugin,
   MaybeFalsey,
@@ -9,10 +8,11 @@ import {
 export class MacroPlugin extends CompilerPlugin {
   public readonly name = 'MacroPlugin';
 
-  private macroTransformer!: MacroTransformer;
+  private macroTransformer!: import('use-macro').MacroTransformer;
 
   public async activate(): Promise<void> {
-    this.macroTransformer = new MacroTransformer();
+    const transform = await import('use-macro');
+    this.macroTransformer = new transform.MacroTransformer();
   }
 
   public async deactivate(): Promise<void> {

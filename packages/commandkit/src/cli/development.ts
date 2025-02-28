@@ -52,7 +52,7 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
         `${colors.cyanBright('Reloading command(s) at ')} ${colors.yellowBright(path)}`,
       );
       await buildAndStart(cwd, true);
-      ps.stdin.write(`COMMANDKIT_EVENT=reload-commands|${path}`);
+      ps.stdin.write(`COMMANDKIT_EVENT=reload-commands|${path}\n`);
       return true;
     }
 
@@ -61,7 +61,7 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
         `${colors.cyanBright('Reloading event(s) at ')} ${colors.yellowBright(path)}`,
       );
       await buildAndStart(cwd, true);
-      ps.stdin.write(`COMMANDKIT_EVENT=reload-events|${path}`);
+      ps.stdin.write(`COMMANDKIT_EVENT=reload-events|${path}\n`);
       return true;
     }
 
@@ -70,7 +70,7 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
         `${colors.cyanBright('Reloading locale(s) at ')} ${colors.yellowBright(path)}`,
       );
       await buildAndStart(cwd, true);
-      ps.stdin.write(`COMMANDKIT_EVENT=reload-locales|${path}`);
+      ps.stdin.write(`COMMANDKIT_EVENT=reload-locales|${path}\n`);
       return true;
     }
 
@@ -97,15 +97,15 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
         break;
       case 'rc':
         console.log(`Received reload commands command, reloading...`);
-        ps?.stdin.write(`COMMANDKIT_EVENT=reload-commands`);
+        ps?.stdin.write(`COMMANDKIT_EVENT=reload-commands\n`);
         break;
       case 're':
         console.log(`Received reload events command, reloading...`);
-        ps?.stdin.write(`COMMANDKIT_EVENT=reload-events`);
+        ps?.stdin.write(`COMMANDKIT_EVENT=reload-events\n`);
         break;
       case 'rl':
         console.log(`Received reload locales command, reloading...`);
-        ps?.stdin.write(`COMMANDKIT_EVENT=reload-locales`);
+        ps?.stdin.write(`COMMANDKIT_EVENT=reload-locales\n`);
         break;
     }
   });
