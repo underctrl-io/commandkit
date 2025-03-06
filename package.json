@@ -8,11 +8,11 @@
     "apps/*"
   ],
   "scripts": {
-    "lint": "bun lint --filter=\"./packages/*\" && prettier --check ./ --ignore-path=.prettierignore",
-    "build": "bun run --filter=\"./packages/*\" build",
-    "publish-package": "bun publish-package",
-    "build-docs": "bun run --filter=\"./apps/website\" build",
-    "docgen": "tsx ./scripts/docgen.ts && bun format",
+    "lint": "pnpm lint --filter=\"./packages/*\" && prettier --check ./ --ignore-path=.prettierignore",
+    "build": "pnpm run --filter=\"./packages/*\" build",
+    "publish-package": "pnpm publish-package",
+    "build-docs": "pnpm run --filter=\"./apps/website\" build",
+    "docgen": "tsx ./scripts/docgen.ts && pnpm format",
     "format": "prettier --write ./ --ignore-path=.prettierignore"
   },
   "devDependencies": {
@@ -37,5 +37,6 @@
     "undici@>=6.0.0 <6.21.1": ">=6.21.1",
     "vite@>=6.0.0 <=6.0.8": ">=6.0.9",
     "katex@>=0.12.0 <=0.16.20": ">=0.16.21"
-  }
+  },
+  "packageManager": "pnpm@9.15.0"
 }
