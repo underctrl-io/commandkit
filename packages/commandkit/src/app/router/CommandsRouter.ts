@@ -51,6 +51,8 @@ export interface ParsedCommand {
   middlewares: string[];
   /** Absolute path to this command */
   fullPath: string;
+  /** Category the command belongs to, if any */
+  category: string | null;
 }
 
 /**
@@ -66,6 +68,8 @@ export interface ParsedMiddleware {
   path: string;
   /** Absolute path to the middleware file */
   fullPath: string;
+  /** Category the middleware belongs to, if any */
+  category: string | null;
 }
 
 /**
@@ -244,68 +248,81 @@ export class CommandsRouter {
    * @returns Promise resolving to the complete commands tree
    */
   public async scan(): Promise<CommandsTree> {
+    this.clear();
     const files = await this.scanDirectory(this.entrypoint, []);
 
-    for (const file of files) {
-      if (this.execMatcher(this.matchers.command, file)) {
-        const location = this.resolveRelativePath(file);
-        const parts = location.split(path.sep);
+    // First pass: collect all files
+    const commandFiles = files.filter((file) => {
+      const basename = path.basename(file);
+      return !this.isIgnoredFile(basename) && this.isCommandFile(file);
+    });
 
-        const parentSegments: string[] = [];
+    // Second pass: process middleware
+    const middlewareFiles = files.filter((file) =>
+      this.execMatcher(this.matchers.middleware, file),
+    );
 
-        parts.forEach((part, index, arr) => {
-          const isLast = index === arr.length - 1;
+    // Process commands
+    for (const file of commandFiles) {
+      const parsedPath = this.parseCommandPath(file);
+      const location = this.resolveRelativePath(file);
 
-          // ignore last because it's definitely a command source file
-          if (isLast) return;
+      const command: ParsedCommand = {
+        name: parsedPath.name,
+        path: location,
+        fullPath: file,
+        parent: parsedPath.parent,
+        parentSegments: parsedPath.parentSegments,
+        category: parsedPath.category,
+        middlewares: [],
+      };
 
-          // we ignore groups
-          if (!/\(.+\)/.test(part)) {
-            parentSegments.push(part.trim());
+      this.commands.set(parsedPath.name, command);
+    }
+
+    // Process middleware
+    for (const file of middlewareFiles) {
+      const location = this.resolveRelativePath(file);
+      const dirname = path.dirname(location);
+      const id = crypto.randomUUID();
+      const parts = location.split(path.sep).filter((p) => p);
+      const categories = this.parseCategories(parts);
+
+      const middleware: ParsedMiddleware = {
+        id,
+        name: dirname,
+        path: location,
+        fullPath: file,
+        category: categories.length ? categories.join('/') : null,
+      };
+
+      this.middlewares.set(id, middleware);
+
+      // Apply middleware based on location
+      const isGlobalMiddleware = path.parse(file).name === 'middleware';
+      const commands = Array.from(this.commands.values());
+
+      for (const command of commands) {
+        const commandDir = path.dirname(command.path);
+
+        if (isGlobalMiddleware) {
+          // Global middleware applies if command is in same dir or nested
+          if (
+            commandDir === dirname ||
+            commandDir.startsWith(dirname + path.sep)
+          ) {
+            command.middlewares.push(id);
           }
-        });
-
-        const parent = parentSegments.join(' ');
-        const name = parts[parts.length - 2];
-
-        const command: ParsedCommand = {
-          name,
-          middlewares: [],
-          parent: parent || null,
-          path: location,
-          fullPath: file,
-          parentSegments,
-        };
-
-        this.commands.set(name, command);
-      }
-
-      if (this.execMatcher(this.matchers.middleware, file)) {
-        const location = this.resolveRelativePath(file);
-        const name = location.replace(/\.(m|c)?(j|t)sx?$/, '');
-        const middlewareDir = path.dirname(location);
-
-        const command = Array.from(this.commands.values()).filter((command) => {
-          const commandDir = path.dirname(command.path);
-          return (
-            commandDir === middlewareDir || commandDir.startsWith(middlewareDir)
-          );
-        });
-
-        const id = crypto.randomUUID();
-
-        const middleware: ParsedMiddleware = {
-          id,
-          name,
-          path: location,
-          fullPath: file,
-        };
-
-        this.middlewares.set(id, middleware);
-
-        command.forEach((cmd) => {
-          cmd.middlewares.push(id);
-        });
+        } else {
+          // Specific middleware only applies to exact command match
+          const commandName = command.name;
+          const middlewareName = path
+            .basename(file)
+            .replace(/\.middleware\.(m|c)?(j|t)sx?$/, '');
+          if (commandName === middlewareName && commandDir === dirname) {
+            command.middlewares.push(id);
+          }
+        }
       }
     }
 
@@ -356,5 +373,46 @@ export class CommandsRouter {
     }
 
     return entries;
+  }
+
+  private isIgnoredFile(filename: string): boolean {
+    return filename.startsWith('_');
+  }
+
+  private isCommandFile(path: string): boolean {
+    if (this.execMatcher(this.matchers.middleware, path)) return false;
+    return (
+      /index\.(m|c)?(j|t)sx?$/.test(path) || /\.(m|c)?(j|t)sx?$/.test(path)
+    );
+  }
+
+  private parseCategories(parts: string[]): string[] {
+    return parts
+      .filter((part) => part.startsWith('(') && part.endsWith(')'))
+      .map((part) => part.slice(1, -1));
+  }
+
+  private parseCommandPath(filepath: string): {
+    name: string;
+    category: string | null;
+    parent: string | null;
+    parentSegments: string[];
+  } {
+    const location = this.resolveRelativePath(filepath);
+    const parts = location.split(path.sep).filter((p) => p);
+    const categories = this.parseCategories(parts);
+    const segments: string[] = parts.filter(
+      (part) => !(part.startsWith('(') && part.endsWith(')')),
+    );
+
+    let name = segments.pop() || '';
+    name = name.replace(/\.(m|c)?(j|t)sx?$/, '').replace(/^index$/, '');
+
+    return {
+      name,
+      category: categories.length ? categories.join('/') : null,
+      parent: segments.length ? segments.join(' ') : null,
+      parentSegments: segments,
+    };
   }
 }

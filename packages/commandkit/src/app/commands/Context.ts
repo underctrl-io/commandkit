@@ -176,7 +176,7 @@ export class Context<
    * @param command The command to forward to.
    */
   public async forwardCommand(command: string): Promise<never> {
-    const target = await this.commandkit.appCommandsHandler.prepareCommandRun(
+    const target = await this.commandkit.commandHandler.prepareCommandRun(
       (this.isInteraction() ? this.interaction : this.message) as Interaction,
     );
 

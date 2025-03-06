@@ -3,6 +3,8 @@
     "target": "ESNext",
     "module": "Preserve",
     "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "lib": ["ESNext", "DOM"],
     "jsx": "react",
     "jsxFactory": "CommandKit.createElement",

@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import { cacheDirectivePlugin } from './src/cli/esbuild-plugins/use-cache';
+import { cacheDirectivePlugin } from './src/plugins/runtime/builtin/cache/UseCacheTransformer';
 import { join } from 'path';
 
 export default defineConfig({

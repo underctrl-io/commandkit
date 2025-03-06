@@ -1,5 +1,3 @@
-// @ts-check
-
 import { randomUUID } from 'node:crypto';
 
 const valuesMap = {

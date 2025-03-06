@@ -1,72 +1,40 @@
-// @ts-check
-import { config as dotenv } from 'dotenv';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { findCommandKitConfig, panic, write } from './common';
-import { parseEnv } from './parse-env';
-import { createNodeProcess, createSpinner } from './utils';
-import colors from '../utils/colors';
+import { join } from 'path';
+import { loadConfigFile } from '../config/loader';
+import { createAppProcess } from './app-process';
+import { existsSync } from 'fs';
+import { panic } from './common';
+import { buildApplication } from './build';
+import { isCompilerPlugin } from '../plugins';
+import { createSpinner } from './utils';
 
-export async function bootstrapProductionServer(configPath: string) {
-  const config = await findCommandKitConfig(configPath);
-  const { outDir = 'dist', sourcemap } = config;
+export async function bootstrapProductionServer(configPath?: string) {
+  const cwd = configPath || process.cwd();
+  const config = await loadConfigFile(cwd);
+  const mainFile = join(config.distDir, 'index.js');
 
-  if (!existsSync(join(process.cwd(), outDir))) {
-    panic('Could not find production build, run `commandkit build` first');
+  if (!existsSync(mainFile)) {
+    panic(
+      `Could not locate the entrypoint. Did you forget to build the application? Run 'commandkit build' to build the application first.`,
+    );
   }
 
-  const spinner = await createSpinner('Starting production server...');
+  return createAppProcess(mainFile, cwd, true);
+}
 
-  try {
-    const processEnv = {};
+export async function createProductionBuild(configPath?: string) {
+  const cwd = configPath || process.cwd();
+  const config = await loadConfigFile(cwd);
 
-    const env = dotenv({
-      path: join(process.cwd(), '.env'),
-      processEnv,
-    });
+  const spinner = await createSpinner('Creating an optimized production build');
 
-    parseEnv(processEnv);
+  spinner.start();
 
-    if (env.error) {
-      write(colors.yellow(`[DOTENV] Warning: ${env.error.message}`));
-    }
+  await buildApplication({
+    configPath: cwd,
+    isDev: false,
+    plugins: config.plugins.filter((p) => isCompilerPlugin(p)),
+    esbuildPlugins: config.esbuildPlugins,
+  });
 
-    if (env.parsed) {
-      write(colors.blue('[DOTENV] Loaded .env file!'));
-    }
-
-    const ps = createNodeProcess({
-      ...config,
-      nodeOptions: [sourcemap ? '--enable-source-maps' : ''].filter(Boolean),
-      env: {
-        ...process.env,
-        ...processEnv,
-        NODE_ENV: 'production',
-        COMMANDKIT_DEV: 'false',
-        COMMANDKIT_PROD: 'true',
-      },
-    });
-
-    ps.stdout?.on('data', (data) => {
-      write(data.toString());
-    });
-
-    ps.stderr?.on('data', (data) => {
-      write(colors.red(data.toString()));
-    });
-
-    ps.on('close', (code) => {
-      write('\n');
-      process.exit(code ?? 0);
-    });
-
-    ps.on('error', (err) => {
-      panic(err);
-    });
-
-    spinner.succeed('Production server started successfully!');
-  } catch (e) {
-    spinner.fail('Failed to start production server');
-    panic(e instanceof Error ? e.stack : e);
-  }
+  spinner.succeed('Production build completed!');
 }

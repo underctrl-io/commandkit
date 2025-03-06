@@ -7,27 +7,33 @@ export async function bootstrapCommandkitCLI(
   argv: string[],
   options?: import('commander').ParseOptions | undefined,
 ) {
+  process.title = 'CommandKit CLI';
+
+  // imports are lazily loaded when the cli is used, instead of loading it with the lib itself
   const { Command } = await import('commander');
   const { bootstrapDevelopmentServer } = await import('./development');
-  const { bootstrapProductionServer } = await import('./production');
-  const { bootstrapProductionBuild } = await import('./build');
+  const { bootstrapProductionServer, createProductionBuild } = await import(
+    './production'
+  );
   const { generateCommand, generateEvent, generateLocale } = await import(
     './generators'
   );
+  const { version } = await import('../version');
 
   const program = new Command('commandkit');
 
   program
     .command('dev')
+    .version(version)
     .description('Start your bot in development mode.')
     .option(
-      '-c, --config <path>',
+      '-c, --config [path]',
       'Path to your commandkit config file.',
       './commandkit.js',
     )
     .action(() => {
       const options = program.opts();
-      bootstrapDevelopmentServer(options);
+      bootstrapDevelopmentServer(options.config);
     });
 
   program
@@ -35,11 +41,7 @@ export async function bootstrapCommandkitCLI(
     .description(
       'Start your bot in production mode after running the build command.',
     )
-    .option(
-      '-c, --config <path>',
-      'Path to your commandkit.json file.',
-      './commandkit.js',
-    )
+    .option('-c, --config [path]', 'Path to your commandkit.json file.')
     .action(() => {
       const options = program.opts();
       bootstrapProductionServer(options.config);
@@ -48,14 +50,10 @@ export async function bootstrapCommandkitCLI(
   program
     .command('build')
     .description('Build your project for production usage.')
-    .option(
-      '-c, --config <path>',
-      'Path to your commandkit.json file.',
-      './commandkit.json',
-    )
+    .option('-c, --config [path]', 'Path to your commandkit.json file.')
     .action(() => {
       const options = program.opts();
-      bootstrapProductionBuild(options.config);
+      return createProductionBuild(options.config);
     });
 
   program

@@ -1,94 +1,138 @@
-import { erase, findCommandKitConfig, panic, write } from './common';
+import { join } from 'path';
+import { loadConfigFile } from '../config/loader';
+import { isCompilerPlugin } from '../plugins';
+import { createAppProcess } from './app-process';
+import { buildApplication } from './build';
+import { watch } from 'chokidar';
+import { ChildProcessWithoutNullStreams } from 'child_process';
+import { readdirSync } from 'node:fs';
+import { debounce } from '../utils/utilities';
 import colors from '../utils/colors';
-import { createNodeProcess, createSpinner } from './utils';
-import { bootstrapDevelopmentBuild } from './build';
 
-const RESTARTING_MSG_PATTERN = /^Restarting '|".+'|"\n?$/;
-const FAILED_RUNNING_PATTERN = /^Failed running '.+'|"\n?$/;
+async function buildAndStart(configPath: string, skipStart = false) {
+  const config = await loadConfigFile(configPath);
+  const mainFile = join('.commandkit', 'index.js');
 
-export async function bootstrapDevelopmentServer(opts: any) {
-  const config = await findCommandKitConfig(opts.config);
-  const { watch = true, nodeOptions = [], clearRestartLogs = true } = config;
+  await buildApplication({
+    configPath,
+    isDev: true,
+    plugins: config.plugins.filter((p) => isCompilerPlugin(p)),
+    esbuildPlugins: config.esbuildPlugins,
+  });
 
-  const spinner = await createSpinner('Starting development server...');
+  if (skipStart) return null as never;
+
+  return createAppProcess(mainFile, configPath, true);
+}
+
+const isCommandSource = (p: string) =>
+  p.replaceAll('\\', '/').includes('src/app/commands');
+
+const isEventSource = (p: string) =>
+  p.replaceAll('\\', '/').includes('src/app/events');
+
+const isLocaleSource = (p: string) =>
+  p.replaceAll('\\', '/').includes('src/app/locales');
+
+export async function bootstrapDevelopmentServer(configPath?: string) {
   const start = performance.now();
+  const cwd = configPath || process.cwd();
 
-  try {
-    await erase('.commandkit');
-    await bootstrapDevelopmentBuild(opts.config);
+  const watcher = watch([join(cwd, 'src')], {
+    ignoreInitial: true,
+  });
 
-    const ps = createNodeProcess({
-      ...config,
-      outDir: '.commandkit',
-      nodeOptions: [
-        ...nodeOptions,
-        watch ? '--watch' : '',
-        '--enable-source-maps',
-      ].filter(Boolean),
-      env: {
-        NODE_ENV: 'development',
-        COMMANDKIT_DEV: 'true',
-        COMMANDKIT_PRODUCTION: 'false',
-      },
-    });
+  let ps: ChildProcessWithoutNullStreams | null = null;
 
-    let isLastLogRestarting = false,
-      hasStarted = false;
+  const performHMR = debounce(async (path?: string): Promise<boolean> => {
+    if (!path || !ps) return false;
 
-    ps.stdout?.on('data', (data) => {
-      const message = data.toString();
+    if (isCommandSource(path)) {
+      console.log(
+        `${colors.cyanBright('Reloading command(s) at ')} ${colors.yellowBright(path)}`,
+      );
+      await buildAndStart(cwd, true);
+      ps.stdin.write(`COMMANDKIT_EVENT=reload-commands|${path}\n`);
+      return true;
+    }
 
-      if (FAILED_RUNNING_PATTERN.test(message)) {
-        write(colors.cyan('Failed running the bot, waiting for changes...'));
-        isLastLogRestarting = false;
-        if (!hasStarted) hasStarted = true;
-        return;
-      }
+    if (isEventSource(path)) {
+      console.log(
+        `${colors.cyanBright('Reloading event(s) at ')} ${colors.yellowBright(path)}`,
+      );
+      await buildAndStart(cwd, true);
+      ps.stdin.write(`COMMANDKIT_EVENT=reload-events|${path}\n`);
+      return true;
+    }
 
-      if (clearRestartLogs && !RESTARTING_MSG_PATTERN.test(message)) {
-        write(message);
-        isLastLogRestarting = false;
-      } else {
-        if (isLastLogRestarting || !hasStarted) {
-          if (!hasStarted) hasStarted = true;
-          return;
-        }
-        write(colors.cyan('⌀ Restarting the bot...'));
-        isLastLogRestarting = true;
-      }
+    if (isLocaleSource(path)) {
+      console.log(
+        `${colors.cyanBright('Reloading locale(s) at ')} ${colors.yellowBright(path)}`,
+      );
+      await buildAndStart(cwd, true);
+      ps.stdin.write(`COMMANDKIT_EVENT=reload-locales|${path}\n`);
+      return true;
+    }
 
-      if (!hasStarted) hasStarted = true;
-    });
+    return false;
+  }, 300);
 
-    ps.stderr?.on('data', (data) => {
-      const message = data.toString();
+  const hmrHandler = async (path: string) => {
+    if (await performHMR(path)) return;
 
-      if (
-        message.includes(
-          'ExperimentalWarning: Watch mode is an experimental feature and might change at any time',
-        )
-      )
-        return;
+    ps?.kill();
 
-      write(colors.red(message));
-    });
+    ps = await buildAndStart(cwd);
+  };
 
-    ps.on('close', (code) => {
-      write('\n');
-      process.exit(code ?? 0);
-    });
+  process.stdin.on('data', async (d) => {
+    const command = d.toString().trim();
 
-    ps.on('error', (err) => {
-      panic(err);
-    });
+    switch (command) {
+      case 'r':
+        console.log(`Received restart command, restarting...`);
+        ps?.kill();
+        ps = null;
+        await buildAndStart(cwd);
+        break;
+      case 'rc':
+        console.log(`Received reload commands command, reloading...`);
+        ps?.stdin.write(`COMMANDKIT_EVENT=reload-commands\n`);
+        break;
+      case 're':
+        console.log(`Received reload events command, reloading...`);
+        ps?.stdin.write(`COMMANDKIT_EVENT=reload-events\n`);
+        break;
+      case 'rl':
+        console.log(`Received reload locales command, reloading...`);
+        ps?.stdin.write(`COMMANDKIT_EVENT=reload-locales\n`);
+        break;
+    }
+  });
 
-    spinner.succeed(
-      colors.green(
-        `Dev server started in ${(performance.now() - start).toFixed(2)}ms!\n`,
-      ),
-    );
-  } catch (e) {
-    spinner.fail(colors.red(`Failed to start dev server: ${e}`));
-    panic(e instanceof Error ? e.stack : e);
-  }
+  watcher.on('change', hmrHandler);
+  watcher.on('add', hmrHandler);
+  watcher.on('unlink', hmrHandler);
+  watcher.on('unlinkDir', (path) => {
+    const hasChild = readdirSync(path).length > 0;
+    if (hasChild) return hmrHandler(path);
+  });
+  watcher.on('error', (e) => {
+    console.error(e);
+  });
+
+  ps = await buildAndStart(cwd);
+
+  const end = performance.now();
+
+  console.log(
+    `${colors.greenBright('Development server started in')} ${colors.yellowBright(`${(end - start).toFixed(2)}ms`)}
+${colors.greenBright('Watching for changes in')} ${colors.yellowBright('src')} ${colors.greenBright('directory')}
+
+${colors.greenBright('Commands:')}
+${colors.yellowBright('r')} - Restart the server
+${colors.yellowBright('rc')} - Reload all commands
+${colors.yellowBright('re')} - Reload all events
+${colors.yellowBright('rl')} - Reload all locales`,
+  );
 }

@@ -1,9 +1,8 @@
-// @ts-check
-
 import { rimrafSync } from 'rimraf';
 import { join } from 'node:path';
 import fs from 'node:fs';
 import colors from '../utils/colors';
+import { ResolvedCommandKitConfig } from '../config/utils';
 
 let ts: typeof import('typescript') | undefined;
 
@@ -31,30 +30,6 @@ export function findPackageJSON() {
   return JSON.parse(fs.readFileSync(target, 'utf8'));
 }
 
-const possibleFileNames = [
-  'commandkit.js',
-  'commandkit.mjs',
-  'commandkit.cjs',
-  'commandkit.ts',
-];
-
-export async function findCommandKitConfig(src: string) {
-  const cwd = process.cwd();
-  const locations = src
-    ? [join(cwd, src)]
-    : possibleFileNames.map((name) => join(cwd, name));
-
-  for (const location of locations) {
-    try {
-      return await loadConfigInner(location);
-    } catch (e) {
-      continue;
-    }
-  }
-
-  panic(`Could not locate commandkit config from ${cwd}`);
-}
-
 async function ensureTypeScript(target: string) {
   const isTypeScript = /\.(c|m)?tsx?$/.test(target);
 
@@ -72,7 +47,9 @@ async function ensureTypeScript(target: string) {
   return true;
 }
 
-async function loadConfigInner(target: string) {
+export async function loadConfigFileFromPath(
+  target: string,
+): Promise<ResolvedCommandKitConfig> {
   await ensureExists(target);
 
   const isTs = await ensureTypeScript(target);
@@ -107,9 +84,9 @@ async function loadConfigInner(target: string) {
   /**
    * @type {import('..').CommandKitConfig}
    */
-  const config = await import(`file://${target}`)
-    .then((conf) => conf.default || conf)
-    .catch(console.log);
+  const config = await import(`file://${target}`).then(
+    (conf) => conf.default || conf,
+  );
 
   return config;
 }

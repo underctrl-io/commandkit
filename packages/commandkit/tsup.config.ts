@@ -2,18 +2,18 @@ import { defineConfig } from 'tsup';
 import { esbuildPluginUseMacro } from 'use-macro';
 
 export default defineConfig({
-  format: ['cjs', 'esm'],
-  entry: ['./src/index.ts'],
+  format: ['cjs'],
+  entry: ['src/index.ts'],
+  outDir: './dist',
   sourcemap: true,
+  watch: false,
   minifyIdentifiers: false,
-  minifySyntax: true,
-  minifyWhitespace: true,
   keepNames: true,
   dts: true,
   shims: true,
-  splitting: false,
   skipNodeModulesBundle: true,
   clean: true,
   target: 'node16',
+  // @ts-ignore
   esbuildPlugins: [esbuildPluginUseMacro()],
 });

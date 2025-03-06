@@ -12,11 +12,7 @@ import type {
 } from 'discord.js';
 
 import type { CommandKit } from './CommandKit';
-import {
-  CommandHandler,
-  EventHandler,
-  ValidationHandler,
-} from './legacy/handlers';
+
 import { CacheProvider } from './cache/CacheProvider';
 
 /**
@@ -68,15 +64,6 @@ export interface CommandKitOptions {
    * Set this to `null` to not use any cache provider.
    */
   cacheProvider?: CacheProvider | null;
-}
-
-/**
- * Private data for the CommandKit class.
- */
-export interface CommandKitData extends CommandKitOptions {
-  commandHandler?: CommandHandler;
-  eventHandler?: EventHandler;
-  validationHandler?: ValidationHandler;
 }
 
 /**
