@@ -6,7 +6,7 @@ export const command: CommandData = {
 };
 
 export const chatInput: SlashCommand = async (ctx) => {
-  await ctx.interaction.reply('Hello from dog!');
+  await ctx.interaction.reply('Hello from dog command!');
 };
 
 export const message: MessageCommand = async (ctx) => {

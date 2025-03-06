@@ -3,39 +3,39 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "turbo dev",
-    "lint": "turbo lint && prettier --check ./ --ignore-path=.prettierignore",
-    "build": "turbo lint && turbo build",
-    "publish-package": "turbo publish-package",
-    "docgen": "tsx ./scripts/docgen.ts && pnpm format",
+    "lint": "bun lint --filter=\"./packages/*\" && prettier --check ./ --ignore-path=.prettierignore",
+    "build": "bun run --filter=\"./packages/*\" build",
+    "publish-package": "bun publish-package",
+    "build-docs": "bun run --filter=\"./apps/website\" build",
+    "docgen": "tsx ./scripts/docgen.ts && bun format",
     "format": "prettier --write ./ --ignore-path=.prettierignore"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "micro-docgen": "^0.3.5",
     "prettier": "^3.0.3",
-    "tsx": "^4.7.0",
-    "turbo": "^2.3.3"
+    "tsx": "^4.7.0"
   },
-  "packageManager": "pnpm@9.15.0",
-  "pnpm": {
-    "overrides": {
-      "katex@>=0.11.0 <0.16.10": ">=0.16.10",
-      "katex@>=0.15.4 <0.16.10": ">=0.16.10",
-      "katex@>=0.10.0-beta <0.16.10": ">=0.16.10",
-      "vite@>=5.0.0 <=5.0.12": ">=5.0.13",
-      "braces@<3.0.3": ">=3.0.3",
-      "micromatch@<4.0.8": ">=4.0.8",
-      "vite@>=5.0.0 <=5.1.7": ">=5.1.8",
-      "vite@>=5.0.0 <5.1.8": ">=5.1.8",
-      "rollup@>=4.0.0 <4.22.4": ">=4.22.4",
-      "cross-spawn@>=7.0.0 <7.0.5": ">=7.0.5",
-      "nanoid@<3.3.8": "3.3.8",
-      "next@>=15.0.0 <15.1.2": ">=15.1.2",
-      "undici@>=6.0.0 <6.21.1": ">=6.21.1",
-      "vite@>=6.0.0 <=6.0.8": ">=6.0.9",
-      "katex@>=0.12.0 <=0.16.20": ">=0.16.21"
-    }
+  "overrides": {
+    "katex@>=0.11.0 <0.16.10": ">=0.16.10",
+    "katex@>=0.15.4 <0.16.10": ">=0.16.10",
+    "katex@>=0.10.0-beta <0.16.10": ">=0.16.10",
+    "vite@>=5.0.0 <=5.0.12": ">=5.0.13",
+    "braces@<3.0.3": ">=3.0.3",
+    "micromatch@<4.0.8": ">=4.0.8",
+    "vite@>=5.0.0 <=5.1.7": ">=5.1.8",
+    "vite@>=5.0.0 <5.1.8": ">=5.1.8",
+    "rollup@>=4.0.0 <4.22.4": ">=4.22.4",
+    "cross-spawn@>=7.0.0 <7.0.5": ">=7.0.5",
+    "nanoid@<3.3.8": "3.3.8",
+    "next@>=15.0.0 <15.1.2": ">=15.1.2",
+    "undici@>=6.0.0 <6.21.1": ">=6.21.1",
+    "vite@>=6.0.0 <=6.0.8": ">=6.0.9",
+    "katex@>=0.12.0 <=0.16.20": ">=0.16.21"
   }
 }

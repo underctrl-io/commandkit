@@ -42,15 +42,24 @@ export function debounce<R, F extends (...args: any[]) => R>(
   ms: number,
 ): F {
   let timer: NodeJS.Timeout | null = null;
+  let resolve: ((value: R | PromiseLike<R>) => void) | null = null;
 
   return ((...args: any[]) => {
     if (timer) {
       clearTimeout(timer);
+      if (resolve) {
+        resolve(null as unknown as R); // Resolve with null if debounced
+      }
     }
 
-    timer = setTimeout(() => {
-      fn(...args);
-      timer = null;
-    }, ms);
+    return new Promise<R>((res) => {
+      resolve = res;
+      timer = setTimeout(() => {
+        const result = fn(...args);
+        res(result);
+        timer = null;
+        resolve = null;
+      }, ms);
+    });
   }) as F;
 }

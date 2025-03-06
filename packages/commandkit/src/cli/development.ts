@@ -4,10 +4,10 @@ import { isCompilerPlugin } from '../plugins';
 import { createAppProcess } from './app-process';
 import { buildApplication } from './build';
 import { watch } from 'chokidar';
-import { ChildProcessWithoutNullStreams } from 'child_process';
 import { readdirSync } from 'node:fs';
 import { debounce } from '../utils/utilities';
 import colors from '../utils/colors';
+import { ChildProcess } from 'node:child_process';
 
 async function buildAndStart(configPath: string, skipStart = false) {
   const config = await loadConfigFile(configPath);
@@ -22,7 +22,13 @@ async function buildAndStart(configPath: string, skipStart = false) {
 
   if (skipStart) return null as never;
 
-  return createAppProcess(mainFile, configPath, true);
+  const ps = createAppProcess(mainFile, configPath, true);
+
+  ps.on('message', (message) => {
+    console.log(`Received message from child process: ${message}`);
+  });
+
+  return ps;
 }
 
 const isCommandSource = (p: string) =>
@@ -42,17 +48,18 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
     ignoreInitial: true,
   });
 
-  let ps: ChildProcessWithoutNullStreams | null = null;
+  let ps: ChildProcess | null = null;
 
   const performHMR = debounce(async (path?: string): Promise<boolean> => {
     if (!path || !ps) return false;
+    if (!ps.send) return false;
 
     if (isCommandSource(path)) {
       console.log(
         `${colors.cyanBright('Reloading command(s) at ')} ${colors.yellowBright(path)}`,
       );
       await buildAndStart(cwd, true);
-      ps.stdin.write(`COMMANDKIT_EVENT=reload-commands|${path}\n`);
+      ps.send({ event: 'reload-commands', path });
       return true;
     }
 
@@ -61,7 +68,7 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
         `${colors.cyanBright('Reloading event(s) at ')} ${colors.yellowBright(path)}`,
       );
       await buildAndStart(cwd, true);
-      ps.stdin.write(`COMMANDKIT_EVENT=reload-events|${path}\n`);
+      ps.send({ event: 'reload-events', path });
       return true;
     }
 
@@ -70,7 +77,7 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
         `${colors.cyanBright('Reloading locale(s) at ')} ${colors.yellowBright(path)}`,
       );
       await buildAndStart(cwd, true);
-      ps.stdin.write(`COMMANDKIT_EVENT=reload-locales|${path}\n`);
+      ps.send({ event: 'reload-locales', path });
       return true;
     }
 
@@ -78,7 +85,12 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
   }, 300);
 
   const hmrHandler = async (path: string) => {
-    if (await performHMR(path)) return;
+    const hmr = await performHMR(path);
+    if (hmr) return;
+
+    console.log(
+      `${colors.yellowBright('⚡️ Performing full restart due to the changes in')} ${colors.cyanBright(path)}`,
+    );
 
     ps?.kill();
 
@@ -97,15 +109,15 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
         break;
       case 'rc':
         console.log(`Received reload commands command, reloading...`);
-        ps?.stdin.write(`COMMANDKIT_EVENT=reload-commands\n`);
+        ps?.send({ event: 'reload-commands' });
         break;
       case 're':
         console.log(`Received reload events command, reloading...`);
-        ps?.stdin.write(`COMMANDKIT_EVENT=reload-events\n`);
+        ps?.send({ event: 'reload-events' });
         break;
       case 'rl':
         console.log(`Received reload locales command, reloading...`);
-        ps?.stdin.write(`COMMANDKIT_EVENT=reload-locales\n`);
+        ps?.send({ event: 'reload-locales' });
         break;
     }
   });

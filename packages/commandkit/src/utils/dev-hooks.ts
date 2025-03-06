@@ -2,19 +2,23 @@ import type { CommandKit } from '../CommandKit';
 import { Logger } from '../logger/Logger';
 import { COMMANDKIT_IS_DEV } from './constants';
 
-const EVENT_PATTERN = /^COMMANDKIT_EVENT=(\w+)(\|(.+))?$/;
+interface IpcMessageCommand {
+  event: string;
+  path?: string;
+}
 
 export function registerDevHooks(commandkit: CommandKit) {
   if (!COMMANDKIT_IS_DEV) return;
 
-  process.stdin.on('data', (chunk) => {
-    const input = chunk.toString().trim();
+  process.on('message', (message) => {
+    if (typeof message !== 'object' || message === null) return;
 
-    const match = input.match(EVENT_PATTERN);
-    if (!match) return;
+    const { event, path } = message as IpcMessageCommand;
+    if (!event) return;
 
-    const [, event, , path] = match;
-    Logger.info(`Received HMR event: ${event}${path ? ` for ${path}` : ''}`);
+    if (process.env.COMMANDKIT_DEBUG_HMR === 'true') {
+      Logger.info(`Received HMR event: ${event}${path ? ` for ${path}` : ''}`);
+    }
 
     switch (event) {
       case 'reload-commands':
