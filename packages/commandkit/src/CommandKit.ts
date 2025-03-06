@@ -17,6 +17,7 @@ import { CommandKitPluginRuntime } from './plugins/runtime/CommandKitPluginRunti
 import { loadConfigFile } from './config/loader';
 import { COMMANDKIT_IS_DEV } from './utils/constants';
 import { registerDevHooks } from './utils/dev-hooks';
+import { writeFileSync } from 'node:fs';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
@@ -199,7 +200,8 @@ export class CommandKit extends EventEmitter {
 
   async #initCommands() {
     if (this.commandsRouter.isValidPath()) {
-      await this.commandsRouter.scan();
+      const commands = await this.commandsRouter.scan();
+      await writeFileSync('./commands.json', JSON.stringify(commands, null, 2));
     }
 
     await this.commandHandler.loadCommands();

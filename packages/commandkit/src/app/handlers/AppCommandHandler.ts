@@ -3,6 +3,7 @@ import {
   Awaitable,
   ChatInputCommandInteraction,
   Collection,
+  CommandInteraction,
   ContextMenuCommandBuilder,
   Events,
   Interaction,
@@ -20,7 +21,7 @@ import { toFileURL } from '../../utils/resolve-file-url';
 import { TranslatableCommandOptions } from '../i18n/Translation';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
-import { ParsedCommand, ParsedMiddleware } from '../router';
+import { ParsedCommand, ParsedMiddleware, ParsedSubCommand } from '../router';
 import { CommandRegistrar } from '../register/CommandRegistrar';
 import { GenericFunction } from '../../context/async-context';
 import { Logger } from '../../logger/Logger';
@@ -42,6 +43,7 @@ interface AppCommandMiddleware {
 export interface LoadedCommand {
   command: ParsedCommand;
   data: AppCommand;
+  subcommands?: ParsedSubCommand[];
   guilds?: string[];
 }
 
@@ -52,8 +54,14 @@ interface LoadedMiddleware {
 
 export interface PreparedAppCommandExecution {
   command: LoadedCommand;
+  subcommand?: LoadedSubCommand | null;
   middlewares: LoadedMiddleware[];
   messageCommandParser?: MessageCommandParser;
+}
+
+interface LoadedSubCommand {
+  subcommand: ParsedSubCommand;
+  data: AppCommand;
 }
 
 type CommandBuilderLike =
@@ -80,7 +88,13 @@ const middlewareDataSchema = {
 
 export class AppCommandHandler {
   private loadedCommands = new Collection<string, LoadedCommand>();
+  private loadedSubCommands = new Collection<string, LoadedSubCommand>();
   private loadedMiddlewares = new Collection<string, LoadedMiddleware>();
+
+  // Name-to-ID mapping for easier lookup
+  private commandNameToId = new Map<string, string>();
+  private subcommandPathToId = new Map<string, string>();
+
   public readonly registrar: CommandRegistrar;
   private onInteraction: GenericFunction<[Interaction]> | null = null;
   private onMessageCreate: GenericFunction<[Message]> | null = null;
@@ -93,8 +107,18 @@ export class AppCommandHandler {
   }
 
   public getCommandsArray() {
-    const loaded = Array.from(this.loadedCommands.values());
-    return loaded;
+    return Array.from(this.loadedCommands.values());
+  }
+
+  /**
+   * Get subcommand data by ID for the command registrar
+   */
+  public getSubcommandData(id: string) {
+    const subcommand = this.loadedSubCommands.get(id);
+    if (!subcommand) return null;
+
+    const commandData = subcommand.data.command;
+    return 'toJSON' in commandData ? commandData.toJSON() : commandData;
   }
 
   public registerCommandHandler() {
@@ -116,11 +140,11 @@ export class AppCommandHandler {
 
       if (!isCommandLike) return;
 
-      const command = await this.prepareCommandRun(interaction);
+      const prepared = await this.prepareCommandRun(interaction);
 
-      if (!command) return;
+      if (!prepared) return;
 
-      return this.runCommand(command, interaction);
+      return this.runCommand(prepared, interaction);
     };
 
     this.onMessageCreate ??= async (message: Message) => {
@@ -134,11 +158,11 @@ export class AppCommandHandler {
       if (success) return;
       if (message.author.bot) return;
 
-      const command = await this.prepareCommandRun(message);
+      const prepared = await this.prepareCommandRun(message);
 
-      if (!command) return;
+      if (!prepared) return;
 
-      return this.runCommand(command, message);
+      return this.runCommand(prepared, message);
     };
 
     this.onMessageUpdate ??= async (
@@ -160,11 +184,11 @@ export class AppCommandHandler {
       if (oldMessage.partial || newMessage.partial) return;
       if (oldMessage.author.bot) return;
 
-      const command = await this.prepareCommandRun(newMessage);
+      const prepared = await this.prepareCommandRun(newMessage);
 
-      if (!command) return;
+      if (!prepared) return;
 
-      return this.runCommand(command, newMessage);
+      return this.runCommand(prepared, newMessage);
     };
 
     this.commandkit.client.on(Events.InteractionCreate, this.onInteraction);
@@ -189,7 +213,7 @@ export class AppCommandHandler {
   }
 
   public async runCommand(
-    command: PreparedAppCommandExecution,
+    prepared: PreparedAppCommandExecution,
     source: Interaction | Message,
   ) {
     if (
@@ -211,15 +235,20 @@ export class AppCommandHandler {
       forwarded: false,
     });
 
-    for (const middleware of command.middlewares) {
+    // Run middleware before command execution
+    for (const middleware of prepared.middlewares) {
       await middleware.data.beforeExecute(ctx);
     }
 
-    const fn = command.command.data[executionMode];
+    // Determine which function to run based on whether we're executing a command or subcommand
+    const targetData = prepared.subcommand
+      ? prepared.subcommand.data
+      : prepared.command.data;
+    const fn = targetData[executionMode];
 
     if (!fn) {
       Logger.warn(
-        `Command ${command.command.command.name} has no handler for ${executionMode}`,
+        `Command ${prepared.command.command.name}${prepared.subcommand ? '/' + prepared.subcommand.subcommand.name : ''} has no handler for ${executionMode}`,
       );
     }
 
@@ -228,7 +257,7 @@ export class AppCommandHandler {
         const executeCommand = async () => fn(ctx.clone());
         const res = await this.commandkit.plugins.execute(
           async (ctx, plugin) => {
-            return plugin.executeCommand(ctx, source, command, executeCommand);
+            return plugin.executeCommand(ctx, source, prepared, executeCommand);
           },
         );
 
@@ -240,7 +269,8 @@ export class AppCommandHandler {
       }
     }
 
-    for (const middleware of command.middlewares) {
+    // Run middleware after command execution
+    for (const middleware of prepared.middlewares) {
       await middleware.data.afterExecute(ctx);
     }
   }
@@ -248,9 +278,12 @@ export class AppCommandHandler {
   public async prepareCommandRun(
     source: Interaction | Message,
   ): Promise<PreparedAppCommandExecution | null> {
-    let cmd: string;
+    let cmdName: string;
+    let subcommandGroupName: string | null = null;
+    let subcommandName: string | null = null;
     let parser: MessageCommandParser | undefined;
 
+    // Extract command name (and possibly subcommand) from the source
     if (source instanceof Message) {
       if (source.author.bot) return null;
 
@@ -261,18 +294,20 @@ export class AppCommandHandler {
         source,
         Array.isArray(prefix) ? prefix : [prefix],
         (command: string) => {
-          const loadedCommand = this.loadedCommands.find((c) => {
-            return c.data.command.name === command;
-          });
+          // Find the command by name
+          const commandId = this.commandNameToId.get(command);
+          if (!commandId) return null;
 
+          const loadedCommand = this.loadedCommands.get(commandId);
           if (!loadedCommand) return null;
 
           if (
             source.guildId &&
             loadedCommand.guilds?.length &&
             !loadedCommand.guilds.includes(source.guildId!)
-          )
+          ) {
             return null;
+          }
 
           const json =
             'toJSON' in loadedCommand.data.command
@@ -292,52 +327,113 @@ export class AppCommandHandler {
       );
 
       try {
-        cmd = parser.getFullCommand();
+        const fullCommand = parser.getFullCommand();
+        const parts = fullCommand.split(' ');
+        cmdName = parts[0];
+
+        // Check if this is a subcommand (with format: "command subcommand" or "command group subcommand")
+        if (parts.length > 1) {
+          if (parts.length === 3) {
+            // Format: "command group subcommand"
+            subcommandGroupName = parts[1];
+            subcommandName = parts[2];
+          } else {
+            // Format: "command subcommand"
+            subcommandName = parts[1];
+          }
+        }
       } catch (e) {
         if (isErrorType(e, CommandKitErrorCodes.InvalidCommandPrefix)) {
           return null;
         }
-
         console.error(e);
         return null;
       }
     } else {
       if (!source.isCommand()) return null;
 
-      cmd = source.commandName;
+      cmdName = source.commandName;
 
       if (source.isChatInputCommand()) {
-        const subcommandGroup = source.options.getSubcommandGroup(false);
-        const subcommand = source.options.getSubcommand(false);
+        subcommandGroupName = source.options.getSubcommandGroup(false);
+        subcommandName = source.options.getSubcommand(false);
+      }
+    }
 
-        if (subcommandGroup) {
-          cmd += ` ${subcommandGroup}`;
-        }
+    // Find the command by name
+    const commandId = this.commandNameToId.get(cmdName);
+    if (!commandId) return null;
 
-        if (subcommand) {
-          cmd += ` ${subcommand}`;
+    const loadedCommand = this.loadedCommands.get(commandId);
+    if (!loadedCommand) return null;
+
+    // If this is a guild specific command, check if we're in the right guild
+    if (
+      source instanceof CommandInteraction &&
+      source.guildId &&
+      loadedCommand.guilds?.length &&
+      !loadedCommand.guilds.includes(source.guildId)
+    ) {
+      return null;
+    }
+
+    // Handle subcommand execution if applicable
+    let loadedSubCommand: LoadedSubCommand | null = null;
+    if (subcommandName) {
+      // Build a path to look up the subcommand
+      let subcommandPath = `${loadedCommand.command.id}/${subcommandName}`;
+      if (subcommandGroupName) {
+        subcommandPath = `${loadedCommand.command.id}/${subcommandGroupName}/${subcommandName}`;
+      }
+
+      // Find the subcommand by its path
+      const subCommandId = this.subcommandPathToId.get(subcommandPath);
+      if (subCommandId) {
+        loadedSubCommand = this.loadedSubCommands.get(subCommandId) || null;
+      }
+    }
+
+    // Collect all applicable middleware
+    const middlewares: LoadedMiddleware[] = [];
+
+    // Add command-level middleware
+    for (const middlewareId of loadedCommand.command.middlewares) {
+      const middleware = this.loadedMiddlewares.get(middlewareId);
+      if (middleware) {
+        middlewares.push(middleware);
+      }
+    }
+
+    // Add subcommand-level middleware if applicable
+    if (loadedSubCommand) {
+      for (const middlewareId of loadedSubCommand.subcommand.middlewares) {
+        // Avoid duplicate middleware
+        const existingIndex = middlewares.findIndex(
+          (m) => m.middleware.id === middlewareId,
+        );
+        if (existingIndex === -1) {
+          const middleware = this.loadedMiddlewares.get(middlewareId);
+          if (middleware) {
+            middlewares.push(middleware);
+          }
         }
       }
     }
 
-    const loadedCommand = this.loadedCommands.find((c) => {
-      return c.data.command.name === cmd;
-    });
-
-    if (!loadedCommand) return null;
-
     return {
       command: loadedCommand,
-      middlewares: loadedCommand.command.middlewares
-        .map((m) => this.loadedMiddlewares.get(m))
-        .filter((m): m is LoadedMiddleware => !!m),
+      subcommand: loadedSubCommand,
+      middlewares,
       messageCommandParser: parser,
     };
   }
 
   public async reloadCommands() {
     this.loadedCommands.clear();
+    this.loadedSubCommands.clear();
     this.loadedMiddlewares.clear();
+    this.commandNameToId.clear();
+    this.subcommandPathToId.clear();
 
     await this.loadCommands();
   }
@@ -349,10 +445,47 @@ export class AppCommandHandler {
       throw new Error('Commands router has not yet initialized');
     }
 
-    const { commands, middleware } = commandsRouter.getData();
+    const { commands, subcommands, middlewares } = commandsRouter.getData();
 
-    for (const [id, md] of middleware) {
-      const data = await import(`${toFileURL(md.fullPath)}?t=${Date.now()}`);
+    // Load middlewares first
+    for (const [id, middleware] of middlewares) {
+      await this.loadMiddleware(id, middleware);
+    }
+
+    // Load commands
+    for (const [id, command] of commands) {
+      await this.loadCommand(id, command);
+    }
+
+    // Load subcommands
+    for (const [id, subcommand] of subcommands) {
+      await this.loadSubcommand(id, subcommand);
+    }
+
+    // Link subcommands to their parent commands
+    for (const loadedSubCommand of this.loadedSubCommands.values()) {
+      const pathSegments = loadedSubCommand.subcommand.path.split('/');
+      const parentCommandName = pathSegments[pathSegments.length - 3]; // Get parent command name from path
+
+      for (const loadedCommand of this.loadedCommands.values()) {
+        if (loadedCommand.command.name === parentCommandName) {
+          if (!loadedCommand.subcommands) {
+            loadedCommand.subcommands = [];
+          }
+          loadedCommand.subcommands.push(loadedSubCommand.subcommand);
+
+          // Break since we found the parent
+          break;
+        }
+      }
+    }
+  }
+
+  private async loadMiddleware(id: string, middleware: ParsedMiddleware) {
+    try {
+      const data = await import(
+        `${toFileURL(middleware.path)}?t=${Date.now()}`
+      );
 
       let handlerCount = 0;
       for (const [key, validator] of Object.entries(middlewareDataSchema)) {
@@ -371,34 +504,54 @@ export class AppCommandHandler {
         );
       }
 
-      this.loadedMiddlewares.set(id, { middleware: md, data });
-    }
-
-    for (const [name, command] of commands) {
-      const data = await import(
-        `${toFileURL(command.fullPath)}?t=${Date.now()}`
+      this.loadedMiddlewares.set(id, { middleware, data });
+    } catch (error) {
+      Logger.error(
+        `Failed to load middleware ${middleware.name} (${id})`,
+        error,
       );
+    }
+  }
+
+  private async loadCommand(id: string, command: ParsedCommand) {
+    try {
+      // Skip if path is null (directory-only command group with no index file)
+      if (command.path === null) {
+        this.loadedCommands.set(id, {
+          command,
+          data: {
+            command: {
+              name: command.name,
+              description: `${command.name} commands`,
+              type: 1, // CHAT_INPUT
+            },
+          },
+        });
+        this.commandNameToId.set(command.name, id);
+        return;
+      }
+
+      const data = await import(`${toFileURL(command.path)}?t=${Date.now()}`);
 
       if (!data.command) {
         throw new Error(
-          `Invalid export for command ${name}: no command definition found`,
+          `Invalid export for command ${command.name}: no command definition found`,
         );
       }
 
       let handlerCount = 0;
-
       for (const [key, validator] of Object.entries(commandDataSchema)) {
         if (key !== 'command' && data[key]) handlerCount++;
         if (data[key] && !(await validator(data[key]))) {
           throw new Error(
-            `Invalid export for command ${name}: ${key} does not match expected value`,
+            `Invalid export for command ${command.name}: ${key} does not match expected value`,
           );
         }
       }
 
       if (handlerCount === 0) {
         throw new Error(
-          `Invalid export for command ${name}: at least one handler function must be provided`,
+          `Invalid export for command ${command.name}: at least one handler function must be provided`,
         );
       }
 
@@ -406,7 +559,7 @@ export class AppCommandHandler {
         ...data.command,
       });
 
-      this.loadedCommands.set(name, {
+      this.loadedCommands.set(id, {
         command,
         guilds: data.guilds,
         data: {
@@ -414,6 +567,77 @@ export class AppCommandHandler {
           command: localizedCommand,
         },
       });
+
+      // Store name-to-id mapping for faster lookups
+      this.commandNameToId.set(command.name, id);
+    } catch (error) {
+      Logger.error(`Failed to load command ${command.name} (${id})`, error);
+    }
+  }
+
+  private async loadSubcommand(id: string, subcommand: ParsedSubCommand) {
+    try {
+      const data = await import(
+        `${toFileURL(subcommand.path)}?t=${Date.now()}`
+      );
+
+      if (!data.command) {
+        throw new Error(
+          `Invalid export for subcommand ${subcommand.name}: no command definition found`,
+        );
+      }
+
+      let handlerCount = 0;
+      for (const [key, validator] of Object.entries(commandDataSchema)) {
+        if (key !== 'command' && data[key]) handlerCount++;
+        if (data[key] && !(await validator(data[key]))) {
+          throw new Error(
+            `Invalid export for subcommand ${subcommand.name}: ${key} does not match expected value`,
+          );
+        }
+      }
+
+      if (handlerCount === 0) {
+        throw new Error(
+          `Invalid export for subcommand ${subcommand.name}: at least one handler function must be provided`,
+        );
+      }
+
+      const localizedCommand = await this.applyLocalizations({
+        ...data.command,
+      });
+
+      this.loadedSubCommands.set(id, {
+        subcommand,
+        data: {
+          ...data,
+          command: localizedCommand,
+        },
+      });
+
+      // Create path-based lookups to find subcommands
+      // Extract the parent command ID from the first part of the ID path
+      const parentCommandId = subcommand.id.split('/')[0];
+
+      // Create lookup paths for subcommands - need to handle both with and without group
+      if (subcommand.group) {
+        // Format: parentCommandId/groupName/subcommandName
+        this.subcommandPathToId.set(
+          `${parentCommandId}/${subcommand.group}/${subcommand.name}`,
+          id,
+        );
+      } else {
+        // Format: parentCommandId/subcommandName
+        this.subcommandPathToId.set(
+          `${parentCommandId}/${subcommand.name}`,
+          id,
+        );
+      }
+    } catch (error) {
+      Logger.error(
+        `Failed to load subcommand ${subcommand.name} (${id})`,
+        error,
+      );
     }
   }
 

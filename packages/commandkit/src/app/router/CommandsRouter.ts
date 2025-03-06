@@ -1,418 +1,479 @@
+import { Collection } from 'discord.js';
 import { existsSync } from 'node:fs';
-import { readdir } from 'node:fs/promises';
-import path, { join } from 'node:path';
+import { readdir, stat } from 'node:fs/promises';
+import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 
-/**
- * Matcher type for identifying command and middleware files.
- * Can be a string suffix (e.g. '.cmd.js'), RegExp pattern, or custom matcher function.
- */
-export type CommandsRouterMatcher =
-  | string
-  | RegExp
-  | ((path: string) => boolean);
+export interface ParsedCommand {
+  /**
+   * The unique identifier of this command.
+   */
+  id: string;
+  /**
+   * The file name without the extension.
+   */
+  name: string;
+  /**
+   * The full path to the command file.
+   * This can be null for directories that function as command groups but have no index file.
+   */
+  path: string | null;
+  /**
+   * The category of the command.
+   */
+  category: string | null;
+  /**
+   * The subcommands of this command parsed from `(category)` format, but omitting the brackets.
+   */
+  subcommands: string[];
+  /**
+   * The middlewares of this command.
+   */
+  middlewares: string[];
+}
 
-/**
- * Maps file type identifiers to their respective matchers.
- * Used to identify command and middleware files in the directory structure.
- */
-export type CommandsRouterMatchersMap = Record<
-  'command' | 'middleware',
-  CommandsRouterMatcher
->;
+export interface ParsedSubCommand {
+  /**
+   * The unique identifier of this subcommand.
+   */
+  id: string;
+  /**
+   * The file name without the extension.
+   */
+  name: string;
+  /**
+   * The full path to the subcommand file.
+   */
+  path: string;
+  /**
+   * The category of the subcommand parsed from `(category)` format, but omitting the brackets.
+   */
+  category: string | null;
+  /**
+   * The subcommand group name for this subcommand.
+   */
+  group: string | null;
+  /**
+   * The middlewares of this subcommand.
+   */
+  middlewares: string[];
+}
 
-/**
- * Configuration options for the CommandsRouter
- */
+export interface ParsedMiddleware {
+  /**
+   * The file name without the extension.
+   */
+  name: string;
+  /**
+   * The unique identifier of this middleware.
+   */
+  id: string;
+  /**
+   * The full path to this middleware file.
+   */
+  path: string;
+  /**
+   * The category of this middleware.
+   */
+  category: string | null;
+}
+
+export interface CommandsTree {
+  /**
+   * The record of commands mapped by their unique identifiers.
+   */
+  commands: Record<string, ParsedCommand>;
+  /**
+   * The record of subcommands mapped by their unique identifiers.
+   */
+  subcommands: Record<string, ParsedSubCommand>;
+  /**
+   * The record of middlewares mapped by their unique identifiers.
+   */
+  middlewares: Record<string, ParsedMiddleware>;
+}
+
+export interface ParsedCommandsData {
+  /**
+   * The collection of parsed commands.
+   */
+  commands: Collection<string, ParsedCommand>;
+  /**
+   * The collection of parsed subcommands.
+   */
+  subcommands: Collection<string, ParsedSubCommand>;
+  /**
+   * The collection of parsed middlewares.
+   */
+  middlewares: Collection<string, ParsedMiddleware>;
+}
+
 export interface CommandsRouterOptions {
   /**
-   * The path to the directory containing the command files.
+   * The entrypoint directory to scan for commands.
    */
   entrypoint: string;
-  /**
-   * The path to the directory containing the middleware files.
-   */
-  matcher?: Partial<CommandsRouterMatchersMap>;
 }
 
-/**
- * Represents a parsed command with its metadata
- * @interface ParsedCommand
- */
-export interface ParsedCommand {
-  /** Command name derived from the file name without extension */
-  name: string;
-  /** Absolute file system path to the command file */
-  path: string;
-  /** Parent command name for nested commands, or null if root-level command */
-  parent: string | null;
-  /** Array of command segments representing the command hierarchy */
-  parentSegments: string[];
-  /** Array of middleware IDs that apply to this command */
-  middlewares: string[];
-  /** Absolute path to this command */
-  fullPath: string;
-  /** Category the command belongs to, if any */
-  category: string | null;
-}
-
-/**
- * Represents a parsed middleware with its metadata
- * @interface ParsedMiddleware
- */
-export interface ParsedMiddleware {
-  /** Unique identifier used to reference this middleware */
-  id: string;
-  /** Middleware name derived from the file path */
-  name: string;
-  /** Path to the middleware file, relative to the entrypoint */
-  path: string;
-  /** Absolute path to the middleware file */
-  fullPath: string;
-  /** Category the middleware belongs to, if any */
-  category: string | null;
-}
-
-/**
- * Complete tree structure of all commands and middleware
- * @interface CommandsTree
- */
-export interface CommandsTree {
-  /** Map of command names to their parsed metadata */
-  commands: Record<string, ParsedCommand>;
-  /** Map of middleware IDs to their parsed metadata */
-  middleware: Record<string, ParsedMiddleware>;
-}
-
-/**
- * Result of a successful command match operation
- * @interface CommandMatchResult
- */
-export interface CommandMatchResult {
-  /** The matched command metadata */
-  command: ParsedCommand;
-  /** Array of middleware that apply to the matched command */
-  middlewares: ParsedMiddleware[];
-}
-
-/**
- * CommandsRouter handles the discovery and routing of commands and middleware files
- * in a directory structure. It supports nested commands and middleware inheritance.
- */
 export class CommandsRouter {
-  private commands = new Map<string, ParsedCommand>();
-  private middlewares = new Map<string, ParsedMiddleware>();
+  private commands: Collection<string, ParsedCommand> = new Collection();
+  private subcommands: Collection<string, ParsedSubCommand> = new Collection();
+  private middlewares: Collection<string, ParsedMiddleware> = new Collection();
 
-  /**
-   * Creates a new CommandsRouter instance
-   * @param options - Configuration options for the router
-   */
-  public constructor(private readonly options: CommandsRouterOptions) {
-    if (!options.entrypoint) {
-      throw new Error('Entrypoint directory must be provided');
-    }
+  public constructor(private readonly options: CommandsRouterOptions) {}
 
-    options.matcher ??= {};
-    options.matcher.command ??= /command\.(m|c)?(j|t)sx?$/;
-    options.matcher.middleware ??= /middleware\.(m|c)?(j|t)sx?$/;
-  }
-
-  /**
-   * Gets the configured entrypoint directory
-   */
-  public get entrypoint(): string {
+  public get entrypoint() {
     return this.options.entrypoint;
   }
 
-  /**
-   * Gets the configured matchers for command and middleware files
-   */
-  public get matchers(): CommandsRouterMatchersMap {
-    return this.options.matcher as CommandsRouterMatchersMap;
-  }
-
-  /**
-   * Returns the cached data of the commands and middleware
-   */
-  public getData() {
-    return {
-      commands: this.commands,
-      middleware: this.middlewares,
-    };
-  }
-
-  /**
-   * Checks if the entrypoint path is valid
-   */
   public isValidPath() {
     return existsSync(this.entrypoint);
   }
 
-  /**
-   * Executes a matcher against a file path
-   * @param matcher - The matcher to use
-   * @param path - The file path to test
-   * @returns boolean indicating if the path matches
-   */
-  private execMatcher(matcher: CommandsRouterMatcher, path: string): boolean {
-    if (typeof matcher === 'string') {
-      return path.endsWith(matcher);
-    }
-
-    if (matcher instanceof RegExp) {
-      return matcher.test(path);
-    }
-
-    return matcher(path);
-  }
-
-  /**
-   * Converts an absolute path to a path relative to the entrypoint
-   * @param path - The absolute path to convert
-   */
-  private resolveRelativePath(path: string): string {
-    const regex = new RegExp(`^${this.entrypoint}`);
-    return path.replace(regex, '');
-  }
-
-  /**
-   * Matches a command by name or path segments
-   * @param commandOrSegment - Command name or array of path segments
-   * @returns Matched command and its middlewares, or null if no match
-   */
-  public match(commandOrSegment: string | string[]): CommandMatchResult | null {
-    if (!commandOrSegment?.length) return null;
-
-    if (Array.isArray(commandOrSegment) && commandOrSegment.length === 1) {
-      commandOrSegment = commandOrSegment[0];
-    }
-
-    if (!Array.isArray(commandOrSegment) && !commandOrSegment.includes(' ')) {
-      const command = this.commands.get(commandOrSegment);
-      if (!command) return null;
-
-      const middlewares = command.middlewares
-        .map((id) => this.middlewares.get(id))
-        .filter((m): m is ParsedMiddleware => !!m);
-
-      return {
-        command,
-        middlewares,
-      };
-    }
-
-    const segments = Array.isArray(commandOrSegment)
-      ? commandOrSegment
-      : commandOrSegment.split(' ');
-
-    const command = Array.from(this.commands.values()).find((cmd) => {
-      const commandSegments = cmd.parentSegments;
-
-      if (commandSegments.length !== segments.length) return false;
-
-      return commandSegments.every((segment, index) => {
-        if (/^\[.+\]$/.test(segment)) return true;
-        return segment === segments[index];
-      });
-    });
-
-    if (!command) return null;
-
-    const middlewares = command.middlewares
-      .map((id) => this.middlewares.get(id))
-      .filter((m): m is ParsedMiddleware => !!m);
-
+  public getData(): ParsedCommandsData {
     return {
-      command,
-      middlewares,
+      commands: this.commands,
+      subcommands: this.subcommands,
+      middlewares: this.middlewares,
     };
   }
 
-  /**
-   * Reloads the commands tree by re-scanning the entrypoint directory
-   */
+  public toJSON(): CommandsTree {
+    return {
+      commands: Object.fromEntries(this.commands.entries()),
+      subcommands: Object.fromEntries(this.subcommands.entries()),
+      middlewares: Object.fromEntries(this.middlewares.entries()),
+    };
+  }
+
+  public clear(): void {
+    this.commands.clear();
+    this.subcommands.clear();
+    this.middlewares.clear();
+  }
+
   public async reload(): Promise<CommandsTree> {
     this.clear();
     return this.scan();
   }
 
-  /**
-   * Clears the internal commands and middleware maps
-   */
-  public clear(): void {
-    this.commands.clear();
-    this.middlewares.clear();
+  public async scan() {
+    await this.scanDirectory(this.entrypoint);
+    return this.toJSON();
   }
 
-  /**
-   * Scans the entrypoint directory for commands and middleware
-   * @returns Promise resolving to the complete commands tree
-   */
-  public async scan(): Promise<CommandsTree> {
-    this.clear();
-    const files = await this.scanDirectory(this.entrypoint, []);
+  private async scanDirectory(
+    dir: string,
+    parentPath = '',
+    categories: string[] = [],
+  ) {
+    const entries = await readdir(dir);
+    const directoryStats = new Map<string, boolean>();
 
-    // First pass: collect all files
-    const commandFiles = files.filter((file) => {
-      const basename = path.basename(file);
-      return !this.isIgnoredFile(basename) && this.isCommandFile(file);
-    });
-
-    // Second pass: process middleware
-    const middlewareFiles = files.filter((file) =>
-      this.execMatcher(this.matchers.middleware, file),
-    );
-
-    // Process commands
-    for (const file of commandFiles) {
-      const parsedPath = this.parseCommandPath(file);
-      const location = this.resolveRelativePath(file);
-
-      const command: ParsedCommand = {
-        name: parsedPath.name,
-        path: location,
-        fullPath: file,
-        parent: parsedPath.parent,
-        parentSegments: parsedPath.parentSegments,
-        category: parsedPath.category,
-        middlewares: [],
-      };
-
-      this.commands.set(parsedPath.name, command);
+    // First, gather information about which entries are directories
+    for (const entry of entries) {
+      if (entry.startsWith('_')) continue; // Ignore files/folders starting with _
+      const fullPath = path.join(dir, entry);
+      const stats = await stat(fullPath);
+      directoryStats.set(entry, stats.isDirectory());
     }
 
-    // Process middleware
-    for (const file of middlewareFiles) {
-      const location = this.resolveRelativePath(file);
-      const dirname = path.dirname(location);
-      const id = crypto.randomUUID();
-      const parts = location.split(path.sep).filter((p) => p);
-      const categories = this.parseCategories(parts);
+    // Process middlewares first so they can be associated with commands
+    await this.processMiddlewares(dir, entries, parentPath, categories);
 
+    // Process commands and subdirectories
+    for (const entry of entries) {
+      if (entry.startsWith('_')) continue; // Ignore files/folders starting with _
+
+      // Skip middleware files as they're already processed
+      if (entry.includes('.middleware.')) continue;
+
+      const fullPath = path.join(dir, entry);
+      const isDirectory = directoryStats.get(entry) || false;
+
+      if (isDirectory) {
+        // Extract name and categories from directory name
+        const { name, parsedCategories } = this.parseNameAndCategory(entry);
+        const newCategories = [...categories, ...parsedCategories];
+
+        // Skip directory as a command node if it's just a category container
+        const isCategoryContainer = /^\([^)]+\)$/.test(entry);
+
+        if (isCategoryContainer) {
+          // If it's just a category container, scan the contents without creating a command
+          await this.scanDirectory(fullPath, parentPath, newCategories);
+        } else {
+          // Otherwise, process it as a normal command directory
+          const newParentPath = parentPath ? `${parentPath}/${name}` : name;
+
+          // Always process directories as command groups regardless of index file
+          // This allows /dir/file.js to be a subcommand of dir even without an index
+          await this.processCommandDirectory(
+            fullPath,
+            name,
+            newParentPath,
+            newCategories,
+          );
+        }
+      } else {
+        // This is a file
+        // Check file extension using regex pattern for valid JavaScript/TypeScript files
+        if (!/\.(m|c)?(j|t)sx?$/.test(entry)) {
+          continue; // Skip files that don't match our valid extensions
+        }
+
+        const extname = path.extname(entry);
+        const basename = path.basename(entry, extname);
+
+        if (basename === 'index') {
+          // Skip index files when processing directly - they're handled when processing directories
+          continue;
+        }
+
+        // Process as a command file
+        const { name, parsedCategories } = this.parseNameAndCategory(basename);
+        const newCategories = [...categories, ...parsedCategories];
+
+        if (parentPath) {
+          // This is potentially a subcommand
+          await this.processSubCommand(
+            fullPath,
+            name,
+            parentPath,
+            newCategories,
+          );
+        } else {
+          // This is a top-level command
+          await this.processCommand(fullPath, name, newCategories);
+        }
+      }
+    }
+  }
+
+  private async processMiddlewares(
+    dir: string,
+    entries: string[],
+    parentPath: string,
+    categories: string[],
+  ) {
+    for (const entry of entries) {
+      if (entry.startsWith('_')) continue;
+      if (!entry.includes('.middleware.')) continue;
+
+      const fullPath = path.join(dir, entry);
+      const stats = await stat(fullPath);
+      if (stats.isDirectory()) continue;
+
+      // Check file extension using regex pattern for valid JavaScript/TypeScript files
+      if (!/\.(m|c)?(j|t)sx?$/.test(entry)) {
+        continue; // Skip files that don't match our valid extensions
+      }
+
+      const extname = path.extname(entry);
+      const basename = path.basename(entry, extname);
+      const middlewareSegments = basename.split('.middleware');
+      const middlewareName = middlewareSegments[0];
+
+      const { name, parsedCategories } =
+        this.parseNameAndCategory(middlewareName);
+      const newCategories = [...categories, ...parsedCategories];
+      const category = newCategories.length ? newCategories.join(':') : null;
+
+      // Create middleware object with unique ID using crypto.randomUUID
       const middleware: ParsedMiddleware = {
-        id,
-        name: dirname,
-        path: location,
-        fullPath: file,
-        category: categories.length ? categories.join('/') : null,
+        name,
+        id: randomUUID(), // Using randomUUID for unique ID generation
+        path: fullPath,
+        category,
       };
 
-      this.middlewares.set(id, middleware);
+      this.middlewares.set(middleware.id, middleware);
+    }
+  }
 
-      // Apply middleware based on location
-      const isGlobalMiddleware = path.parse(file).name === 'middleware';
-      const commands = Array.from(this.commands.values());
+  private async processCommand(
+    filePath: string,
+    name: string,
+    categories: string[],
+  ) {
+    const category = categories.length ? categories.join(':') : null;
+    const id = randomUUID(); // Using randomUUID for unique ID generation
 
-      for (const command of commands) {
-        const commandDir = path.dirname(command.path);
+    // Find associated middlewares
+    const middlewares = this.findAssociatedMiddlewares(name, category);
 
-        if (isGlobalMiddleware) {
-          // Global middleware applies if command is in same dir or nested
-          if (
-            commandDir === dirname ||
-            commandDir.startsWith(dirname + path.sep)
-          ) {
-            command.middlewares.push(id);
-          }
-        } else {
-          // Specific middleware only applies to exact command match
-          const commandName = command.name;
-          const middlewareName = path
-            .basename(file)
-            .replace(/\.middleware\.(m|c)?(j|t)sx?$/, '');
-          if (commandName === middlewareName && commandDir === dirname) {
-            command.middlewares.push(id);
-          }
+    const command: ParsedCommand = {
+      id,
+      name,
+      path: filePath,
+      category,
+      subcommands: [],
+      middlewares,
+    };
+
+    this.commands.set(id, command);
+  }
+
+  private async processCommandDirectory(
+    dirPath: string,
+    name: string,
+    parentPath: string,
+    categories: string[],
+  ) {
+    const category = categories.length ? categories.join(':') : null;
+    const id = randomUUID(); // Using randomUUID for unique ID generation
+
+    // Find index file by checking multiple possible extensions
+    let indexFile: string | null = null;
+    const possibleExtensions = [
+      '.js',
+      '.ts',
+      '.jsx',
+      '.tsx',
+      '.mjs',
+      '.cjs',
+      '.mts',
+      '.cts',
+    ];
+    for (const ext of possibleExtensions) {
+      const testPath = path.join(dirPath, `index${ext}`);
+      if (existsSync(testPath)) {
+        indexFile = testPath;
+        break;
+      }
+    }
+
+    // Find associated middlewares
+    const middlewares = this.findAssociatedMiddlewares(name, category);
+
+    // Find potential subcommands in this directory
+    const entries = await readdir(dirPath);
+    const subcommands: string[] = [];
+
+    for (const entry of entries) {
+      if (entry.startsWith('_') || entry.startsWith('index.')) continue;
+
+      const fullPath = path.join(dirPath, entry);
+      const stats = await stat(fullPath);
+      const isDirectory = stats.isDirectory();
+
+      // Check file extension using regex pattern for valid JavaScript/TypeScript files
+      if (!isDirectory && !/\.(m|c)?(j|t)sx?$/.test(entry)) {
+        continue; // Skip files that don't match our valid extensions
+      }
+
+      if (!isDirectory || (isDirectory && !entry.includes('.'))) {
+        const extname = isDirectory ? '' : path.extname(entry);
+        const baseName = isDirectory ? entry : path.basename(entry, extname);
+        if (!baseName.includes('.middleware')) {
+          const { name: subName } = this.parseNameAndCategory(baseName);
+          subcommands.push(subName);
         }
       }
     }
 
-    return this.toJSON();
-  }
-
-  /**
-   * Converts the internal maps to a serializable object
-   * @returns CommandsTree containing all commands and middleware
-   */
-  public toJSON(): CommandsTree {
-    return {
-      commands: Object.fromEntries(this.commands),
-      middleware: Object.fromEntries(this.middlewares),
+    // Create command representation for this directory even if no index file exists
+    const command: ParsedCommand = {
+      id,
+      name,
+      path: indexFile, // This can be null if no index file exists
+      category,
+      subcommands,
+      middlewares,
     };
+
+    this.commands.set(id, command);
+
+    // Scan for actual subcommands
+    await this.scanDirectory(dirPath, id, categories);
   }
 
-  /**
-   * Recursively scans a directory for files
-   * @param dir - Directory to scan
-   * @param entries - Accumulator for found files
-   * @returns Promise resolving to array of file paths
-   */
-  private async scanDirectory(
-    dir: string,
-    entries: string[],
-  ): Promise<string[]> {
-    const files = await readdir(dir, {
-      withFileTypes: true,
-    });
-
-    for (const file of files) {
-      // for whatever reason
-      if (
-        file.name === 'node_modules' ||
-        file.parentPath.includes('node_modules')
-      ) {
-        continue;
-      }
-
-      if (file.isDirectory()) {
-        const next = join(dir, file.name);
-        await this.scanDirectory(next, entries);
-        continue;
-      }
-
-      entries.push(join(dir, file.name));
+  private async processSubCommand(
+    filePath: string,
+    name: string,
+    parentPath: string,
+    categories: string[],
+  ) {
+    // Validate file extension
+    if (!/\.(m|c)?(j|t)sx?$/.test(filePath)) {
+      return; // Skip files that don't match our valid extensions
     }
 
-    return entries;
+    const pathSegments = parentPath.split('/');
+    let group: string | null = null;
+
+    // Check if this is a subcommand inside a group (depth > 1)
+    // parentPath format could be: "commandId" or "commandId/groupName"
+    if (pathSegments.length > 1) {
+      // The second segment is the subcommand group if it exists
+      group = pathSegments[1];
+    }
+
+    const category = categories.length ? categories.join(':') : null;
+    const id = randomUUID(); // Using randomUUID for unique ID generation
+
+    // Find associated middlewares
+    const middlewares = this.findAssociatedMiddlewares(name, category);
+
+    const subcommand: ParsedSubCommand = {
+      id,
+      name,
+      path: filePath,
+      category,
+      group,
+      middlewares,
+    };
+
+    this.subcommands.set(id, subcommand);
   }
 
-  private isIgnoredFile(filename: string): boolean {
-    return filename.startsWith('_');
-  }
-
-  private isCommandFile(path: string): boolean {
-    if (this.execMatcher(this.matchers.middleware, path)) return false;
-    return (
-      /index\.(m|c)?(j|t)sx?$/.test(path) || /\.(m|c)?(j|t)sx?$/.test(path)
-    );
-  }
-
-  private parseCategories(parts: string[]): string[] {
-    return parts
-      .filter((part) => part.startsWith('(') && part.endsWith(')'))
-      .map((part) => part.slice(1, -1));
-  }
-
-  private parseCommandPath(filepath: string): {
+  private parseNameAndCategory(name: string): {
     name: string;
-    category: string | null;
-    parent: string | null;
-    parentSegments: string[];
+    parsedCategories: string[];
   } {
-    const location = this.resolveRelativePath(filepath);
-    const parts = location.split(path.sep).filter((p) => p);
-    const categories = this.parseCategories(parts);
-    const segments: string[] = parts.filter(
-      (part) => !(part.startsWith('(') && part.endsWith(')')),
-    );
+    const parsedCategories: string[] = [];
 
-    let name = segments.pop() || '';
-    name = name.replace(/\.(m|c)?(j|t)sx?$/, '').replace(/^index$/, '');
+    // Extract categories in format (category)
+    const regex = /\(([^)]+)\)/g;
+    let match;
+    let cleanName = name;
+
+    while ((match = regex.exec(name)) !== null) {
+      parsedCategories.push(match[1]);
+      cleanName = cleanName.replace(match[0], '');
+    }
 
     return {
-      name,
-      category: categories.length ? categories.join('/') : null,
-      parent: segments.length ? segments.join(' ') : null,
-      parentSegments: segments,
+      name: cleanName.trim(),
+      parsedCategories,
     };
+  }
+
+  private findAssociatedMiddlewares(
+    commandName: string,
+    category: string | null,
+  ): string[] {
+    const middlewares: string[] = [];
+
+    this.middlewares.forEach((middleware) => {
+      // Global middleware (named just 'middleware')
+      if (middleware.name === 'middleware') {
+        middlewares.push(middleware.id);
+        return;
+      }
+
+      // Command-specific middleware
+      if (middleware.name === commandName) {
+        middlewares.push(middleware.id);
+        return;
+      }
+
+      // Category-based middleware matching
+      if (category && middleware.category === category) {
+        middlewares.push(middleware.id);
+      }
+    });
+
+    return middlewares;
   }
 }
