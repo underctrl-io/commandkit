@@ -1,9 +1,13 @@
 import { CommandKit } from '../../CommandKit';
+import { ListenerFunction } from '../../events/CommandKitEventsChannel';
 import { Logger } from '../../logger/Logger';
 import { toFileURL } from '../../utils/resolve-file-url';
 import { ParsedEvent } from '../router';
 
-export type EventListener = (...args: any[]) => any;
+export type EventListener = {
+  handler: ListenerFunction;
+  once: boolean;
+};
 
 export interface LoadedEvent {
   name: string;
@@ -11,6 +15,7 @@ export interface LoadedEvent {
   event: ParsedEvent;
   listeners: EventListener[];
   mainListener?: EventListener;
+  executedOnceListeners?: Set<ListenerFunction>; // Track executed once listeners
 }
 
 export class AppEventsHandler {
@@ -39,7 +44,10 @@ export class AppEventsHandler {
           );
         }
 
-        listeners.push(handler.default);
+        listeners.push({
+          handler: handler.default,
+          once: !!handler.once,
+        });
       }
 
       const len = listeners.length;
@@ -76,37 +84,96 @@ export class AppEventsHandler {
     const client = this.commandkit.client;
 
     for (const [key, data] of this.loadedEvents.entries()) {
-      const { name, listeners, namespace, mainListener } = data;
-      const main =
-        mainListener ||
-        (async (...args) => {
-          for (const listener of listeners) {
-            try {
-              await listener(...args);
-            } catch (e) {
-              Logger.error(
-                `Error handling event ${name}${
-                  namespace ? ` of namespace ${namespace}` : ''
-                }`,
-                e,
-              );
-            }
+      const { name, listeners, namespace } = data;
+
+      // Separate listeners into "once" and "on" groups
+      const onceListeners = listeners.filter((listener) => listener.once);
+      const onListeners = listeners.filter((listener) => !listener.once);
+
+      // Initialize set to track executed once listeners
+      const executedOnceListeners = new Set<ListenerFunction>();
+
+      // Create main handler for regular "on" listeners
+      const mainHandler: ListenerFunction = async (...args) => {
+        for (const listener of onListeners) {
+          try {
+            await listener.handler(...args);
+          } catch (e) {
+            Logger.error(
+              `Error handling event ${name}${
+                namespace ? ` of namespace ${namespace}` : ''
+              }`,
+              e,
+            );
           }
-        });
+        }
+      };
 
-      if (!mainListener) {
-        this.loadedEvents.set(key, {
-          ...data,
-          mainListener: main,
-        });
+      // Create handler for "once" listeners with cleanup logic
+      const onceHandler: ListenerFunction = async (...args) => {
+        for (const listener of onceListeners) {
+          try {
+            // Skip if already executed (shouldn't happen with proper .once registration, but just in case)
+            if (executedOnceListeners.has(listener.handler)) continue;
+
+            await listener.handler(...args);
+            executedOnceListeners.add(listener.handler);
+          } catch (e) {
+            Logger.error(
+              `Error handling event ${name}${
+                namespace ? ` of namespace ${namespace}` : ''
+              }`,
+              e,
+            );
+          }
+        }
+
+        // Cleanup: Remove once listeners that have been executed
+        if (
+          executedOnceListeners.size === onceListeners.length &&
+          onListeners.length === 0
+        ) {
+          // If all once listeners executed and no regular listeners, remove event entirely
+          this.loadedEvents.delete(key);
+          Logger.info(
+            `🧹 Cleaned up completed once-only event ${name}${
+              namespace ? ` of namespace ${namespace}` : ''
+            }`,
+          );
+        }
+      };
+
+      // Store main handlers in loadedEvents for later unregistration
+      this.loadedEvents.set(key, {
+        ...data,
+        mainListener:
+          onListeners.length > 0
+            ? { handler: mainHandler, once: false }
+            : undefined,
+        executedOnceListeners,
+      });
+
+      // Register handlers with appropriate methods
+      if (namespace) {
+        if (onListeners.length > 0) {
+          this.commandkit.events.on(namespace, name, mainHandler);
+        }
+        if (onceListeners.length > 0) {
+          this.commandkit.events.once(namespace, name, onceHandler);
+        }
+      } else {
+        if (onListeners.length > 0) {
+          client.on(name, mainHandler);
+        }
+        if (onceListeners.length > 0) {
+          client.once(name, onceHandler);
+        }
       }
-
-      client.on(name, main);
 
       Logger.info(
         `🔌 Registered event ${name}${
           namespace ? ` of namespace ${namespace}` : ''
-        }`,
+        } (${onListeners.length} regular, ${onceListeners.length} once-only)`,
       );
     }
   }
@@ -119,9 +186,17 @@ export class AppEventsHandler {
       { name, mainListener, namespace },
     ] of this.loadedEvents.entries()) {
       if (mainListener) {
-        client.off(name, mainListener);
+        if (namespace) {
+          this.commandkit.events.off(namespace, name, mainListener.handler);
+        } else {
+          client.off(name, mainListener.handler);
+        }
       } else {
-        client.removeAllListeners(name);
+        if (namespace) {
+          this.commandkit.events.removeAllListeners(namespace, name);
+        } else {
+          client.removeAllListeners(name);
+        }
       }
 
       this.loadedEvents.delete(key);

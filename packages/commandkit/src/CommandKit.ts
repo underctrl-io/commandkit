@@ -18,6 +18,10 @@ import { loadConfigFile } from './config/loader';
 import { COMMANDKIT_IS_DEV } from './utils/constants';
 import { registerDevHooks } from './utils/dev-hooks';
 import { writeFileSync } from 'node:fs';
+import { CommandKitEventsChannel } from './events/CommandKitEventsChannel';
+import { isRuntimePlugin } from './plugins';
+import { generateTypesPackage } from './utils/types-package';
+import { Logger } from './logger/Logger';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
@@ -43,6 +47,7 @@ export class CommandKit extends EventEmitter {
   public readonly commandHandler = new AppCommandHandler(this);
   public readonly eventHandler = new AppEventsHandler(this);
   public readonly plugins: CommandKitPluginRuntime;
+  public readonly events = new CommandKitEventsChannel(this);
 
   static instance: CommandKit | undefined = undefined;
 
@@ -99,8 +104,22 @@ export class CommandKit extends EventEmitter {
    * @param token The application token to connect to the discord gateway. If not provided, it will use the `TOKEN` or `DISCORD_TOKEN` environment variable. If set to `false`, it will not login.
    */
   async start(token?: string | false) {
-    await loadConfigFile();
     if (this.#started) return;
+
+    if (COMMANDKIT_IS_DEV) {
+      try {
+        registerDevHooks(this);
+
+        await generateTypesPackage();
+      } catch (e) {
+        // ignore
+        if (process.env.COMMANDKIT_DEBUG_TYPEGEN) {
+          Logger.error(e);
+        }
+      }
+    }
+
+    await this.loadPlugins();
 
     await this.#init();
 
@@ -114,11 +133,21 @@ export class CommandKit extends EventEmitter {
 
     this.#started = true;
 
-    if (COMMANDKIT_IS_DEV) {
-      registerDevHooks(this);
-    }
-
     await this.commandHandler.registrar.register();
+  }
+
+  /**
+   * Loads all the plugins.
+   */
+  async loadPlugins() {
+    const config = await loadConfigFile();
+    const plugins = config.plugins.filter((p) => isRuntimePlugin(p));
+
+    if (!plugins.length) return;
+
+    for (const plugin of plugins) {
+      await this.plugins.softRegisterPlugin(plugin);
+    }
   }
 
   /**
@@ -200,8 +229,12 @@ export class CommandKit extends EventEmitter {
 
   async #initCommands() {
     if (this.commandsRouter.isValidPath()) {
-      const commands = await this.commandsRouter.scan();
-      await writeFileSync('./commands.json', JSON.stringify(commands, null, 2));
+      await this.commandsRouter.scan();
+
+      if (COMMANDKIT_IS_DEV) {
+        const visual = this.commandsRouter.visualize();
+        console.log(visual);
+      }
     }
 
     await this.commandHandler.loadCommands();

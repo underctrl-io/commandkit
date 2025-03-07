@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import fs from 'node:fs';
 import colors from '../utils/colors';
 import { ResolvedCommandKitConfig } from '../config/utils';
+import { generateTypesPackage } from '../utils/types-package';
 
 let ts: typeof import('typescript') | undefined;
 
@@ -66,13 +67,7 @@ export async function loadConfigFileFromPath(
       fileName: target,
     });
 
-    const nodeModulesPath = join(
-      process.cwd(),
-      'node_modules',
-      '.commandkit_tmp',
-    );
-
-    fs.mkdirSync(nodeModulesPath, { recursive: true });
+    const nodeModulesPath = await generateTypesPackage();
 
     const tmpFile = join(nodeModulesPath, 'compiled-commandkit.config.mjs');
 

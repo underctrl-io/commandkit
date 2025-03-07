@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadConfigFileFromPath } from '../cli/common';
-import { defaultConfig } from './default';
 import { getConfig } from './config';
 
 const CONFIG_FILE_NAMES = [

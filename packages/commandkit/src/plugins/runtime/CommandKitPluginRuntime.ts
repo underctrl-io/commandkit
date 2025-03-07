@@ -25,6 +25,21 @@ export class CommandKitPluginRuntime extends EventTarget {
     return this.plugins.get(pluginName) ?? null;
   }
 
+  public async softRegisterPlugin(plugin: RuntimePlugin) {
+    const pluginName = plugin.name;
+
+    if (this.plugins.has(pluginName)) return;
+
+    try {
+      await plugin.activate(this);
+      this.plugins.set(pluginName, plugin);
+    } catch (e: any) {
+      throw new Error(
+        `Failed to activate plugin "${pluginName}": ${e?.stack || e}`,
+      );
+    }
+  }
+
   public async registerPlugin(plugin: RuntimePlugin) {
     const pluginName = plugin.name;
 
