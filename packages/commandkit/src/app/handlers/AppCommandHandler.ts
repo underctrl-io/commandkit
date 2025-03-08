@@ -26,9 +26,18 @@ import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 import { ParsedCommand, ParsedMiddleware, ParsedSubCommand } from '../router';
 import { CommandRegistrar } from '../register/CommandRegistrar';
-import { GenericFunction } from '../../context/async-context';
+import {
+  GenericFunction,
+  makeContextAwareFunction,
+  useEnvironment,
+} from '../../context/async-context';
 import { Logger } from '../../logger/Logger';
 import { AsyncFunction } from '../../cache';
+import {
+  afterCommand,
+  CommandKitEnvironment,
+  CommandKitEnvironmentType,
+} from '../../context/environment';
 
 export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
 
@@ -238,7 +247,14 @@ export class AppCommandHandler {
 
     let runCommand: RunCommand | null = null;
 
+    const env = new CommandKitEnvironment(this.commandkit);
+    env.setType(CommandKitEnvironmentType.CommandHandler);
+    env.variables.set('commandHandlerType', 'app');
+    env.variables.set('currentCommandName', prepared.command.command.name);
+    env.variables.set('execHandlerKind', executionMode);
+
     const ctx = new MiddlewareContext(this.commandkit, {
+      environment: env,
       executionMode,
       interaction: !(source instanceof Message)
         ? (source as ChatInputCommandInteraction)
@@ -271,11 +287,35 @@ export class AppCommandHandler {
 
     if (fn) {
       try {
-        const _executeCommand = async () => fn(ctx.clone());
+        const _executeCommand = makeContextAwareFunction(
+          env,
+          async () => fn(ctx.clone()),
+          this.#finalizer.bind(this),
+        );
+
         const executeCommand =
           runCommand != null
             ? (runCommand as RunCommand)(_executeCommand)
             : _executeCommand;
+
+        afterCommand((env) => {
+          const error = env.getExecutionError();
+          const marker = env.getMarker();
+          const time = `${env.getExecutionTime().toFixed(2)}ms`;
+
+          if (error) {
+            Logger.error(
+              `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
+            );
+
+            return;
+          }
+
+          Logger.info(`[${marker} - ${time}] Command executed successfully`);
+        });
+
+        env.markStart(prepared.command.command.name);
+
         const res = await this.commandkit.plugins.execute(
           async (ctx, plugin) => {
             return plugin.executeCommand(ctx, source, prepared, executeCommand);
@@ -290,10 +330,22 @@ export class AppCommandHandler {
       }
     }
 
-    // Run middleware after command execution
-    for (const middleware of prepared.middlewares) {
-      await middleware.data.afterExecute(ctx);
+    try {
+      // Run middleware after command execution
+      for (const middleware of prepared.middlewares) {
+        await middleware.data.afterExecute(ctx);
+      }
+    } finally {
+      env.markEnd();
     }
+  }
+
+  async #finalizer() {
+    const env = useEnvironment();
+
+    await env.runDeferredFunctions();
+
+    env.clearAllDeferredFunctions();
   }
 
   public async prepareCommandRun(
@@ -367,7 +419,7 @@ export class AppCommandHandler {
         if (isErrorType(e, CommandKitErrorCodes.InvalidCommandPrefix)) {
           return null;
         }
-        console.error(e);
+        Logger.error(e);
         return null;
       }
     } else {

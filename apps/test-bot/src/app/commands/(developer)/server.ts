@@ -1,4 +1,9 @@
-import type { CommandData, SlashCommand, MessageCommand } from 'commandkit';
+import {
+  type CommandData,
+  type SlashCommand,
+  type MessageCommand,
+  Logger,
+} from 'commandkit';
 
 export const command: CommandData = {
   name: 'server',
@@ -7,9 +12,11 @@ export const command: CommandData = {
 };
 
 export const chatInput: SlashCommand = async (ctx) => {
+  Logger.log('Running server command');
   await ctx.interaction.reply('Hello from server!');
 };
 
 export const message: MessageCommand = async (ctx) => {
+  Logger.log('Running server command');
   await ctx.message.reply('Hello from server!');
 };

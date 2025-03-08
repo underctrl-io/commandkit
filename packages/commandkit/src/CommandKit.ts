@@ -123,6 +123,7 @@ export class CommandKit extends EventEmitter {
 
     await this.#init();
 
+    this.commandHandler.registerCommandHandler();
     this.incrementClientListenersCount();
 
     if (token !== false && !this.options.client.isReady()) {
@@ -133,6 +134,8 @@ export class CommandKit extends EventEmitter {
       await this.options.client.login(
         token ?? process.env.TOKEN ?? process.env.DISCORD_TOKEN,
       );
+    } else if (this.options.client.isReady()) {
+      await this.commandHandler.registrar.register();
     }
 
     this.#started = true;
