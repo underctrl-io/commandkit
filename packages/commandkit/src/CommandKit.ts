@@ -5,7 +5,7 @@ import { CacheProvider } from './cache/CacheProvider';
 import { MemoryCache } from './cache/MemoryCache';
 import { createElement, Fragment } from './components';
 import { EventInterceptor } from './components/common/EventInterceptor';
-import { Awaitable, Locale, Message } from 'discord.js';
+import { Awaitable, Events, Locale, Message } from 'discord.js';
 import { DefaultLocalizationStrategy } from './app/i18n/DefaultLocalizationStrategy';
 import { findAppDirectory } from './utils/utilities';
 import { join } from 'node:path';
@@ -125,15 +125,17 @@ export class CommandKit extends EventEmitter {
 
     this.incrementClientListenersCount();
 
-    // if (token !== false && !this.options.client.isReady()) {
-    //   await this.options.client.login(
-    //     token ?? process.env.TOKEN ?? process.env.DISCORD_TOKEN,
-    //   );
-    // }
+    if (token !== false && !this.options.client.isReady()) {
+      this.client.once(Events.ClientReady, async () => {
+        await this.commandHandler.registrar.register();
+      });
+
+      await this.options.client.login(
+        token ?? process.env.TOKEN ?? process.env.DISCORD_TOKEN,
+      );
+    }
 
     this.#started = true;
-
-    await this.commandHandler.registrar.register();
   }
 
   /**
