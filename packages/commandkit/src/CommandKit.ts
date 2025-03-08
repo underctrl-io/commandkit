@@ -229,11 +229,15 @@ export class CommandKit extends EventEmitter {
 
   async #initCommands() {
     if (this.commandsRouter.isValidPath()) {
-      await this.commandsRouter.scan();
+      const result = await this.commandsRouter.scan();
 
       if (COMMANDKIT_IS_DEV) {
         const visual = this.commandsRouter.visualize();
-        console.log(visual);
+        Logger.info(visual);
+        writeFileSync(
+          './.commandkit/commands.json',
+          JSON.stringify(result, null, 2),
+        );
       }
     }
 

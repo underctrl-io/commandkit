@@ -1,7 +1,7 @@
 import { Collection } from 'discord.js';
 import { existsSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
-import path from 'node:path/posix';
+import * as path from 'node:path';
 
 /**
  * Represents a command file info parsed from the file system.
@@ -84,6 +84,10 @@ export interface ParsedSubCommand {
    * The group name of the subcommand. This is used to group subcommands together in the Discord UI.
    */
   group: string | null;
+  /**
+   * The category of this subcommand. This will be the parent directory segment that matches /(category)/ in the path.
+   */
+  category: string | null;
   /**
    * The absolute path to the subcommand file.
    */
@@ -266,9 +270,20 @@ export class CommandsRouter {
     return this.toJSON();
   }
 
-  private async scanDeep(entry: string, currentDepth = 2): Promise<void> {
+  private async scanDeep(entry: string, currentDepth = 3): Promise<void> {
     const normalizedPath = path.normalize(entry);
     const content = await readdir(normalizedPath, { withFileTypes: true });
+
+    // Check if this directory is the root commands directory or a direct subdirectory (ignoring categories)
+    const isRootOrDirectSubdir =
+      normalizedPath === this.entrypoint ||
+      path.dirname(normalizedPath) === this.entrypoint ||
+      // Check if parent directories between this and entrypoint are all category directories
+      this.getPathSegmentsBetween(normalizedPath, this.entrypoint).every(
+        (segment) => this.isCategoryDirectory(segment),
+      );
+
+    const effectiveDepth = isRootOrDirectSubdir ? 3 : currentDepth;
 
     for (const item of content) {
       const itemPath = path.join(normalizedPath, item.name);
@@ -281,31 +296,32 @@ export class CommandsRouter {
 
         // Continue scanning directories if we haven't reached max depth
         // Don't decrease depth for category directories
-        if (currentDepth > 0 || isCategoryDir) {
+        if (isCategoryDir || effectiveDepth >= 0) {
           // Only decrease depth if it's not a category directory
-          const nextDepth = isCategoryDir ? currentDepth : currentDepth - 1;
+          const nextDepth = isCategoryDir ? effectiveDepth : effectiveDepth - 1;
+
           await this.scanDeep(itemPath, nextDepth);
         }
       } else {
         // Process file based on its type and depth
-        const isInnerSubCommand = currentDepth === 0;
-        const isSubCommandGroup = currentDepth === 1;
         const category = this.extractCategory(itemPath);
         const fileName = this.extractName(itemPath);
-        const isIndexFile =
-          fileName === 'index' && normalizedPath !== this.entrypoint;
+        const isIndexFile = fileName === 'index';
 
         if (this.isMiddleware(itemPath)) {
           this.processMiddleware(itemPath, category);
-        } else if (isInnerSubCommand || isSubCommandGroup) {
+        } else if (effectiveDepth <= 1) {
+          // This is a subcommand or subcommand group command
           this.processSubcommand(
             itemPath,
             path.basename(normalizedPath),
-            isSubCommandGroup,
+            effectiveDepth === 0, // isSubCommandGroup when depth is 0
             isIndexFile,
+            effectiveDepth,
+            category,
           );
         } else {
-          // At root level (currentDepth = 2), we have commands
+          // At root level or first level (after ignoring category dirs), we have commands
           this.processCommand(
             itemPath,
             category,
@@ -314,6 +330,26 @@ export class CommandsRouter {
         }
       }
     }
+  }
+
+  /**
+   * Gets path segments between two paths, excluding the start and end paths
+   * Used to check if all directories between a path and the entrypoint are category directories
+   */
+  private getPathSegmentsBetween(path1: string, path2: string): string[] {
+    const normalizedPath1 = path.normalize(path1);
+    const normalizedPath2 = path.normalize(path2);
+
+    // If paths are the same, return empty array
+    if (normalizedPath1 === normalizedPath2) return [];
+
+    // Get the relative path between the two
+    const relativePath = path.relative(normalizedPath2, normalizedPath1);
+
+    // Split into segments and return
+    return relativePath
+      .split(path.sep)
+      .filter((segment) => segment !== '.' && segment !== '..');
   }
 
   private processMiddleware(filePath: string, category: string | null): void {
@@ -334,20 +370,49 @@ export class CommandsRouter {
     parentDirName: string,
     isGrouped: boolean,
     isIndexFile: boolean = false,
+    depth: number,
+    category: string | null,
   ): void {
-    const subcommand: ParsedSubCommand = {
-      id: crypto.randomUUID(),
-      name: isIndexFile
-        ? this.getDirectoryName(filePath)
-        : this.extractName(filePath),
-      group: isGrouped ? parentDirName : null,
-      middlewares: [],
-      path: filePath,
-      relativePath: this.getRelativePath(filePath),
-    };
+    // If this is an index file, handle it as a special case
+    if (isIndexFile) {
+      // Get the actual parent directory name without category markers
+      const cleanParentDirName = this.extractDirOmitCategory(parentDirName);
 
-    this.subcommands.set(subcommand.id, subcommand);
-    this.applySubcommandToCommands(subcommand);
+      // Check if there's already a command with this name
+      const parentCommand = this.commands.find((cmd) => {
+        return cmd.name === cleanParentDirName;
+      });
+
+      // If no parent command is found, create one
+      if (!parentCommand) {
+        const command: ParsedCommand = {
+          id: crypto.randomUUID(),
+          name: cleanParentDirName,
+          category,
+          middlewares: [],
+          path: filePath,
+          relativePath: this.getRelativePath(filePath),
+          subcommands: [],
+        };
+
+        this.commands.set(command.id, command);
+      }
+    } else {
+      // Standard subcommand processing
+      const subcommand: ParsedSubCommand = {
+        id: crypto.randomUUID(),
+        name: this.extractName(filePath),
+        // For subcommands, the group is the directory name (excluding category markers)
+        group: isGrouped ? this.extractDirOmitCategory(parentDirName) : null,
+        middlewares: [],
+        path: filePath,
+        category,
+        relativePath: this.getRelativePath(filePath),
+      };
+
+      this.subcommands.set(subcommand.id, subcommand);
+      this.applySubcommandToCommands(subcommand);
+    }
   }
 
   private processCommand(
@@ -355,6 +420,7 @@ export class CommandsRouter {
     category: string | null,
     parentPath: string | null = null,
   ): void {
+    console.log({ filePath, category, parentPath });
     const command: ParsedCommand = {
       id: crypto.randomUUID(),
       name: parentPath
@@ -368,6 +434,20 @@ export class CommandsRouter {
     };
 
     this.commands.set(command.id, command);
+  }
+
+  private extractDirOmitCategory(dirPath: string): string {
+    const segments = path.normalize(dirPath).split(path.sep).reverse();
+    let name = '';
+
+    while (segments.length > 0) {
+      const segment = segments.pop()!;
+      if (this.isCategoryDirectory(segment)) continue;
+      name = segment;
+      break;
+    }
+
+    return name;
   }
 
   /**
@@ -414,24 +494,42 @@ export class CommandsRouter {
 
   private applySubcommandToCommands(subcommand: ParsedSubCommand) {
     for (const command of this.commands.values()) {
-      // matching criteria: subcommand file's path contains the command file's path
-      // but the path must be deeper than entrypoint
-      if (!subcommand.path.startsWith(command.path)) continue;
-      if (command.subcommands.includes(subcommand.id)) continue;
+      // A subcommand should be associated with a command if:
+      // 1. The subcommand path contains the command name in its directory path
+      // 2. The paths are related when ignoring category directories
 
-      command.subcommands.push(subcommand.id);
+      const subcommandPathParts = path
+        .normalize(subcommand.path)
+        .split(path.sep);
+      const commandName = command.name;
+
+      // Extract directory name that would contain the command name
+      // Skip any directory parts that are categories (have parentheses)
+      const relevantDirectories = subcommandPathParts
+        .map((part) => path.basename(part))
+        .filter((part) => !this.isCategoryDirectory(part));
+
+      // Check if any non-category directory name matches the command name
+      if (relevantDirectories.includes(commandName)) {
+        if (!command.subcommands.includes(subcommand.id)) {
+          command.subcommands.push(subcommand.id);
+        }
+      }
     }
   }
 
   private extractCategory(entry: string) {
-    return entry
-      .split(path.sep)
-      .map((segment) => {
-        const match = segment.match(/^\((\w+)\)$/);
-        return match ? match[1] : null;
-      })
-      .filter(Boolean)
-      .join(':');
+    return (
+      path
+        .normalize(entry)
+        .split(path.sep)
+        .map((segment) => {
+          const match = segment.match(/^\((\w+)\)$/);
+          return match ? match[1] : null;
+        })
+        .filter(Boolean)
+        .join(':') || null
+    );
   }
 
   private getRelativePath(entry: string) {
@@ -439,22 +537,43 @@ export class CommandsRouter {
   }
 
   private isMiddleware(entry: string) {
+    // Don't check if we should ignore here - that's done by the caller
+    const fileName = path.basename(entry);
+
+    // More precise check for middleware files:
+    // - Either filename is exactly "middleware.js/ts" or similar
+    // - Or filename contains ".middleware." segment before the extension
     return (
-      !this.shouldIgnore(entry) &&
-      ['middleware', '.middleware.'].some((ext) => entry.includes(ext))
+      fileName === 'middleware.js' ||
+      fileName === 'middleware.ts' ||
+      fileName === 'middleware.mjs' ||
+      fileName === 'middleware.cjs' ||
+      fileName === 'middleware.jsx' ||
+      fileName === 'middleware.tsx' ||
+      /\.middleware\.(c|m)?(j|t)sx?$/.test(fileName)
     );
   }
 
   private shouldIgnore(entry: string, dir = false) {
     const fileName = path.basename(entry);
 
+    // Ignore files/directories that start with underscore
     if (fileName.startsWith('_')) return true;
-    if (!dir) return !/.(c|m)?(j|t)sx?$/.test(fileName);
+
+    // For files, check if they have valid JavaScript/TypeScript extensions
+    if (!dir) {
+      // Use path.extname to reliably get the extension across platforms
+      const ext = path.extname(fileName).toLowerCase();
+      return !['.js', '.ts', '.jsx', '.tsx', '.mjs', '.cjs'].includes(ext);
+    }
 
     return false;
   }
 
   private extractName(entry: string) {
-    return path.basename(entry).replace(/\.(c|m)?(j|t)sx?$/, '');
+    // Get the file name without path
+    const fileName = path.basename(entry);
+    // Remove the extension from the file
+    return path.parse(fileName).name;
   }
 }
