@@ -125,11 +125,11 @@ export class CommandKit extends EventEmitter {
 
     this.incrementClientListenersCount();
 
-    if (token !== false && !this.options.client.isReady()) {
-      await this.options.client.login(
-        token ?? process.env.TOKEN ?? process.env.DISCORD_TOKEN,
-      );
-    }
+    // if (token !== false && !this.options.client.isReady()) {
+    //   await this.options.client.login(
+    //     token ?? process.env.TOKEN ?? process.env.DISCORD_TOKEN,
+    //   );
+    // }
 
     this.#started = true;
 
@@ -232,8 +232,6 @@ export class CommandKit extends EventEmitter {
       const result = await this.commandsRouter.scan();
 
       if (COMMANDKIT_IS_DEV) {
-        const visual = this.commandsRouter.visualize();
-        Logger.info(visual);
         writeFileSync(
           './.commandkit/commands.json',
           JSON.stringify(result, null, 2),

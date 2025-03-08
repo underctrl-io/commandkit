@@ -22,7 +22,8 @@ import {
 } from '../../context/environment';
 import { GenericFunction, getContext } from '../../context/async-context';
 import { exitMiddleware, redirect } from '../middleware/signals';
-import { isCachedFunction } from '../../cache';
+import { AsyncFunction, isCachedFunction } from '../../cache';
+import { RunCommand } from '../handlers/AppCommandHandler';
 
 export const CommandExecutionMode = {
   SlashCommand: 'chatInput',
@@ -35,7 +36,10 @@ export const CommandExecutionMode = {
 export type CommandExecutionMode =
   (typeof CommandExecutionMode)[keyof typeof CommandExecutionMode];
 
-export interface ContextParameters<T extends CommandExecutionMode> {
+export interface ContextParameters<
+  T extends CommandExecutionMode,
+  Args = Record<string, any>,
+> {
   environment?: CommandKitEnvironment;
   executionMode: T;
   interaction: T extends 'chatInput'
@@ -51,6 +55,7 @@ export interface ContextParameters<T extends CommandExecutionMode> {
   forwarded?: boolean;
   messageCommandParser?: T extends 'message' ? MessageCommandParser : never;
   store?: Map<string, any>;
+  customArgs?: Args;
 }
 
 export type MessageCommandContext = Context<'message'>;
@@ -98,8 +103,13 @@ export type UserContextMenuCommand =
   AnyCommandExecute<UserContextMenuCommandContext>;
 export type MessageCommand = AnyCommandExecute<MessageCommandContext>;
 
+export interface MiddlewareContextArgs {
+  setCommandRunner?: GenericFunction<[RunCommand]>;
+}
+
 export class Context<
   ExecutionMode extends CommandExecutionMode = CommandExecutionMode,
+  Args extends Record<string, any> = Record<string, any>,
 > {
   /**
    * The interaction that triggered the command.
@@ -127,7 +137,7 @@ export class Context<
    */
   public constructor(
     public readonly commandkit: CommandKit,
-    private readonly config: ContextParameters<ExecutionMode>,
+    protected readonly config: ContextParameters<ExecutionMode, Args>,
   ) {
     // these are assigned to readonly properties to make them accessible via object destructuring
     this.interaction = config.interaction;
@@ -411,7 +421,7 @@ export class Context<
 
 export class MiddlewareContext<
   T extends CommandExecutionMode = CommandExecutionMode,
-> extends Context<T> {
+> extends Context<T, MiddlewareContextArgs> {
   #cancel = false;
 
   /**
@@ -426,5 +436,18 @@ export class MiddlewareContext<
    */
   public cancel(): void {
     this.#cancel = true;
+  }
+
+  /**
+   * Sets command runner function to wrap the command execution.
+   * @param fn The function to set.
+   * @example ctx.setCommandRunner(async (execute) => {
+   *  // do something before command execution
+   *  await execute();
+   *  // do something after command execution
+   * })
+   */
+  public setCommandRunner(fn: RunCommand): void {
+    this.config.customArgs?.setCommandRunner?.(fn);
   }
 }

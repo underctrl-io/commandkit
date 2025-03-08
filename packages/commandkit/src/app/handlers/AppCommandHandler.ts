@@ -18,13 +18,19 @@ import {
   MiddlewareContext,
 } from '../commands/Context';
 import { toFileURL } from '../../utils/resolve-file-url';
-import { TranslatableCommandOptions } from '../i18n/Translation';
+import {
+  ApiTranslatableCommandOptions,
+  TranslatableCommandOptions,
+} from '../i18n/Translation';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 import { ParsedCommand, ParsedMiddleware, ParsedSubCommand } from '../router';
 import { CommandRegistrar } from '../register/CommandRegistrar';
 import { GenericFunction } from '../../context/async-context';
 import { Logger } from '../../logger/Logger';
+import { AsyncFunction } from '../../cache';
+
+export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
 
 interface AppCommand {
   command: SlashCommandBuilder | Record<string, any>;
@@ -111,10 +117,14 @@ export class AppCommandHandler {
   }
 
   /**
-   * Get subcommand data by ID for the command registrar
+   * Get subcommand data by command ID and subcommand name
    */
-  public getSubcommandData(id: string) {
-    const subcommand = this.loadedSubCommands.get(id);
+  public getSubcommandData(commandId: string, subcommandName: string) {
+    const subcommand = Array.from(this.loadedSubCommands.values()).find(
+      (sub) =>
+        sub.subcommand.command === commandId &&
+        sub.subcommand.name === subcommandName,
+    );
     if (!subcommand) return null;
 
     const commandData = subcommand.data.command;
@@ -226,6 +236,8 @@ export class AppCommandHandler {
 
     const executionMode = this.getExecutionMode(source);
 
+    let runCommand: RunCommand | null = null;
+
     const ctx = new MiddlewareContext(this.commandkit, {
       executionMode,
       interaction: !(source instanceof Message)
@@ -233,6 +245,11 @@ export class AppCommandHandler {
         : (null as never),
       message: source instanceof Message ? source : (null as never),
       forwarded: false,
+      customArgs: {
+        setCommandRunner: (fn: RunCommand) => {
+          runCommand = fn;
+        },
+      },
     });
 
     // Run middleware before command execution
@@ -254,7 +271,11 @@ export class AppCommandHandler {
 
     if (fn) {
       try {
-        const executeCommand = async () => fn(ctx.clone());
+        const _executeCommand = async () => fn(ctx.clone());
+        const executeCommand =
+          runCommand != null
+            ? (runCommand as RunCommand)(_executeCommand)
+            : _executeCommand;
         const res = await this.commandkit.plugins.execute(
           async (ctx, plugin) => {
             return plugin.executeCommand(ctx, source, prepared, executeCommand);
@@ -397,29 +418,14 @@ export class AppCommandHandler {
     const middlewares: LoadedMiddleware[] = [];
 
     // Add command-level middleware
-    for (const middlewareId of loadedCommand.command.middlewares) {
+    for (const middlewareId of loadedCommand.command.middlewareIds) {
       const middleware = this.loadedMiddlewares.get(middlewareId);
       if (middleware) {
         middlewares.push(middleware);
       }
     }
 
-    // Add subcommand-level middleware if applicable
-    if (loadedSubCommand) {
-      for (const middlewareId of loadedSubCommand.subcommand.middlewares) {
-        // Avoid duplicate middleware
-        const existingIndex = middlewares.findIndex(
-          (m) => m.middleware.id === middlewareId,
-        );
-        if (existingIndex === -1) {
-          const middleware = this.loadedMiddlewares.get(middlewareId);
-          if (middleware) {
-            middlewares.push(middleware);
-          }
-        }
-      }
-    }
-
+    // No middleware for subcommands since they inherit from parent command
     return {
       command: loadedCommand,
       subcommand: loadedSubCommand,
@@ -445,7 +451,7 @@ export class AppCommandHandler {
       throw new Error('Commands router has not yet initialized');
     }
 
-    const { commands, subcommands, middlewares } = commandsRouter.getData();
+    const { commands, middlewares } = commandsRouter.getData();
 
     // Load middlewares first
     for (const [id, middleware] of middlewares) {
@@ -458,24 +464,10 @@ export class AppCommandHandler {
     }
 
     // Load subcommands
-    for (const [id, subcommand] of subcommands) {
-      await this.loadSubcommand(id, subcommand);
-    }
-
-    // Link subcommands to their parent commands
-    for (const loadedSubCommand of this.loadedSubCommands.values()) {
-      const pathSegments = loadedSubCommand.subcommand.path.split('/');
-      const parentCommandName = pathSegments[pathSegments.length - 3]; // Get parent command name from path
-
-      for (const loadedCommand of this.loadedCommands.values()) {
-        if (loadedCommand.command.name === parentCommandName) {
-          if (!loadedCommand.subcommands) {
-            loadedCommand.subcommands = [];
-          }
-          loadedCommand.subcommands.push(loadedSubCommand.subcommand);
-
-          // Break since we found the parent
-          break;
+    for (const loadedCommand of this.loadedCommands.values()) {
+      if (loadedCommand.command.subcommands) {
+        for (const subcommand of loadedCommand.command.subcommands) {
+          await this.loadSubcommand(subcommand);
         }
       }
     }
@@ -506,16 +498,13 @@ export class AppCommandHandler {
 
       this.loadedMiddlewares.set(id, { middleware, data });
     } catch (error) {
-      Logger.error(
-        `Failed to load middleware ${middleware.name} (${id})`,
-        error,
-      );
+      Logger.error(`Failed to load middleware ${id}`, error);
     }
   }
 
   private async loadCommand(id: string, command: ParsedCommand) {
     try {
-      // Skip if path is null (directory-only command group with no index file)
+      // Skip if path is null (directory-only command group)
       if (command.path === null) {
         this.loadedCommands.set(id, {
           command,
@@ -523,11 +512,10 @@ export class AppCommandHandler {
             command: {
               name: command.name,
               description: `${command.name} commands`,
-              type: 1, // CHAT_INPUT
+              type: 1,
             },
           },
         });
-        this.commandNameToId.set(command.name, id);
         return;
       }
 
@@ -568,14 +556,14 @@ export class AppCommandHandler {
         },
       });
 
-      // Store name-to-id mapping for faster lookups
+      // Map command name to ID for easier lookup
       this.commandNameToId.set(command.name, id);
     } catch (error) {
       Logger.error(`Failed to load command ${command.name} (${id})`, error);
     }
   }
 
-  private async loadSubcommand(id: string, subcommand: ParsedSubCommand) {
+  private async loadSubcommand(subcommand: ParsedSubCommand) {
     try {
       const data = await import(
         `${toFileURL(subcommand.path)}?t=${Date.now()}`
@@ -603,11 +591,13 @@ export class AppCommandHandler {
         );
       }
 
-      const localizedCommand = await this.applyLocalizations({
-        ...data.command,
-      });
+      const localizedCommand = await this.applyLocalizations(
+        { ...data.command },
+        subcommand,
+      );
 
-      this.loadedSubCommands.set(id, {
+      const subcommandId = subcommand.command + '/' + subcommand.name;
+      this.loadedSubCommands.set(subcommandId, {
         subcommand,
         data: {
           ...data,
@@ -615,48 +605,36 @@ export class AppCommandHandler {
         },
       });
 
-      // Create path-based lookups to find subcommands
-      // Extract the parent command ID from the first part of the ID path
-      const parentCommandId = subcommand.id.split('/')[0];
-
-      // Create lookup paths for subcommands - need to handle both with and without group
-      if (subcommand.group) {
-        // Format: parentCommandId/groupName/subcommandName
-        this.subcommandPathToId.set(
-          `${parentCommandId}/${subcommand.group}/${subcommand.name}`,
-          id,
-        );
-      } else {
-        // Format: parentCommandId/subcommandName
-        this.subcommandPathToId.set(
-          `${parentCommandId}/${subcommand.name}`,
-          id,
-        );
-      }
+      // Map subcommand path to ID for easier lookup
+      this.subcommandPathToId.set(subcommandId, subcommandId);
     } catch (error) {
-      Logger.error(
-        `Failed to load subcommand ${subcommand.name} (${id})`,
-        error,
-      );
+      Logger.error(`Failed to load subcommand ${subcommand.name}`, error);
     }
   }
 
-  public async applyLocalizations(command: CommandBuilderLike) {
+  public async applyLocalizations(
+    command: CommandBuilderLike,
+    subcommand?: ParsedSubCommand,
+  ) {
     const localization = this.commandkit.config.localizationStrategy;
-
     const validLocales = Object.values(Locale).filter(
       (v) => typeof v === 'string',
     );
 
+    // For subcommands, use parent command's name to locate translations
+    const localizationKey = subcommand
+      ? command.name.split('/')[0] // Get parent command name if this is a subcommand
+      : command.name;
+
     for (const locale of validLocales) {
       const translation = await localization.locateTranslation(
-        command.name,
+        localizationKey,
         locale,
       );
-
       if (!translation?.command) continue;
 
       if (command instanceof SlashCommandBuilder) {
+        // Apply command-level localizations
         if (translation.command.name) {
           command.setNameLocalization(locale, translation.command.name);
         }
@@ -676,6 +654,9 @@ export class AppCommandHandler {
 
           while ((o = opt.shift()!)) {
             raw.options?.forEach((option) => {
+              // For subcommands, only apply localizations if they match the current subcommand
+              if (subcommand && option.name !== subcommand.name) return;
+
               if (option.name === o.ref) {
                 if (option.name) {
                   option.name_localizations ??= {};
@@ -686,6 +667,31 @@ export class AppCommandHandler {
                   option.description_localizations ??= {};
                   option.description_localizations[locale] = o.description;
                 }
+
+                const opts = (
+                  option as typeof option & {
+                    options: ApiTranslatableCommandOptions[] | undefined;
+                  }
+                ).options;
+
+                // Handle nested options (subcommand parameters)
+                if (opts?.length && o.options?.length) {
+                  o.options.forEach((subOpt) => {
+                    const targetOption = opts?.find(
+                      (opt) => opt.name === subOpt.name,
+                    );
+                    if (targetOption) {
+                      targetOption.name_localizations ??= {};
+                      targetOption.name_localizations[locale] = subOpt.name;
+
+                      if ('description' in targetOption) {
+                        targetOption.description_localizations ??= {};
+                        targetOption.description_localizations[locale] =
+                          subOpt.description;
+                      }
+                    }
+                  });
+                }
               }
             });
           }
@@ -694,15 +700,12 @@ export class AppCommandHandler {
         if (translation.command.name) {
           command.setNameLocalization(locale, translation.command.name);
         }
-
-        const raw = command.toJSON();
-
-        return raw;
       } else {
+        // Raw command object
         command.name_localizations ??= {};
         command.name_localizations[locale] = translation.command.name;
 
-        if (command.description) {
+        if (!subcommand && command.description) {
           command.description_localizations ??= {};
           command.description_localizations[locale] =
             translation.command.description;
@@ -714,15 +717,37 @@ export class AppCommandHandler {
 
           while ((o = opt.shift()!)) {
             command.options.forEach((option: any) => {
-              if (option.name === o.ref) {
-                if (option.name) {
-                  option.name_localizations ??= {};
-                  option.name_localizations[locale] = o.name;
-                }
+              // For subcommands, only apply localizations if they match the current subcommand
+              if (subcommand && option.name !== subcommand.name) return;
 
-                if (option.description) {
+              if (option.name === o.ref) {
+                option.name_localizations ??= {};
+                option.name_localizations[locale] = o.name;
+
+                if ('description' in option) {
                   option.description_localizations ??= {};
                   option.description_localizations[locale] = o.description;
+                }
+
+                const opts = option.options as ApiTranslatableCommandOptions[];
+
+                // Handle nested options (subcommand parameters)
+                if (opts?.length && o.options?.length) {
+                  o.options.forEach((subOpt) => {
+                    const targetOption = opts?.find(
+                      (opt) => opt.name === subOpt.name,
+                    );
+                    if (targetOption) {
+                      targetOption.name_localizations ??= {};
+                      targetOption.name_localizations[locale] = subOpt.name;
+
+                      if ('description' in targetOption) {
+                        targetOption.description_localizations ??= {};
+                        targetOption.description_localizations[locale] =
+                          subOpt.description;
+                      }
+                    }
+                  });
                 }
               }
             });

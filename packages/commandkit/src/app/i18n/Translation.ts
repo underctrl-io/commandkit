@@ -1,3 +1,5 @@
+import type { LocalizationMap } from 'discord.js';
+
 export interface TranslatableCommand {
   name?: string;
   description?: string;
@@ -8,6 +10,13 @@ export interface TranslatableCommandOptions {
   ref: string;
   name?: string;
   description?: string;
+  options?: TranslatableCommandOptions[];
+}
+
+export interface ApiTranslatableCommandOptions
+  extends TranslatableCommandOptions {
+  name_localizations?: LocalizationMap;
+  description_localizations?: LocalizationMap;
 }
 
 export interface Translation {

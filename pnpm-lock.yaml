@@ -230,6 +230,9 @@ importers:
       '@babel/types':
         specifier: ^7.26.5
         version: 7.26.5
+      '@root/walk':
+        specifier: ^1.1.0
+        version: 1.1.0
       chokidar:
         specifier: ^4.0.3
         version: 4.0.3
@@ -2847,6 +2850,9 @@ packages:
     resolution: {integrity: sha512-U0FaE5O1BCpZSeE6gBl3c5ObhePQSfk9vDRToMmTkbhCOgW4jqvtS5LGyQ76L1fH8sM0keRp4uDTsbjiUyjk0g==}
     cpu: [x64]
     os: [win32]
+
+  '@root/walk@1.1.0':
+    resolution: {integrity: sha512-FfXPAta9u2dBuaXhPRawBcijNC9rmKVApmbi6lIZyg36VR/7L02ytxoY5K/14PJlHqiBUoYII73cTlekdKTUOw==}
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -11318,6 +11324,8 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.34.8':
     optional: true
+
+  '@root/walk@1.1.0': {}
 
   '@rtsao/scc@1.1.0': {}
 

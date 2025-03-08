@@ -5,11 +5,13 @@ import {
   ApplicationCommandOptionType,
   APIApplicationCommandOption,
   APIApplicationCommandSubcommandGroupOption,
+  APIApplicationCommandSubcommandOption,
 } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { CommandData } from '../../types';
 import { Logger } from '../../logger/Logger';
 import { ParsedSubCommand } from '../router/CommandsRouter';
+import { writeFileSync } from 'node:fs';
 
 export class CommandRegistrar {
   private api = new REST();
@@ -31,7 +33,9 @@ export class CommandRegistrar {
    * Gets the commands data.
    */
   public getCommandsData(): CommandData[] {
-    const commands = this.commandkit.commandHandler.getCommandsArray();
+    const handler = this.commandkit.commandHandler;
+    // Use the public method instead of accessing private property
+    const commands = handler.getCommandsArray();
 
     return commands.flatMap((cmd) => {
       const json: CommandData =
@@ -41,11 +45,10 @@ export class CommandRegistrar {
 
       // Process subcommands if they exist and this is a chat input command
       if (
-        cmd.subcommands &&
-        cmd.subcommands.length > 0 &&
+        cmd.command.subcommands?.length > 0 &&
         (!json.type || json.type === ApplicationCommandType.ChatInput)
       ) {
-        this.processSubcommands(json, cmd.subcommands);
+        this.processSubcommands(json, cmd.command.subcommands);
       }
 
       const collections: CommandData[] = [json];
@@ -90,7 +93,6 @@ export class CommandRegistrar {
     commandData: CommandData,
     subcommands: ParsedSubCommand[],
   ) {
-    // Initialize options array if it doesn't exist
     if (!commandData.options) {
       commandData.options = [];
     }
@@ -98,7 +100,7 @@ export class CommandRegistrar {
     // Group subcommands by their group (if any)
     const groupedSubcommands = new Map<string | null, ParsedSubCommand[]>();
 
-    // First, organize subcommands by their group
+    // Organize subcommands by their group
     for (const subcommand of subcommands) {
       const group = subcommand.group || null;
       if (!groupedSubcommands.has(group)) {
@@ -107,16 +109,16 @@ export class CommandRegistrar {
       groupedSubcommands.get(group)?.push(subcommand);
     }
 
-    // Process subcommands without groups (direct subcommands)
+    // Process direct subcommands (no group)
     const directSubcommands = groupedSubcommands.get(null) || [];
     for (const subcommand of directSubcommands) {
       const subcommandData = this.commandkit.commandHandler.getSubcommandData(
-        subcommand.id,
+        subcommand.command,
+        subcommand.name,
       );
       if (subcommandData) {
-        // Convert to option format for Discord API
-        const subcommandOption = {
-          type: 1, // SUB_COMMAND
+        const subcommandOption: APIApplicationCommandSubcommandOption = {
+          type: ApplicationCommandOptionType.Subcommand,
           name: subcommand.name,
           description: subcommandData.description || 'No description provided',
           options: subcommandData.options || [],
@@ -130,25 +132,24 @@ export class CommandRegistrar {
 
     // Process subcommand groups
     for (const [groupName, groupSubcommands] of groupedSubcommands.entries()) {
-      if (groupName === null) continue; // Skip null group (handled above)
+      if (groupName === null) continue;
 
-      // Create subcommand group
       const subcommandGroupOption: APIApplicationCommandSubcommandGroupOption =
         {
-          type: ApplicationCommandOptionType.SubcommandGroup, // SUB_COMMAND_GROUP
+          type: ApplicationCommandOptionType.SubcommandGroup,
           name: groupName,
           description: `${groupName} commands`,
           options: [],
         };
 
-      // Add subcommands to the group
       for (const subcommand of groupSubcommands) {
         const subcommandData = this.commandkit.commandHandler.getSubcommandData(
-          subcommand.id,
+          subcommand.command,
+          subcommand.name,
         );
         if (subcommandData) {
           subcommandGroupOption.options?.push({
-            type: ApplicationCommandOptionType.Subcommand, // SUB_COMMAND
+            type: ApplicationCommandOptionType.Subcommand,
             name: subcommand.name,
             description:
               subcommandData.description || 'No description provided',
@@ -159,7 +160,6 @@ export class CommandRegistrar {
         }
       }
 
-      // Add group to command options if it has subcommands
       if ((subcommandGroupOption.options?.length || 0) > 0) {
         commandData.options.push(subcommandGroupOption);
       }
@@ -170,10 +170,19 @@ export class CommandRegistrar {
    * Registers loaded commands.
    */
   public async register() {
+    if (!this.commandkit.client.isReady()) {
+      throw new Error('Cannot register commands before the client is ready');
+    }
+
     const commands = this.getCommandsData();
-    const guildCommands = commands.filter((command) => command.guilds?.length);
+    const guildCommands = commands
+      .filter((command) => command.guilds?.filter(Boolean).length)
+      .map((c) => ({
+        ...c,
+        guilds: Array.from(new Set(c.guilds?.filter(Boolean))),
+      }));
     const globalCommands = commands.filter(
-      (command) => !command.guilds?.length,
+      (command) => !command.guilds?.filter(Boolean).length,
     );
 
     await this.updateGlobalCommands(globalCommands);
