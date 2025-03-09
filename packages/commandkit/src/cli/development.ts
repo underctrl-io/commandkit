@@ -125,10 +125,7 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
   watcher.on('change', hmrHandler);
   watcher.on('add', hmrHandler);
   watcher.on('unlink', hmrHandler);
-  watcher.on('unlinkDir', (path) => {
-    const hasChild = readdirSync(path).length > 0;
-    if (hasChild) return hmrHandler(path);
-  });
+  watcher.on('unlinkDir', hmrHandler);
   watcher.on('error', (e) => {
     console.error(e);
   });
