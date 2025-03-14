@@ -29,6 +29,9 @@ export interface CommandKitConfiguration {
   getMessageCommandPrefix: (message: Message) => Awaitable<string | string[]>;
 }
 
+// @ts-ignore
+export let commandkit: Commandkit
+
 export class CommandKit extends EventEmitter {
   #started = false;
   public readonly eventInterceptor: EventInterceptor;
@@ -97,6 +100,9 @@ export class CommandKit extends EventEmitter {
     if (!CommandKit.instance) {
       CommandKit.instance = this;
     }
+    
+    // @ts-ignore
+    commandkit = CommandKit.instance;
   }
 
   /**
