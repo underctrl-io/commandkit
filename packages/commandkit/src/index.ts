@@ -15,6 +15,7 @@ export * from './logger/Logger';
 export * from './app/router/index';
 export type * from './types';
 export * from './version';
+export * from './plugins/index';
 
 // cli
 export { bootstrapCommandkitCLI } from './cli/init';

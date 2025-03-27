@@ -3,7 +3,10 @@ import { MacroPlugin } from '../plugins/runtime/builtin/MacroPlugin';
 import { ResolvedCommandKitConfig } from './utils';
 
 export const defaultConfig: ResolvedCommandKitConfig = {
-  plugins: [new CachePlugin({}), new MacroPlugin({})],
+  plugins: [
+    new CachePlugin({ enabled: true }),
+    new MacroPlugin({ enabled: true }),
+  ],
   esbuildPlugins: [],
   compilerOptions: {
     macro: {

@@ -1,7 +1,6 @@
 import type { CommandKit } from '../../CommandKit';
 import {
   Awaitable,
-  ChatInputCommandInteraction,
   Collection,
   CommandInteraction,
   ContextMenuCommandBuilder,
@@ -12,11 +11,7 @@ import {
   PartialMessage,
   SlashCommandBuilder,
 } from 'discord.js';
-import {
-  CommandExecutionMode,
-  Context,
-  MiddlewareContext,
-} from '../commands/Context';
+import { Context } from '../commands/Context';
 import { toFileURL } from '../../utils/resolve-file-url';
 import {
   ApiTranslatableCommandOptions,
@@ -24,20 +19,12 @@ import {
 } from '../i18n/Translation';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
-import { ParsedCommand, ParsedMiddleware, ParsedSubCommand } from '../router';
 import { CommandRegistrar } from '../register/CommandRegistrar';
-import {
-  GenericFunction,
-  makeContextAwareFunction,
-  useEnvironment,
-} from '../../context/async-context';
+import { GenericFunction } from '../../context/async-context';
 import { Logger } from '../../logger/Logger';
 import { AsyncFunction } from '../../cache';
-import {
-  afterCommand,
-  CommandKitEnvironment,
-  CommandKitEnvironmentType,
-} from '../../context/environment';
+import { Command, Middleware } from '../router';
+import { AppCommandRunner } from '../commands/AppCommandRunner';
 
 export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
 
@@ -56,27 +43,20 @@ interface AppCommandMiddleware {
 }
 
 export interface LoadedCommand {
-  command: ParsedCommand;
+  command: Command;
   data: AppCommand;
-  subcommands?: ParsedSubCommand[];
   guilds?: string[];
 }
 
 interface LoadedMiddleware {
-  middleware: ParsedMiddleware;
+  middleware: Middleware;
   data: AppCommandMiddleware;
 }
 
 export interface PreparedAppCommandExecution {
   command: LoadedCommand;
-  subcommand?: LoadedSubCommand | null;
   middlewares: LoadedMiddleware[];
   messageCommandParser?: MessageCommandParser;
-}
-
-interface LoadedSubCommand {
-  subcommand: ParsedSubCommand;
-  data: AppCommand;
 }
 
 type CommandBuilderLike =
@@ -103,7 +83,6 @@ const middlewareDataSchema = {
 
 export class AppCommandHandler {
   private loadedCommands = new Collection<string, LoadedCommand>();
-  private loadedSubCommands = new Collection<string, LoadedSubCommand>();
   private loadedMiddlewares = new Collection<string, LoadedMiddleware>();
 
   // Name-to-ID mapping for easier lookup
@@ -116,6 +95,7 @@ export class AppCommandHandler {
   private onMessageUpdate: GenericFunction<
     [Message | PartialMessage, Message | PartialMessage]
   > | null = null;
+  public readonly commandRunner = new AppCommandRunner(this);
 
   public constructor(public readonly commandkit: CommandKit) {
     this.registrar = new CommandRegistrar(this.commandkit);
@@ -123,21 +103,6 @@ export class AppCommandHandler {
 
   public getCommandsArray() {
     return Array.from(this.loadedCommands.values());
-  }
-
-  /**
-   * Get subcommand data by command ID and subcommand name
-   */
-  public getSubcommandData(commandId: string, subcommandName: string) {
-    const subcommand = Array.from(this.loadedSubCommands.values()).find(
-      (sub) =>
-        sub.subcommand.command === commandId &&
-        sub.subcommand.name === subcommandName,
-    );
-    if (!subcommand) return null;
-
-    const commandData = subcommand.data.command;
-    return 'toJSON' in commandData ? commandData.toJSON() : commandData;
   }
 
   public registerCommandHandler() {
@@ -163,7 +128,7 @@ export class AppCommandHandler {
 
       if (!prepared) return;
 
-      return this.runCommand(prepared, interaction);
+      return this.commandRunner.runCommand(prepared, interaction);
     };
 
     this.onMessageCreate ??= async (message: Message) => {
@@ -181,7 +146,7 @@ export class AppCommandHandler {
 
       if (!prepared) return;
 
-      return this.runCommand(prepared, message);
+      return this.commandRunner.runCommand(prepared, message);
     };
 
     this.onMessageUpdate ??= async (
@@ -207,7 +172,7 @@ export class AppCommandHandler {
 
       if (!prepared) return;
 
-      return this.runCommand(prepared, newMessage);
+      return this.commandRunner.runCommand(prepared, newMessage);
     };
 
     this.commandkit.client.on(Events.InteractionCreate, this.onInteraction);
@@ -215,145 +180,10 @@ export class AppCommandHandler {
     this.commandkit.client.on(Events.MessageUpdate, this.onMessageUpdate);
   }
 
-  public getExecutionMode(source: Interaction | Message): CommandExecutionMode {
-    if (source instanceof Message) return CommandExecutionMode.Message;
-    if (source.isChatInputCommand()) return CommandExecutionMode.SlashCommand;
-    if (source.isAutocomplete()) {
-      return CommandExecutionMode.Autocomplete;
-    }
-    if (source.isMessageContextMenuCommand()) {
-      return CommandExecutionMode.MessageContextMenu;
-    }
-    if (source.isUserContextMenuCommand()) {
-      return CommandExecutionMode.UserContextMenu;
-    }
-
-    return null as never;
-  }
-
-  public async runCommand(
-    prepared: PreparedAppCommandExecution,
-    source: Interaction | Message,
-  ) {
-    if (
-      source instanceof Message &&
-      (source.editedTimestamp || source.partial)
-    ) {
-      // TODO: handle message edit
-      return;
-    }
-
-    const executionMode = this.getExecutionMode(source);
-
-    let runCommand: RunCommand | null = null;
-
-    const env = new CommandKitEnvironment(this.commandkit);
-    env.setType(CommandKitEnvironmentType.CommandHandler);
-    env.variables.set('commandHandlerType', 'app');
-    env.variables.set('currentCommandName', prepared.command.command.name);
-    env.variables.set('execHandlerKind', executionMode);
-
-    const ctx = new MiddlewareContext(this.commandkit, {
-      environment: env,
-      executionMode,
-      interaction: !(source instanceof Message)
-        ? (source as ChatInputCommandInteraction)
-        : (null as never),
-      message: source instanceof Message ? source : (null as never),
-      forwarded: false,
-      customArgs: {
-        setCommandRunner: (fn: RunCommand) => {
-          runCommand = fn;
-        },
-      },
-    });
-
-    // Run middleware before command execution
-    for (const middleware of prepared.middlewares) {
-      await middleware.data.beforeExecute(ctx);
-    }
-
-    // Determine which function to run based on whether we're executing a command or subcommand
-    const targetData = prepared.subcommand
-      ? prepared.subcommand.data
-      : prepared.command.data;
-    const fn = targetData[executionMode];
-
-    if (!fn) {
-      Logger.warn(
-        `Command ${prepared.command.command.name}${prepared.subcommand ? '/' + prepared.subcommand.subcommand.name : ''} has no handler for ${executionMode}`,
-      );
-    }
-
-    if (fn) {
-      try {
-        const _executeCommand = makeContextAwareFunction(
-          env,
-          async () => fn(ctx.clone()),
-          this.#finalizer.bind(this),
-        );
-
-        const executeCommand =
-          runCommand != null
-            ? (runCommand as RunCommand)(_executeCommand)
-            : _executeCommand;
-
-        afterCommand((env) => {
-          const error = env.getExecutionError();
-          const marker = env.getMarker();
-          const time = `${env.getExecutionTime().toFixed(2)}ms`;
-
-          if (error) {
-            Logger.error(
-              `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
-            );
-
-            return;
-          }
-
-          Logger.info(`[${marker} - ${time}] Command executed successfully`);
-        });
-
-        env.markStart(prepared.command.command.name);
-
-        const res = await this.commandkit.plugins.execute(
-          async (ctx, plugin) => {
-            return plugin.executeCommand(ctx, source, prepared, executeCommand);
-          },
-        );
-
-        if (!res) {
-          await executeCommand();
-        }
-      } catch (e) {
-        Logger.error(e);
-      }
-    }
-
-    try {
-      // Run middleware after command execution
-      for (const middleware of prepared.middlewares) {
-        await middleware.data.afterExecute(ctx);
-      }
-    } finally {
-      env.markEnd();
-    }
-  }
-
-  async #finalizer() {
-    const env = useEnvironment();
-
-    await env.runDeferredFunctions();
-
-    env.clearAllDeferredFunctions();
-  }
-
   public async prepareCommandRun(
     source: Interaction | Message,
   ): Promise<PreparedAppCommandExecution | null> {
     let cmdName: string;
-    let subcommandGroupName: string | null = null;
-    let subcommandName: string | null = null;
     let parser: MessageCommandParser | undefined;
 
     // Extract command name (and possibly subcommand) from the source
@@ -403,18 +233,6 @@ export class AppCommandHandler {
         const fullCommand = parser.getFullCommand();
         const parts = fullCommand.split(' ');
         cmdName = parts[0];
-
-        // Check if this is a subcommand (with format: "command subcommand" or "command group subcommand")
-        if (parts.length > 1) {
-          if (parts.length === 3) {
-            // Format: "command group subcommand"
-            subcommandGroupName = parts[1];
-            subcommandName = parts[2];
-          } else {
-            // Format: "command subcommand"
-            subcommandName = parts[1];
-          }
-        }
       } catch (e) {
         if (isErrorType(e, CommandKitErrorCodes.InvalidCommandPrefix)) {
           return null;
@@ -426,11 +244,6 @@ export class AppCommandHandler {
       if (!source.isCommand()) return null;
 
       cmdName = source.commandName;
-
-      if (source.isChatInputCommand()) {
-        subcommandGroupName = source.options.getSubcommandGroup(false);
-        subcommandName = source.options.getSubcommand(false);
-      }
     }
 
     // Find the command by name
@@ -450,27 +263,11 @@ export class AppCommandHandler {
       return null;
     }
 
-    // Handle subcommand execution if applicable
-    let loadedSubCommand: LoadedSubCommand | null = null;
-    if (subcommandName) {
-      // Build a path to look up the subcommand
-      let subcommandPath = `${loadedCommand.command.id}/${subcommandName}`;
-      if (subcommandGroupName) {
-        subcommandPath = `${loadedCommand.command.id}/${subcommandGroupName}/${subcommandName}`;
-      }
-
-      // Find the subcommand by its path
-      const subCommandId = this.subcommandPathToId.get(subcommandPath);
-      if (subCommandId) {
-        loadedSubCommand = this.loadedSubCommands.get(subCommandId) || null;
-      }
-    }
-
     // Collect all applicable middleware
     const middlewares: LoadedMiddleware[] = [];
 
     // Add command-level middleware
-    for (const middlewareId of loadedCommand.command.middlewareIds) {
+    for (const middlewareId of loadedCommand.command.middlewares) {
       const middleware = this.loadedMiddlewares.get(middlewareId);
       if (middleware) {
         middlewares.push(middleware);
@@ -480,7 +277,6 @@ export class AppCommandHandler {
     // No middleware for subcommands since they inherit from parent command
     return {
       command: loadedCommand,
-      subcommand: loadedSubCommand,
       middlewares,
       messageCommandParser: parser,
     };
@@ -488,7 +284,6 @@ export class AppCommandHandler {
 
   public async reloadCommands() {
     this.loadedCommands.clear();
-    this.loadedSubCommands.clear();
     this.loadedMiddlewares.clear();
     this.commandNameToId.clear();
     this.subcommandPathToId.clear();
@@ -514,18 +309,9 @@ export class AppCommandHandler {
     for (const [id, command] of commands) {
       await this.loadCommand(id, command);
     }
-
-    // Load subcommands
-    for (const loadedCommand of this.loadedCommands.values()) {
-      if (loadedCommand.command.subcommands) {
-        for (const subcommand of loadedCommand.command.subcommands) {
-          await this.loadSubcommand(subcommand);
-        }
-      }
-    }
   }
 
-  private async loadMiddleware(id: string, middleware: ParsedMiddleware) {
+  private async loadMiddleware(id: string, middleware: Middleware) {
     try {
       const data = await import(
         `${toFileURL(middleware.path)}?t=${Date.now()}`
@@ -554,7 +340,7 @@ export class AppCommandHandler {
     }
   }
 
-  private async loadCommand(id: string, command: ParsedCommand) {
+  private async loadCommand(id: string, command: Command) {
     try {
       // Skip if path is null (directory-only command group)
       if (command.path === null) {
@@ -615,68 +401,13 @@ export class AppCommandHandler {
     }
   }
 
-  private async loadSubcommand(subcommand: ParsedSubCommand) {
-    try {
-      const data = await import(
-        `${toFileURL(subcommand.path)}?t=${Date.now()}`
-      );
-
-      if (!data.command) {
-        throw new Error(
-          `Invalid export for subcommand ${subcommand.name}: no command definition found`,
-        );
-      }
-
-      let handlerCount = 0;
-      for (const [key, validator] of Object.entries(commandDataSchema)) {
-        if (key !== 'command' && data[key]) handlerCount++;
-        if (data[key] && !(await validator(data[key]))) {
-          throw new Error(
-            `Invalid export for subcommand ${subcommand.name}: ${key} does not match expected value`,
-          );
-        }
-      }
-
-      if (handlerCount === 0) {
-        throw new Error(
-          `Invalid export for subcommand ${subcommand.name}: at least one handler function must be provided`,
-        );
-      }
-
-      const localizedCommand = await this.applyLocalizations(
-        { ...data.command },
-        subcommand,
-      );
-
-      const subcommandId = subcommand.command + '/' + subcommand.name;
-      this.loadedSubCommands.set(subcommandId, {
-        subcommand,
-        data: {
-          ...data,
-          command: localizedCommand,
-        },
-      });
-
-      // Map subcommand path to ID for easier lookup
-      this.subcommandPathToId.set(subcommandId, subcommandId);
-    } catch (error) {
-      Logger.error(`Failed to load subcommand ${subcommand.name}`, error);
-    }
-  }
-
-  public async applyLocalizations(
-    command: CommandBuilderLike,
-    subcommand?: ParsedSubCommand,
-  ) {
+  public async applyLocalizations(command: CommandBuilderLike) {
     const localization = this.commandkit.config.localizationStrategy;
     const validLocales = Object.values(Locale).filter(
       (v) => typeof v === 'string',
     );
 
-    // For subcommands, use parent command's name to locate translations
-    const localizationKey = subcommand
-      ? command.name.split('/')[0] // Get parent command name if this is a subcommand
-      : command.name;
+    const localizationKey = command.name;
 
     for (const locale of validLocales) {
       const translation = await localization.locateTranslation(
@@ -706,9 +437,6 @@ export class AppCommandHandler {
 
           while ((o = opt.shift()!)) {
             raw.options?.forEach((option) => {
-              // For subcommands, only apply localizations if they match the current subcommand
-              if (subcommand && option.name !== subcommand.name) return;
-
               if (option.name === o.ref) {
                 if (option.name) {
                   option.name_localizations ??= {};
@@ -757,7 +485,7 @@ export class AppCommandHandler {
         command.name_localizations ??= {};
         command.name_localizations[locale] = translation.command.name;
 
-        if (!subcommand && command.description) {
+        if (command.description) {
           command.description_localizations ??= {};
           command.description_localizations[locale] =
             translation.command.description;
@@ -769,9 +497,6 @@ export class AppCommandHandler {
 
           while ((o = opt.shift()!)) {
             command.options.forEach((option: any) => {
-              // For subcommands, only apply localizations if they match the current subcommand
-              if (subcommand && option.name !== subcommand.name) return;
-
               if (option.name === o.ref) {
                 option.name_localizations ??= {};
                 option.name_localizations[locale] = o.name;
@@ -783,7 +508,6 @@ export class AppCommandHandler {
 
                 const opts = option.options as ApiTranslatableCommandOptions[];
 
-                // Handle nested options (subcommand parameters)
                 if (opts?.length && o.options?.length) {
                   o.options.forEach((subOpt) => {
                     const targetOption = opts?.find(

@@ -3,15 +3,13 @@ import {
   REST,
   Routes,
   ApplicationCommandOptionType,
-  APIApplicationCommandOption,
   APIApplicationCommandSubcommandGroupOption,
   APIApplicationCommandSubcommandOption,
 } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { CommandData } from '../../types';
 import { Logger } from '../../logger/Logger';
-import { ParsedSubCommand } from '../router/CommandsRouter';
-import { writeFileSync } from 'node:fs';
+import { Command } from '../router/CommandsRouter';
 
 export class CommandRegistrar {
   private api = new REST();
@@ -42,14 +40,6 @@ export class CommandRegistrar {
         'toJSON' in cmd.data.command
           ? cmd.data.command.toJSON()
           : cmd.data.command;
-
-      // Process subcommands if they exist and this is a chat input command
-      if (
-        cmd.command.subcommands?.length > 0 &&
-        (!json.type || json.type === ApplicationCommandType.ChatInput)
-      ) {
-        this.processSubcommands(json, cmd.command.subcommands);
-      }
 
       const collections: CommandData[] = [json];
 
@@ -84,86 +74,6 @@ export class CommandRegistrar {
 
       return collections;
     });
-  }
-
-  /**
-   * Process and merge subcommands into the parent command's options
-   */
-  private processSubcommands(
-    commandData: CommandData,
-    subcommands: ParsedSubCommand[],
-  ) {
-    if (!commandData.options) {
-      commandData.options = [];
-    }
-
-    // Group subcommands by their group (if any)
-    const groupedSubcommands = new Map<string | null, ParsedSubCommand[]>();
-
-    // Organize subcommands by their group
-    for (const subcommand of subcommands) {
-      const group = subcommand.group || null;
-      if (!groupedSubcommands.has(group)) {
-        groupedSubcommands.set(group, []);
-      }
-      groupedSubcommands.get(group)?.push(subcommand);
-    }
-
-    // Process direct subcommands (no group)
-    const directSubcommands = groupedSubcommands.get(null) || [];
-    for (const subcommand of directSubcommands) {
-      const subcommandData = this.commandkit.commandHandler.getSubcommandData(
-        subcommand.command,
-        subcommand.name,
-      );
-      if (subcommandData) {
-        const subcommandOption: APIApplicationCommandSubcommandOption = {
-          type: ApplicationCommandOptionType.Subcommand,
-          name: subcommand.name,
-          description: subcommandData.description || 'No description provided',
-          options: subcommandData.options || [],
-          name_localizations: subcommandData.name_localizations,
-          description_localizations: subcommandData.description_localizations,
-        };
-
-        commandData.options.push(subcommandOption);
-      }
-    }
-
-    // Process subcommand groups
-    for (const [groupName, groupSubcommands] of groupedSubcommands.entries()) {
-      if (groupName === null) continue;
-
-      const subcommandGroupOption: APIApplicationCommandSubcommandGroupOption =
-        {
-          type: ApplicationCommandOptionType.SubcommandGroup,
-          name: groupName,
-          description: `${groupName} commands`,
-          options: [],
-        };
-
-      for (const subcommand of groupSubcommands) {
-        const subcommandData = this.commandkit.commandHandler.getSubcommandData(
-          subcommand.command,
-          subcommand.name,
-        );
-        if (subcommandData) {
-          subcommandGroupOption.options?.push({
-            type: ApplicationCommandOptionType.Subcommand,
-            name: subcommand.name,
-            description:
-              subcommandData.description || 'No description provided',
-            options: subcommandData.options || [],
-            name_localizations: subcommandData.name_localizations,
-            description_localizations: subcommandData.description_localizations,
-          });
-        }
-      }
-
-      if ((subcommandGroupOption.options?.length || 0) > 0) {
-        commandData.options.push(subcommandGroupOption);
-      }
-    }
   }
 
   /**

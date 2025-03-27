@@ -30,7 +30,7 @@ export interface CommandKitConfiguration {
 }
 
 // @ts-ignore
-export let commandkit: Commandkit
+export let commandkit: Commandkit;
 
 export class CommandKit extends EventEmitter {
   #started = false;
@@ -100,7 +100,7 @@ export class CommandKit extends EventEmitter {
     if (!CommandKit.instance) {
       CommandKit.instance = this;
     }
-    
+
     // @ts-ignore
     commandkit = CommandKit.instance;
   }

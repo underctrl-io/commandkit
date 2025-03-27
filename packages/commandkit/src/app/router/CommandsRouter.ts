@@ -1,81 +1,68 @@
-import { Collection } from 'discord.js';
-import { existsSync } from 'node:fs';
-import crypto from 'node:crypto';
-import Walk from '@root/walk';
-import path from 'node:path';
+import { Dirent, existsSync } from 'node:fs';
+import { readdir } from 'node:fs/promises';
+import { basename, extname, join, normalize, sep } from 'node:path';
 
-export interface ParsedCommand {
+export interface Command {
   id: string;
   name: string;
   path: string;
   relativePath: string;
+  parentPath: string;
+  middlewares: Array<string>;
   category: string | null;
-  subcommands: ParsedSubCommand[];
-  middlewareIds: string[];
 }
 
-export interface ParsedMiddleware {
+export interface Middleware {
   id: string;
+  name: string;
   path: string;
   relativePath: string;
+  parentPath: string;
 }
 
-export interface ParsedSubCommand {
-  name: string;
-  group: string | null;
-  path: string;
-  relativePath: string;
-  command: string;
+export interface ParsedCommandData {
+  commands: Record<string, Command>;
+  middlewares: Record<string, Middleware>;
 }
 
 export interface CommandsRouterOptions {
   entrypoint: string;
 }
 
-export interface CommandsRouterData {
-  commands: Collection<string, ParsedCommand>;
-  middlewares: Collection<string, ParsedMiddleware>;
-}
-
-export interface CommandsRouterRawData {
-  commands: Record<string, ParsedCommand>;
-  middlewares: Record<string, ParsedMiddleware>;
-}
+const MIDDLEWARE_PATTERN = /^\+middleware\.(m|c)?(j|t)sx?$/;
+const COMMAND_PATTERN = /^(\w+)\.(m|c)?(j|t)sx?$/;
+const CATEGORY_PATTERN = /^\(\w+\)$/;
 
 export class CommandsRouter {
-  private commands: Collection<string, ParsedCommand> = new Collection();
-  private middlewares: Collection<string, ParsedMiddleware> = new Collection();
+  private commands = new Map<string, Command>();
+  private middlewares = new Map<string, Middleware>();
+
   public constructor(private readonly options: CommandsRouterOptions) {}
 
-  public fromData(data: CommandsRouterRawData) {
-    this.commands = new Collection(
-      Object.entries(data.commands).map(([id, command]) => [id, command]),
-    );
+  public populate(data: ParsedCommandData) {
+    for (const [id, command] of Object.entries(data.commands)) {
+      this.commands.set(id, command);
+    }
 
-    this.middlewares = new Collection(
-      Object.entries(data.middlewares).map(([id, middleware]) => [
-        id,
-        middleware,
-      ]),
-    );
+    for (const [id, middleware] of Object.entries(data.middlewares)) {
+      this.middlewares.set(id, middleware);
+    }
   }
 
-  public isValidPath() {
+  public isValidPath(): boolean {
     return existsSync(this.options.entrypoint);
   }
 
-  public getData(): CommandsRouterData {
-    return {
-      commands: this.commands,
-      middlewares: this.middlewares,
-    };
+  private isCommand(name: string): boolean {
+    return COMMAND_PATTERN.test(name);
   }
 
-  public toJSON(): CommandsRouterRawData {
-    return {
-      commands: Object.fromEntries(this.commands.entries()),
-      middlewares: Object.fromEntries(this.middlewares.entries()),
-    };
+  private isMiddleware(name: string): boolean {
+    return MIDDLEWARE_PATTERN.test(name);
+  }
+
+  private isCategory(name: string): boolean {
+    return CATEGORY_PATTERN.test(name);
   }
 
   public clear() {
@@ -83,230 +70,113 @@ export class CommandsRouter {
     this.middlewares.clear();
   }
 
-  public reload(): Promise<CommandsRouterRawData> {
-    this.clear();
-    return this.scan();
-  }
+  public async scan() {
+    const entries = await readdir(this.options.entrypoint, {
+      withFileTypes: true,
+    });
 
-  public async scan(): Promise<CommandsRouterRawData> {
-    if (!this.isValidPath()) {
-      throw new Error('Invalid path');
+    for (const entry of entries) {
+      // ignore _ prefixed files
+      if (entry.name.startsWith('_')) continue;
+
+      const fullPath = join(this.options.entrypoint, entry.name);
+
+      if (entry.isDirectory()) {
+        const category = this.isCategory(entry.name)
+          ? entry.name.slice(1, -1)
+          : null;
+
+        await this.traverse(fullPath, category);
+      } else {
+        await this.handle(entry);
+      }
     }
 
-    await this.traverse();
-    this.applyBindings();
+    await this.applyMiddlewares();
 
     return this.toJSON();
   }
 
-  private async traverse() {
-    const validFile = /\.(c|m)?(j|t)sx?$/;
-    const middleware = /^(\w+\.)?middleware\.(c|m)?(j|t)sx?$/;
-    const categoryDir = /^\((\w+)\)$/;
-
-    const isCategory = (name: string) => categoryDir.test(name);
-    const isMiddleware = (name: string) => middleware.test(name);
-    const isCommand = (name: string) =>
-      validFile.test(name) && !isMiddleware(name);
-
-    // First pass: collect all root command files
-    await Walk.walk(
-      this.options.entrypoint,
-      async (error, pathname, dirent) => {
-        if (error) throw error;
-
-        const name = dirent.name;
-
-        if (dirent.isDirectory()) {
-          if (isCategory(name) && this.distanceFromRoot(pathname) > 1) {
-            throw new Error(
-              `Category directories must be at the root. Found "${name}" at "${pathname}"`,
-            );
-          }
-          return;
-        }
-
-        // Skip non-root level files in first pass
-        if (this.distanceFromRoot(pathname, true) > 1) return;
-
-        // Handle middlewares
-        if (isMiddleware(name)) {
-          const middleware: ParsedMiddleware = {
-            id: crypto.randomUUID(),
-            path: pathname,
-            relativePath: this.toRelativePath(pathname),
-          };
-          this.middlewares.set(middleware.id, middleware);
-          return;
-        }
-
-        if (!isCommand(name)) return;
-
-        // This is a root command
-        const command: ParsedCommand = {
-          id: crypto.randomUUID(),
-          name: this.parseFileName(name),
-          category: this.parseCategory(pathname),
-          middlewareIds: [],
-          path: pathname,
-          relativePath: this.toRelativePath(pathname),
-          subcommands: [],
-        };
-        this.commands.set(command.id, command);
-      },
-    );
-
-    // Second pass: collect subcommands and nested middlewares
-    await Walk.walk(
-      this.options.entrypoint,
-      async (error, pathname, dirent) => {
-        if (error) throw error;
-
-        const name = dirent.name;
-
-        if (dirent.isDirectory()) return;
-
-        // Skip root level files in second pass
-        if (this.distanceFromRoot(pathname, true) <= 1) return;
-
-        // Handle nested middlewares
-        if (isMiddleware(name)) {
-          const middleware: ParsedMiddleware = {
-            id: crypto.randomUUID(),
-            path: pathname,
-            relativePath: this.toRelativePath(pathname),
-          };
-          this.middlewares.set(middleware.id, middleware);
-          return;
-        }
-
-        if (!isCommand(name)) return;
-
-        // Find the parent command by walking up the directory tree
-        let currentDir = path.dirname(pathname);
-        let parentCommand: ParsedCommand | undefined;
-
-        while (currentDir !== this.options.entrypoint) {
-          const dirName = path.basename(currentDir);
-          parentCommand = Array.from(this.commands.values()).find(
-            (cmd) =>
-              path.basename(path.dirname(cmd.path)) ===
-                path.basename(path.dirname(currentDir)) &&
-              this.parseFileName(cmd.path) === dirName,
-          );
-          if (parentCommand) break;
-          currentDir = path.dirname(currentDir);
-        }
-
-        if (parentCommand) {
-          // This is a subcommand
-          const subcommand: ParsedSubCommand = {
-            name: this.parseFileName(name),
-            group: this.parseGroup(pathname),
-            path: pathname,
-            relativePath: this.toRelativePath(pathname),
-            command: parentCommand.id,
-          };
-          parentCommand.subcommands.push(subcommand);
-        }
-      },
-    );
+  public getData() {
+    return {
+      commands: this.commands,
+      middlewares: this.middlewares,
+    };
   }
 
-  private applyBindings() {
-    // For each command, find its associated middlewares
-    for (const command of this.commands.values()) {
-      const commandName = command.name;
-      const commandDir = path.dirname(command.path);
+  public toJSON() {
+    return {
+      commands: Object.fromEntries(this.commands.entries()),
+      middlewares: Object.fromEntries(this.middlewares.entries()),
+    };
+  }
 
-      // Find middlewares in the same directory or its parent directories
-      for (const middleware of this.middlewares.values()) {
-        const middlewareDir = path.dirname(middleware.path);
-        const middlewareFileName = path.basename(middleware.path);
-        const isCommandSpecificMiddleware = middlewareFileName.startsWith(
-          commandName + '.',
-        );
-        const isSharedMiddleware =
-          middlewareFileName === 'middleware.ts' ||
-          middlewareFileName === 'middleware.js';
+  private async traverse(path: string, category: string | null) {
+    const entries = await readdir(path, {
+      withFileTypes: true,
+    });
 
-        // Command-specific middleware: Must match the command name prefix
-        if (
-          isCommandSpecificMiddleware &&
-          middlewareFileName.startsWith(commandName + '.')
-        ) {
-          command.middlewareIds.push(middleware.id);
-          continue;
-        }
+    for (const entry of entries) {
+      // ignore _ prefixed files
+      if (entry.name.startsWith('_')) continue;
 
-        // Shared middleware: Must be in the same directory or parent directory
-        if (isSharedMiddleware) {
-          // Check if middleware is in same directory or a parent directory of the command
-          const relPath = path.relative(middlewareDir, commandDir);
-          if (!relPath.startsWith('..') && !path.isAbsolute(relPath)) {
-            command.middlewareIds.push(middleware.id);
-          }
+      if (entry.isFile()) {
+        if (this.isCommand(entry.name) || this.isMiddleware(entry.name)) {
+          await this.handle(entry, category);
         }
       }
+
+      // TODO: handle subcommands
     }
   }
 
-  private distanceFromRoot(pathname: string, isFile = false) {
-    const entrypointParts = this.options.entrypoint.split(path.sep);
-    const pathParts = (!isFile ? pathname : path.dirname(pathname)).split(
-      path.sep,
-    );
+  private async handle(entry: Dirent, category: string | null = null) {
+    const name = entry.name;
+    const path = join(entry.parentPath, entry.name);
 
-    // Get the parts after the entrypoint by finding where the paths diverge
-    const relativeParts = pathParts.slice(entrypointParts.length);
+    if (this.isCommand(name)) {
+      const command: Command = {
+        id: crypto.randomUUID(),
+        name: basename(path, extname(path)),
+        path,
+        category,
+        parentPath: entry.parentPath,
+        relativePath: this.replaceEntrypoint(path),
+        middlewares: [],
+      };
 
-    // Filter out category directories and count remaining parts
-    return relativeParts.filter((part) => !part.match(/^\(.*\)$/)).length;
-  }
+      this.commands.set(command.id, command);
+    } else if (this.isMiddleware(name)) {
+      const middleware: Middleware = {
+        id: crypto.randomUUID(),
+        name: basename(path, extname(path)),
+        path,
+        relativePath: this.replaceEntrypoint(path),
+        parentPath: entry.parentPath,
+      };
 
-  private parseGroup(pathname: string) {
-    const parts = pathname.split(path.sep);
-    const parentDirIndex = parts.findIndex((part) =>
-      this.commands.some((cmd) => cmd.name === part),
-    );
-
-    if (parentDirIndex === -1) return null;
-
-    // Get the immediate parent directory name (the group)
-    // Skipping the command directory and file name
-    const groupName = parts[parts.length - 2];
-
-    // Don't include it as group if it's the command name itself or a category
-    if (
-      !groupName ||
-      groupName === parts[parentDirIndex] ||
-      groupName.match(/^\(.*\)$/)
-    ) {
-      return null;
+      this.middlewares.set(middleware.id, middleware);
     }
-
-    return groupName;
   }
 
-  private parseCategory(pathname: string) {
-    const parts = pathname.split(path.sep);
-    const entrypointParts = this.options.entrypoint.split(path.sep);
-    const relativeIndex = entrypointParts.length;
+  private applyMiddlewares() {
+    this.commands.forEach((command) => {
+      const commandPath = command.parentPath;
+      const samePathMiddlewares = Array.from(this.middlewares.values())
+        .filter((middleware) => {
+          // if middleware's parent path is the same as command's parent path
+          return middleware.parentPath === commandPath;
+        })
+        .map((middleware) => middleware.id);
 
-    // Only check for category in the first directory after entrypoint
-    const categoryDir = parts[relativeIndex];
-    if (!categoryDir || !/^\((\w+)\)$/.test(categoryDir)) {
-      return null;
-    }
-
-    return categoryDir.slice(1, -1);
+      command.middlewares = Array.from(
+        new Set([...command.middlewares, ...samePathMiddlewares]),
+      );
+    });
   }
 
-  private parseFileName(filename: string) {
-    return path.basename(filename, path.extname(filename));
-  }
-
-  private toRelativePath(pathname: string) {
-    return path.relative(this.options.entrypoint, pathname);
+  private replaceEntrypoint(path: string) {
+    const normalized = normalize(path);
+    return normalized.replace(this.options.entrypoint, '');
   }
 }

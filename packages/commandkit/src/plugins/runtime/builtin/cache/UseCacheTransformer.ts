@@ -170,6 +170,6 @@ export const cacheDirectivePlugin = async (source: string, args: any) => {
 
   return {
     contents: code,
-    loader: args.path.split('.').pop(),
+    loader: args.path?.split('.').pop(),
   };
 };

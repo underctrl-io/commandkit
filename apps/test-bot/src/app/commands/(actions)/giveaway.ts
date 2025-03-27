@@ -12,8 +12,8 @@ import {
 } from 'commandkit';
 
 export const command: CommandData = {
-  name: 'ping',
-  description: 'Pong!',
+  name: 'giveaway',
+  description: 'giveaway!',
   options: [
     {
       name: 'test',

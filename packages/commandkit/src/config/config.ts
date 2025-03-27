@@ -1,6 +1,6 @@
 import { defaultConfig } from './default';
 import { CommandKitConfig } from './types';
-import { mergeDeep, ResolvedCommandKitConfig } from './utils';
+import { ResolvedCommandKitConfig } from './utils';
 
 let defined: ResolvedCommandKitConfig = defaultConfig;
 
@@ -18,10 +18,44 @@ export function getConfig(): ResolvedCommandKitConfig {
 export function defineConfig(
   config: Partial<CommandKitConfig> = {},
 ): ResolvedCommandKitConfig {
-  defined = mergeDeep(
-    config as ResolvedCommandKitConfig,
-    mergeDeep({} as ResolvedCommandKitConfig, defaultConfig),
-  );
+  // defined = mergeDeep(
+  //   config as ResolvedCommandKitConfig,
+  //   mergeDeep({} as ResolvedCommandKitConfig, defaultConfig),
+  // );
+
+  defined = {
+    compilerOptions: {
+      cache: {
+        ...defaultConfig.compilerOptions.cache,
+        ...config.compilerOptions?.cache,
+      },
+      macro: {
+        ...defaultConfig.compilerOptions.macro,
+        ...config.compilerOptions?.macro,
+      },
+    },
+    distDir: config.distDir ?? defaultConfig.distDir,
+    env: {
+      ...defaultConfig.env,
+      ...config.env,
+    },
+    esbuildPlugins: [
+      ...(config.esbuildPlugins ?? []),
+      ...(defaultConfig.esbuildPlugins ?? []),
+    ],
+    plugins: [...(config.plugins ?? []), ...(defaultConfig.plugins ?? [])],
+    sourceMap: {
+      ...defaultConfig.sourceMap,
+      ...config.sourceMap,
+    },
+    static: config.static ?? defaultConfig.static,
+    typedCommands: config.typedCommands ?? defaultConfig.typedCommands,
+    typedLocales: config.typedLocales ?? defaultConfig.typedLocales,
+    typescript: {
+      ...defaultConfig.typescript,
+      ...config.typescript,
+    },
+  };
 
   return defined;
 }

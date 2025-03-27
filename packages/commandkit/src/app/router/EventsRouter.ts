@@ -98,8 +98,7 @@ export class EventsRouter {
     for (const dir of dirs) {
       if (dir.isDirectory()) {
         const path = join(this.entrypoint, dir.name);
-        const event = await this.scanEvent(dir.name, path);
-        this.events.set(event.event, event);
+        await this.scanEvent(dir.name, path, null, [], true);
       }
     }
 
@@ -124,16 +123,22 @@ export class EventsRouter {
   private async scanEvent(
     event: string,
     path: string,
+    _namespace: string | null = null,
     listeners: string[] = [],
-  ): Promise<ParsedEvent> {
+    isRoot = false,
+  ): Promise<void> {
     const files = await readdir(path, { withFileTypes: true });
+    const isNamespace = isRoot && /^\(.+\)$/.test(event);
+
+    // if event = (something) pattern then namespace is something
+    const namespace = isNamespace ? event.slice(1, -1) : (_namespace ?? null);
 
     for (const file of files) {
-      if (/node_modules/.test(file.name)) continue;
+      if (file.name.includes('_')) continue;
 
       if (file.isDirectory()) {
         const nextPath = join(path, file.name);
-        await this.scanEvent(event, nextPath, listeners);
+        await this.scanEvent(file.name, nextPath, namespace, listeners);
         continue;
       }
 
@@ -142,15 +147,8 @@ export class EventsRouter {
       }
     }
 
-    const maybeNamespace = path
-      .replace(this.entrypoint, '')
-      .replaceAll('\\', '/')
-      .split('/')
-      .shift();
-
-    const namespace =
-      (maybeNamespace && /\(([^)]+)\)/.exec(maybeNamespace)?.[1]) || null;
-
-    return { event, path, listeners, namespace };
+    if (!isNamespace) {
+      this.events.set(event, { event, path, listeners, namespace });
+    }
   }
 }

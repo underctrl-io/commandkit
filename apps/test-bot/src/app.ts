@@ -1,7 +1,13 @@
 import { Client } from 'discord.js';
 
 const client = new Client({
-  intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent'],
+  intents: [
+    'Guilds',
+    'GuildMembers',
+    'GuildMessages',
+    'MessageContent',
+    'GuildMessageTyping',
+  ],
 });
 
 export default client;

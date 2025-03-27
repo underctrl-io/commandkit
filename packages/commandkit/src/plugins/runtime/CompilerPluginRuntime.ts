@@ -23,7 +23,7 @@ export class CompilerPluginRuntime {
     const source = await readFile(args.path, 'utf8');
 
     let contents: string | Uint8Array = source,
-      loader = args.path.split('.').pop();
+      loader = args.path?.split('.').pop();
 
     for (const plugin of this.plugins) {
       try {
