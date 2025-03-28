@@ -56,6 +56,7 @@ export class AppCommandRunner {
           runCommand = fn;
         },
       },
+      messageCommandParser: prepared.messageCommandParser,
     });
 
     // Run middleware before command execution
