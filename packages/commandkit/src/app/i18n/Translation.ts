@@ -19,9 +19,24 @@ export interface ApiTranslatableCommandOptions
   description_localizations?: LocalizationMap;
 }
 
-export interface Translation {
-  command: TranslatableCommand;
-  translations: TranslatableArguments;
+// Define command-specific type structure
+export interface CommandLocalizationTypeData {
+  [key: string]: Record<string, string | null>;
 }
 
-export type TranslatableArguments = Record<string, string>;
+export type TranslatableCommandName = string & {};
+
+export interface Translation {
+  command: TranslatableCommand;
+  translations: Record<string, string>;
+}
+
+// Improved type definition for TranslatableArguments
+export type TranslatableArguments<T extends TranslatableCommandName> =
+  T extends TranslatableCommandName
+    ? CommandLocalizationTypeData[T] extends Record<string, infer ArgType>
+      ? ArgType extends null
+        ? never
+        : Record<string, string>
+      : Record<string, string>
+    : Record<string, string>;

@@ -25,6 +25,8 @@ import { Logger } from '../../logger/Logger';
 import { AsyncFunction } from '../../cache';
 import { Command, Middleware } from '../router';
 import { AppCommandRunner } from '../commands/AppCommandRunner';
+import { COMMANDKIT_IS_DEV } from '../../utils/constants';
+import { rewriteCommandDeclaration } from '../../utils/types-package';
 
 export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
 
@@ -47,6 +49,10 @@ export interface LoadedCommand {
   data: AppCommand;
   guilds?: string[];
 }
+
+export type CommandTypeData = string;
+
+export type ResolvableCommand = CommandTypeData | (string & {});
 
 interface LoadedMiddleware {
   middleware: Middleware;
@@ -308,6 +314,17 @@ export class AppCommandHandler {
     // Load commands
     for (const [id, command] of commands) {
       await this.loadCommand(id, command);
+    }
+
+    // generate types
+    if (COMMANDKIT_IS_DEV) {
+      await rewriteCommandDeclaration(
+        `type CommandTypeData = ${Array.from(
+          this.loadedCommands
+            .mapValues((v) => JSON.stringify(v.command.name))
+            .values(),
+        ).join(' | ')}`,
+      );
     }
   }
 

@@ -1,3 +1,7 @@
+import { existsSync } from 'node:fs';
+import { mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+
 /**
  * Creates a command line interface for CommandKit.
  * @param argv The arguments passed to the CLI.
@@ -85,4 +89,10 @@ export async function bootstrapCommandkitCLI(
     });
 
   await program.parseAsync(argv, options);
+
+  const types = join(process.cwd(), 'node_modules', 'commandkit-types');
+
+  if (!existsSync(types)) {
+    await mkdir(types, { recursive: true }).catch(() => {});
+  }
 }

@@ -22,8 +22,9 @@ import {
 } from '../../context/environment';
 import { GenericFunction, getContext } from '../../context/async-context';
 import { exitMiddleware, redirect } from '../middleware/signals';
-import { AsyncFunction, isCachedFunction } from '../../cache';
-import { RunCommand } from '../handlers/AppCommandHandler';
+import { isCachedFunction } from '../../cache';
+import { ResolvableCommand, RunCommand } from '../handlers/AppCommandHandler';
+import { TranslatableCommandName } from '../i18n/Translation';
 
 export const CommandExecutionMode = {
   SlashCommand: 'chatInput',
@@ -185,7 +186,9 @@ export class Context<
    * Forwards the context to another command. The target handler will be the same as current handler.
    * @param command The command to forward to.
    */
-  public async forwardCommand(command: string): Promise<never> {
+  public async forwardCommand<C extends ResolvableCommand>(
+    command: C,
+  ): Promise<never> {
     const target = await this.commandkit.commandHandler.prepareCommandRun(
       (this.isInteraction() ? this.interaction : this.message) as Interaction,
     );
@@ -344,14 +347,20 @@ export class Context<
   /**
    * Returns the i18n api for this command.
    * @param locale The locale to use for the i18n api.
+   * @template T The command name for type-safe translations. Will provide autocomplete from available translations.
    */
-  public locale(locale?: Locale) {
+  public locale<T extends TranslatableCommandName | (string & {}) = string>(
+    locale?: Locale,
+  ): Localization<T extends TranslatableCommandName ? T : string> {
     const selectedLocale = locale ?? this.getLocale();
 
-    return new Localization(this.commandkit, {
-      locale: selectedLocale,
-      target: this.getCommandIdentifier(),
-    });
+    return new Localization<T extends TranslatableCommandName ? T : string>(
+      this.commandkit,
+      {
+        locale: selectedLocale,
+        target: this.getCommandIdentifier(),
+      },
+    );
   }
 
   /**

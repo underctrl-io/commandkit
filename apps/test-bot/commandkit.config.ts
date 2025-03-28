@@ -23,4 +23,5 @@ class ExtendedLogsPlugin extends RuntimePlugin {
 
 export default defineConfig({
   plugins: [new ExtendedLogsPlugin({})],
+  typedLocales: true,
 });

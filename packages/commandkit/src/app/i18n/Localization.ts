@@ -1,10 +1,11 @@
 import { Locale } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
+import { TranslationResult } from './LocalizationStrategy';
 import {
-  LocalizationTranslationRequest,
-  TranslationResult,
-} from './LocalizationStrategy';
-import { TranslatableArguments } from './Translation';
+  CommandLocalizationTypeData,
+  TranslatableArguments,
+  TranslatableCommandName,
+} from './Translation';
 
 export interface LocalizationConfig {
   /**
@@ -17,17 +18,25 @@ export interface LocalizationConfig {
   target: string;
 }
 
-export type Translator = (
-  translatable: string,
-  args?: TranslatableArguments | undefined,
+// Improved Translator type for better autocomplete
+export type Translator<T extends TranslatableCommandName> = <
+  K extends keyof CommandLocalizationTypeData[T] & string,
+>(
+  key: K,
+  // If args corresponding to this key is null, don't allow second argument
+  args?: CommandLocalizationTypeData[T][K] extends null
+    ? never
+    : CommandLocalizationTypeData[T][K] extends string
+      ? Record<CommandLocalizationTypeData[T][K], string>
+      : Record<string, string>,
 ) => Promise<TranslationResult>;
 
-export class Localization {
+export class Localization<T extends TranslatableCommandName = string> {
   /**
    * Translates the given translatable object.
    * @param translatable The translatable object to translate.
    */
-  public readonly t: Translator;
+  public readonly t: Translator<T>;
 
   /**
    * Creates a new localization instance.

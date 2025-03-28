@@ -6,10 +6,11 @@ import {
   TranslationResult,
 } from './LocalizationStrategy';
 import { Translation } from './Translation';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { getConfig } from '../../config/config';
 import { existsSync } from 'node:fs';
+import { COMMANDKIT_IS_DEV } from '../../utils/constants';
 
 export class DefaultLocalizationStrategy implements LocalizationStrategy {
   private translations: Map<string, Translation> = new Map();
@@ -21,23 +22,47 @@ export class DefaultLocalizationStrategy implements LocalizationStrategy {
 
     if (!localesPath) return null;
 
-    const path = join(localesPath, locale, `${scope}.json`);
+    const paths = ['.js', '.json', '.mjs', '.cjs'].map(
+      (e) => join(localesPath, locale, scope) + e,
+    );
 
-    try {
-      const data = await readFile(path, 'utf-8');
+    for (const path of paths) {
+      if (!existsSync(path)) {
+        continue;
+      }
 
-      const localeData = JSON.parse(data) as Translation;
+      try {
+        let localeData: Translation;
 
-      await this.generateLocaleTypes(localeData);
+        try {
+          if (path.endsWith('.json')) {
+            const data = await readFile(path, 'utf-8');
+            localeData = JSON.parse(data) as Translation;
+          } else {
+            const { default: data } = await import(`file://${path}`);
+            localeData = data as Translation;
+          }
+        } catch {
+          continue;
+        }
 
-      return localeData;
-    } catch {
-      return null;
+        if (!localeData) continue;
+
+        await this.generateLocaleTypes(localeData).catch(() => {});
+
+        return localeData;
+      } catch {
+        return null;
+      }
     }
+
+    return null;
   }
 
   private async generateLocaleTypes(localeData: Translation) {
+    if (!COMMANDKIT_IS_DEV) return;
     const { typedLocales } = getConfig();
+
     if (!typedLocales) return;
 
     const file = join(
@@ -47,56 +72,80 @@ export class DefaultLocalizationStrategy implements LocalizationStrategy {
       'locale_types.d.ts',
     );
 
-    const header = `// auto generated file do not edit\ndeclare module 'commandkit' {\n  export interface CommandLocalizationTypeData {\n`;
-    const footer = `  }\n}`;
+    const header = `// auto generated file do not edit\nexport {};\ndeclare module 'commandkit' {\n  export interface CommandLocalizationTypeData {\n`;
+    const footer = `  type TranslatableCommandName = keyof CommandLocalizationTypeData\n}\n}`;
 
     const generateType = (locale: Translation) => {
-      return `"${locale.command}": ${JSON.stringify(
-        Object.entries(locale.translations).map(([key, value]) => {
-          // if value contains {xyz} then we need to parse it as an argument
-          // so that it can be autocompleted
+      // Create type definition for this command's translations
+      const commandName = locale.command.name;
+      const translationTypes = Object.entries(locale.translations)
+        .map(([key, value]) => {
+          // Extract arguments from translation string (e.g. {xyz})
           const args = value.match(/{([^}]+)}/g);
 
-          if (!args) return `${JSON.stringify(key)}: null`;
+          if (!args) {
+            return `    "${key}": null`;
+          }
 
-          return `${JSON.stringify(key)}: ${args.map((arg) => arg.slice(1, -1)).join(' | ')}`;
-        }),
-        null,
-        2,
-      )}`;
+          // Create a union type of all arguments
+          const argUnion = args
+            .map((arg) => `"${arg.slice(1, -1)}"`)
+            .join(' | ');
+
+          return `    "${key}": ${argUnion}`;
+        })
+        .join(',\n');
+
+      return `  "${commandName}": {\n${translationTypes}\n  }`;
     };
 
-    if (!existsSync(file)) {
-      const generated = generateType(localeData);
+    try {
+      let commandDefinitions = new Map<string, string>();
 
-      await writeFile(file, `${header}${generated}${footer}`);
-    } else {
-      const data = await readFile(file, 'utf-8');
+      // If file exists, parse its content
+      if (existsSync(file)) {
+        try {
+          const data = await readFile(file, 'utf-8');
+          const content = data.toString();
 
-      const lines = data.split('\n');
+          // Extract existing command definitions using regex
+          const regex = /"([^"]+)":\s*\{([^}]*)\}/gs;
+          let match;
 
-      const index = lines.findIndex((line) =>
-        line.includes('CommandLocalizationTypeData'),
-      );
-
-      if (index === -1) {
-        for (const locale of this.translations.values()) {
-          const generated = generateType(locale);
-
-          await writeFile(file, `${header}${generated}${footer}`);
+          while ((match = regex.exec(content)) !== null) {
+            const [fullMatch, commandName] = match;
+            if (commandName !== localeData.command.name) {
+              commandDefinitions.set(commandName, fullMatch);
+            }
+          }
+        } catch (err) {
+          // If we can't parse the file, we'll just create a new one
+          console.warn('Could not parse existing type file, creating new one');
         }
-        return;
       }
 
-      const start = index + 2;
+      // Add current command definition
+      const newCommandType = generateType(localeData);
+      commandDefinitions.set(localeData.command.name!, newCommandType);
 
-      const end = lines.findIndex((line) => line.includes('}'));
+      // Create the final type file content
+      let fileContent = header;
+      const entries = Array.from(commandDefinitions.values());
 
-      const generated = generateType(localeData);
+      fileContent += entries.join(',\n');
+      fileContent += '\n' + footer;
 
-      lines.splice(start, end - start, generated);
+      // Ensure directory exists
+      const dir = join(process.cwd(), 'node_modules', 'commandkit-types');
+      if (!existsSync(dir)) {
+        await mkdir(dir, { recursive: true });
+      }
 
-      await writeFile(file, lines.join('\n'));
+      // Write the file
+      await writeFile(file, fileContent);
+    } catch (error) {
+      console.error('Failed to generate locale types:', error);
+      // Continue execution even if type generation fails
     }
   }
 

@@ -13,8 +13,7 @@
     "skipDefaultLibCheck": true,
     "allowJs": true,
     "alwaysStrict": false,
-    "checkJs": false,
-    "types": ["commandkit-types"]
+    "checkJs": false
   },
-  "include": ["src"]
+  "include": ["src", "commandkit.config.ts", "commandkit-env.d.ts"]
 }

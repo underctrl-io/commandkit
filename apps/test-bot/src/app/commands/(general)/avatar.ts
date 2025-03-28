@@ -20,7 +20,7 @@ export const command = {
 export async function userContextMenu(ctx: UserContextMenuCommandContext) {
   const target = ctx.interaction.targetUser;
 
-  const { t } = ctx.locale();
+  const { t } = ctx.locale<'avatar'>();
 
   const msg = await t('avatar', { user: target.username });
 
@@ -39,8 +39,7 @@ export async function userContextMenu(ctx: UserContextMenuCommandContext) {
 
 export async function chatInput(ctx: SlashCommandContext) {
   const user = ctx.options.getUser('user') ?? ctx.interaction.user;
-
-  const { t } = ctx.locale();
+  const { t } = ctx.locale<'avatar'>();
 
   const msg = await t('avatar', { user: user.username });
 
@@ -60,7 +59,7 @@ export async function chatInput(ctx: SlashCommandContext) {
 export async function message(ctx: MessageCommandContext) {
   const user = ctx.options.getUser('user') ?? ctx.message.author;
 
-  const { t } = ctx.locale();
+  const { t } = ctx.locale<'avatar'>();
 
   const msg = await t('avatar', { user: user.username });
 

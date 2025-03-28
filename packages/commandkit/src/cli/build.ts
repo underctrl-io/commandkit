@@ -8,6 +8,7 @@ import { loadConfigFile } from '../config/loader';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { devEnvFileArgs, prodEnvFileArgs } from './env';
+import { rimraf } from 'rimraf';
 
 export interface ApplicationBuildOptions {
   plugins?: CompilerPlugin[];
@@ -33,6 +34,11 @@ export async function buildApplication({
   }
 
   try {
+    const dest = isDev ? '.commandkit' : config.distDir;
+
+    // Clean the destination directory
+    await rimraf(dest);
+
     await build({
       esbuildPlugins: esbuildPluginList,
       watch: false,
@@ -58,7 +64,7 @@ export async function buildApplication({
       name: 'CommandKit',
       sourcemap: true,
       target: 'node16',
-      outDir: isDev ? '.commandkit' : config.distDir,
+      outDir: dest,
       entry: [
         'src',
         `!${config.distDir}`,
