@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "commandkit": "workspace:*",
+    "@commandkit/devtools": "workspace:*",
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7"
   },

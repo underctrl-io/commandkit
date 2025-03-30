@@ -5,6 +5,7 @@ node_modules
 **/website/versioned_docs
 **/website/versioned_sidebars
 .docusaurus
+**/devtools/ui
 .astro
 dist
 build
