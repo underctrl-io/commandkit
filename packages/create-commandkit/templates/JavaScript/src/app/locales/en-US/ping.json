@@ -3,7 +3,7 @@
     "name": "ping",
     "description": "Ping the bot to check if it's online."
   },
-  "response": {
+  "translations": {
     "ping_response": "The ping is `{latency}ms`."
   }
 }
