@@ -12,33 +12,24 @@ CommandKit provides an easy way to implement caching in your bot without having 
 ## Setting up the cache
 
 By default, commandkit enables in-memory caching. This means that the cache will be stored in the bot's memory and will be lost when the bot restarts.
-You can provide a custom cache store by specifying the `cacheProvider` option when instantiating CommandKit.
+You can provide a custom cache store using the `setCacheProvider` method.
 
 ```js
-import { CommandKit } from 'commandkit';
+import { commandkit } from 'commandkit';
 
-new CommandKit({
-  client,
-  commandsPath,
-  eventsPath,
-  cacheProvider: new MyCustomCacheProvider(),
-});
+commandkit.setCacheProvider(new MyCustomCacheProvider());
 ```
 
 The `MyCustomCacheProvider` class should extend `CacheProvider` from CommandKit and implement the required methods. You may use this to store the cache in redis, a database or a file system.
 
-CommandKit officially provides a `RedisCache` provider as well with `@commandkit/redis` package. You can use it as follows:
+CommandKit officially provides a `RedisCache` provider as well with `@commandkit/redis` package. You can enable redis cache provider by initializing it in your commandkit config file.
 
 ```js
-import { CommandKit } from 'commandkit';
-import { RedisCache } from '@commandkit/redis';
+import { defineConfig } from 'commandkit';
+import { redis } from '@commandkit/redis';
 
-new CommandKit({
-  client,
-  commandsPath,
-  eventsPath,
-  // uses default redis connection options (ioredis package)
-  cacheProvider: new RedisCache(),
+export default defineConfig({
+  plugins: [redis()],
 });
 ```
 
@@ -276,11 +267,6 @@ async function fetchData() {
   return data.json();
 }
 ```
-
-:::tip
-`cacheTag()` will only tag the function when it first runs. If not tagged manually, CommandKit assigns a random tag name with 15 minutes TTL.
-`cacheTag()` must be used with the `cache()` function or a function with `"use cache"` directive only.
-:::
 
 ## Managing Cache Data
 

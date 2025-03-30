@@ -5,14 +5,7 @@ description: Learn how to use CommandKit CLI to start, build, and manage your bo
 
 # Using CommandKit CLI
 
-CommandKit CLI allows you to start, build, and manage your bot application. It also includes features such as anti-crash so you can be rest assured your bot won't crash and go offline during production.
-
-:::warning
-For CommandKit CLI on version `0.1.7` it's recommended to use an ESM project
-instead of CommonJS due to the behavior of `require()`. If you're using
-CommonJS you'll have to use dynamic `import()`. However, this is not an issue
-for TypeScript CommonJS projects.
-:::
+CommandKit CLI allows you to start, build, and manage your bot application. It also includes features such as HMR during development, anti-crash, etc. so you can be rest assured your bot won't crash and go offline during production.
 
 To get a list of the available CLI commands, run the following command inside your project directory:
 
@@ -26,17 +19,18 @@ The output should look something like this:
 Usage: commandkit [options] [command]
 
 Options:
-  -h, --help       display help for command
+  -h, --help               display help for command
 
 Commands:
-  dev [options]    Start your bot in development mode.
-  start [options]  Start your bot in production mode after running the build command.
-  build [options]  Build your project for production usage.
-  help [command]   display help for command
+  dev [options]            Start your bot in development mode.
+  start [options]          Start your bot in production mode after running the build command.
+  build [options]          Build your project for production usage.
+  create [options] <name>  Create new commands, events, or locale files
+  help [command]           display help for command
 ```
 
 :::info
-CommandKit does not perform type checking on your code. You need to do that
+CommandKit does not perform type checking on your code yet. You need to do that
 yourself using `tsc --noEmit` command or any other tool of your choice.
 :::
 
@@ -50,8 +44,12 @@ CommandKit also injects anti-crash script in your production build to prevent yo
 
 ### Development
 
-`commandkit dev` starts your bot in development mode. It supports hot reloading out of the box to automatically restart your bot when you make changes to your code. CommandKit automatically loads your environment variables from `.env` file in your project directory, without you having to worry about it. It also supports typescript out of the box.
+`commandkit dev` starts your bot in development mode. It supports hot reloading out of the box to restart your bot only when it's needed. Changes made to commands/events files are automatically reloaded without restarting the bot. CommandKit automatically loads your environment variables from `.env` file in your project directory, without you having to worry about it. It also supports typescript out of the box.
 
 ### Production
 
 `commandkit start` starts your bot in production mode. You need to run `commandkit build` before running this command. This command also loads the environment variables from `.env` file in your project directory.
+
+### Create
+
+`commandkit create` creates new commands, events, or locale files. You can use this command to quickly scaffold new files in your project.
