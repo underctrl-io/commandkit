@@ -36,9 +36,13 @@ lerna-debug.log*
 **/*.DS_Store
 `;
 
+export async function writeGitignore(dir: string) {
+  await writeFile(`${dir}/.gitignore`, gitignore);
+}
+
 export async function initializeGit(dir: string) {
   try {
-    await writeFile(`${dir}/.gitignore`, gitignore);
+    await writeGitignore(dir);
     execSync('git init', { cwd: dir, stdio: 'pipe' });
   } catch {}
 }

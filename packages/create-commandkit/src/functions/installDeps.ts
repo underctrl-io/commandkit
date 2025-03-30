@@ -15,16 +15,19 @@ export function installDeps({
   lang,
   stdio = 'pipe',
 }: InstallDepsProps) {
-  const depsCommand = `${manager} add ${dependencies[lang].dependencies.join(
-    ' ',
-  )}`;
-  const devDepsCommand = `${manager} add ${dependencies.ts.devDependencies.join(
-    ' ',
-  )}`;
+  if (dependencies[lang].dependencies.length) {
+    const depsCommand = `${manager} add ${dependencies[lang].dependencies.join(
+      ' ',
+    )}`;
 
-  execSync(depsCommand, { cwd: dir, stdio });
+    execSync(depsCommand, { cwd: dir, stdio });
+  }
 
-  if (devDepsCommand) {
+  if (dependencies[lang].devDependencies.length) {
+    const devDepsCommand = `${manager} add -D ${dependencies[
+      lang
+    ].devDependencies.join(' ')}`;
+
     execSync(devDepsCommand, { cwd: dir, stdio });
   }
 }

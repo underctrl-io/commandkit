@@ -23,6 +23,7 @@ const baseDependencies = ['commandkit@dev', 'discord.js@14'];
 export const dependencies = {
   js: {
     dependencies: baseDependencies,
+    devDependencies: ['@types/node'],
   },
   ts: {
     dependencies: baseDependencies,

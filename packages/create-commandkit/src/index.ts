@@ -12,7 +12,7 @@ import { copyTemplates } from './functions/copyTemplates';
 import path from 'node:path';
 import colors from 'picocolors';
 import fs from 'fs-extra';
-import { initializeGit } from './functions/initializeGit';
+import { initializeGit, writeGitignore } from './functions/initializeGit';
 
 await intro(`Welcome to ${commandkit}!`);
 
@@ -86,6 +86,8 @@ await copyTemplates({ dir, lang });
 
 if (gitInit) {
   await initializeGit(dir);
+} else {
+  await writeGitignore(dir);
 }
 
 if (installNow) {
