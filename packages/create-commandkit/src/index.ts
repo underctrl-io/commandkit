@@ -63,10 +63,10 @@ const token = (await password({
   mask: colors.gray('*'),
 })) as string;
 
-const installNow = await confirm({
+const installNow = (await confirm({
   message: 'Install dependencies now?',
   initialValue: true,
-});
+})) as boolean;
 
 const gitInit = await confirm({
   message: 'Initialize a git repository?',
@@ -75,7 +75,13 @@ const gitInit = await confirm({
 
 outro(colors.cyan('Setup complete.'));
 
-await setup({ manager, dir, token });
+await setup({
+  manager,
+  dir,
+  token,
+  devDeps: lang === 'ts',
+  installDeps: installNow,
+});
 await copyTemplates({ dir, lang });
 
 if (gitInit) {

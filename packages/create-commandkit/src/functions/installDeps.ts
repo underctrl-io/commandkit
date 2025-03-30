@@ -24,7 +24,7 @@ export function installDeps({
 
   execSync(depsCommand, { cwd: dir, stdio });
 
-  if (lang == 'ts') {
+  if (devDepsCommand) {
     execSync(devDepsCommand, { cwd: dir, stdio });
   }
 }

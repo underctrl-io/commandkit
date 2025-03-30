@@ -18,7 +18,7 @@ export const textColors = {
 };
 
 // TODO: use stable version when we're ready
-const baseDependencies = ['commandkit@dev', 'discord.js'];
+const baseDependencies = ['commandkit@dev', 'discord.js@14'];
 
 export const dependencies = {
   js: {
