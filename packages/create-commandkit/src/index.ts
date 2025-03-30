@@ -1,15 +1,10 @@
 #!/usr/bin/env node
 console.clear();
 
-import type {
-  HandlerType,
-  Language,
-  ModuleType,
-  PackageManager,
-} from './types';
+import type { Language, PackageManager } from './types';
 
 import { intro, text, select, password, confirm, outro } from '@clack/prompts';
-import { commandkit, hints, outroMsg } from './utils';
+import { commandkit, outroMsg } from './utils';
 import { setup } from './functions/setup';
 import { installDeps } from './functions/installDeps';
 import { copyTemplates } from './functions/copyTemplates';
@@ -63,39 +58,6 @@ const lang = (await select({
   ],
 })) as Language;
 
-const handler = (await select({
-  message: 'Select a command handler:',
-  initialValue: 'app' as HandlerType,
-  options: [
-    {
-      label: 'App',
-      value: 'app',
-      hint: 'recommended',
-    },
-    {
-      label: 'Legacy',
-      value: 'legacy',
-    },
-  ],
-})) as HandlerType;
-
-const type = (await select({
-  message: 'Select a module type:',
-  initialValue: 'esm' as ModuleType,
-  options: [
-    {
-      label: 'CommonJS',
-      value: 'cjs',
-      hint: `${hints.require} & ${hints.module}`,
-    },
-    {
-      label: 'ES Modules',
-      value: 'esm',
-      hint: `${hints.import} & ${hints.export}`,
-    },
-  ],
-})) as ModuleType;
-
 const token = (await password({
   message: 'Enter your bot token (stored in .env):',
   mask: colors.gray('*'),
@@ -113,8 +75,8 @@ const gitInit = await confirm({
 
 outro(colors.cyan('Setup complete.'));
 
-await setup({ manager, dir, token, type });
-await copyTemplates({ type, dir, lang, handler });
+await setup({ manager, dir, token });
+await copyTemplates({ dir, lang });
 
 if (gitInit) {
   await initializeGit(dir);

@@ -7,69 +7,18 @@ import { PackageManager } from './types';
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 export const templates = {
-  js: {
-    app: {
-      esm: path.join(__dirname, '..', 'templates', 'JavaScript', 'app', 'esm'),
-      cjs: path.join(__dirname, '..', 'templates', 'JavaScript', 'app', 'cjs'),
-    },
-    legacy: {
-      esm: path.join(
-        __dirname,
-        '..',
-        'templates',
-        'JavaScript',
-        'legacy',
-        'esm',
-      ),
-      cjs: path.join(
-        __dirname,
-        '..',
-        'templates',
-        'JavaScript',
-        'legacy',
-        'cjs',
-      ),
-    },
-  },
-  ts: {
-    app: {
-      esm: path.join(__dirname, '..', 'templates', 'TypeScript', 'app', 'esm'),
-      cjs: path.join(__dirname, '..', 'templates', 'TypeScript', 'app', 'cjs'),
-    },
-    legacy: {
-      esm: path.join(
-        __dirname,
-        '..',
-        'templates',
-        'TypeScript',
-        'legacy',
-        'esm',
-      ),
-      cjs: path.join(
-        __dirname,
-        '..',
-        'templates',
-        'TypeScript',
-        'legacy',
-        'cjs',
-      ),
-    },
-  },
+  js: path.join(__dirname, '..', 'templates', 'JavaScript'),
+  ts: path.join(__dirname, '..', 'templates', 'TypeScript'),
 };
 
 export const textColors = {
   commandkit: ['#fdba74', '#e4a5a2', '#c288de', '#b27bf9'],
-  import: ['#c586c0', '#c586c0'],
-  export: ['#569cd6', '#569cd6'],
-  require: ['#dcdcaa', '#dcdcaa'],
-  module: ['#4ec9b0', '#4ec9b0'],
   js: ['#f7e01c', '#f7e01c'],
   ts: ['#2480c5', '#2480c5'],
-  app: ['#e4a5a2', '#e4a5a2'],
-  legacy: ['#dcdcaa', '#dcdcaa'],
 };
 
-const baseDependencies = ['commandkit', 'discord.js'];
+// TODO: use stable version when we're ready
+const baseDependencies = ['commandkit@dev', 'discord.js'];
 
 export const dependencies = {
   js: {
@@ -91,10 +40,6 @@ export const commands = {
 };
 
 export const hints = {
-  import: gradient(textColors.import)('import'),
-  export: gradient(textColors.export)('export'),
-  require: gradient(textColors.require)('require'),
-  module: gradient(textColors.module)('exports'),
   javascript: gradient(textColors.js)('JavaScript'),
   typescript: gradient(textColors.ts)('TypeScript'),
 };

@@ -1,4 +1,4 @@
-import type { ModuleType, PackageManager } from '../types';
+import type { PackageManager } from '../types';
 import { type IOType, execSync } from 'child_process';
 import { commands } from '../utils';
 
@@ -7,7 +7,6 @@ import path from 'node:path';
 
 interface SetupProps {
   manager: PackageManager;
-  type: ModuleType;
   token: string;
   dir: string;
   stdio?: IOType;
@@ -15,7 +14,6 @@ interface SetupProps {
 
 export async function setup({
   manager,
-  type,
   token,
   dir,
   stdio = 'pipe',
@@ -28,7 +26,7 @@ export async function setup({
 
   delete packageJson.main;
   packageJson.name = packageJson.name.toLowerCase();
-  packageJson.type = type == 'esm' ? 'module' : 'commonjs';
+  packageJson.type = 'module';
   packageJson.version = '0.0.0';
 
   packageJson.scripts = {
