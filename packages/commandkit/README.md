@@ -60,55 +60,9 @@ npm install commandkit@dev
 
 > ⚠️ The development version is likely to have bugs.
 
-## Usage
+## Getting Started
 
-This is a simple overview of how to set up this library with all the options. You can read more in the [full documentation](https://commandkit.dev)
-
-```js
-// index.js
-const { Client, GatewayIntentBits } = require('discord.js');
-const { CommandKit } = require('commandkit');
-const path = require('path');
-
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-    ],
-});
-
-new CommandKit({
-    // Your discord.js client object
-    client,
-
-    // Path to the commands folder
-    commandsPath: path.join(__dirname, 'commands'),
-
-    // Path to the events folder
-    eventsPath: path.join(__dirname, 'events'),
-
-    // Path to the validations folder (only valid if "commandsPath" was provided)
-    validationsPath: path.join(__dirname, 'validations'),
-
-    // Array of development server IDs (used to register and run devOnly commands)
-    devGuildIds: ['1234567890', '0987654321'],
-
-    // Array of developer user IDs (used for devOnly commands)
-    devUserIds: ['1234567890', '0987654321'],
-
-    // Array of developer role IDs (used for devOnly commands)
-    devRoleIds: ['1234567890', '0987654321'],
-
-    // Disable CommandKit's built-in validations
-    skipBuiltInValidations: true,
-
-    // Update command registration/reload behaviour to register all commands at once
-    bulkRegister: true,
-});
-
-client.login('YOUR_TOKEN_HERE');
-```
+To get started with CommandKit, you can check out the [quick start guide](https://commandkit.dev/docs/next/guide/installation).
 
 ## Support and Suggestions
 
