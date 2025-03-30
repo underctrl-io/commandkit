@@ -252,6 +252,8 @@ export class CommandKit extends EventEmitter {
     await this.plugins.execute((ctx, plugin) => {
       return plugin.onAfterCommandsLoad(ctx);
     });
+
+    this.commandHandler.printBanner();
   }
 
   async #initEvents() {

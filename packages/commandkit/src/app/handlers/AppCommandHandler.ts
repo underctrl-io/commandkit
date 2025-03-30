@@ -27,6 +27,7 @@ import { Command, Middleware } from '../router';
 import { AppCommandRunner } from '../commands/AppCommandRunner';
 import { COMMANDKIT_IS_DEV } from '../../utils/constants';
 import { rewriteCommandDeclaration } from '../../utils/types-package';
+import colors from '../../utils/colors';
 
 export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
 
@@ -105,6 +106,59 @@ export class AppCommandHandler {
 
   public constructor(public readonly commandkit: CommandKit) {
     this.registrar = new CommandRegistrar(this.commandkit);
+  }
+
+  public printBanner() {
+    // Group commands by category
+    const categorizedCommands = this.getCommandsArray().reduce(
+      (acc, cmd) => {
+        const category = cmd.command.category || 'uncategorized';
+        acc[category] = acc[category] || [];
+        acc[category].push(cmd);
+        return acc;
+      },
+      {} as Record<string, LoadedCommand[]>,
+    );
+
+    // Get all categories and sort them
+    const categories = Object.keys(categorizedCommands).sort();
+
+    console.log(
+      colors.green(
+        `Loaded ${colors.magenta(this.loadedCommands.size.toString())} commands:`,
+      ),
+    );
+
+    // Print commands by category
+    categories.forEach((category, index) => {
+      const commands = categorizedCommands[category];
+      const isLastCategory = index === categories.length - 1;
+      const categoryPrefix = isLastCategory ? '└─' : '├─';
+
+      // Print category header (skip for uncategorized)
+      if (category !== 'uncategorized') {
+        console.log(colors.cyan(`${categoryPrefix} ${colors.bold(category)}`));
+      }
+
+      // Print commands in this category
+      commands.forEach((cmd, cmdIndex) => {
+        const isLastCommand = cmdIndex === commands.length - 1;
+        const commandPrefix =
+          category !== 'uncategorized'
+            ? (isLastCategory ? '   ' : '│  ') + (isLastCommand ? '└─' : '├─')
+            : isLastCommand
+              ? '└─'
+              : '├─';
+
+        const name = cmd.data.command.name;
+        const hasMw = cmd.command.middlewares.length > 0;
+        const middlewareIcon = hasMw ? colors.magenta(' (λ)') : '';
+
+        console.log(
+          `${colors.green(commandPrefix)} ${colors.yellow(name)}${middlewareIcon}`,
+        );
+      });
+    });
   }
 
   public getCommandsArray() {

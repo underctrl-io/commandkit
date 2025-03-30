@@ -31,7 +31,7 @@ export interface CommandsRouterOptions {
 }
 
 const MIDDLEWARE_PATTERN = /^\+middleware\.(m|c)?(j|t)sx?$/;
-const COMMAND_PATTERN = /^(\w+)\.(m|c)?(j|t)sx?$/;
+const COMMAND_PATTERN = /^([^+().][^().]*)\.(m|c)?(j|t)sx?$/;
 const CATEGORY_PATTERN = /^\(\w+\)$/;
 
 export class CommandsRouter {
