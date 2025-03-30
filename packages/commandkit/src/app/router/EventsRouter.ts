@@ -1,3 +1,4 @@
+import { Collection } from 'discord.js';
 import { existsSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -26,7 +27,7 @@ export interface ParsedEvent {
   namespace: string | null;
 }
 
-/** Map of event names to their parsed metadata */
+/** Collection of event names to their parsed metadata */
 export type EventsTree = Record<string, ParsedEvent>;
 
 /**
@@ -35,7 +36,7 @@ export type EventsTree = Record<string, ParsedEvent>;
  */
 export class EventsRouter {
   /** Internal storage of parsed events */
-  private events = new Map<string, ParsedEvent>();
+  private events = new Collection<string, ParsedEvent>();
 
   /**
    * Creates a new EventsRouter instance
@@ -106,7 +107,7 @@ export class EventsRouter {
   }
 
   /**
-   * Convert the internal events map to a plain object
+   * Convert the internal events Collection to a plain object
    * @returns Events tree as a plain object
    */
   public toJSON(): EventsTree {

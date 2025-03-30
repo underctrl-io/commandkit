@@ -1,25 +1,15 @@
-import { SlashCommandProps, CommandOptions, CommandData } from 'commandkit';
+import { CommandData, SlashCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'reload',
-  description: 'Reload commands, events, and validations.',
+  description: 'Reload commands, events, and middlewares.',
 };
 
-export async function chatInput({ interaction, handler }: SlashCommandProps) {
-  await interaction.deferReply({ ephemeral: true });
+export const chatInput: SlashCommand = async (ctx) => {
+  await ctx.interaction.deferReply({ ephemeral: true });
 
-  // await handler.reloadCommands();
-  // console.log('Reloaded commands');
+  await ctx.commandkit.reloadCommands();
+  await ctx.commandkit.reloadEvents();
 
-  // await handler.reloadEvents();
-  // console.log('Reloaded events');
-
-  await handler.reloadValidations();
-  console.log('Reloaded validations.');
-  interaction.followUp('Done!');
-}
-
-export const options: CommandOptions = {
-  userPermissions: [],
-  devOnly: true,
+  ctx.interaction.followUp('Done!');
 };

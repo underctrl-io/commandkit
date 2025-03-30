@@ -1,6 +1,4 @@
 export const CommandKitErrorCodes = {
-  GuildOnlyException: Symbol('kGuildOnlyException'),
-  DMOnlyException: Symbol('kDMOnlyException'),
   ExitMiddleware: Symbol('kExitMiddleware'),
   ForwardedCommand: Symbol('kForwardedCommand'),
   InvalidCommandPrefix: Symbol('kInvalidCommandPrefix'),

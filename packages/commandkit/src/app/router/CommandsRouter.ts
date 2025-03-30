@@ -1,6 +1,7 @@
+import { Collection } from 'discord.js';
 import { Dirent, existsSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
-import { basename, extname, join, normalize, sep } from 'node:path';
+import { basename, extname, join, normalize } from 'node:path';
 
 export interface Command {
   id: string;
@@ -34,8 +35,8 @@ const COMMAND_PATTERN = /^(\w+)\.(m|c)?(j|t)sx?$/;
 const CATEGORY_PATTERN = /^\(\w+\)$/;
 
 export class CommandsRouter {
-  private commands = new Map<string, Command>();
-  private middlewares = new Map<string, Middleware>();
+  private commands = new Collection<string, Command>();
+  private middlewares = new Collection<string, Middleware>();
 
   public constructor(private readonly options: CommandsRouterOptions) {}
 

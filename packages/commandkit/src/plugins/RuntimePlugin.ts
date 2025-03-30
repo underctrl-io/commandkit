@@ -2,6 +2,7 @@ import { Interaction, Message, PartialMessage } from 'discord.js';
 import { PluginCommon, PluginOptions } from './PluginCommon';
 import type { CommandKitPluginRuntime } from './runtime/CommandKitPluginRuntime';
 import { PreparedAppCommandExecution } from '../app';
+import { CommandKitEnvironment } from '../context/environment';
 
 export abstract class RuntimePlugin<
   T extends PluginOptions = PluginOptions,
@@ -56,15 +57,6 @@ export abstract class RuntimePlugin<
   ): Promise<void> {}
 
   /**
-   * Called after interaction is handled
-   * @param interaction The interaction that was handled
-   */
-  public async onAfterInteraction(
-    ctx: CommandKitPluginRuntime,
-    interaction: Interaction,
-  ): Promise<void> {}
-
-  /**
    * Called before message command is processed
    * @param message The message
    */
@@ -91,6 +83,7 @@ export abstract class RuntimePlugin<
    */
   public async executeCommand(
     ctx: CommandKitPluginRuntime,
+    env: CommandKitEnvironment,
     source: Interaction | Message,
     command: PreparedAppCommandExecution,
     execute: () => Promise<any>,

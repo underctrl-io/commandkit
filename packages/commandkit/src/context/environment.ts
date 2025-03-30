@@ -141,7 +141,9 @@ export class CommandKitEnvironment {
    * @internal
    */
   public markEnd(): void {
-    if (!this.#data.markEnd) this.#data.markEnd = performance.now();
+    if (!this.#data.markEnd) {
+      this.#data.markEnd = performance.now();
+    }
   }
 
   /**

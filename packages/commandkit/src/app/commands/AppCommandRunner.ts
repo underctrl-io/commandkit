@@ -1,6 +1,5 @@
 import { ChatInputCommandInteraction, Interaction, Message } from 'discord.js';
 import {
-  afterCommand,
   CommandKitEnvironment,
   CommandKitEnvironmentType,
 } from '../../context/environment';
@@ -13,8 +12,10 @@ import {
 import { CommandExecutionMode, MiddlewareContext } from './Context';
 import {
   makeContextAwareFunction,
+  provideContext,
   useEnvironment,
 } from '../../context/async-context';
+import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 
 export class AppCommandRunner {
   public constructor(private handler: AppCommandHandler) {}
@@ -59,75 +60,119 @@ export class AppCommandRunner {
       messageCommandParser: prepared.messageCommandParser,
     });
 
+    let middlewaresCanceled = false;
+
     // Run middleware before command execution
-    for (const middleware of prepared.middlewares) {
-      await middleware.data.beforeExecute(ctx);
-    }
+    if (prepared.middlewares.length) {
+      await provideContext(env, async () => {
+        for (const middleware of prepared.middlewares) {
+          try {
+            await middleware.data.beforeExecute(ctx);
+          } catch (e) {
+            if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
+              middlewaresCanceled = true;
+              return;
+            }
 
-    // Determine which function to run based on whether we're executing a command or subcommand
-    const targetData = prepared.command.data;
-    const fn = targetData[executionMode];
+            if (
+              isErrorType(e, [
+                CommandKitErrorCodes.ForwardedCommand,
+                CommandKitErrorCodes.InvalidCommandPrefix,
+              ])
+            ) {
+              continue;
+            }
 
-    if (!fn) {
-      Logger.warn(
-        `Command ${prepared.command.command.name} has no handler for ${executionMode}`,
-      );
-    }
-
-    if (fn) {
-      try {
-        const _executeCommand = makeContextAwareFunction(
-          env,
-          async () => {
-            afterCommand((env) => {
-              const error = env.getExecutionError();
-              const marker = env.getMarker();
-              const time = `${env.getExecutionTime().toFixed(2)}ms`;
-
-              if (error) {
-                Logger.error(
-                  `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
-                );
-
-                return;
-              }
-
-              Logger.info(
-                `[${marker} - ${time}] Command executed successfully`,
-              );
-            });
-
-            return fn(ctx.clone());
-          },
-          this.#finalizer.bind(this),
-        );
-
-        const executeCommand =
-          runCommand != null
-            ? (runCommand as RunCommand)(_executeCommand)
-            : _executeCommand;
-
-        env.markStart(prepared.command.command.name);
-
-        const res = await commandkit.plugins.execute(async (ctx, plugin) => {
-          return plugin.executeCommand(ctx, source, prepared, executeCommand);
-        });
-
-        if (!res) {
-          await executeCommand();
+            throw e;
+          }
         }
-      } catch (e) {
-        Logger.error(e);
+      });
+    }
+
+    if (!ctx.cancelled) {
+      // Determine which function to run based on whether we're executing a command or subcommand
+      const targetData = prepared.command.data;
+      const fn = targetData[executionMode];
+
+      if (!fn) {
+        Logger.warn(
+          `Command ${prepared.command.command.name} has no handler for ${executionMode}`,
+        );
+      }
+
+      if (fn) {
+        try {
+          const _executeCommand = makeContextAwareFunction(
+            env,
+            async () => {
+              env.registerDeferredFunction((env) => {
+                env.markEnd();
+                const error = env.getExecutionError();
+                const marker = env.getMarker();
+                const time = `${env.getExecutionTime().toFixed(2)}ms`;
+
+                if (error) {
+                  Logger.error(
+                    `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
+                  );
+
+                  return;
+                }
+
+                Logger.info(
+                  `[${marker} - ${time}] Command executed successfully`,
+                );
+              });
+
+              return fn(ctx.clone());
+            },
+            this.#finalizer.bind(this),
+          );
+
+          const executeCommand =
+            runCommand != null
+              ? (runCommand as RunCommand)(_executeCommand)
+              : _executeCommand;
+
+          env.markStart(prepared.command.data.command.name);
+
+          const res = await commandkit.plugins.execute(async (ctx, plugin) => {
+            return plugin.executeCommand(
+              ctx,
+              env,
+              source,
+              prepared,
+              executeCommand,
+            );
+          });
+
+          if (!res) {
+            await executeCommand();
+          }
+        } catch (e) {
+          if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
+            middlewaresCanceled = true;
+          }
+
+          if (
+            !isErrorType(e, [
+              CommandKitErrorCodes.ForwardedCommand,
+              CommandKitErrorCodes.ExitMiddleware,
+            ])
+          ) {
+            Logger.error(e);
+          }
+        }
       }
     }
 
-    try {
-      // Run middleware after command execution
-      for (const middleware of prepared.middlewares) {
-        await middleware.data.afterExecute(ctx);
-      }
-    } finally {
-      env.markEnd();
+    // Run middleware after command execution
+    if (!middlewaresCanceled && prepared.middlewares.length) {
+      await provideContext(env, async () => {
+        for (const middleware of prepared.middlewares) {
+          await middleware.data.afterExecute(ctx);
+        }
+      });
     }
   }
 

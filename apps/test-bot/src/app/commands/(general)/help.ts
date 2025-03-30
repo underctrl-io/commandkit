@@ -1,4 +1,4 @@
-import { SlashCommandProps, CommandData } from 'commandkit';
+import { CommandData, SlashCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'help',
@@ -12,14 +12,17 @@ function $botVersion(): string {
   return require(path).version;
 }
 
-export async function chatInput({ interaction, handler }: SlashCommandProps) {
+export const chatInput: SlashCommand = async (ctx) => {
+  const { interaction } = ctx;
   await interaction.deferReply();
 
   const botVersion = $botVersion();
 
-  const commands = handler.commands
-    .map((c, i) => {
-      return `${i + 1}. **\`/${c.data.name}\`**`;
+  let i = 1;
+  const commands = ctx.commandkit.commandsRouter
+    .getData()
+    .commands.map((c) => {
+      return `${i++}. **\`/${c.name}\`** - ${c.category}`;
     })
     .join('\n');
 
@@ -36,4 +39,4 @@ export async function chatInput({ interaction, handler }: SlashCommandProps) {
       },
     ],
   });
-}
+};

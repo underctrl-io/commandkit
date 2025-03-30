@@ -73,13 +73,18 @@ export class DefaultLogger implements ILogger {
 
     if (!h && !commandHandler) return '';
 
-    const t = commandHandler === 'app' ? '(app ✨) ' : '';
+    const forwardedBy = ctx.variables.get('forwardedBy');
+    const forwardedTo = ctx.variables.get('forwardedTo');
+
     const cmdText = command ? colors.magenta(`/${command}`) + ' ' : '';
+    const forward = forwardedTo
+      ? `${colors.yellowBright(`(${forwardedBy || command} → ${forwardedTo})`)} `
+      : '';
 
     return (
       colors.dim(`${BoxChars.vertical} `) +
       colors.cyanBright(
-        `${t}${cmdText}${h ? colors.gray(`[${h}]`) : ''}`.trim(),
+        `${cmdText}${forward}${h ? colors.gray(`[${h}]`) : ''}`.trim(),
       )
     );
   }

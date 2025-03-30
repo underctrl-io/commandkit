@@ -191,12 +191,11 @@ export class Context<
   ): Promise<never> {
     const target = await this.commandkit.commandHandler.prepareCommandRun(
       (this.isInteraction() ? this.interaction : this.message) as Interaction,
+      command,
     );
 
     if (!target) {
-      throw new Error(
-        `Command ${command} not found! If you are trying to forward to a legacy command, ctx.forwardCommand is not compatible with legacy commands.`,
-      );
+      throw new Error(`Command ${command} not found`);
     }
 
     const env = this.config.environment ?? getContext();
@@ -226,6 +225,9 @@ export class Context<
     if (!handler) {
       throw new Error(`No handler found for ${handlerKind}`);
     }
+
+    env.variables.set('forwardedBy', this.commandName);
+    env.variables.set('forwardedTo', command);
 
     await handler(this.clone({ forwarded: true }));
 

@@ -188,68 +188,70 @@ export class AppCommandHandler {
 
   public async prepareCommandRun(
     source: Interaction | Message,
+    cmdName?: string,
   ): Promise<PreparedAppCommandExecution | null> {
-    let cmdName: string;
     let parser: MessageCommandParser | undefined;
 
     // Extract command name (and possibly subcommand) from the source
-    if (source instanceof Message) {
-      if (source.author.bot) return null;
+    if (!cmdName) {
+      if (source instanceof Message) {
+        if (source.author.bot) return null;
 
-      const prefix =
-        await this.commandkit.config.getMessageCommandPrefix(source);
+        const prefix =
+          await this.commandkit.config.getMessageCommandPrefix(source);
 
-      parser = new MessageCommandParser(
-        source,
-        Array.isArray(prefix) ? prefix : [prefix],
-        (command: string) => {
-          // Find the command by name
-          const commandId = this.commandNameToId.get(command);
-          if (!commandId) return null;
+        parser = new MessageCommandParser(
+          source,
+          Array.isArray(prefix) ? prefix : [prefix],
+          (command: string) => {
+            // Find the command by name
+            const commandId = this.commandNameToId.get(command);
+            if (!commandId) return null;
 
-          const loadedCommand = this.loadedCommands.get(commandId);
-          if (!loadedCommand) return null;
+            const loadedCommand = this.loadedCommands.get(commandId);
+            if (!loadedCommand) return null;
 
-          if (
-            source.guildId &&
-            loadedCommand.guilds?.length &&
-            !loadedCommand.guilds.includes(source.guildId!)
-          ) {
+            if (
+              source.guildId &&
+              loadedCommand.guilds?.length &&
+              !loadedCommand.guilds.includes(source.guildId!)
+            ) {
+              return null;
+            }
+
+            const json =
+              'toJSON' in loadedCommand.data.command
+                ? loadedCommand.data.command.toJSON()
+                : loadedCommand.data.command;
+
+            return (
+              json.options?.reduce(
+                (acc: Record<string, unknown>, opt: Record<string, any>) => {
+                  acc[opt.name] = opt.type;
+                  return acc;
+                },
+                {} as Record<string, unknown>,
+              ) ?? {}
+            );
+          },
+        );
+
+        try {
+          const fullCommand = parser.getFullCommand();
+          const parts = fullCommand.split(' ');
+          cmdName = parts[0];
+        } catch (e) {
+          if (isErrorType(e, CommandKitErrorCodes.InvalidCommandPrefix)) {
             return null;
           }
-
-          const json =
-            'toJSON' in loadedCommand.data.command
-              ? loadedCommand.data.command.toJSON()
-              : loadedCommand.data.command;
-
-          return (
-            json.options?.reduce(
-              (acc: Record<string, unknown>, opt: Record<string, any>) => {
-                acc[opt.name] = opt.type;
-                return acc;
-              },
-              {} as Record<string, unknown>,
-            ) ?? {}
-          );
-        },
-      );
-
-      try {
-        const fullCommand = parser.getFullCommand();
-        const parts = fullCommand.split(' ');
-        cmdName = parts[0];
-      } catch (e) {
-        if (isErrorType(e, CommandKitErrorCodes.InvalidCommandPrefix)) {
+          Logger.error(e);
           return null;
         }
-        Logger.error(e);
-        return null;
-      }
-    } else {
-      if (!source.isCommand()) return null;
+      } else {
+        if (!source.isCommand()) return null;
 
-      cmdName = source.commandName;
+        cmdName = source.commandName;
+      }
     }
 
     // Find the command by name

@@ -4,7 +4,6 @@ import { isCompilerPlugin } from '../plugins';
 import { createAppProcess } from './app-process';
 import { buildApplication } from './build';
 import { watch } from 'chokidar';
-import { readdirSync } from 'node:fs';
 import { debounce } from '../utils/utilities';
 import colors from '../utils/colors';
 import { ChildProcess } from 'node:child_process';

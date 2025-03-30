@@ -1,8 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { CommandKitEnvironment } from './environment';
-import { CommandKitErrorCodes, isCommandKitError } from '../utils/error-codes';
-import { Interaction, MessageFlags } from 'discord.js';
 import { CommandKit } from '../CommandKit';
+import { isCommandKitError } from '../utils/error-codes';
 
 const context = new AsyncLocalStorage<CommandKitEnvironment>();
 
@@ -10,6 +9,13 @@ export type GenericFunction<A extends any[] = any[]> = (...args: A) => any;
 
 export function exitContext<T>(fn: () => T): T {
   return context.exit(fn);
+}
+
+export function provideContext<R>(
+  value: CommandKitEnvironment,
+  receiver: () => R,
+): R {
+  return context.run(value, receiver);
 }
 
 /**
@@ -24,44 +30,16 @@ export function makeContextAwareFunction<
   F extends GenericFunction,
 >(env: CommandKitEnvironment, fn: R, finalizer?: F): R {
   const _fn = (...args: any[]) => {
-    return context.run(env, async () => {
+    return provideContext(env, async () => {
       try {
         // execute the target function
         const result = await fn(...args);
 
         return result;
       } catch (e) {
-        // set the error in the environment data
-        if (isCommandKitError(e)) {
-          const code = Reflect.get(e, 'code');
-          const interaction = env.variables.get('interaction') as Interaction;
-          if (!interaction) return;
-
-          switch (code) {
-            case CommandKitErrorCodes.GuildOnlyException: {
-              if (interaction.isRepliable()) {
-                await interaction.reply({
-                  content: 'This command is only available in guilds.',
-                  flags: MessageFlags.Ephemeral,
-                });
-              }
-              return;
-            }
-            case CommandKitErrorCodes.DMOnlyException: {
-              if (interaction.isRepliable()) {
-                await interaction.reply({
-                  content: 'This command is only available in DMs.',
-                  flags: MessageFlags.Ephemeral,
-                });
-              }
-              return;
-            }
-          }
-
-          return;
+        if (!isCommandKitError(e)) {
+          env.setExecutionError(e as Error);
         }
-
-        env.setExecutionError(e as Error);
       } finally {
         if (typeof finalizer === 'function') {
           // execute the finalizer function
@@ -117,42 +95,4 @@ export function useEnvironment(): CommandKitEnvironment {
   }
 
   return ctx;
-}
-
-/**
- * Ensures the command is only available in guilds.
- */
-export function guildOnly() {
-  const env = useEnvironment();
-  const interaction: Interaction = env.variables.get('interaction');
-
-  if (!interaction) {
-    throw new Error('No interaction found in environment.');
-  }
-
-  if (!interaction.guild) {
-    const error = new Error('This command is only available in guilds.');
-    Reflect.set(error, 'code', CommandKitErrorCodes.GuildOnlyException);
-
-    throw error;
-  }
-}
-
-/**
- * Ensures the command is only available in DMs.
- */
-export function dmOnly() {
-  const env = useEnvironment();
-  const interaction: Interaction = env.variables.get('interaction');
-
-  if (!interaction) {
-    throw new Error('No interaction found in environment.');
-  }
-
-  if (interaction.guild) {
-    const error = new Error('This command is only available in DMs.');
-    Reflect.set(error, 'code', CommandKitErrorCodes.DMOnlyException);
-
-    throw error;
-  }
 }

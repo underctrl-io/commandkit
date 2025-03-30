@@ -76,15 +76,7 @@ export class CommandKit extends EventEmitter {
       );
     }
 
-    if (options.validationsPath && !options.commandsPath) {
-      throw new Error(
-        colors.red('"commandsPath" is required when "validationsPath" is set.'),
-      );
-    }
-
     super();
-
-    options.debugCommands ??= process.env.NODE_ENV !== 'production';
 
     if (
       options.cacheProvider !== null &&
@@ -137,9 +129,17 @@ export class CommandKit extends EventEmitter {
         await this.commandHandler.registrar.register();
       });
 
+      await this.plugins.execute((ctx, plugin) => {
+        return plugin.onBeforeClientLogin?.(ctx);
+      });
+
       await this.options.client.login(
         token ?? process.env.TOKEN ?? process.env.DISCORD_TOKEN,
       );
+
+      await this.plugins.execute((ctx, plugin) => {
+        return plugin.onAfterClientLogin?.(ctx);
+      });
     } else if (this.options.client.isReady()) {
       await this.commandHandler.registrar.register();
     }
@@ -206,13 +206,6 @@ export class CommandKit extends EventEmitter {
   }
 
   /**
-   * Whether or not to debug the command handler.
-   */
-  isDebuggingCommands() {
-    return this.options.debugCommands || false;
-  }
-
-  /**
    * Get the client attached to this CommandKit instance.
    */
   get client() {
@@ -239,6 +232,10 @@ export class CommandKit extends EventEmitter {
   }
 
   async #initCommands() {
+    await this.plugins.execute((ctx, plugin) => {
+      return plugin.onBeforeCommandsLoad(ctx);
+    });
+
     if (this.commandsRouter.isValidPath()) {
       const result = await this.commandsRouter.scan();
 
@@ -251,14 +248,26 @@ export class CommandKit extends EventEmitter {
     }
 
     await this.commandHandler.loadCommands();
+
+    await this.plugins.execute((ctx, plugin) => {
+      return plugin.onAfterCommandsLoad(ctx);
+    });
   }
 
   async #initEvents() {
+    await this.plugins.execute((ctx, plugin) => {
+      return plugin.onBeforeEventsLoad(ctx);
+    });
+
     if (this.eventsRouter.isValidPath()) {
       await this.eventsRouter.scan();
     }
 
     await this.eventHandler.loadEvents();
+
+    await this.plugins.execute((ctx, plugin) => {
+      return plugin.onAfterEventsLoad(ctx);
+    });
   }
 
   /**
@@ -273,48 +282,6 @@ export class CommandKit extends EventEmitter {
    */
   async reloadEvents() {
     await this.eventHandler.reloadEvents();
-  }
-
-  /**
-   * @returns The path to the commands folder which was set when instantiating CommandKit.
-   */
-  get commandsPath(): string | undefined {
-    return this.options.commandsPath;
-  }
-
-  /**
-   * @returns The path to the events folder which was set when instantiating CommandKit.
-   */
-  get eventsPath(): string | undefined {
-    return this.options.eventsPath;
-  }
-
-  /**
-   * @returns The path to the validations folder which was set when instantiating CommandKit.
-   */
-  get validationsPath(): string | undefined {
-    return this.options.validationsPath;
-  }
-
-  /**
-   * @returns An array of all the developer user IDs which was set when instantiating CommandKit.
-   */
-  get devUserIds(): string[] {
-    return this.options.devUserIds || [];
-  }
-
-  /**
-   * @returns An array of all the developer guild IDs which was set when instantiating CommandKit.
-   */
-  get devGuildIds(): string[] {
-    return this.options.devGuildIds || [];
-  }
-
-  /**
-   * @returns An array of all the developer role IDs which was set when instantiating CommandKit.
-   */
-  get devRoleIds(): string[] {
-    return this.options.devRoleIds || [];
   }
 
   /**
