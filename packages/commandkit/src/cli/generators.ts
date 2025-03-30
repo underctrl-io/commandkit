@@ -13,11 +13,17 @@ const LOCALES_DIR = join(BASE_PATH, 'src/app/locales');
 const formatPath = (path: string) =>
   path.replace(process.cwd(), '.').replace(/\\/g, '/');
 
+function determineExtension() {
+  return existsSync(join(BASE_PATH, 'tsconfig.json')) ? 'ts' : 'js';
+}
+
 export async function generateCommand(name: string, customPath?: string) {
-  const cmdPath = join(customPath || COMMANDS_DIR, name);
+  const cmdPath = join(customPath || COMMANDS_DIR);
   if (!existsSync(cmdPath)) await mkdir(cmdPath, { recursive: true });
 
-  if (existsSync(join(cmdPath, 'command.ts'))) {
+  const fileName = `${name}.${determineExtension()}`;
+
+  if (existsSync(join(cmdPath, fileName))) {
     panic(`Command ${name} already exists.`);
   }
 
@@ -38,11 +44,11 @@ export const message: MessageCommand = async (ctx) => {
 };
 `.trim();
 
-  await writeFile(join(cmdPath, 'command.ts'), commandFile);
+  await writeFile(join(cmdPath, fileName), commandFile);
 
   console.log(
     colors.green(
-      `Command ${colors.magenta(name)} created at ${colors.blue(formatPath(cmdPath))}/command.ts`,
+      `Command ${colors.magenta(name)} created at ${colors.blue(formatPath(`${cmdPath}/${fileName}`))}`,
     ),
   );
 }
