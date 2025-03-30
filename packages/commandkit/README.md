@@ -30,35 +30,15 @@ You can find the full documentation [here](https://commandkit.dev).
 
 [![npm](https://nodei.co/npm/commandkit.png)](https://nodei.co/npm/commandkit/)
 
-To install CommandKit, simply run the following command:
+To create a new CommandKit project, you can use the following command:
 
-For npm:
-
-```bash
-npm install commandkit
-```
-
-Yarn:
+<!-- TODO: use stable version -->
 
 ```bash
-yarn add commandkit
+npm create commandkit@dev
 ```
 
-pnpm:
-
-```bash
-pnpm add commandkit
-```
-
-### Install development version
-
-To install the development version of CommandKit, run the following command:
-
-```bash
-npm install commandkit@dev
-```
-
-> ⚠️ The development version is likely to have bugs.
+This will prompt you to enter few details about your project. Once you have entered the details, you can simply run `commandkit dev` to start the bot application.
 
 ## Getting Started
 
