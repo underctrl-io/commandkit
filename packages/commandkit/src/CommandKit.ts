@@ -189,6 +189,21 @@ export class CommandKit extends EventEmitter {
   }
 
   /**
+   * Sets the cache provider.
+   * @param provider The cache provider.
+   */
+  setCacheProvider(provider: CacheProvider) {
+    if (!(provider instanceof CacheProvider)) {
+      throw new Error(
+        colors.red('Cache provider must be an instance of CacheProvider.'),
+      );
+    }
+
+    this.options.cacheProvider = provider;
+    return this;
+  }
+
+  /**
    * Sets the localization strategy for the command handler.
    * @param strategy The localization strategy.
    */

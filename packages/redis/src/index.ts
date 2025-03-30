@@ -1,5 +1,9 @@
 import { Redis, type RedisOptions } from 'ioredis';
-import { CacheProvider } from 'commandkit';
+import {
+  CacheProvider,
+  CommandKitPluginRuntime,
+  RuntimePlugin,
+} from 'commandkit';
 
 export type Awaitable<T> = T | Promise<T>;
 export type SerializeFunction = (value: any) => Awaitable<string>;
@@ -118,4 +122,16 @@ export class RedisCache extends CacheProvider {
   public async expire(key: string, ttl: number): Promise<void> {
     await this.redis.pexpire(key, ttl);
   }
+}
+
+export class RedisPlugin extends RuntimePlugin<RedisOptions> {
+  public readonly name = 'RedisPlugin';
+
+  public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
+    ctx.commandkit.setCacheProvider(new RedisCache(this.options));
+  }
+}
+
+export function redis(options?: RedisOptions) {
+  return new RedisPlugin(options ?? {});
 }

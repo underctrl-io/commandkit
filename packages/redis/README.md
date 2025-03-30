@@ -10,16 +10,13 @@ npm install @commandkit/redis
 
 ## Usage
 
-```js
-import { CommandKit } from 'commandkit';
-import { RedisCache } from '@commandkit/redis';
+This package provides a commandkit plugin that automatically registers the cache provider with the commandkit instance.
 
-new CommandKit({
-  client,
-  commandsPath,
-  eventsPath,
-  // uses default redis connection options (ioredis package)
-  cacheProvider: new RedisCache(),
+```js
+import { redis } from '@commandkit/redis';
+
+export default defineConfig({
+  plugins: [redis()],
 });
 ```
 
