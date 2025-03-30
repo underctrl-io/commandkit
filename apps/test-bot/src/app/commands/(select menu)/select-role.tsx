@@ -1,22 +1,20 @@
 import CommandKit, {
   ActionRow,
   CommandData,
-  OnSelectMenuKitSubmit,
+  OnRoleSelectMenuKitSubmit,
   RoleSelectMenu,
-  RoleSelectMenuKit,
   SlashCommand,
 } from 'commandkit';
-import { RoleSelectMenuInteraction } from 'discord.js';
 
 export const command: CommandData = {
   name: 'select-role',
   description: 'Select a role from a list',
 };
 
-const handleSelect: OnSelectMenuKitSubmit<
-  RoleSelectMenuInteraction,
-  RoleSelectMenuKit
-> = async (interaction, context) => {
+const handleSelect: OnRoleSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
   const selections = interaction.roles.map((v) => v.toString()).join(', ');
 
   await interaction.reply({

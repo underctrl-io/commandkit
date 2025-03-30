@@ -2,21 +2,19 @@ import CommandKit, {
   ActionRow,
   CommandData,
   MentionableSelectMenu,
-  MentionableSelectMenuKit,
-  OnSelectMenuKitSubmit,
+  OnMentionableSelectMenuKitSubmit,
   SlashCommand,
 } from 'commandkit';
-import { MentionableSelectMenuInteraction } from 'discord.js';
 
 export const command: CommandData = {
   name: 'select-mentionable',
   description: 'Select a mentionable from a list',
 };
 
-const handleSelect: OnSelectMenuKitSubmit<
-  MentionableSelectMenuInteraction,
-  MentionableSelectMenuKit
-> = async (interaction, context) => {
+const handleSelect: OnMentionableSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
   const roles = interaction.roles.map((v) => v.toString()).join(', ');
   const users = interaction.users.map((v) => v.toString()).join(', ');
 

@@ -1,23 +1,21 @@
 import CommandKit, {
   ActionRow,
   CommandData,
-  OnSelectMenuKitSubmit,
+  OnStringSelectMenuKitSubmit,
   SlashCommand,
   StringSelectMenu,
-  StringSelectMenuKit,
   StringSelectMenuOption,
 } from 'commandkit';
-import { StringSelectMenuInteraction } from 'discord.js';
 
 export const command: CommandData = {
   name: 'select-string',
   description: 'Select a string from a list',
 };
 
-const handleSelect: OnSelectMenuKitSubmit<
-  StringSelectMenuInteraction,
-  StringSelectMenuKit
-> = async (interaction, context) => {
+const handleSelect: OnStringSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
   const selections = interaction.values.map((v) => v.toString()).join(', ');
 
   await interaction.reply({

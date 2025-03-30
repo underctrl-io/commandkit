@@ -13,8 +13,17 @@ import {
   CommandKitSelectMenuBuilderInteractionCollectorDispatch,
   CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData,
   CommandKitSelectMenuBuilderOnEnd,
+  OnSelectMenuKitSubmit,
   SelectMenuKitPredicate,
 } from './common';
+
+export type OnUserSelectMenuKitSubmit = OnSelectMenuKitSubmit<
+  UserSelectMenuInteraction,
+  UserSelectMenuKit
+>;
+
+export type UserSelectMenuKitPredicate =
+  SelectMenuKitPredicate<UserSelectMenuInteraction>;
 
 export class UserSelectMenuKit extends UserSelectMenuBuilder {
   #onSelectHandler: CommandKitSelectMenuBuilderInteractionCollectorDispatch<

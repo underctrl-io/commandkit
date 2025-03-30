@@ -1,22 +1,20 @@
 import CommandKit, {
   ActionRow,
   ChannelSelectMenu,
-  ChannelSelectMenuKit,
   CommandData,
-  OnSelectMenuKitSubmit,
+  OnChannelSelectMenuKitSubmit,
   SlashCommand,
 } from 'commandkit';
-import { ChannelSelectMenuInteraction, MessageFlags } from 'discord.js';
 
 export const command: CommandData = {
   name: 'select-channel',
   description: 'Select a channel from a list',
 };
 
-const handleSelect: OnSelectMenuKitSubmit<
-  ChannelSelectMenuInteraction,
-  ChannelSelectMenuKit
-> = async (interaction, context) => {
+const handleSelect: OnChannelSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
   const selections = interaction.channels.map((v) => v.toString()).join(', ');
 
   await interaction.reply({
