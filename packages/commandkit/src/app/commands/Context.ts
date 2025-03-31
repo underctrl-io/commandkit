@@ -23,7 +23,11 @@ import {
 import { GenericFunction, getContext } from '../../context/async-context';
 import { exitMiddleware, redirect } from '../middleware/signals';
 import { isCachedFunction } from '../../cache';
-import { ResolvableCommand, RunCommand } from '../handlers/AppCommandHandler';
+import {
+  LoadedCommand,
+  ResolvableCommand,
+  RunCommand,
+} from '../handlers/AppCommandHandler';
 import { TranslatableCommandName } from '../i18n/Translation';
 
 export const CommandExecutionMode = {
@@ -41,6 +45,7 @@ export interface ContextParameters<
   T extends CommandExecutionMode,
   Args = Record<string, any>,
 > {
+  command: LoadedCommand;
   environment?: CommandKitEnvironment;
   executionMode: T;
   interaction: T extends 'chatInput'
@@ -127,6 +132,11 @@ export class Context<
    */
   public readonly client: Client;
 
+  /**
+   * The command that this context belongs to.
+   */
+  public readonly command: LoadedCommand;
+
   #store: Map<string, any>;
 
   private _locale: Locale | null = null;
@@ -145,6 +155,7 @@ export class Context<
     this.message = config.message;
     this.client = commandkit.client;
     this.#store = config.store ?? new Map();
+    this.command = config.command;
   }
 
   /**

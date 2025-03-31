@@ -9,7 +9,7 @@ import { join } from 'node:path';
  */
 export interface EventsRouterOptions {
   /** Root directory path where event handlers are located */
-  entrypoint: string;
+  entrypoints: string[];
 }
 
 /**
@@ -44,9 +44,23 @@ export class EventsRouter {
    * @throws Error if entrypoint is not provided
    */
   public constructor(private options: EventsRouterOptions) {
-    if (!options.entrypoint) {
+    if (options.entrypoints) {
+      options.entrypoints = Array.from(new Set(options.entrypoints));
+    }
+
+    if (!options.entrypoints?.length) {
       throw new Error('Entrypoint directory must be provided');
     }
+  }
+
+  /**
+   * Adds new entrypoints to the router
+   * @param entrypoints - Array of new entrypoint paths
+   */
+  public addEntrypoints(entrypoints: string[]) {
+    this.options.entrypoints = Array.from(
+      new Set([...this.options.entrypoints, ...entrypoints]),
+    );
   }
 
   /**
@@ -62,15 +76,15 @@ export class EventsRouter {
    * Get the entrypoint directory path
    * @returns Entrypoint directory path
    */
-  public get entrypoint(): string {
-    return this.options.entrypoint;
+  public get entrypoints(): string[] {
+    return this.options.entrypoints;
   }
 
   /**
    * Checks if the entrypoint path is valid
    */
   public isValidPath() {
-    return existsSync(this.entrypoint);
+    return this.entrypoints.every((entrypoint) => existsSync(entrypoint));
   }
 
   /**
@@ -94,12 +108,14 @@ export class EventsRouter {
    * @returns Promise resolving to the events tree
    */
   public async scan(): Promise<EventsTree> {
-    const dirs = await readdir(this.entrypoint, { withFileTypes: true });
+    for (const entrypoint of this.entrypoints) {
+      const dirs = await readdir(entrypoint, { withFileTypes: true });
 
-    for (const dir of dirs) {
-      if (dir.isDirectory()) {
-        const path = join(this.entrypoint, dir.name);
-        await this.scanEvent(dir.name, path, null, [], true);
+      for (const dir of dirs) {
+        if (dir.isDirectory()) {
+          const path = join(entrypoint, dir.name);
+          await this.scanEvent(dir.name, path, null, [], true);
+        }
       }
     }
 

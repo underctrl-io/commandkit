@@ -45,6 +45,7 @@ export class AppCommandRunner {
     env.variables.set('execHandlerKind', executionMode);
 
     const ctx = new MiddlewareContext(commandkit, {
+      command: prepared.command,
       environment: env,
       executionMode,
       interaction: !(source instanceof Message)

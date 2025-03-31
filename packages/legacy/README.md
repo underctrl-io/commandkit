@@ -1,0 +1,21 @@
+# `@commandkit/legacy`
+
+Legacy command handler plugin for CommandKit.
+
+## Installation
+
+```sh
+npm install @commandkit/legacy
+```
+
+## Usage
+
+This package provides a commandkit plugin that automatically registers the cache provider with the commandkit instance.
+
+```js
+import { legacy } from '@commandkit/legacy';
+
+export default defineConfig({
+  plugins: [legacy()],
+});
+```

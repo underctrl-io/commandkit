@@ -159,6 +159,9 @@ importers:
       '@commandkit/devtools':
         specifier: workspace:*
         version: link:../../packages/devtools
+      '@commandkit/legacy':
+        specifier: workspace:*
+        version: link:../../packages/legacy
       commandkit:
         specifier: workspace:*
         version: link:../../packages/commandkit
@@ -516,6 +519,21 @@ importers:
       vite:
         specifier: ^6.2.0
         version: 6.2.1(@types/node@22.10.2)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0)
+
+  packages/legacy:
+    devDependencies:
+      commandkit:
+        specifier: workspace:*
+        version: link:../commandkit
+      discord.js:
+        specifier: ^14.17.3
+        version: 14.17.3
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^5.7.3
+        version: 5.7.3
 
   packages/redis:
     dependencies:

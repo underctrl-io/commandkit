@@ -238,8 +238,16 @@ export class CommandKit extends EventEmitter {
       entrypoint: commandsPath,
     });
 
+    await this.plugins.execute((ctx, plugin) => {
+      return plugin.onCommandsRouterInit(ctx);
+    });
+
     this.eventsRouter = new EventsRouter({
-      entrypoint: events,
+      entrypoints: [events],
+    });
+
+    await this.plugins.execute((ctx, plugin) => {
+      return plugin.onEventsRouterInit(ctx);
     });
 
     await this.#initEvents();
@@ -247,10 +255,6 @@ export class CommandKit extends EventEmitter {
   }
 
   async #initCommands() {
-    await this.plugins.execute((ctx, plugin) => {
-      return plugin.onBeforeCommandsLoad(ctx);
-    });
-
     if (this.commandsRouter.isValidPath()) {
       const result = await this.commandsRouter.scan();
 
@@ -264,27 +268,15 @@ export class CommandKit extends EventEmitter {
 
     await this.commandHandler.loadCommands();
 
-    await this.plugins.execute((ctx, plugin) => {
-      return plugin.onAfterCommandsLoad(ctx);
-    });
-
     this.commandHandler.printBanner();
   }
 
   async #initEvents() {
-    await this.plugins.execute((ctx, plugin) => {
-      return plugin.onBeforeEventsLoad(ctx);
-    });
-
     if (this.eventsRouter.isValidPath()) {
       await this.eventsRouter.scan();
     }
 
     await this.eventHandler.loadEvents();
-
-    await this.plugins.execute((ctx, plugin) => {
-      return plugin.onAfterEventsLoad(ctx);
-    });
   }
 
   /**

@@ -1,0 +1,35 @@
+{
+  "name": "@commandkit/legacy",
+  "version": "0.1.0",
+  "description": "Legacy command handler plugin for CommandKit",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underctrl-io/commandkit.git"
+  },
+  "keywords": [
+    "commandkit",
+    "legacy"
+  ],
+  "author": "twilight <hello@twlite.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/underctrl-io/commandkit/issues"
+  },
+  "homepage": "https://github.com/underctrl-io/commandkit#readme",
+  "devDependencies": {
+    "commandkit": "workspace:*",
+    "discord.js": "^14.17.3",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.7.3"
+  }
+}

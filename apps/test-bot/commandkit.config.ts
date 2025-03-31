@@ -1,7 +1,7 @@
 import { defineConfig } from 'commandkit';
-import { devtools } from '@commandkit/devtools';
+import { legacy } from '@commandkit/legacy';
 
 export default defineConfig({
-  plugins: [devtools()],
+  plugins: [legacy()],
   typedLocales: true,
 });

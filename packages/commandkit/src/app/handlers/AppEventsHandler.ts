@@ -28,6 +28,10 @@ export class AppEventsHandler {
   }
 
   public async loadEvents() {
+    await this.commandkit.plugins.execute((ctx, plugin) => {
+      return plugin.onBeforeEventsLoad(ctx);
+    });
+
     const router = this.commandkit.eventsRouter;
 
     const events = await router.scan();
@@ -73,6 +77,10 @@ export class AppEventsHandler {
     }
 
     this.registerAllClientEvents();
+
+    await this.commandkit.plugins.execute((ctx, plugin) => {
+      return plugin.onAfterEventsLoad(ctx);
+    });
   }
 
   public unregisterAll() {

@@ -90,6 +90,22 @@ export abstract class RuntimePlugin<
   ): Promise<boolean> {
     return false;
   }
+
+  /**
+   * Called after events router is initialized
+   * @param ctx The context
+   */
+  public async onEventsRouterInit(
+    ctx: CommandKitPluginRuntime,
+  ): Promise<void> {}
+
+  /**
+   * Called after commands router is initialized
+   * @param ctx The context
+   */
+  public async onCommandsRouterInit(
+    ctx: CommandKitPluginRuntime,
+  ): Promise<void> {}
 }
 
 export function isRuntimePlugin(plugin: unknown): plugin is RuntimePlugin {

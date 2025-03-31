@@ -4,6 +4,22 @@ import { COMMANDKIT_IS_DEV } from './constants';
 import { getConfig } from '../config/config';
 
 let appDir: string | null = null;
+let currentDir: string | null = null;
+
+export function getCurrentDirectory(): string {
+  if (currentDir) return currentDir;
+
+  let root = join(
+    process.cwd(),
+    COMMANDKIT_IS_DEV ? '.commandkit' : getConfig().distDir,
+  );
+
+  if (!existsSync(root)) root = process.cwd();
+
+  currentDir = root;
+
+  return root;
+}
 
 /**
  * Returns the path to the app directory.

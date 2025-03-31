@@ -1,5 +1,6 @@
 import type { CommandKit } from '../../CommandKit';
 import {
+  AutocompleteInteraction,
   Awaitable,
   Collection,
   CommandInteraction,
@@ -103,6 +104,9 @@ export class AppCommandHandler {
     [Message | PartialMessage, Message | PartialMessage]
   > | null = null;
   public readonly commandRunner = new AppCommandRunner(this);
+
+  public readonly externalCommandData = new Collection<string, Command>();
+  public readonly externalMiddlewareData = new Collection<string, Middleware>();
 
   public constructor(public readonly commandkit: CommandKit) {
     this.registrar = new CommandRegistrar(this.commandkit);
@@ -302,7 +306,12 @@ export class AppCommandHandler {
           return null;
         }
       } else {
-        if (!source.isCommand()) return null;
+        const isAnyCommand =
+          source.isChatInputCommand() ||
+          source.isAutocomplete() ||
+          source.isContextMenuCommand();
+
+        if (!isAnyCommand) return null;
 
         cmdName = source.commandName;
       }
@@ -317,7 +326,8 @@ export class AppCommandHandler {
 
     // If this is a guild specific command, check if we're in the right guild
     if (
-      source instanceof CommandInteraction &&
+      (source instanceof CommandInteraction ||
+        source instanceof AutocompleteInteraction) &&
       source.guildId &&
       loadedCommand.guilds?.length &&
       !loadedCommand.guilds.includes(source.guildId)
@@ -349,11 +359,46 @@ export class AppCommandHandler {
     this.loadedMiddlewares.clear();
     this.commandNameToId.clear();
     this.subcommandPathToId.clear();
+    this.externalCommandData.clear();
+    this.externalMiddlewareData.clear();
 
     await this.loadCommands();
   }
 
+  public async addExternalMiddleware(data: Middleware[]) {
+    for (const middleware of data) {
+      if (!middleware.id) continue;
+
+      this.externalMiddlewareData.set(middleware.id, middleware);
+    }
+  }
+
+  public async addExternalCommands(data: Command[]) {
+    for (const command of data) {
+      if (!command.id) continue;
+
+      this.externalCommandData.set(command.id, command);
+    }
+  }
+
+  public async registerExternalLoadedMiddleware(data: LoadedMiddleware[]) {
+    for (const middleware of data) {
+      this.loadedMiddlewares.set(middleware.middleware.id, middleware);
+    }
+  }
+
+  public async registerExternalLoadedCommands(data: LoadedCommand[]) {
+    for (const command of data) {
+      this.loadedCommands.set(command.command.id, command);
+      this.commandNameToId.set(command.command.name, command.command.id);
+    }
+  }
+
   public async loadCommands() {
+    await this.commandkit.plugins.execute((ctx, plugin) => {
+      return plugin.onBeforeCommandsLoad(ctx);
+    });
+
     const commandsRouter = this.commandkit.commandsRouter;
 
     if (!commandsRouter) {
@@ -362,13 +407,21 @@ export class AppCommandHandler {
 
     const { commands, middlewares } = commandsRouter.getData();
 
+    const combinedCommands = this.externalCommandData.size
+      ? commands.concat(this.externalCommandData)
+      : commands;
+
+    const combinedMiddlewares = this.externalMiddlewareData.size
+      ? middlewares.concat(this.externalMiddlewareData)
+      : middlewares;
+
     // Load middlewares first
-    for (const [id, middleware] of middlewares) {
+    for (const [id, middleware] of combinedMiddlewares) {
       await this.loadMiddleware(id, middleware);
     }
 
     // Load commands
-    for (const [id, command] of commands) {
+    for (const [id, command] of combinedCommands) {
       await this.loadCommand(id, command);
     }
 
@@ -382,6 +435,10 @@ export class AppCommandHandler {
         ).join(' | ')}`,
       );
     }
+
+    await this.commandkit.plugins.execute((ctx, plugin) => {
+      return plugin.onAfterCommandsLoad(ctx);
+    });
   }
 
   private async loadMiddleware(id: string, middleware: Middleware) {
