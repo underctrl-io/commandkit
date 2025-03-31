@@ -350,6 +350,9 @@ importers:
       discord.js:
         specifier: ^14.17.3
         version: 14.17.3
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
 
   packages/devtools-ui:
     dependencies:

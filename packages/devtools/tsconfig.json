@@ -8,8 +8,9 @@
     "inlineSourceMap": true,
     "target": "ES2020",
     "module": "CommonJS",
-    "noEmit": false
+    "noEmit": false,
+    "esModuleInterop": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

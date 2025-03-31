@@ -19,6 +19,7 @@ export interface Middleware {
   path: string;
   relativePath: string;
   parentPath: string;
+  global: boolean;
 }
 
 export interface ParsedCommandData {
@@ -31,6 +32,7 @@ export interface CommandsRouterOptions {
 }
 
 const MIDDLEWARE_PATTERN = /^\+middleware\.(m|c)?(j|t)sx?$/;
+const GLOBAL_MIDDLEWARE_PATTERN = /^\+global-middleware\.(m|c)?(j|t)sx?$/;
 const COMMAND_PATTERN = /^([^+().][^().]*)\.(m|c)?(j|t)sx?$/;
 const CATEGORY_PATTERN = /^\(.+\)$/;
 
@@ -59,7 +61,9 @@ export class CommandsRouter {
   }
 
   private isMiddleware(name: string): boolean {
-    return MIDDLEWARE_PATTERN.test(name);
+    return (
+      MIDDLEWARE_PATTERN.test(name) || GLOBAL_MIDDLEWARE_PATTERN.test(name)
+    );
   }
 
   private isCategory(name: string): boolean {
@@ -154,6 +158,7 @@ export class CommandsRouter {
         path,
         relativePath: this.replaceEntrypoint(path),
         parentPath: entry.parentPath,
+        global: GLOBAL_MIDDLEWARE_PATTERN.test(name),
       };
 
       this.middlewares.set(middleware.id, middleware);
@@ -166,7 +171,8 @@ export class CommandsRouter {
       const samePathMiddlewares = Array.from(this.middlewares.values())
         .filter((middleware) => {
           // if middleware's parent path is the same as command's parent path
-          return middleware.parentPath === commandPath;
+          // or if the middleware is global
+          return middleware.parentPath === commandPath || middleware.global;
         })
         .map((middleware) => middleware.id);
 
