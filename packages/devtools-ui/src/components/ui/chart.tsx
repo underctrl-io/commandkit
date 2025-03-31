@@ -32,22 +32,6 @@ function useChart() {
   return context;
 }
 
-const Chart = React.forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(
-  ({ className, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          'rounded-md border bg-card text-card-foreground shadow-sm',
-          className,
-        )}
-        {...props}
-      />
-    );
-  },
-);
-Chart.displayName = 'Chart';
-
 function ChartContainer({
   id,
   className,
@@ -55,7 +39,7 @@ function ChartContainer({
   config,
   ...props
 }: React.ComponentProps<'div'> & {
-  config?: ChartConfig;
+  config: ChartConfig;
   children: React.ComponentProps<
     typeof RechartsPrimitive.ResponsiveContainer
   >['children'];
@@ -64,7 +48,7 @@ function ChartContainer({
   const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`;
 
   return (
-    <ChartContext.Provider value={{ config: config || {} }}>
+    <ChartContext.Provider value={{ config }}>
       <div
         data-slot="chart"
         data-chart={chartId}
@@ -74,7 +58,7 @@ function ChartContainer({
         )}
         {...props}
       >
-        <ChartStyle id={chartId} config={config || {}} />
+        <ChartStyle id={chartId} config={config} />
         <RechartsPrimitive.ResponsiveContainer>
           {children}
         </RechartsPrimitive.ResponsiveContainer>
@@ -358,7 +342,6 @@ function getPayloadConfigFromPayload(
 }
 
 export {
-  Chart,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,

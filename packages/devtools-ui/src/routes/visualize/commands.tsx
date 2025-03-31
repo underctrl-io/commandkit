@@ -1,0 +1,530 @@
+import { createFileRoute } from '@tanstack/react-router';
+import type React from 'react';
+
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  ChevronRight,
+  ChevronDown,
+  FolderTree,
+  Command,
+  Shield,
+} from 'lucide-react';
+
+export const Route = createFileRoute('/visualize/commands')({
+  component: CommandHierarchy,
+});
+
+interface CommandData {
+  id: string;
+  name: string;
+  path: string;
+  category: string | null;
+  parentPath: string;
+  relativePath: string;
+  middlewares: string[];
+}
+
+interface MiddlewareData {
+  id: string;
+  name: string;
+  path: string;
+  relativePath: string;
+  parentPath: string;
+  global: boolean;
+}
+
+interface CommandsData {
+  commands: Record<string, CommandData>;
+  middlewares: Record<string, MiddlewareData>;
+}
+
+// Component to display command details when a node is clicked
+const CommandDetails = ({
+  command,
+  middlewares,
+}: {
+  command: CommandData;
+  middlewares: Record<string, MiddlewareData>;
+}) => {
+  return (
+    <Card className="p-4 mt-4 bg-muted/50 border-l-4 border-l-primary rounded-sm">
+      <h3 className="text-lg font-bold mb-2">{command.name}</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+        <div>
+          <p className="text-muted-foreground">ID:</p>
+          <p className="font-mono text-xs break-all">{command.id}</p>
+        </div>
+        <div>
+          <p className="text-muted-foreground">Category:</p>
+          <p>{command.category || 'Uncategorized'}</p>
+        </div>
+        <div className="md:col-span-2">
+          <p className="text-muted-foreground">Path:</p>
+          <p className="font-mono text-xs break-all">{command.path}</p>
+        </div>
+        <div className="md:col-span-2">
+          <p className="text-muted-foreground">Relative Path:</p>
+          <p className="font-mono text-xs">{command.relativePath}</p>
+        </div>
+        <div className="md:col-span-2">
+          <p className="text-muted-foreground">Middlewares:</p>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {command.middlewares.map((middlewareId) => {
+              const middleware = middlewares[middlewareId];
+              return (
+                <Badge
+                  key={middlewareId}
+                  variant="outline"
+                  className="flex items-center gap-1"
+                >
+                  <Shield className="h-3 w-3" />
+                  {middleware?.name || middlewareId}
+                  {middleware?.global && (
+                    <span className="text-xs ml-1 text-muted-foreground">
+                      (global)
+                    </span>
+                  )}
+                </Badge>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+// TreeNode component for rendering each node in the hierarchy
+const TreeNode = ({
+  name,
+  children,
+  isCommand = false,
+  hasMiddleware = false,
+  onClick,
+  isSelected,
+}: {
+  name: string;
+  children?: React.ReactNode;
+  isCommand?: boolean;
+  hasMiddleware?: boolean;
+  onClick?: () => void;
+  isSelected?: boolean;
+}) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const hasChildren = Boolean(children);
+
+  return (
+    <div className="ml-4">
+      <div
+        className={`flex items-center py-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-800/50 rounded ${
+          isSelected ? 'bg-slate-100 dark:bg-gray-800/50' : ''
+        }`}
+        onClick={() => {
+          if (hasChildren) {
+            setIsOpen(!isOpen);
+          }
+          if (onClick) {
+            onClick();
+          }
+        }}
+      >
+        {hasChildren ? (
+          isOpen ? (
+            <ChevronDown className="h-4 w-4 mr-1 text-muted-foreground" />
+          ) : (
+            <ChevronRight className="h-4 w-4 mr-1 text-muted-foreground" />
+          )
+        ) : (
+          <span className="w-5" />
+        )}
+
+        {isCommand ? (
+          <Command className="h-4 w-4 mr-1 text-primary" />
+        ) : (
+          <FolderTree className="h-4 w-4 mr-1 text-amber-500" />
+        )}
+
+        <span
+          className={`${isCommand ? 'font-mono text-sm' : 'font-semibold'}`}
+        >
+          {name}
+        </span>
+
+        {hasMiddleware && (
+          <Badge variant="outline" className="ml-2 py-0 h-5">
+            <Shield className="h-3 w-3 mr-1" />λ
+          </Badge>
+        )}
+      </div>
+
+      {hasChildren && isOpen && (
+        <div className="border-l border-dashed border-slate-300 dark:border-slate-700 pl-2">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+function CommandHierarchy() {
+  const [data, setData] = useState<CommandsData | null>(null);
+  const [selectedCommand, setSelectedCommand] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // In a real application, you would fetch this data from an API
+    // For this example, we're using the provided JSON data directly
+    try {
+      const commandsData = {
+        commands: {
+          '498d84ce-3dd1-4896-a034-ce712652bd66': {
+            id: '498d84ce-3dd1-4896-a034-ce712652bd66',
+            name: 'reload',
+            path: '~/commandkit/app/commands/(developer)/reload.js',
+            category: 'developer',
+            parentPath: '~/commandkit/app/commands/(developer)',
+            relativePath: '/(developer)/reload.js',
+            middlewares: [
+              '4b228f6a-774e-4f81-954f-6db40b0cb6e5',
+              '2a1278ee-d642-4ad9-b899-6ad6405ea054',
+            ],
+          },
+          'fb07c361-3aa3-43c4-854f-fac44799e324': {
+            id: 'fb07c361-3aa3-43c4-854f-fac44799e324',
+            name: 'run-after',
+            path: '~/commandkit/app/commands/(developer)/run-after.js',
+            category: 'developer',
+            parentPath: '~/commandkit/app/commands/(developer)',
+            relativePath: '/(developer)/run-after.js',
+            middlewares: [
+              '4b228f6a-774e-4f81-954f-6db40b0cb6e5',
+              '2a1278ee-d642-4ad9-b899-6ad6405ea054',
+            ],
+          },
+          '4d3a2a49-4c75-4029-9a7b-55434713b7eb': {
+            id: '4d3a2a49-4c75-4029-9a7b-55434713b7eb',
+            name: 'server',
+            path: '~/commandkit/app/commands/(developer)/server.js',
+            category: 'developer',
+            parentPath: '~/commandkit/app/commands/(developer)',
+            relativePath: '/(developer)/server.js',
+            middlewares: [
+              '4b228f6a-774e-4f81-954f-6db40b0cb6e5',
+              '2a1278ee-d642-4ad9-b899-6ad6405ea054',
+            ],
+          },
+          '08c2612a-dfcd-4f20-ab0f-0660317aeb01': {
+            id: '08c2612a-dfcd-4f20-ab0f-0660317aeb01',
+            name: 'forward',
+            path: '~/commandkit/app/commands/(forward)/forward.js',
+            category: 'forward',
+            parentPath: '~/commandkit/app/commands/(forward)',
+            relativePath: '/(forward)/forward.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          '7eebc5bc-5615-4d92-a05b-fb1628c33aa9': {
+            id: '7eebc5bc-5615-4d92-a05b-fb1628c33aa9',
+            name: 'forwarded',
+            path: '~/commandkit/app/commands/(forward)/forwarded.js',
+            category: 'forward',
+            parentPath: '~/commandkit/app/commands/(forward)',
+            relativePath: '/(forward)/forwarded.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          'fcfb3105-716f-4c3c-8063-d02d26110c5b': {
+            id: 'fcfb3105-716f-4c3c-8063-d02d26110c5b',
+            name: 'avatar',
+            path: '~/commandkit/app/commands/(general)/avatar.js',
+            category: 'general',
+            parentPath: '~/commandkit/app/commands/(general)',
+            relativePath: '/(general)/avatar.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          '648e4200-294c-4433-9aeb-f38120e0a22a': {
+            id: '648e4200-294c-4433-9aeb-f38120e0a22a',
+            name: 'cat',
+            path: '~/commandkit/app/commands/(general)/cat.js',
+            category: 'general',
+            parentPath: '~/commandkit/app/commands/(general)',
+            relativePath: '/(general)/cat.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          'c8229c9d-d05f-4fab-8f75-56ea81a3b0bc': {
+            id: 'c8229c9d-d05f-4fab-8f75-56ea81a3b0bc',
+            name: 'dog',
+            path: '~/commandkit/app/commands/(general)/dog.js',
+            category: 'general',
+            parentPath: '~/commandkit/app/commands/(general)',
+            relativePath: '/(general)/dog.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          '81d59af2-486b-4192-8f57-af5b28341371': {
+            id: '81d59af2-486b-4192-8f57-af5b28341371',
+            name: 'help',
+            path: '~/commandkit/app/commands/(general)/help.js',
+            category: 'general',
+            parentPath: '~/commandkit/app/commands/(general)',
+            relativePath: '/(general)/help.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          'e6f2c177-5d7b-41f0-8155-7df35bd3680a': {
+            id: 'e6f2c177-5d7b-41f0-8155-7df35bd3680a',
+            name: 'ping',
+            path: '~/commandkit/app/commands/(general)/ping.js',
+            category: 'general',
+            parentPath: '~/commandkit/app/commands/(general)',
+            relativePath: '/(general)/ping.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          '8604fad4-464e-43ff-9bb2-53c3380a4c1c': {
+            id: '8604fad4-464e-43ff-9bb2-53c3380a4c1c',
+            name: 'commandkit',
+            path: '~/commandkit/app/commands/(interactions)/commandkit.js',
+            category: 'interactions',
+            parentPath: '~/commandkit/app/commands/(interactions)',
+            relativePath: '/(interactions)/commandkit.js',
+            middlewares: [
+              'bad9cc82-f063-4b6c-ac3c-9f70097ec251',
+              '2a1278ee-d642-4ad9-b899-6ad6405ea054',
+            ],
+          },
+          '7e0dd6ec-0136-46bc-bc7a-63f1d6b2a9a1': {
+            id: '7e0dd6ec-0136-46bc-bc7a-63f1d6b2a9a1',
+            name: 'confirmation',
+            path: '~/commandkit/app/commands/(interactions)/confirmation.js',
+            category: 'interactions',
+            parentPath: '~/commandkit/app/commands/(interactions)',
+            relativePath: '/(interactions)/confirmation.js',
+            middlewares: [
+              'bad9cc82-f063-4b6c-ac3c-9f70097ec251',
+              '2a1278ee-d642-4ad9-b899-6ad6405ea054',
+            ],
+          },
+          '3b6b54bb-f970-4098-a7df-ce0857128cf8': {
+            id: '3b6b54bb-f970-4098-a7df-ce0857128cf8',
+            name: 'prompt',
+            path: '~/commandkit/app/commands/(interactions)/prompt.js',
+            category: 'interactions',
+            parentPath: '~/commandkit/app/commands/(interactions)',
+            relativePath: '/(interactions)/prompt.js',
+            middlewares: [
+              'bad9cc82-f063-4b6c-ac3c-9f70097ec251',
+              '2a1278ee-d642-4ad9-b899-6ad6405ea054',
+            ],
+          },
+          '3cd7d037-44ad-4d67-8683-0ab0a7eb3ed1': {
+            id: '3cd7d037-44ad-4d67-8683-0ab0a7eb3ed1',
+            name: 'xp',
+            path: '~/commandkit/app/commands/(leveling)/xp.js',
+            category: 'leveling',
+            parentPath: '~/commandkit/app/commands/(leveling)',
+            relativePath: '/(leveling)/xp.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          'c34e0d79-6ce8-4271-a5a9-ef6ead9de7ba': {
+            id: 'c34e0d79-6ce8-4271-a5a9-ef6ead9de7ba',
+            name: 'select-channel',
+            path: '~/commandkit/app/commands/(select menu)/select-channel.js',
+            category: 'select menu',
+            parentPath: '~/commandkit/app/commands/(select menu)',
+            relativePath: '/(select menu)/select-channel.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          'f679d103-612c-45bd-b9fc-0e50c1e45986': {
+            id: 'f679d103-612c-45bd-b9fc-0e50c1e45986',
+            name: 'select-mentionable',
+            path: '~/commandkit/app/commands/(select menu)/select-mentionable.js',
+            category: 'select menu',
+            parentPath: '~/commandkit/app/commands/(select menu)',
+            relativePath: '/(select menu)/select-mentionable.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          'd72e1837-3a95-4233-ba0e-39e93b03d53f': {
+            id: 'd72e1837-3a95-4233-ba0e-39e93b03d53f',
+            name: 'select-role',
+            path: '~/commandkit/app/commands/(select menu)/select-role.js',
+            category: 'select menu',
+            parentPath: '~/commandkit/app/commands/(select menu)',
+            relativePath: '/(select menu)/select-role.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          '9203d089-fd35-421e-8afe-e345c1006ab9': {
+            id: '9203d089-fd35-421e-8afe-e345c1006ab9',
+            name: 'select-string-multi',
+            path: '~/commandkit/app/commands/(select menu)/select-string-multi.js',
+            category: 'select menu',
+            parentPath: '~/commandkit/app/commands/(select menu)',
+            relativePath: '/(select menu)/select-string-multi.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          'a13b0df7-cfde-4fa1-af9c-7fc360c8a14e': {
+            id: 'a13b0df7-cfde-4fa1-af9c-7fc360c8a14e',
+            name: 'select-string',
+            path: '~/commandkit/app/commands/(select menu)/select-string.js',
+            category: 'select menu',
+            parentPath: '~/commandkit/app/commands/(select menu)',
+            relativePath: '/(select menu)/select-string.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          'ba8932bb-ab00-4ab5-8d42-66c307da9d34': {
+            id: 'ba8932bb-ab00-4ab5-8d42-66c307da9d34',
+            name: 'select-user',
+            path: '~/commandkit/app/commands/(select menu)/select-user.js',
+            category: 'select menu',
+            parentPath: '~/commandkit/app/commands/(select menu)',
+            relativePath: '/(select menu)/select-user.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          '13cd73bf-efc8-48cb-8979-a02f969ac15b': {
+            id: '13cd73bf-efc8-48cb-8979-a02f969ac15b',
+            name: 'invalidate-random',
+            path: '~/commandkit/app/commands/invalidate-random.js',
+            category: null,
+            parentPath: '~/commandkit/app/commands',
+            relativePath: '/invalidate-random.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          'e410ee9d-56ae-4212-8947-042a7ba10391': {
+            id: 'e410ee9d-56ae-4212-8947-042a7ba10391',
+            name: 'random',
+            path: '~/commandkit/app/commands/random.js',
+            category: null,
+            parentPath: '~/commandkit/app/commands',
+            relativePath: '/random.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+          '9cf724a5-cc3d-4bf9-acaa-a9f7c5002311': {
+            id: '9cf724a5-cc3d-4bf9-acaa-a9f7c5002311',
+            name: 'revalidate-random',
+            path: '~/commandkit/app/commands/revalidate-random.js',
+            category: null,
+            parentPath: '~/commandkit/app/commands',
+            relativePath: '/revalidate-random.js',
+            middlewares: ['2a1278ee-d642-4ad9-b899-6ad6405ea054'],
+          },
+        },
+        middlewares: {
+          '4b228f6a-774e-4f81-954f-6db40b0cb6e5': {
+            id: '4b228f6a-774e-4f81-954f-6db40b0cb6e5',
+            name: '+middleware',
+            path: '~/commandkit/app/commands/(developer)/+middleware.js',
+            relativePath: '/(developer)/+middleware.js',
+            parentPath: '~/commandkit/app/commands/(developer)',
+            global: false,
+          },
+          'bad9cc82-f063-4b6c-ac3c-9f70097ec251': {
+            id: 'bad9cc82-f063-4b6c-ac3c-9f70097ec251',
+            name: '+middleware',
+            path: '~/commandkit/app/commands/(interactions)/+middleware.js',
+            relativePath: '/(interactions)/+middleware.js',
+            parentPath: '~/commandkit/app/commands/(interactions)',
+            global: false,
+          },
+          '2a1278ee-d642-4ad9-b899-6ad6405ea054': {
+            id: '2a1278ee-d642-4ad9-b899-6ad6405ea054',
+            name: '+global-middleware',
+            path: '~/commandkit/app/commands/+global-middleware.js',
+            relativePath: '/+global-middleware.js',
+            parentPath: '~/commandkit/app/commands',
+            global: true,
+          },
+        },
+      };
+
+      setData(commandsData);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to load command data');
+      setLoading(false);
+      console.error(err);
+    }
+  }, []);
+
+  // Group commands by category
+  const groupedCommands = data
+    ? Object.values(data.commands).reduce(
+        (acc, command) => {
+          const category = command.category || 'uncategorized';
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(command);
+          return acc;
+        },
+        {} as Record<string, CommandData[]>,
+      )
+    : {};
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        Loading command data...
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
+  if (!data) {
+    return <div>No command data available</div>;
+  }
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">Command Hierarchy</h1>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1 border rounded-lg p-4 bg-muted/50 shadow-sm overflow-auto max-h-[80vh]">
+          <h2 className="text-xl font-bold mb-4">Commands</h2>
+
+          <div className="command-tree">
+            {Object.entries(groupedCommands).map(([category, commands]) => (
+              <TreeNode key={category} name={category}>
+                {commands.map((command) => (
+                  <TreeNode
+                    key={command.id}
+                    name={command.name}
+                    isCommand={true}
+                    hasMiddleware={command.middlewares.length > 0}
+                    onClick={() => setSelectedCommand(command.id)}
+                    isSelected={selectedCommand === command.id}
+                  />
+                ))}
+              </TreeNode>
+            ))}
+          </div>
+        </div>
+
+        <div className="lg:col-span-2 border rounded-lg p-4 bg-muted/50 shadow-sm">
+          <h2 className="text-xl font-bold mb-4">Command Details</h2>
+
+          {selectedCommand ? (
+            <CommandDetails
+              command={data.commands[selectedCommand]}
+              middlewares={data.middlewares}
+            />
+          ) : (
+            <div className="text-center p-8 text-muted-foreground">
+              <FolderTree className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Select a command to view its details</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-6 text-sm text-muted-foreground">
+        <p>
+          <Badge variant="outline" className="mr-2">
+            <Shield className="h-3 w-3 mr-1" />λ
+          </Badge>
+          indicates the command has middleware associated
+        </p>
+      </div>
+    </div>
+  );
+}

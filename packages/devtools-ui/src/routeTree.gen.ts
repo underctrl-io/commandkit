@@ -10,224 +10,85 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as ServersImport } from './routes/servers'
-import { Route as PerformanceImport } from './routes/performance'
-import { Route as MiddlewareImport } from './routes/middleware'
-import { Route as LocalizationImport } from './routes/localization'
-import { Route as EventsImport } from './routes/events'
-import { Route as DebuggingImport } from './routes/debugging'
-import { Route as CommandsImport } from './routes/commands'
-import { Route as IndexImport } from './routes/index'
+import { Route as rootRoute } from './routes/__root';
+import { Route as IndexImport } from './routes/index';
+import { Route as VisualizeCommandsImport } from './routes/visualize/commands';
 
 // Create/Update Routes
-
-const ServersRoute = ServersImport.update({
-  id: '/servers',
-  path: '/servers',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const PerformanceRoute = PerformanceImport.update({
-  id: '/performance',
-  path: '/performance',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const MiddlewareRoute = MiddlewareImport.update({
-  id: '/middleware',
-  path: '/middleware',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LocalizationRoute = LocalizationImport.update({
-  id: '/localization',
-  path: '/localization',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const EventsRoute = EventsImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DebuggingRoute = DebuggingImport.update({
-  id: '/debugging',
-  path: '/debugging',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const CommandsRoute = CommandsImport.update({
-  id: '/commands',
-  path: '/commands',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
+
+const VisualizeCommandsRoute = VisualizeCommandsImport.update({
+  id: '/visualize/commands',
+  path: '/visualize/commands',
+  getParentRoute: () => rootRoute,
+} as any);
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/commands': {
-      id: '/commands'
-      path: '/commands'
-      fullPath: '/commands'
-      preLoaderRoute: typeof CommandsImport
-      parentRoute: typeof rootRoute
-    }
-    '/debugging': {
-      id: '/debugging'
-      path: '/debugging'
-      fullPath: '/debugging'
-      preLoaderRoute: typeof DebuggingImport
-      parentRoute: typeof rootRoute
-    }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsImport
-      parentRoute: typeof rootRoute
-    }
-    '/localization': {
-      id: '/localization'
-      path: '/localization'
-      fullPath: '/localization'
-      preLoaderRoute: typeof LocalizationImport
-      parentRoute: typeof rootRoute
-    }
-    '/middleware': {
-      id: '/middleware'
-      path: '/middleware'
-      fullPath: '/middleware'
-      preLoaderRoute: typeof MiddlewareImport
-      parentRoute: typeof rootRoute
-    }
-    '/performance': {
-      id: '/performance'
-      path: '/performance'
-      fullPath: '/performance'
-      preLoaderRoute: typeof PerformanceImport
-      parentRoute: typeof rootRoute
-    }
-    '/servers': {
-      id: '/servers'
-      path: '/servers'
-      fullPath: '/servers'
-      preLoaderRoute: typeof ServersImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    '/visualize/commands': {
+      id: '/visualize/commands';
+      path: '/visualize/commands';
+      fullPath: '/visualize/commands';
+      preLoaderRoute: typeof VisualizeCommandsImport;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/commands': typeof CommandsRoute
-  '/debugging': typeof DebuggingRoute
-  '/events': typeof EventsRoute
-  '/localization': typeof LocalizationRoute
-  '/middleware': typeof MiddlewareRoute
-  '/performance': typeof PerformanceRoute
-  '/servers': typeof ServersRoute
+  '/': typeof IndexRoute;
+  '/visualize/commands': typeof VisualizeCommandsRoute;
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/commands': typeof CommandsRoute
-  '/debugging': typeof DebuggingRoute
-  '/events': typeof EventsRoute
-  '/localization': typeof LocalizationRoute
-  '/middleware': typeof MiddlewareRoute
-  '/performance': typeof PerformanceRoute
-  '/servers': typeof ServersRoute
+  '/': typeof IndexRoute;
+  '/visualize/commands': typeof VisualizeCommandsRoute;
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/commands': typeof CommandsRoute
-  '/debugging': typeof DebuggingRoute
-  '/events': typeof EventsRoute
-  '/localization': typeof LocalizationRoute
-  '/middleware': typeof MiddlewareRoute
-  '/performance': typeof PerformanceRoute
-  '/servers': typeof ServersRoute
+  __root__: typeof rootRoute;
+  '/': typeof IndexRoute;
+  '/visualize/commands': typeof VisualizeCommandsRoute;
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/commands'
-    | '/debugging'
-    | '/events'
-    | '/localization'
-    | '/middleware'
-    | '/performance'
-    | '/servers'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/commands'
-    | '/debugging'
-    | '/events'
-    | '/localization'
-    | '/middleware'
-    | '/performance'
-    | '/servers'
-  id:
-    | '__root__'
-    | '/'
-    | '/commands'
-    | '/debugging'
-    | '/events'
-    | '/localization'
-    | '/middleware'
-    | '/performance'
-    | '/servers'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '/' | '/visualize/commands';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/' | '/visualize/commands';
+  id: '__root__' | '/' | '/visualize/commands';
+  fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CommandsRoute: typeof CommandsRoute
-  DebuggingRoute: typeof DebuggingRoute
-  EventsRoute: typeof EventsRoute
-  LocalizationRoute: typeof LocalizationRoute
-  MiddlewareRoute: typeof MiddlewareRoute
-  PerformanceRoute: typeof PerformanceRoute
-  ServersRoute: typeof ServersRoute
+  IndexRoute: typeof IndexRoute;
+  VisualizeCommandsRoute: typeof VisualizeCommandsRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CommandsRoute: CommandsRoute,
-  DebuggingRoute: DebuggingRoute,
-  EventsRoute: EventsRoute,
-  LocalizationRoute: LocalizationRoute,
-  MiddlewareRoute: MiddlewareRoute,
-  PerformanceRoute: PerformanceRoute,
-  ServersRoute: ServersRoute,
-}
+  VisualizeCommandsRoute: VisualizeCommandsRoute,
+};
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
 /* ROUTE_MANIFEST_START
 {
@@ -236,38 +97,14 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/commands",
-        "/debugging",
-        "/events",
-        "/localization",
-        "/middleware",
-        "/performance",
-        "/servers"
+        "/visualize/commands"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/commands": {
-      "filePath": "commands.tsx"
-    },
-    "/debugging": {
-      "filePath": "debugging.tsx"
-    },
-    "/events": {
-      "filePath": "events.tsx"
-    },
-    "/localization": {
-      "filePath": "localization.tsx"
-    },
-    "/middleware": {
-      "filePath": "middleware.tsx"
-    },
-    "/performance": {
-      "filePath": "performance.tsx"
-    },
-    "/servers": {
-      "filePath": "servers.tsx"
+    "/visualize/commands": {
+      "filePath": "visualize/commands.tsx"
     }
   }
 }
