@@ -118,3 +118,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Sidebar visibility fixes */
+.sidebar-visible {
+  display: flex !important;
+}
+
+@media (min-width: 768px) {
+  [data-sidebar='sidebar'] {
+    background-color: hsl(var(--background));
+    border-right: 1px solid hsl(var(--border));
+  }
+}
+
+/* Ensure sidebar content is visible */
+[data-sidebar='menu-button'] {
+  color: hsl(var(--foreground));
+}
+
+[data-sidebar='menu-button'][data-active='true'] {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
