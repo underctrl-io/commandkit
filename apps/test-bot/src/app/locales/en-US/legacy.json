@@ -1,0 +1,9 @@
+{
+  "command": {
+    "name": "legacy",
+    "description": "Pong!"
+  },
+  "translations": {
+    "greet": "Hello there from legacy command, {user}!"
+  }
+}

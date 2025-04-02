@@ -1,14 +1,15 @@
 import type { CommandKit } from '../CommandKit';
 import { Logger } from '../logger/Logger';
-import { COMMANDKIT_IS_DEV } from './constants';
+import { COMMANDKIT_IS_DEV, HMREventType } from './constants';
 
 interface IpcMessageCommand {
-  event: string;
+  event: HMREventType;
   path: string;
+  id?: string;
 }
 
 export interface CommandKitHMREvent {
-  event: string;
+  event: HMREventType;
   path: string;
   accept: () => void;
   preventDefault: () => void;
@@ -20,7 +21,7 @@ export function registerDevHooks(commandkit: CommandKit) {
   process.on('message', async (message) => {
     if (typeof message !== 'object' || message === null) return;
 
-    const { event, path } = message as IpcMessageCommand;
+    const { event, path, id } = message as IpcMessageCommand;
     if (!event) return;
 
     if (process.env.COMMANDKIT_DEBUG_HMR === 'true') {
@@ -28,38 +29,57 @@ export function registerDevHooks(commandkit: CommandKit) {
     }
 
     let accepted = false,
-      prevented = false;
+      prevented = false,
+      handled = false;
 
     const hmrEvent: CommandKitHMREvent = {
       accept() {
         accepted = true;
       },
       preventDefault() {
-        prevented = false;
+        prevented = true;
       },
       path,
       event,
     };
 
-    await commandkit.plugins.execute(async (ctx, plugin) => {
-      // some plugin accepted the event
-      if (accepted) return;
-      await plugin.performHMR?.(ctx, hmrEvent);
-    });
+    try {
+      await commandkit.plugins.execute(async (ctx, plugin) => {
+        // some plugin accepted the event
+        if (accepted) return;
+        await plugin.performHMR?.(ctx, hmrEvent);
+      });
 
-    // plugin took care of it
-    if (prevented) return;
+      // plugin took care of it
+      if (prevented) return;
 
-    switch (event) {
-      case 'reload-commands':
-        commandkit.commandHandler.reloadCommands();
-        break;
-      case 'reload-events':
-        commandkit.eventHandler.reloadEvents();
-        break;
-      case 'reload-locales':
-        commandkit.commandHandler.reloadCommands();
-        break;
+      switch (event) {
+        case HMREventType.ReloadCommands:
+          commandkit.commandHandler.reloadCommands();
+          handled = true;
+          break;
+        case HMREventType.ReloadEvents:
+        case HMREventType.ReloadLocales:
+          commandkit.eventHandler.reloadEvents();
+          handled = true;
+          break;
+        case HMREventType.Unknown:
+          // Handle unknown events if needed
+          handled = false;
+          break;
+        default:
+          // invalid hmr event
+          break;
+      }
+    } finally {
+      // Send acknowledgment back to dev server if an id was provided
+      if (id && process.send) {
+        process.send({
+          type: 'commandkit-hmr-ack',
+          id,
+          handled: handled || accepted,
+        });
+      }
     }
   });
 }

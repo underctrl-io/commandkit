@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { CommandKit } from '../CommandKit';
 import { GenericFunction, getContext } from './async-context';
+import type { Context } from '../app';
 
 export interface CommandKitEnvironmentInternalData {
   executionError: Error | null;
@@ -10,6 +11,7 @@ export interface CommandKitEnvironmentInternalData {
   marker: string;
   markStart: number;
   markEnd: number;
+  context: Context | null;
 }
 
 export class CommandKitEnvironment {
@@ -21,6 +23,7 @@ export class CommandKitEnvironment {
     marker: '',
     markStart: 0,
     markEnd: 0,
+    context: null,
   };
 
   /**
@@ -28,6 +31,22 @@ export class CommandKitEnvironment {
    * @param commandkit - The commandkit instance.
    */
   public constructor(public readonly commandkit: CommandKit) {}
+
+  /**
+   * Set the context.
+   * @param context - The context to set.
+   */
+  public setContext(context: Context): void {
+    this.#data.context = context;
+  }
+
+  /**
+   * Get the context. `null` if not set.
+   * @internal
+   */
+  public get context(): Context | null {
+    return this.#data.context;
+  }
 
   /**
    * Get the execution error.

@@ -10,8 +10,12 @@ const CONFIG_FILE_NAMES = [
   'commandkit.config.ts',
 ];
 
+export function getPossibleConfigPaths(root: string) {
+  return CONFIG_FILE_NAMES.map((name) => join(root, name));
+}
+
 function findConfigFile(cwd: string) {
-  const locations = CONFIG_FILE_NAMES.map((name) => join(cwd, name));
+  const locations = getPossibleConfigPaths(cwd);
 
   for (const location of locations) {
     if (existsSync(location)) {

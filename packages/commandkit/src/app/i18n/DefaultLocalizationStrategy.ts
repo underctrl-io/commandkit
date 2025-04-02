@@ -73,7 +73,7 @@ export class DefaultLocalizationStrategy implements LocalizationStrategy {
     );
 
     const header = `// auto generated file do not edit\nexport {};\ndeclare module 'commandkit' {\n  export interface CommandLocalizationTypeData {\n`;
-    const footer = `  type TranslatableCommandName = keyof CommandLocalizationTypeData\n}\n}`;
+    const footer = `  }\ntype TranslatableCommandName = keyof CommandLocalizationTypeData\n}`;
 
     const generateType = (locale: Translation) => {
       // Create type definition for this command's translations

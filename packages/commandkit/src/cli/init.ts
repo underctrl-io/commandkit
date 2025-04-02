@@ -23,6 +23,7 @@ export async function bootstrapCommandkitCLI(
     './generators'
   );
   const { version } = await import('../version');
+  const { showInformation } = await import('./information');
 
   const program = new Command('commandkit');
 
@@ -38,6 +39,15 @@ export async function bootstrapCommandkitCLI(
     .action(() => {
       const options = program.opts();
       bootstrapDevelopmentServer(options.config);
+    });
+
+  program
+    .command('info')
+    .description(
+      'Show information about the system which can be used to report bugs.',
+    )
+    .action(async () => {
+      await showInformation();
     });
 
   program

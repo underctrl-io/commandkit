@@ -145,7 +145,7 @@ ${isDev ? `\n\n// Injected for development\n${wrapInAsyncIIFE([envScript(isDev),
 import { CommandKit } from 'commandkit';
 import app from './app.js';
 
-async function main() {
+async function bootstrap() {
   const commandkit = new CommandKit({
     client: app,
   });
@@ -153,7 +153,9 @@ async function main() {
   await commandkit.start();
 }
 
-await main();
+await bootstrap().catch((e) => {
+  console.error('Failed to bootstrap CommandKit application:\\n', e.stack);
+})
 `;
 
   const dist = isDev ? '.commandkit' : distDir || 'dist';

@@ -34,7 +34,7 @@ export let commandkit: CommandKit;
 
 export class CommandKit extends EventEmitter {
   #started = false;
-  public readonly eventInterceptor: EventInterceptor;
+  public eventInterceptor!: EventInterceptor;
 
   public static readonly createElement = createElement;
   public static readonly Fragment = Fragment;
@@ -60,7 +60,7 @@ export class CommandKit extends EventEmitter {
    * @param options - The default CommandKit configuration.
    * @see {@link https://commandkit.js.org/docs/guide/commandkit-setup}
    */
-  constructor(private options: CommandKitOptions) {
+  constructor(private readonly options: CommandKitOptions) {
     if (CommandKit.instance) {
       process.emitWarning(
         'CommandKit instance already exists. Having multiple instance in same project is discouraged and it may lead to unexpected behavior.',
@@ -86,7 +86,6 @@ export class CommandKit extends EventEmitter {
       options.cacheProvider = new MemoryCache();
     }
 
-    this.eventInterceptor = new EventInterceptor(options.client);
     this.plugins = new CommandKitPluginRuntime(this);
 
     if (!CommandKit.instance) {
@@ -103,6 +102,14 @@ export class CommandKit extends EventEmitter {
    */
   async start(token?: string | false) {
     if (this.#started) return;
+
+    if (!this.options.client) {
+      throw new Error(
+        colors.red('"client" is required when starting CommandKit.'),
+      );
+    }
+
+    this.eventInterceptor = new EventInterceptor(this.client);
 
     if (COMMANDKIT_IS_DEV) {
       try {

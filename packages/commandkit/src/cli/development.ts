@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { loadConfigFile } from '../config/loader';
+import { getPossibleConfigPaths, loadConfigFile } from '../config/loader';
 import { isCompilerPlugin } from '../plugins';
 import { createAppProcess } from './app-process';
 import { buildApplication } from './build';
@@ -8,6 +8,8 @@ import { debounce } from '../utils/utilities';
 import colors from '../utils/colors';
 import { ChildProcess } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { randomUUID } from 'node:crypto';
+import { HMREventType } from '../utils/constants';
 
 async function buildAndStart(configPath: string, skipStart = false) {
   const config = await loadConfigFile(configPath);
@@ -24,10 +26,6 @@ async function buildAndStart(configPath: string, skipStart = false) {
 
   const ps = createAppProcess(mainFile, configPath, true);
 
-  ps.on('message', (message) => {
-    console.log(`Received message from child process: ${message}`);
-  });
-
   return ps;
 }
 
@@ -43,48 +41,133 @@ const isLocaleSource = (p: string) =>
 export async function bootstrapDevelopmentServer(configPath?: string) {
   const start = performance.now();
   const cwd = configPath || process.cwd();
+  const configPaths = getPossibleConfigPaths(cwd);
 
-  const watcher = watch([join(cwd, 'src')], {
+  const watcher = watch([join(cwd, 'src'), ...configPaths], {
     ignoreInitial: true,
   });
 
   let ps: ChildProcess | null = null;
 
+  const waitForAcknowledgment = (messageId: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (!ps) return resolve(false);
+
+      let _handled = false;
+      const onMessage = (message: any) => {
+        _handled = true;
+        if (typeof message !== 'object' || message === null) return;
+
+        const { type, id, handled } = message;
+        if (type === 'commandkit-hmr-ack' && id === messageId) {
+          ps?.off('message', onMessage);
+          resolve(!!handled);
+        }
+      };
+
+      ps.once('message', onMessage);
+
+      if (!_handled) {
+        sleep(3000).then(() => {
+          ps?.off('message', onMessage);
+          resolve(false);
+        });
+      }
+    });
+  };
+
+  const sendHmrEvent = async (
+    event: HMREventType,
+    path?: string,
+  ): Promise<boolean> => {
+    if (!ps || !ps.send) return false;
+
+    const messageId = randomUUID();
+    const messagePromise = waitForAcknowledgment(messageId);
+
+    ps.send({ event, path, id: messageId });
+
+    // Wait for acknowledgment or timeout after 3 seconds
+    try {
+      let triggered = false;
+      const res = !!(await Promise.race([
+        messagePromise,
+        sleep(3000).then(() => {
+          if (!triggered) {
+            console.warn(
+              colors.yellow(
+                `HMR acknowledgment timed out for event ${event} on path ${path}`,
+              ),
+            );
+          }
+          return false;
+        }),
+      ]));
+
+      triggered = true;
+
+      return res;
+    } catch (error) {
+      console.error(
+        colors.red(`Error waiting for HMR acknowledgment: ${error}`),
+      );
+      return false;
+    }
+  };
+
   const performHMR = debounce(async (path?: string): Promise<boolean> => {
     if (!path || !ps) return false;
-    if (!ps.send) return false;
+
+    let eventType: HMREventType | null = null;
+    let eventDescription = '';
 
     if (isCommandSource(path)) {
-      console.log(
-        `${colors.cyanBright('Reloading command(s) at ')} ${colors.yellowBright(path)}`,
-      );
-      await buildAndStart(cwd, true);
-      ps.send({ event: 'reload-commands', path });
-      return true;
+      eventType = HMREventType.ReloadCommands;
+      eventDescription = 'command(s)';
+    } else if (isEventSource(path)) {
+      eventType = HMREventType.ReloadEvents;
+      eventDescription = 'event(s)';
+    } else if (isLocaleSource(path)) {
+      eventType = HMREventType.ReloadLocales;
+      eventDescription = 'locale(s)';
+    } else {
+      eventType = HMREventType.Unknown;
+      eventDescription = 'unknown source';
     }
 
-    if (isEventSource(path)) {
+    if (eventType) {
       console.log(
-        `${colors.cyanBright('Reloading event(s) at ')} ${colors.yellowBright(path)}`,
+        `${colors.cyanBright(`Attempting to reload ${eventDescription} at`)} ${colors.yellowBright(path)}`,
       );
-      await buildAndStart(cwd, true);
-      ps.send({ event: 'reload-events', path });
-      return true;
-    }
 
-    if (isLocaleSource(path)) {
-      console.log(
-        `${colors.cyanBright('Reloading locale(s) at ')} ${colors.yellowBright(path)}`,
-      );
       await buildAndStart(cwd, true);
-      ps.send({ event: 'reload-locales', path });
-      return true;
+      const hmrHandled = await sendHmrEvent(eventType, path);
+
+      if (hmrHandled) {
+        console.log(
+          `${colors.greenBright(`Successfully hot reloaded ${eventDescription} at`)} ${colors.yellowBright(path)}`,
+        );
+        return true;
+      }
     }
 
     return false;
   }, 300);
 
+  const isConfigUpdate = (path: string) => {
+    const isConfig = configPaths.some((configPath) => path === configPath);
+
+    console.log(
+      colors.yellowBright(
+        'It seems like commandkit config file was updated, please restart the server manually to apply changes.',
+      ),
+    );
+
+    return isConfig;
+  };
+
   const hmrHandler = async (path: string) => {
+    if (isConfigUpdate(path)) return;
     const hmr = await performHMR(path);
     if (hmr) return;
 
@@ -93,7 +176,6 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
     );
 
     ps?.kill();
-
     ps = await buildAndStart(cwd);
   };
 
@@ -105,19 +187,19 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
         console.log(`Received restart command, restarting...`);
         ps?.kill();
         ps = null;
-        await buildAndStart(cwd);
+        ps = await buildAndStart(cwd);
         break;
       case 'rc':
         console.log(`Received reload commands command, reloading...`);
-        ps?.send({ event: 'reload-commands' });
+        await sendHmrEvent(HMREventType.ReloadCommands);
         break;
       case 're':
         console.log(`Received reload events command, reloading...`);
-        ps?.send({ event: 'reload-events' });
+        await sendHmrEvent(HMREventType.ReloadEvents);
         break;
       case 'rl':
         console.log(`Received reload locales command, reloading...`);
-        ps?.send({ event: 'reload-locales' });
+        await sendHmrEvent(HMREventType.ReloadLocales);
         break;
     }
   });

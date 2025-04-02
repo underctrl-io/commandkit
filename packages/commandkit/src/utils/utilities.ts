@@ -21,6 +21,15 @@ export function getCurrentDirectory(): string {
   return root;
 }
 
+export function getSourceDirectories(): string[] {
+  const dist = getConfig().distDir;
+  const locations = ['src', '.commandkit', dist].map((dir) =>
+    join(process.cwd(), dir),
+  );
+
+  return locations;
+}
+
 /**
  * Returns the path to the app directory.
  * @returns The path to the app directory or `null` if not found.

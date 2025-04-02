@@ -17,18 +17,8 @@ function determineExtension() {
   return existsSync(join(BASE_PATH, 'tsconfig.json')) ? 'ts' : 'js';
 }
 
-export async function generateCommand(name: string, customPath?: string) {
-  const cmdPath = join(customPath || COMMANDS_DIR);
-  if (!existsSync(cmdPath)) await mkdir(cmdPath, { recursive: true });
-
-  const fileName = `${name}.${determineExtension()}`;
-
-  if (existsSync(join(cmdPath, fileName))) {
-    panic(`Command ${name} already exists.`);
-  }
-
-  const commandFile = `
-import type { CommandData, SlashCommand, MessageCommand } from 'commandkit';
+function TS_COMMAND_SOURCE(name: string) {
+  return `import type { CommandData, SlashCommand, MessageCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: '${name}',
@@ -42,7 +32,50 @@ export const chatInput: SlashCommand = async (ctx) => {
 export const message: MessageCommand = async (ctx) => {
   await ctx.message.reply('Hello from ${name}!');
 };
-`.trim();
+`;
+}
+
+function JS_COMMAND_SOURCE(name: string) {
+  return `/**
+ * @type {import('commandkit').CommandData}
+ */
+export const command = {
+  name: '${name}',
+  description: '${name} command',
+};
+
+/**
+ * @type {import('commandkit').SlashCommand}
+ */
+export const chatInput = async (ctx) => {
+  await ctx.interaction.reply('Hello from ${name}!');
+};
+
+/**
+ * @type {import('commandkit').MessageCommand}
+ */
+export const message = async (ctx) => {
+  await ctx.message.reply('Hello from ${name}!');
+};
+`;
+}
+
+export async function generateCommand(name: string, customPath?: string) {
+  const cmdPath = join(customPath || COMMANDS_DIR);
+  if (!existsSync(cmdPath)) await mkdir(cmdPath, { recursive: true });
+
+  const ext = determineExtension();
+  const isTypeScript = ext === 'ts';
+
+  const fileName = `${name}.${ext}`;
+
+  if (existsSync(join(cmdPath, fileName))) {
+    panic(`Command ${name} already exists.`);
+  }
+
+  const commandFile = isTypeScript
+    ? TS_COMMAND_SOURCE(name)
+    : JS_COMMAND_SOURCE(name);
 
   await writeFile(join(cmdPath, fileName), commandFile);
 
@@ -57,7 +90,10 @@ export async function generateEvent(name: string, customPath?: string) {
   const eventPath = join(customPath || EVENTS_DIR, name);
   if (!existsSync(eventPath)) await mkdir(eventPath, { recursive: true });
 
-  let filename = 'event.ts';
+  const ext = determineExtension();
+
+  let filename = `event.${ext}`;
+
   if (existsSync(join(eventPath, filename))) {
     const count = (await readdir(eventPath)).length;
     filename = `${String(count).padStart(2, '0')}_${filename}`;

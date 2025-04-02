@@ -9,6 +9,9 @@ import {
   UserContextMenuCommandContext,
   LoadedCommand,
   SlashCommandContext,
+  CommandKitHMREvent,
+  HMREventType,
+  getSourceDirectories,
 } from 'commandkit';
 import { join } from 'node:path';
 import { loadLegacyValidations } from './loadLegacyValidations.js';
@@ -33,12 +36,60 @@ export class LegacyHandlerPlugin extends RuntimePlugin<LegacyHandlerPluginOption
     return join(basePath, path);
   }
 
+  private getSourcePaths(path: string): string[] {
+    const basePaths = getSourceDirectories();
+    return basePaths.map((basePath) => join(basePath, path));
+  }
+
+  private getCommandsPaths(): string[] {
+    return this.getSourcePaths(this.options.commandsPath);
+  }
+
+  private getEventsPaths(): string[] {
+    return this.getSourcePaths(this.options.eventsPath);
+  }
+
+  private getValidationsPaths(): string[] {
+    return this.getSourcePaths(this.options.validationsPath);
+  }
+
   public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
     Logger.info('LegacyHandlerPlugin activated');
   }
 
   public async deactivate(ctx: CommandKitPluginRuntime): Promise<void> {
     Logger.info('LegacyHandlerPlugin deactivated');
+  }
+
+  // TODO: properly handle hmr without reloading everything
+  async performHMR(
+    ctx: CommandKitPluginRuntime,
+    event: CommandKitHMREvent,
+  ): Promise<void> {
+    if (!event.path || !event.event) return;
+    if (event.event !== HMREventType.Unknown) return;
+
+    const isCommand = this.getCommandsPaths().some((p) =>
+      event.path.startsWith(p),
+    );
+    const isEvent = this.getEventsPaths().some((p) => event.path.startsWith(p));
+    const isValidation = this.getValidationsPaths().some((p) =>
+      event.path.startsWith(p),
+    );
+
+    const isValid = isCommand || isEvent || isValidation;
+
+    if (!isValid) return;
+
+    // accept hmr handle
+    event.preventDefault();
+    event.accept();
+
+    if (isCommand || isValidation) {
+      await ctx.commandkit.reloadCommands();
+    } else if (isEvent) {
+      await ctx.commandkit.reloadEvents();
+    }
   }
 
   public async onEventsRouterInit(ctx: CommandKitPluginRuntime): Promise<void> {

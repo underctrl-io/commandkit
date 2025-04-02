@@ -156,6 +156,10 @@ export class Context<
     this.client = commandkit.client;
     this.#store = config.store ?? new Map();
     this.command = config.command;
+
+    if (this.config.environment) {
+      this.config.environment.setContext(this);
+    }
   }
 
   /**

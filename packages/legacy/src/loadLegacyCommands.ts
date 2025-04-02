@@ -85,7 +85,13 @@ export async function loadLegacyCommands(path: string) {
       if (files.length === 0) continue;
 
       for (const file of files) {
-        const data = await loadCommand(file, entry.name);
+        const data = await loadCommand(
+          {
+            name: file.name,
+            path: join(path, entry.name, file.name),
+          },
+          entry.name,
+        );
         commandFiles.push(data);
       }
     }
