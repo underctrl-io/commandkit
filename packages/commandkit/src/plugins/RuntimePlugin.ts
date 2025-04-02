@@ -3,6 +3,7 @@ import { PluginCommon, PluginOptions } from './PluginCommon';
 import type { CommandKitPluginRuntime } from './runtime/CommandKitPluginRuntime';
 import { PreparedAppCommandExecution } from '../app';
 import { CommandKitEnvironment } from '../context/environment';
+import { CommandKitHMREvent } from '../utils/dev-hooks';
 
 export abstract class RuntimePlugin<
   T extends PluginOptions = PluginOptions,
@@ -105,6 +106,16 @@ export abstract class RuntimePlugin<
    */
   public async onCommandsRouterInit(
     ctx: CommandKitPluginRuntime,
+  ): Promise<void> {}
+
+  /**
+   * Called when HMR event is received
+   * @param ctx The context
+   * @param event The event
+   */
+  public async performHMR(
+    ctx: CommandKitPluginRuntime,
+    event: CommandKitHMREvent,
   ): Promise<void> {}
 }
 

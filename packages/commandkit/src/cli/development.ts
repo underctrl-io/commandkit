@@ -7,6 +7,7 @@ import { watch } from 'chokidar';
 import { debounce } from '../utils/utilities';
 import colors from '../utils/colors';
 import { ChildProcess } from 'node:child_process';
+import { setTimeout as sleep } from 'node:timers/promises';
 
 async function buildAndStart(configPath: string, skipStart = false) {
   const config = await loadConfigFile(configPath);
