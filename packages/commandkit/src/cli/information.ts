@@ -112,7 +112,7 @@ export async function showInformation() {
       Yarn: getBinaryVersion('yarn') || 'N/A',
       pnpm: getBinaryVersion('pnpm') || 'N/A',
       Bun: getBinaryVersion('bun') || 'N/A',
-      Deno: getBinaryVersion('deno') || 'N/A',
+      Deno: (getBinaryVersion('deno') || 'N/A').replace(/\n|\r/g, ' '),
     },
     'Relevant Packages': {
       commandkit: commandkitVersion,
