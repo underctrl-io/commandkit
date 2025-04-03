@@ -60,7 +60,7 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
 
       - name: 🧱 Build
-        run: pnpm --filter=${{ matrix.package }} run build
+        run: pnpm run build
 
       - name: 🚚 Publish
         run: pnpm --filter=${{ matrix.package }} publish --ignore-git-checks --access public --tag dev
