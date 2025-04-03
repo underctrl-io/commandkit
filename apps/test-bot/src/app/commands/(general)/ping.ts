@@ -4,11 +4,10 @@ import {
   ButtonStyle,
 } from 'discord.js';
 import {
-  SlashCommandProps,
-  CommandOptions,
   CommandData,
   ButtonKit,
-  AutocompleteProps,
+  SlashCommandContext,
+  AutocompleteCommandContext,
 } from 'commandkit';
 
 export const command: CommandData = {
@@ -30,7 +29,9 @@ const tests = Array.from({ length: 10 }, (_, i) => ({
   value: `${i}_test`,
 }));
 
-export async function autocomplete({ interaction }: AutocompleteProps) {
+export async function autocomplete({
+  interaction,
+}: AutocompleteCommandContext) {
   const arg = interaction.options.getString('test', false);
   console.log(arg);
   if (!arg) return interaction.respond(tests);
@@ -42,7 +43,7 @@ export async function autocomplete({ interaction }: AutocompleteProps) {
   interaction.respond(filtered);
 }
 
-export async function chatInput({ interaction, client }: SlashCommandProps) {
+export async function chatInput({ interaction, client }: SlashCommandContext) {
   if (!interaction.channel) return;
 
   const button = new ButtonKit()
@@ -77,7 +78,3 @@ export async function chatInput({ interaction, client }: SlashCommandProps) {
       message.edit({ components: [row] });
     });
 }
-
-export const options: CommandOptions = {
-  devOnly: true,
-};

@@ -1,4 +1,4 @@
-name: (CommandKit) Publish Dev Build
+name: (CommandKit) Publish Dev Builds
 
 on:
   push:
@@ -6,11 +6,32 @@ on:
       - main
     paths:
       - 'packages/commandkit/**'
+      - 'packages/create-commandkit/**'
+      - 'packages/legacy/**'
+      - 'packages/redis/**'
 
 jobs:
   release:
     name: 🚀 Publish Dev Build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          [
+            commandkit,
+            create-commandkit,
+            '@commandkit/legacy',
+            '@commandkit/redis',
+          ]
+        include:
+          - package: commandkit
+            path: packages/commandkit
+          - package: create-commandkit
+            path: packages/create-commandkit
+          - package: '@commandkit/legacy'
+            path: packages/legacy
+          - package: '@commandkit/redis'
+            path: packages/redis
     steps:
       - uses: pnpm/action-setup@v2
         with:
@@ -30,7 +51,7 @@ jobs:
 
       - name: 🔢 Update Version
         run: |
-          cd packages/commandkit
+          cd ${{ matrix.path }}
           node -e "const pkg = require('./package.json'); \
           const newVersion = pkg.version + '-dev.' + new Date().toISOString().replace(/[:\-T]/g, '').substr(0,14); \
           pkg.version = newVersion; \
@@ -39,18 +60,16 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
 
       - name: 🧱 Build
-        run: pnpm --filter './packages/commandkit' run build
+        run: pnpm --filter=${{ matrix.package }} run build
 
       - name: 🚚 Publish
-        run: |
-          cd packages/commandkit
-          npm publish --access public --tag dev
+        run: pnpm --filter=${{ matrix.package }} publish --ignore-git-checks --access public --tag dev
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
 
       - name: 🚫 Deprecate Previous Dev Version
         run: |
-          PACKAGE_NAME=$(node -e "console.log(require('./packages/commandkit/package.json').name);")
+          PACKAGE_NAME=${{ matrix.package }}
           ALL_VERSIONS=$(npm info $PACKAGE_NAME versions -json)
           VERSION_TO_DEPRECATE=$(echo $ALL_VERSIONS | node -e "
               const versions = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8'));
@@ -60,6 +79,5 @@ jobs:
           ")
           echo Deprecating version $VERSION_TO_DEPRECATE
           npm deprecate $PACKAGE_NAME@$VERSION_TO_DEPRECATE "Deprecated dev version."
-
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

@@ -9,6 +9,7 @@ import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { devEnvFileArgs, prodEnvFileArgs } from './env';
 import { rimraf } from 'rimraf';
+import { performTypeCheck } from './type-checker';
 
 export interface ApplicationBuildOptions {
   plugins?: CompilerPlugin[];
@@ -24,6 +25,11 @@ export async function buildApplication({
   configPath,
 }: ApplicationBuildOptions) {
   const config = await loadConfigFile(configPath);
+
+  if (!isDev && !config?.typescript?.ignoreDuringBuilds) {
+    await performTypeCheck(configPath || process.cwd());
+  }
+
   const pluginRuntime = new CompilerPluginRuntime(plugins || []);
   const esbuildPluginList: any[] = pluginRuntime.isEmpty()
     ? []

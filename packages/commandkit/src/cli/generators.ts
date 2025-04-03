@@ -8,7 +8,6 @@ import colors from '../utils/colors';
 const BASE_PATH = process.cwd();
 const COMMANDS_DIR = join(BASE_PATH, 'src/app/commands');
 const EVENTS_DIR = join(BASE_PATH, 'src/app/events');
-const LOCALES_DIR = join(BASE_PATH, 'src/app/locales');
 
 const formatPath = (path: string) =>
   path.replace(process.cwd(), '.').replace(/\\/g, '/');
@@ -110,53 +109,6 @@ export default async function on${name[0].toUpperCase() + name.slice(1)}() {
   console.log(
     colors.green(
       `Event ${colors.magenta(name)} created at ${colors.blue(formatPath(eventPath))}/${colors.magenta(filename)}`,
-    ),
-  );
-}
-
-export async function generateLocale(
-  locale: keyof typeof Locale,
-  commandName: string,
-  customPath?: string,
-) {
-  const localeNames = Object.fromEntries(
-    Object.entries(Locale).map(([k, v]) => [v, k]),
-  );
-
-  if (!localeNames[locale]) {
-    panic(`Invalid locale: ${locale}`);
-  }
-
-  if (!commandName) {
-    panic('Command name is required.');
-  }
-
-  const localePath = join(customPath || LOCALES_DIR, locale);
-
-  if (!existsSync(localePath)) await mkdir(localePath, { recursive: true });
-
-  if (existsSync(join(localePath, `${commandName}.json`))) {
-    panic(`Locale file for ${commandName} already exists.`);
-  }
-
-  const localeFile = {
-    command: {
-      name: `${commandName}`,
-      description: `${commandName} command`,
-    },
-    translations: {},
-  };
-
-  await writeFile(
-    join(localePath, `${commandName}.json`),
-    JSON.stringify(localeFile, null, 2),
-  );
-
-  console.log(
-    colors.green(
-      `Locale file for ${colors.magenta(commandName)} created at ${colors.blue(
-        formatPath(localePath),
-      )}/${colors.magenta(`${commandName}.json`)}`,
     ),
   );
 }

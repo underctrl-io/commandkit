@@ -10,13 +10,8 @@ export const command = {
  * @param {import('commandkit').SlashCommandContext} ctx
  */
 export const chatInput = async (ctx) => {
-  /**
-   * @type {import('commandkit').Localization<'ping'>}
-   */
-  const { t } = ctx.locale();
-
   const latency = (ctx.client.ws.ping ?? -1).toString();
-  const response = await t('ping_response', { latency });
+  const response = `Pong! Latency: ${latency}ms`;
 
   await ctx.interaction.reply(response);
 };
@@ -25,13 +20,8 @@ export const chatInput = async (ctx) => {
  * @param {import('commandkit').MessageCommandContext} ctx
  */
 export const message = async (ctx) => {
-  /**
-   * @type {import('commandkit').Localization<'ping'>}
-   */
-  const { t } = ctx.locale();
-
   const latency = (ctx.client.ws.ping ?? -1).toString();
-  const response = await t('ping_response', { latency });
+  const response = `Pong! Latency: ${latency}ms`;
 
   await ctx.message.reply(response);
 };

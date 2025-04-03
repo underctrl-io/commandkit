@@ -6,19 +6,15 @@ export const command: CommandData = {
 };
 
 export const chatInput: SlashCommand = async (ctx) => {
-  const { t } = ctx.locale<'ping'>();
-
   const latency = (ctx.client.ws.ping ?? -1).toString();
-  const response = await t('ping_response', { latency });
+  const response = `Pong! Latency: ${latency}ms`;
 
   await ctx.interaction.reply(response);
 };
 
 export const message: MessageCommand = async (ctx) => {
-  const { t } = ctx.locale<'ping'>();
-
   const latency = (ctx.client.ws.ping ?? -1).toString();
-  const response = await t('ping_response', { latency });
+  const response = `Pong! Latency: ${latency}ms`;
 
   await ctx.message.reply(response);
 };

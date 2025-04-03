@@ -14,10 +14,6 @@ import {
 } from 'discord.js';
 import { Context } from '../commands/Context';
 import { toFileURL } from '../../utils/resolve-file-url';
-import {
-  ApiTranslatableCommandOptions,
-  TranslatableCommandOptions,
-} from '../i18n/Translation';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 import { CommandRegistrar } from '../register/CommandRegistrar';
@@ -67,7 +63,7 @@ export interface PreparedAppCommandExecution {
   messageCommandParser?: MessageCommandParser;
 }
 
-type CommandBuilderLike =
+export type CommandBuilderLike =
   | SlashCommandBuilder
   | ContextMenuCommandBuilder
   | Record<string, any>;
@@ -511,8 +507,14 @@ export class AppCommandHandler {
         );
       }
 
-      const localizedCommand = await this.applyLocalizations({
-        ...data.command,
+      let lastUpdated = data.command;
+
+      await this.commandkit.plugins.execute(async (ctx, plugin) => {
+        const res = await plugin.prepareCommand(ctx, lastUpdated);
+
+        if (res) {
+          lastUpdated = res;
+        }
       });
 
       this.loadedCommands.set(id, {
@@ -520,7 +522,7 @@ export class AppCommandHandler {
         guilds: data.guilds,
         data: {
           ...data,
-          command: localizedCommand,
+          command: 'toJSON' in lastUpdated ? lastUpdated.toJSON() : lastUpdated,
         },
       });
 
@@ -529,139 +531,5 @@ export class AppCommandHandler {
     } catch (error) {
       Logger.error(`Failed to load command ${command.name} (${id})`, error);
     }
-  }
-
-  public async applyLocalizations(command: CommandBuilderLike) {
-    const localization = this.commandkit.config.localizationStrategy;
-    const validLocales = Object.values(Locale).filter(
-      (v) => typeof v === 'string',
-    );
-
-    const localizationKey = command.name;
-
-    for (const locale of validLocales) {
-      const translation = await localization.locateTranslation(
-        localizationKey,
-        locale,
-      );
-      if (!translation?.command) continue;
-
-      if (command instanceof SlashCommandBuilder) {
-        // Apply command-level localizations
-        if (translation.command.name) {
-          command.setNameLocalization(locale, translation.command.name);
-        }
-
-        if (translation.command.description) {
-          command.setDescriptionLocalization(
-            locale,
-            translation.command.description,
-          );
-        }
-
-        const raw = command.toJSON();
-
-        if (raw.options?.length && translation.command.options?.length) {
-          const opt = translation.command.options.slice();
-          let o: TranslatableCommandOptions;
-
-          while ((o = opt.shift()!)) {
-            raw.options?.forEach((option) => {
-              if (option.name === o.ref) {
-                if (option.name) {
-                  option.name_localizations ??= {};
-                  option.name_localizations[locale] = o.name;
-                }
-
-                if (option.description) {
-                  option.description_localizations ??= {};
-                  option.description_localizations[locale] = o.description;
-                }
-
-                const opts = (
-                  option as typeof option & {
-                    options: ApiTranslatableCommandOptions[] | undefined;
-                  }
-                ).options;
-
-                // Handle nested options (subcommand parameters)
-                if (opts?.length && o.options?.length) {
-                  o.options.forEach((subOpt) => {
-                    const targetOption = opts?.find(
-                      (opt) => opt.name === subOpt.name,
-                    );
-                    if (targetOption) {
-                      targetOption.name_localizations ??= {};
-                      targetOption.name_localizations[locale] = subOpt.name;
-
-                      if ('description' in targetOption) {
-                        targetOption.description_localizations ??= {};
-                        targetOption.description_localizations[locale] =
-                          subOpt.description;
-                      }
-                    }
-                  });
-                }
-              }
-            });
-          }
-        }
-      } else if (command instanceof ContextMenuCommandBuilder) {
-        if (translation.command.name) {
-          command.setNameLocalization(locale, translation.command.name);
-        }
-      } else {
-        // Raw command object
-        command.name_localizations ??= {};
-        command.name_localizations[locale] = translation.command.name;
-
-        if (command.description) {
-          command.description_localizations ??= {};
-          command.description_localizations[locale] =
-            translation.command.description;
-        }
-
-        if (command.options?.length && translation.command.options?.length) {
-          const opt = translation.command.options.slice();
-          let o: TranslatableCommandOptions;
-
-          while ((o = opt.shift()!)) {
-            command.options.forEach((option: any) => {
-              if (option.name === o.ref) {
-                option.name_localizations ??= {};
-                option.name_localizations[locale] = o.name;
-
-                if ('description' in option) {
-                  option.description_localizations ??= {};
-                  option.description_localizations[locale] = o.description;
-                }
-
-                const opts = option.options as ApiTranslatableCommandOptions[];
-
-                if (opts?.length && o.options?.length) {
-                  o.options.forEach((subOpt) => {
-                    const targetOption = opts?.find(
-                      (opt) => opt.name === subOpt.name,
-                    );
-                    if (targetOption) {
-                      targetOption.name_localizations ??= {};
-                      targetOption.name_localizations[locale] = subOpt.name;
-
-                      if ('description' in targetOption) {
-                        targetOption.description_localizations ??= {};
-                        targetOption.description_localizations[locale] =
-                          subOpt.description;
-                      }
-                    }
-                  });
-                }
-              }
-            });
-          }
-        }
-      }
-    }
-
-    return command;
   }
 }

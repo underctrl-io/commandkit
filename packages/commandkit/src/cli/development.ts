@@ -35,9 +35,6 @@ const isCommandSource = (p: string) =>
 const isEventSource = (p: string) =>
   p.replaceAll('\\', '/').includes('src/app/events');
 
-const isLocaleSource = (p: string) =>
-  p.replaceAll('\\', '/').includes('src/app/locales');
-
 export async function bootstrapDevelopmentServer(configPath?: string) {
   const start = performance.now();
   const cwd = configPath || process.cwd();
@@ -127,9 +124,6 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
     } else if (isEventSource(path)) {
       eventType = HMREventType.ReloadEvents;
       eventDescription = 'event(s)';
-    } else if (isLocaleSource(path)) {
-      eventType = HMREventType.ReloadLocales;
-      eventDescription = 'locale(s)';
     } else {
       eventType = HMREventType.Unknown;
       eventDescription = 'unknown source';
@@ -197,9 +191,6 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
         console.log(`Received reload events command, reloading...`);
         await sendHmrEvent(HMREventType.ReloadEvents);
         break;
-      case 'rl':
-        console.log(`Received reload locales command, reloading...`);
-        await sendHmrEvent(HMREventType.ReloadLocales);
         break;
     }
   });
@@ -223,7 +214,6 @@ ${colors.greenBright('Watching for changes in')} ${colors.yellowBright('src')} $
 ${colors.greenBright('Commands:')}
 ${colors.yellowBright('r')} - Restart the server
 ${colors.yellowBright('rc')} - Reload all commands
-${colors.yellowBright('re')} - Reload all events
-${colors.yellowBright('rl')} - Reload all locales`,
+${colors.yellowBright('re')} - Reload all events`,
   );
 }

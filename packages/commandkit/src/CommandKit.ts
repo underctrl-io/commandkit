@@ -6,11 +6,9 @@ import { MemoryCache } from './cache/MemoryCache';
 import { createElement, Fragment } from './components';
 import { EventInterceptor } from './components/common/EventInterceptor';
 import { Awaitable, Events, Locale, Message } from 'discord.js';
-import { DefaultLocalizationStrategy } from './app/i18n/DefaultLocalizationStrategy';
 import { findAppDirectory } from './utils/utilities';
 import { join } from 'node:path';
 import { AppCommandHandler } from './app/handlers/AppCommandHandler';
-import { LocalizationStrategy } from './app/i18n/LocalizationStrategy';
 import { CommandsRouter, EventsRouter } from './app/router';
 import { AppEventsHandler } from './app/handlers/AppEventsHandler';
 import { CommandKitPluginRuntime } from './plugins/runtime/CommandKitPluginRuntime';
@@ -25,7 +23,6 @@ import { Logger } from './logger/Logger';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
-  localizationStrategy: LocalizationStrategy;
   getMessageCommandPrefix: (message: Message) => Awaitable<string | string[]>;
 }
 
@@ -41,7 +38,6 @@ export class CommandKit extends EventEmitter {
 
   public readonly config: CommandKitConfiguration = {
     defaultLocale: Locale.EnglishUS,
-    localizationStrategy: new DefaultLocalizationStrategy(this),
     getMessageCommandPrefix: () => '!',
   };
 
@@ -211,15 +207,6 @@ export class CommandKit extends EventEmitter {
   }
 
   /**
-   * Sets the localization strategy for the command handler.
-   * @param strategy The localization strategy.
-   */
-  setLocalizationStrategy(strategy: LocalizationStrategy) {
-    this.config.localizationStrategy = strategy;
-    return this;
-  }
-
-  /**
    * Resolves the current cache provider.
    */
   getCacheProvider(): CacheProvider | null {
@@ -328,13 +315,11 @@ export class CommandKit extends EventEmitter {
     return findAppDirectory();
   }
 
-  getPath(to: 'locales' | 'commands' | 'events') {
+  getPath(to: 'commands' | 'events') {
     const appDir = this.getAppDirectory();
     if (!appDir) return null;
 
     switch (to) {
-      case 'locales':
-        return join(appDir, 'locales');
       case 'commands':
         return join(appDir, 'commands');
       case 'events':

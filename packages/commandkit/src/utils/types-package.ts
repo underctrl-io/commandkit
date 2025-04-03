@@ -9,7 +9,6 @@ export async function generateTypesPackage() {
   const packageJSON = join(location, 'package.json');
   const index = join(location, 'index.js');
   const types = join(location, 'index.d.ts');
-  const locale = join(location, 'locale_types.d.ts');
   const command = join(location, 'command.d.ts');
 
   const packageJSONContent = {
@@ -25,21 +24,9 @@ export async function generateTypesPackage() {
 
   // Restructuring the type declarations to properly extend rather than replace types
   const typesContent = `// Main types index file - imports all type declarations
-import './locale_types';
 import './command';
 export {};
 `;
-
-  // Properly set up locale_types to extend the CommandLocalizationTypeData interface
-  const localeTypesContent = `// Auto-generated localization types
-  export {};
-declare module 'commandkit' {
-   interface CommandLocalizationTypeData {
-    // This interface will be populated with localizations
-  }
-
-  type TranslatableCommandName = keyof CommandLocalizationTypeData
-}`;
 
   // Properly set up command types to extend the CommandTypeData interface
   const commandTypesContent = `// Auto-generated command types
@@ -52,26 +39,9 @@ declare module 'commandkit' {
   await writeFile(packageJSON, JSON.stringify(packageJSONContent, null, 2));
   await writeFile(index, indexContent);
   await writeFile(types, typesContent);
-  await writeFile(locale, localeTypesContent);
   await writeFile(command, commandTypesContent);
 
   return location;
-}
-
-export async function rewriteLocalesDeclaration(data: string) {
-  const localeTypesContent = `// Auto-generated localization types
-  declare module 'commandkit' {
-    ${data}
-  }
-  export {};`;
-
-  const location = join(process.cwd(), 'node_modules', 'commandkit-types');
-
-  if (!existsSync(location)) return;
-
-  const locale = join(location, 'locale_types.d.ts');
-
-  await writeFile(locale, localeTypesContent, { encoding: 'utf-8' });
 }
 
 export async function rewriteCommandDeclaration(data: string) {

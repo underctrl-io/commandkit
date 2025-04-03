@@ -27,5 +27,4 @@ export const defaultConfig: ResolvedCommandKitConfig = {
     production: true,
   },
   typedCommands: true,
-  typedLocales: true,
 };

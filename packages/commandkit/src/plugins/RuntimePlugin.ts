@@ -1,7 +1,7 @@
 import { Interaction, Message, PartialMessage } from 'discord.js';
 import { PluginCommon, PluginOptions } from './PluginCommon';
 import type { CommandKitPluginRuntime } from './runtime/CommandKitPluginRuntime';
-import { PreparedAppCommandExecution } from '../app';
+import { CommandBuilderLike, PreparedAppCommandExecution } from '../app';
 import { CommandKitEnvironment } from '../context/environment';
 import { CommandKitHMREvent } from '../utils/dev-hooks';
 
@@ -117,6 +117,18 @@ export abstract class RuntimePlugin<
     ctx: CommandKitPluginRuntime,
     event: CommandKitHMREvent,
   ): Promise<void> {}
+
+  /**
+   * Called before command is loaded for registration. This method can be used to modify the command data before it is loaded.
+   * @param ctx The context
+   * @param commands The command that is being loaded. This is a CommandBuilderLike object which represents Discord's command
+   */
+  async prepareCommand(
+    ctx: CommandKitPluginRuntime,
+    commands: CommandBuilderLike,
+  ): Promise<CommandBuilderLike | null> {
+    return null;
+  }
 }
 
 export function isRuntimePlugin(plugin: unknown): plugin is RuntimePlugin {
