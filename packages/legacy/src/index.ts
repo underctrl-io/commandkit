@@ -210,6 +210,7 @@ export class LegacyHandlerPlugin extends RuntimePlugin<LegacyHandlerPluginOption
           } as any,
           middleware: {
             global: true,
+            command: null,
             id,
             name: validation.name,
             parentPath: validationsPath,
