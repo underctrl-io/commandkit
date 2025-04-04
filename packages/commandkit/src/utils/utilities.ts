@@ -88,3 +88,25 @@ export function debounce<R, F extends (...args: any[]) => R>(
     });
   }) as F;
 }
+
+/**
+ * Creates a function from the given function that runs only in development mode.
+ * @param fn The function to run in development mode.
+ * @returns The function that runs only in development mode.
+ * @example
+ * ```ts
+ * const devOnlyFn = devOnly(() => {
+ *   console.log('This function runs only in development mode');
+ * });
+ * devOnlyFn(); // This will log the message only in development mode
+ * ```
+ */
+export function devOnly<T extends (...args: any[]) => any>(fn: T): T {
+  const f = (...args: Parameters<T>) => {
+    if (COMMANDKIT_IS_DEV) {
+      return fn(...args);
+    }
+  };
+
+  return f as T;
+}

@@ -16,7 +16,12 @@ export * from './app/router/index';
 export type * from './types';
 export * from './version';
 export * from './plugins/index';
-export { getCurrentDirectory, getSourceDirectories } from './utils/utilities';
+export {
+  getCurrentDirectory,
+  getSourceDirectories,
+  devOnly,
+  debounce,
+} from './utils/utilities';
 export type { CommandKitHMREvent } from './utils/dev-hooks';
 export * from './utils/constants';
 
