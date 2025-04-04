@@ -10,7 +10,6 @@ import {
   Awaitable,
 } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
-import { Localization } from '../i18n/Localization';
 import {
   MessageCommandOptions,
   MessageCommandParser,
@@ -28,7 +27,6 @@ import {
   ResolvableCommand,
   RunCommand,
 } from '../handlers/AppCommandHandler';
-import { TranslatableCommandName } from '../i18n/Translation';
 
 export const CommandExecutionMode = {
   SlashCommand: 'chatInput',
@@ -359,25 +357,6 @@ export class Context<
    */
   public setLocale(locale: Locale | null): void {
     this._locale = locale;
-  }
-
-  /**
-   * Returns the i18n api for this command.
-   * @param locale The locale to use for the i18n api.
-   * @template T The command name for type-safe translations. Will provide autocomplete from available translations.
-   */
-  public locale<T extends TranslatableCommandName | (string & {}) = string>(
-    locale?: Locale,
-  ): Localization<T extends TranslatableCommandName ? T : string> {
-    const selectedLocale = locale ?? this.getLocale();
-
-    return new Localization<T extends TranslatableCommandName ? T : string>(
-      this.commandkit,
-      {
-        locale: selectedLocale,
-        target: this.getCommandIdentifier(),
-      },
-    );
   }
 
   /**

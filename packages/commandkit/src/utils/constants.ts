@@ -10,7 +10,6 @@ export const COMMANDKIT_IS_TEST = process.env.COMMANDKIT_IS_TEST === 'true';
 export const HMREventType = {
   ReloadCommands: 'reload-commands',
   ReloadEvents: 'reload-events',
-  ReloadLocales: 'reload-locales',
   Unknown: 'unknown',
 } as const;
 

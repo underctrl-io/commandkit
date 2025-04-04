@@ -20,14 +20,10 @@ export const command = {
 export async function userContextMenu(ctx: UserContextMenuCommandContext) {
   const target = ctx.interaction.targetUser;
 
-  const { t } = ctx.locale<'avatar'>();
-
-  const msg = await t('avatar', { user: target.username });
-
   await ctx.interaction.reply({
     embeds: [
       {
-        title: msg,
+        title: `${target.username}'s Avatar`,
         image: {
           url: target.displayAvatarURL({ size: 2048 }),
         },
@@ -39,14 +35,11 @@ export async function userContextMenu(ctx: UserContextMenuCommandContext) {
 
 export async function chatInput(ctx: SlashCommandContext) {
   const user = ctx.options.getUser('user') ?? ctx.interaction.user;
-  const { t } = ctx.locale<'avatar'>();
-
-  const msg = await t('avatar', { user: user.username });
 
   await ctx.interaction.reply({
     embeds: [
       {
-        title: msg,
+        title: `${user.username}'s Avatar`,
         image: {
           url: user.displayAvatarURL({ size: 2048 }),
         },
@@ -59,14 +52,10 @@ export async function chatInput(ctx: SlashCommandContext) {
 export async function message(ctx: MessageCommandContext) {
   const user = ctx.options.getUser('user') ?? ctx.message.author;
 
-  const { t } = ctx.locale<'avatar'>();
-
-  const msg = await t('avatar', { user: user.username });
-
   await ctx.message.reply({
     embeds: [
       {
-        title: msg,
+        title: `${user.username}'s Avatar`,
         image: {
           url: user.displayAvatarURL({ size: 2048 }),
         },

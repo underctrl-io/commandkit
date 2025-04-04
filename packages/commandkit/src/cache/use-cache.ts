@@ -1,7 +1,8 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { GenericFunction, getCommandKit } from '../context/async-context';
-import { createHash, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import ms from 'ms';
+import { createObjectHash } from './utils';
 
 const cacheContext = new AsyncLocalStorage<CacheContext>();
 const fnStore = new Map<
@@ -50,14 +51,6 @@ export interface CacheMetadata {
 }
 
 /**
- * Generates an MD5 hash of the input string
- * @internal
- */
-function md5(data: string): string {
-  return createHash('md5').update(data).digest('hex');
-}
-
-/**
  * Retrieves the configured cache provider from CommandKit context
  * @internal
  * @throws {Error} When no cache provider is configured
@@ -102,10 +95,10 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
 
   const fnId = randomUUID();
 
-  const memo = ((...args) => {
+  const memo = (async (...args) => {
     const forcedName = isLocal ? params?.name : null;
-    const keyHash =
-      forcedName ?? md5(!args.length ? fnId : `${fnId}:${args.join(':')}`);
+    const keyHash = forcedName ?? (await createObjectHash(fnId, ...args));
+
     const resolvedTTL =
       isLocal && params?.ttl != null
         ? typeof params.ttl === 'string'

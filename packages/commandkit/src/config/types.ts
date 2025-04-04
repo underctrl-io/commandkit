@@ -69,11 +69,6 @@ export interface CommandKitConfig {
     production?: boolean;
   };
   /**
-   * Whether or not to enable typed locales.
-   * @default true
-   */
-  typedLocales?: boolean;
-  /**
    * Whether or not to enable the typed commands.
    * @default true
    */

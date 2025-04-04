@@ -59,7 +59,6 @@ export function registerDevHooks(commandkit: CommandKit) {
           handled = true;
           break;
         case HMREventType.ReloadEvents:
-        case HMREventType.ReloadLocales:
           commandkit.eventHandler.reloadEvents();
           handled = true;
           break;

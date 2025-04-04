@@ -19,9 +19,7 @@ export async function bootstrapCommandkitCLI(
   const { bootstrapProductionServer, createProductionBuild } = await import(
     './production'
   );
-  const { generateCommand, generateEvent, generateLocale } = await import(
-    './generators'
-  );
+  const { generateCommand, generateEvent } = await import('./generators');
   const { version } = await import('../version');
   const { showInformation } = await import('./information');
 
@@ -55,7 +53,7 @@ export async function bootstrapCommandkitCLI(
     .description(
       'Start your bot in production mode after running the build command.',
     )
-    .option('-c, --config [path]', 'Path to your commandkit.json file.')
+    .option('-c, --config [path]', 'Path to your commandkit config file.')
     .action(() => {
       const options = program.opts();
       bootstrapProductionServer(options.config);
@@ -64,7 +62,7 @@ export async function bootstrapCommandkitCLI(
   program
     .command('build')
     .description('Build your project for production usage.')
-    .option('-c, --config [path]', 'Path to your commandkit.json file.')
+    .option('-c, --config [path]', 'Path to your commandkit config file.')
     .action(() => {
       const options = program.opts();
       return createProductionBuild(options.config);
@@ -72,29 +70,17 @@ export async function bootstrapCommandkitCLI(
 
   program
     .command('create')
-    .description('Create new commands, events, or locale files')
+    .description('Create new commands or events files')
     .option('-c, --command', 'Create a new command')
     .option('-e, --event', 'Create a new event')
-    .option(
-      '-l, --locale <locale>',
-      'Specify the locale code (e.g. nl, es, fr)',
-    )
     .argument('<name>', 'The name of the command or event')
     .action(async (name, options) => {
       if (options.command) {
         await generateCommand(name);
       } else if (options.event) {
         await generateEvent(name);
-      } else if (options.locale) {
-        if (!name) {
-          console.error('Please specify a command name for the locale file');
-          return;
-        }
-        await generateLocale(options.locale, name);
       } else {
-        console.error(
-          'Please specify what to create: --command, --event, or --locale',
-        );
+        console.error('Please specify what to create: --command or --event');
       }
     });
 

@@ -50,7 +50,6 @@ export function defineConfig(
     },
     static: config.static ?? defaultConfig.static,
     typedCommands: config.typedCommands ?? defaultConfig.typedCommands,
-    typedLocales: config.typedLocales ?? defaultConfig.typedLocales,
     typescript: {
       ...defaultConfig.typescript,
       ...config.typescript,

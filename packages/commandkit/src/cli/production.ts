@@ -25,7 +25,9 @@ export async function createProductionBuild(configPath?: string) {
   const cwd = configPath || process.cwd();
   const config = await loadConfigFile(cwd);
 
-  const spinner = await createSpinner('Creating an optimized production build');
+  const spinner = await createSpinner(
+    'Creating an optimized production build\n',
+  );
 
   spinner.start();
 

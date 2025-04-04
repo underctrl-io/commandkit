@@ -27,19 +27,13 @@ const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
 };
 
 export async function chatInput(ctx: SlashCommandContext) {
-  const { t } = ctx.locale();
-
-  const title = await t('modal.title');
-  const label = await t('input.label');
-  const description = await t('input.placeholder');
-
   const modal = (
-    <Modal title={title} onSubmit={handleSubmit}>
+    <Modal title={'Modal'} onSubmit={handleSubmit}>
       <ShortInput customId="name" label="Name" placeholder="John" required />
       <ParagraphInput
         customId="description"
-        label={label}
-        placeholder={description}
+        label={'Description'}
+        placeholder={'Enter a description here...'}
       />
     </Modal>
   );

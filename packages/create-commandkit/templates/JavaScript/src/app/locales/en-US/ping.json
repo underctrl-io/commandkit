@@ -1,9 +1,0 @@
-{
-  "command": {
-    "name": "ping",
-    "description": "Ping the bot to check if it's online."
-  },
-  "translations": {
-    "ping_response": "The ping is `{latency}ms`."
-  }
-}

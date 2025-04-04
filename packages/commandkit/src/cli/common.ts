@@ -37,15 +37,21 @@ async function ensureTypeScript(target: string) {
   if (!isTypeScript) return false;
   if (process.features.typescript) return true;
 
-  if (!ts) {
-    try {
-      ts = await import('typescript');
-    } catch {
-      panic('TypeScript must be installed to use TypeScript config files.');
-    }
-  }
+  await loadTypeScript();
 
   return true;
+}
+
+export async function loadTypeScript(e?: string) {
+  if (ts) return ts;
+
+  try {
+    ts = await import('typescript');
+  } catch {
+    panic(e || 'TypeScript must be installed to use TypeScript config files.');
+  }
+
+  return ts;
 }
 
 export async function loadConfigFileFromPath(
@@ -96,31 +102,4 @@ async function ensureExists(loc: string) {
 
 export function erase(dir: string) {
   rimrafSync(dir);
-}
-
-export async function copyLocaleFiles(_from: string, _to: string) {
-  const resolvedFrom = join(process.cwd(), _from);
-  const resolvedTo = join(process.cwd(), _to);
-
-  const localePaths = ['app/locales'];
-  const srcLocalePaths = localePaths.map((path) => join(resolvedFrom, path));
-  const destLocalePaths = localePaths.map((path) => join(resolvedTo, path));
-
-  for (const localePath of srcLocalePaths) {
-    if (!fs.existsSync(localePath)) {
-      continue;
-    }
-
-    // copy localePath to destLocalePath
-    const destLocalePath = destLocalePaths[srcLocalePaths.indexOf(localePath)];
-
-    if (!fs.existsSync(destLocalePath)) {
-      fs.promises.mkdir(destLocalePath, { recursive: true });
-    }
-
-    await fs.promises.cp(localePath, destLocalePath, {
-      recursive: true,
-      force: true,
-    });
-  }
 }
