@@ -4,6 +4,7 @@ import type { CommandKitPluginRuntime } from './runtime/CommandKitPluginRuntime'
 import { CommandBuilderLike, PreparedAppCommandExecution } from '../app';
 import { CommandKitEnvironment } from '../context/environment';
 import { CommandKitHMREvent } from '../utils/dev-hooks';
+import { PreRegisterCommandsEvent } from '../app/register/CommandRegistrar';
 
 export abstract class RuntimePlugin<
   T extends PluginOptions = PluginOptions,
@@ -129,6 +130,49 @@ export abstract class RuntimePlugin<
   ): Promise<CommandBuilderLike | null> {
     return null;
   }
+
+  /**
+   * Called before command is registered to discord. This method can cancel the registration of the command and handle it manually.
+   * @param ctx The context
+   * @param data The command registration data
+   */
+  async onBeforeRegisterCommands(
+    ctx: CommandKitPluginRuntime,
+    event: PreRegisterCommandsEvent,
+  ): Promise<void> {}
+
+  /**
+   * Called before global commands registration. This method can cancel the registration of the command and handle it manually.
+   * This method is called after `onBeforeRegisterCommands` if that stage was not handled.
+   * @param ctx The context
+   * @param event The command registration data
+   */
+  async onBeforeRegisterGlobalCommands(
+    ctx: CommandKitPluginRuntime,
+    event: PreRegisterCommandsEvent,
+  ): Promise<void> {}
+
+  /**
+   * Called before guild commands registration. This method can cancel the registration of the command and handle it manually.
+   * This method is called before guilds of the command are resolved. It is called after `onBeforeRegisterCommands` if that stage was not handled.
+   * @param ctx The context
+   * @param event The command registration data
+   */
+  async onBeforePrepareGuildCommandsRegistration(
+    ctx: CommandKitPluginRuntime,
+    event: PreRegisterCommandsEvent,
+  ): Promise<void> {}
+
+  /**
+   * Called before guild commands registration. This method can cancel the registration of the command and handle it manually.
+   * This method is called after guilds of the command are resolved. It is called after `onBeforePrepareGuildCommandsRegistration` if that stage was not handled.
+   * @param ctx The context
+   * @param event The command registration data
+   */
+  async onBeforeRegisterGuildCommands(
+    ctx: CommandKitPluginRuntime,
+    event: PreRegisterCommandsEvent,
+  ): Promise<void> {}
 }
 
 export function isRuntimePlugin(plugin: unknown): plugin is RuntimePlugin {

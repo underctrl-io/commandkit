@@ -1,0 +1,13 @@
+export default {
+  $command: {
+    name: 'avatar',
+    description: "C'est une commande pour afficher l'avatar.",
+    options: [
+      {
+        name: 'user',
+        description: "L'utilisateur dont vous souhaitez voir l'avatar.",
+      },
+    ],
+  },
+  avatar: 'Avatar de {{user}}',
+};

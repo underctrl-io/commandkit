@@ -137,7 +137,10 @@ export class CommandKit extends EventEmitter {
       });
 
       await this.options.client.login(
-        token ?? process.env.TOKEN ?? process.env.DISCORD_TOKEN,
+        token ??
+          this.options.client.token ??
+          process.env.TOKEN ??
+          process.env.DISCORD_TOKEN,
       );
 
       await this.plugins.execute((ctx, plugin) => {
@@ -155,7 +158,7 @@ export class CommandKit extends EventEmitter {
    */
   async loadPlugins() {
     const config = await loadConfigFile();
-    const plugins = config.plugins.filter((p) => isRuntimePlugin(p));
+    const plugins = config.plugins.flat(2).filter((p) => isRuntimePlugin(p));
 
     if (!plugins.length) return;
 

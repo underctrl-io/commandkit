@@ -1,3 +1,5 @@
+import { MaybeArray } from '../components';
+import { CommandKitPlugin } from '../plugins';
 import { defaultConfig } from './default';
 import { CommandKitConfig } from './types';
 import { ResolvedCommandKitConfig } from './utils';
@@ -43,7 +45,10 @@ export function defineConfig(
       ...(config.esbuildPlugins ?? []),
       ...(defaultConfig.esbuildPlugins ?? []),
     ],
-    plugins: [...(config.plugins ?? []), ...(defaultConfig.plugins ?? [])],
+    plugins: [
+      ...(config.plugins ?? []),
+      ...(defaultConfig.plugins ?? []),
+    ] as MaybeArray<CommandKitPlugin[]>,
     sourceMap: {
       ...defaultConfig.sourceMap,
       ...config.sourceMap,

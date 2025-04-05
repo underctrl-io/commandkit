@@ -1,0 +1,39 @@
+{
+  "name": "@commandkit/i18n",
+  "version": "0.1.0",
+  "description": "CommandKit plugin that adds command localizations backed by i18next",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underctrl-io/commandkit.git"
+  },
+  "keywords": [
+    "commandkit",
+    "redis",
+    "cache"
+  ],
+  "author": "twilight <hello@twlite.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/underctrl-io/commandkit/issues"
+  },
+  "homepage": "https://github.com/underctrl-io/commandkit#readme",
+  "dependencies": {
+    "i18next": "^24.2.3",
+    "i18next-fs-backend": "^2.6.0"
+  },
+  "devDependencies": {
+    "commandkit": "workspace:*",
+    "discord.js": "14",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.7.3"
+  }
+}

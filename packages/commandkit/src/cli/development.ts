@@ -18,7 +18,7 @@ async function buildAndStart(configPath: string, skipStart = false) {
   await buildApplication({
     configPath,
     isDev: true,
-    plugins: config.plugins.filter((p) => isCompilerPlugin(p)),
+    plugins: config.plugins.flat(2).filter((p) => isCompilerPlugin(p)),
     esbuildPlugins: config.esbuildPlugins,
   });
 

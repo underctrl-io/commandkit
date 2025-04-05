@@ -1,15 +1,12 @@
-import {
-  ApplicationCommandType,
-  REST,
-  Routes,
-  ApplicationCommandOptionType,
-  APIApplicationCommandSubcommandGroupOption,
-  APIApplicationCommandSubcommandOption,
-} from 'discord.js';
+import { ApplicationCommandType, REST, Routes } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { CommandData } from '../../types';
 import { Logger } from '../../logger/Logger';
-import { Command } from '../router/CommandsRouter';
+
+export interface PreRegisterCommandsEvent {
+  preventDefault(): void;
+  commands: CommandData[];
+}
 
 export class CommandRegistrar {
   private api = new REST();
@@ -80,11 +77,30 @@ export class CommandRegistrar {
    * Registers loaded commands.
    */
   public async register() {
+    const commands = this.getCommandsData();
+
+    let preRegistrationPrevented = false;
+    const preRegisterEvent: PreRegisterCommandsEvent = {
+      preventDefault() {
+        preRegistrationPrevented = true;
+      },
+      commands,
+    };
+
+    await this.commandkit.plugins.execute(async (ctx, plugin) => {
+      if (preRegistrationPrevented) return;
+      return plugin.onBeforeRegisterCommands(ctx, preRegisterEvent);
+    });
+
+    if (preRegistrationPrevented) return;
+
+    // we check this after the plugin event
+    // because plugins may be able to register commands
+    // before the client is ready
     if (!this.commandkit.client.isReady()) {
       throw new Error('Cannot register commands before the client is ready');
     }
 
-    const commands = this.getCommandsData();
     const guildCommands = commands
       .filter((command) => command.guilds?.filter(Boolean).length)
       .map((c) => ({
@@ -104,6 +120,19 @@ export class CommandRegistrar {
    */
   public async updateGlobalCommands(commands: CommandData[]) {
     if (!commands.length) return;
+
+    let prevented = false;
+    const preRegisterEvent: PreRegisterCommandsEvent = {
+      preventDefault() {
+        prevented = true;
+      },
+      commands,
+    };
+
+    await this.commandkit.plugins.execute(async (ctx, plugin) => {
+      if (prevented) return;
+      return plugin.onBeforeRegisterGlobalCommands(ctx, preRegisterEvent);
+    });
 
     try {
       const data = (await this.api.put(
@@ -128,6 +157,24 @@ export class CommandRegistrar {
    * Updates the guild commands.
    */
   public async updateGuildCommands(commands: CommandData[]) {
+    if (!commands.length) return;
+
+    let prevented = false;
+    const preRegisterEvent: PreRegisterCommandsEvent = {
+      preventDefault() {
+        prevented = true;
+      },
+      commands,
+    };
+    await this.commandkit.plugins.execute(async (ctx, plugin) => {
+      if (prevented) return;
+      return plugin.onBeforePrepareGuildCommandsRegistration(
+        ctx,
+        preRegisterEvent,
+      );
+    });
+    if (prevented) return;
+
     try {
       const guildCommandsMap = new Map<string, CommandData[]>();
 
@@ -148,6 +195,21 @@ export class CommandRegistrar {
       let count = 0;
 
       for (const [guild, guildCommands] of guildCommandsMap) {
+        let prevented = false;
+        const preRegisterEvent: PreRegisterCommandsEvent = {
+          preventDefault() {
+            prevented = true;
+          },
+          commands: guildCommands,
+        };
+
+        await this.commandkit.plugins.execute(async (ctx, plugin) => {
+          if (prevented) return;
+          return plugin.onBeforeRegisterGuildCommands(ctx, preRegisterEvent);
+        });
+
+        if (prevented) continue;
+
         const data = (await this.api.put(
           Routes.applicationGuildCommands(
             this.commandkit.client.user!.id,

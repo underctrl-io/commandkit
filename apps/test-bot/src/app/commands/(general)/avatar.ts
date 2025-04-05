@@ -20,10 +20,14 @@ export const command = {
 export async function userContextMenu(ctx: UserContextMenuCommandContext) {
   const target = ctx.interaction.targetUser;
 
+  const { t } = ctx.locale();
+
   await ctx.interaction.reply({
     embeds: [
       {
-        title: `${target.username}'s Avatar`,
+        title: t('avatar', {
+          user: target.username,
+        }),
         image: {
           url: target.displayAvatarURL({ size: 2048 }),
         },
@@ -35,11 +39,14 @@ export async function userContextMenu(ctx: UserContextMenuCommandContext) {
 
 export async function chatInput(ctx: SlashCommandContext) {
   const user = ctx.options.getUser('user') ?? ctx.interaction.user;
+  const { t } = ctx.locale();
 
   await ctx.interaction.reply({
     embeds: [
       {
-        title: `${user.username}'s Avatar`,
+        title: t('avatar', {
+          user: user.username,
+        }),
         image: {
           url: user.displayAvatarURL({ size: 2048 }),
         },
@@ -51,11 +58,14 @@ export async function chatInput(ctx: SlashCommandContext) {
 
 export async function message(ctx: MessageCommandContext) {
   const user = ctx.options.getUser('user') ?? ctx.message.author;
+  const { t } = ctx.locale();
 
   await ctx.message.reply({
     embeds: [
       {
-        title: `${user.username}'s Avatar`,
+        title: t('avatar', {
+          user: user.username,
+        }),
         image: {
           url: user.displayAvatarURL({ size: 2048 }),
         },

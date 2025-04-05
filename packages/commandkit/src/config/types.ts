@@ -1,10 +1,11 @@
+import { MaybeArray } from '../components';
 import { CommandKitPlugin } from '../plugins';
 
 export interface CommandKitConfig {
   /**
    * The plugins to use with CommandKit.
    */
-  plugins?: CommandKitPlugin[];
+  plugins?: MaybeArray<CommandKitPlugin[]>;
   /**
    * The esbuild plugins to use with CommandKit.
    */
