@@ -10,11 +10,12 @@ on:
       - 'packages/create-commandkit/**'
       - 'packages/legacy/**'
       - 'packages/redis/**'
+      - 'packages/i18n/**'
 
 jobs:
   release:
     name: 🚀 Publish Dev Build
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 7
     strategy:
       matrix:
@@ -24,6 +25,7 @@ jobs:
             create-commandkit,
             '@commandkit/legacy',
             '@commandkit/redis',
+            '@commandkit/i18n',
           ]
         include:
           - package: commandkit
@@ -34,6 +36,8 @@ jobs:
             path: packages/legacy
           - package: '@commandkit/redis'
             path: packages/redis
+          - package: '@commandkit/i18n'
+            path: packages/i18n
       fail-fast: false
     steps:
       - uses: pnpm/action-setup@v2
