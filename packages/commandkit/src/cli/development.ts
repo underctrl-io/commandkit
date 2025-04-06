@@ -36,6 +36,7 @@ const isEventSource = (p: string) =>
   p.replaceAll('\\', '/').includes('src/app/events');
 
 export async function bootstrapDevelopmentServer(configPath?: string) {
+  process.env.COMMANDKIT_BOOTSTRAP_MODE = 'development';
   const start = performance.now();
   const cwd = configPath || process.cwd();
   const configPaths = getPossibleConfigPaths(cwd);

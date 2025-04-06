@@ -8,6 +8,7 @@ import { isCompilerPlugin } from '../plugins';
 import { createSpinner } from './utils';
 
 export async function bootstrapProductionServer(configPath?: string) {
+  process.env.COMMANDKIT_BOOTSTRAP_MODE = 'production';
   const cwd = configPath || process.cwd();
   const config = await loadConfigFile(cwd);
   const mainFile = join(config.distDir, 'index.js');
@@ -22,6 +23,7 @@ export async function bootstrapProductionServer(configPath?: string) {
 }
 
 export async function createProductionBuild(configPath?: string) {
+  process.env.COMMANDKIT_BOOTSTRAP_MODE = 'production';
   const cwd = configPath || process.cwd();
   const config = await loadConfigFile(cwd);
 
