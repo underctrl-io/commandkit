@@ -27,7 +27,7 @@ export function run({ interaction }: SlashCommandProps) {
   const targetPetId = interaction.options.getString('pet');
   const targetPetObj = pets.find((pet) => pet.id === targetPetId);
 
-  interaction.reply(`Your pet name is ${targetPetObj.name}.`);
+  interaction.reply(`Your pet name is ${targetPetObj!.name}.`);
 }
 
 export function autocomplete({ interaction }: AutocompleteProps) {

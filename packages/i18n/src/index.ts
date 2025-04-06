@@ -1,23 +1,17 @@
 import { I18nPlugin, LocalizationPluginOptions } from './i18n';
 
 export function i18n(options?: LocalizationPluginOptions) {
-  const opt = Object.assign(
-    {},
-    {
-      options: {
-        disableFsBackend: false,
-        loadPath: '/app/locales/{{lng}}/{{ns}}.js',
-      },
-      i18nOptions: {
-        defaultNS: 'default',
-        fallbackLng: 'en-US',
-        load: 'currentOnly',
-        saveMissing: false,
-        partialBundledLanguages: true,
-      },
+  const opt = {
+    ...options,
+    i18nOptions: {
+      defaultNS: 'default',
+      fallbackLng: 'en-US',
+      load: 'currentOnly',
+      saveMissing: false,
+      partialBundledLanguages: true,
+      ...options?.i18nOptions,
     },
-    options,
-  );
+  } as LocalizationPluginOptions;
 
   const localization = new I18nPlugin(opt);
 

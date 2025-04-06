@@ -152,6 +152,8 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
   const isConfigUpdate = (path: string) => {
     const isConfig = configPaths.some((configPath) => path === configPath);
 
+    if (!isConfig) return false;
+
     console.log(
       colors.yellowBright(
         'It seems like commandkit config file was updated, please restart the server manually to apply changes.',

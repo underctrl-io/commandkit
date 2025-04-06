@@ -18,6 +18,7 @@ import {
   PreparedAppCommandExecution,
   CommandBuilderLike,
   PreRegisterCommandsEvent,
+  CommandKitHMREvent,
 } from 'commandkit';
 import FsBackend from 'i18next-fs-backend';
 import { basename, extname, join } from 'path';
@@ -27,7 +28,7 @@ import { existsSync, writeFileSync } from 'fs';
 import { CommandTranslation, CommandTranslationMetadata } from './types';
 import { COMMAND_METADATA_KEY, DISCORD_LOCALES } from './constants';
 import { applyTranslations } from './utils';
-import { readdir } from 'fs/promises';
+import { readdir, readFile } from 'fs/promises';
 
 export type Awaitable<T> = Promise<T> | T;
 
@@ -44,21 +45,6 @@ export interface LocalizationPluginOptions {
    * specified.
    */
   plugins?: Array<LocalizationModule | DynamicLocalizationModule>;
-  /**
-   * The options to use
-   */
-  options?: {
-    /**
-     * Whether to disable internal i18next fs backend.
-     * @default false
-     */
-    disableFsBackend?: boolean;
-    /**
-     * The path to load the translation files from.
-     * @default '/app/locales/{{lng}}/{{ns}}.js'
-     */
-    loadPath?: string;
-  };
   /**
    * The i18next initialization options.
    * @see https://www.i18next.com/overview/configuration-options
@@ -119,9 +105,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
   public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
     this.i18n = i18next;
 
-    if (!this.options.options?.disableFsBackend) {
-      this.i18n.use(FsBackend);
-    }
+    this.i18n.use(FsBackend);
 
     if (this.options.plugins?.length) {
       for (const plugin of this.options.plugins) {
@@ -140,21 +124,18 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
     const { namespaces, languages } = await this.scanLocaleDirectory();
 
     await this.i18n.init({
-      initAsync: true,
+      initAsync: false,
       fallbackLng: 'en-US',
       debug,
       ns: namespaces,
       preload: languages,
       load: 'all',
-      initImmediate: false,
       interpolation: {
         escapeValue: false,
         skipOnVariables: false,
       },
       ...this.options.i18nOptions,
-      ...(!this.options.options?.disableFsBackend && {
-        backend: this.getBackendOptions(),
-      }),
+      backend: this.getBackendOptions(),
     });
 
     // Check if we have any languages available
@@ -172,14 +153,11 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
   }
 
   private getLoadPath() {
-    return join(
-      getCurrentDirectory(),
-      this.options.options?.loadPath ?? '/app/locales/{{lng}}/{{ns}}.js',
-    );
+    return join(getCurrentDirectory(), '/app/locales/{{lng}}/{{ns}}.json');
   }
 
   private async scanLocaleDirectory() {
-    const endPattern = /{{lng}}(\/|\\){{ns}}.(c|m)?js(on)?$/;
+    const endPattern = /{{lng}}(\/|\\){{ns}}.json$/;
     const localesPath = this.getLoadPath();
     const scanDirTarget = localesPath.replace(endPattern, '');
 
@@ -214,7 +192,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
           if (file.isFile()) {
             const ext = extname(file.name);
 
-            if (!/\.js(on)?$/.test(ext)) continue;
+            if (!/\.json$/.test(ext)) continue;
 
             const name = basename(file.name, ext);
             namespaces.add(name);
@@ -231,7 +209,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
       } else if (file.isFile()) {
         const ext = extname(file.name);
 
-        if (!/\.js(on)?$/.test(ext)) continue;
+        if (!/\.json$/.test(ext)) continue;
 
         const name = basename(file.name, ext);
         namespaces.add(name);
@@ -248,27 +226,40 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
     };
   }
 
+  public async performHMR(
+    ctx: CommandKitPluginRuntime,
+    event: CommandKitHMREvent,
+  ): Promise<void> {
+    const targetLocation = event.path;
+    const localeDir = join(process.cwd(), '/src/app/locales');
+
+    if (!targetLocation.startsWith(localeDir)) return;
+
+    event.accept();
+    event.preventDefault();
+
+    const { languages, namespaces } = await this.scanLocaleDirectory();
+
+    await this.i18n.reloadResources(languages, namespaces);
+
+    await ctx.commandkit.reloadCommands();
+  }
+
   private async loadMetadata(
     filePath: string,
     locale: string,
     name: string,
   ): Promise<void> {
     try {
-      const translationResource = require(filePath);
-      // const translationResource = await import(
-      //   pathToFileURL(filePath).toString()
-      // )
-      //   .then((mod) => mod.default || mod, console.error)
-      //   .catch(() => null);
-
+      const translationResource = JSON.parse(
+        await readFile(filePath, {
+          encoding: 'utf8',
+        }),
+      );
       const translation: CommandTranslation =
         translationResource.default || translationResource;
 
       if (!translation) return;
-
-      if (translation.translations) {
-        this.i18n.addResources(locale, name, translation.translations);
-      }
 
       const metadata = translation[COMMAND_METADATA_KEY];
 
@@ -286,10 +277,6 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
         const path = loadPath
           .replace(/{{lng}}/g, lng)
           .replace(/{{ns}}/g, namespace);
-
-        if (!existsSync(path)) {
-          return path.replace(/\.js$/, '.json');
-        }
 
         return path;
       },
