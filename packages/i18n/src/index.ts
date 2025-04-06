@@ -17,3 +17,5 @@ export function i18n(options?: LocalizationPluginOptions) {
 
   return localization;
 }
+
+export * from './hooks';
