@@ -15,12 +15,21 @@ CommandKit is a library that makes it easy to handle commands and events in your
 ## Features
 
 - Beginner friendly 🚀
-- Slash + context menu commands support ✅
-- Multiple dev guilds, users, & roles support 🤝
-- Automatic command updates 🤖
-- REST registration behaviour 📍
-- Easy command line interface 🖥️
-- And much more! 🧪
+- Suitable for both beginners and advanced users 👶👨‍💻
+- Slash + context menu commands + prefix commands support ✅
+- Automatic command registration and updates 🤖
+- Command middlewares for easy command management 🛠️
+- Localization support through `@commandkit/i18n` plugin 🌍
+- Plugin system to extend functionality 🔌
+- Built-in command line interface for easy development 🖥️
+- Out-of-the-box support for TypeScript and JavaScript 📜
+- Built-in customizable cache system for speedy data storage and retrieval 🗄️
+- User installable/guild scoped commands 🔧
+- Custom events support 🔔
+- JSX support for declaring Discord interaction components and modals 🎨
+- Easy to use interaction components and modals system (forget about collectors) 🧩
+- Less boilerplate code, more productivity 💪
+- and much more...
 
 ## Documentation
 

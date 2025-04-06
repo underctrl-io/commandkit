@@ -17,14 +17,13 @@ import {
   CommandSource,
   PreparedAppCommandExecution,
   CommandBuilderLike,
-  PreRegisterCommandsEvent,
   CommandKitHMREvent,
 } from 'commandkit';
 import FsBackend from 'i18next-fs-backend';
 import { basename, extname, join } from 'path';
 import { FsBackendOptions } from 'i18next-fs-backend';
 import { Locale } from 'discord.js';
-import { existsSync, writeFileSync } from 'fs';
+import { existsSync } from 'fs';
 import { CommandTranslation, CommandTranslationMetadata } from './types';
 import { COMMAND_METADATA_KEY, DISCORD_LOCALES } from './constants';
 import { applyTranslations } from './utils';
@@ -314,17 +313,5 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
     }
 
     return data;
-  }
-
-  public async onBeforeRegisterCommands(
-    ctx: CommandKitPluginRuntime,
-    event: PreRegisterCommandsEvent,
-  ): Promise<void> {
-    event.preventDefault();
-
-    writeFileSync(
-      `./.commandkit/cmd.json`,
-      JSON.stringify(event.commands, null, 2),
-    );
   }
 }

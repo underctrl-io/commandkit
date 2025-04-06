@@ -86,6 +86,7 @@ export async function showInformation() {
     '@commandkit/redis',
     '@commandkit/legacy',
     '@commandkit/devtools',
+    '@commandkit/i18n',
   ];
 
   const runtimeName: string = (() => {
