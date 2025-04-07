@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import colors from '../utils/colors';
 import { ResolvedCommandKitConfig } from '../config/utils';
 import { generateTypesPackage } from '../utils/types-package';
+import { execSync } from 'node:child_process';
 
 let ts: typeof import('typescript') | undefined;
 
@@ -42,12 +43,63 @@ async function ensureTypeScript(target: string) {
   return true;
 }
 
+let packageManager: string;
+
+function detectPackageManager() {
+  if (packageManager) return packageManager;
+
+  const lockfiles = {
+    'yarn.lock': 'yarn',
+    'pnpm-lock.yaml': 'pnpm',
+    'package-lock.json': 'npm',
+    'bun.lock': 'bun',
+    'bun.lockb': 'bun',
+  };
+
+  for (const [lockfile, manager] of Object.entries(lockfiles)) {
+    if (fs.existsSync(join(process.cwd(), lockfile))) {
+      packageManager = manager;
+      break;
+    }
+  }
+
+  if (!packageManager) {
+    packageManager = 'npm';
+  }
+
+  return packageManager;
+}
+
 export async function loadTypeScript(e?: string) {
   if (ts) return ts;
 
   try {
     ts = await import('typescript');
-  } catch {
+  } catch (e) {
+    if (e instanceof Error && 'code' in e && e.code === 'MODULE_NOT_FOUND') {
+      try {
+        const packageManager = detectPackageManager();
+
+        execSync(`${packageManager} add typescript`, {
+          stdio: 'inherit',
+          cwd: process.cwd(),
+        });
+
+        console.log(
+          colors.cyan(
+            `TypeScript has been installed automatically, restarting...`,
+          ),
+        );
+
+        ts = await import('typescript');
+
+        return ts;
+      } catch {
+        panic(
+          'TypeScript is not installed and could not be installed automatically. Please install it manually.',
+        );
+      }
+    }
     panic(e || 'TypeScript must be installed to use TypeScript config files.');
   }
 

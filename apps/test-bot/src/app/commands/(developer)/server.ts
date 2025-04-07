@@ -8,7 +8,7 @@ import {
 export const command: CommandData = {
   name: 'server',
   description: 'server command',
-  guilds: [process.env.DEV_GUILD_ID],
+  guilds: [process.env.DEV_GUILD_ID!],
 };
 
 export const chatInput: SlashCommand = async (ctx) => {

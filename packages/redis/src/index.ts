@@ -18,7 +18,7 @@ export type DeserializeFunction = (value: string) => Awaitable<any>;
  * });
  */
 export class RedisCache extends CacheProvider {
-  protected redis: Redis;
+  public redis: Redis;
 
   /**
    * Serialize function used to serialize values before storing them in the cache.

@@ -20,6 +20,8 @@ import { CommandKitEventsChannel } from './events/CommandKitEventsChannel';
 import { isRuntimePlugin } from './plugins';
 import { generateTypesPackage } from './utils/types-package';
 import { Logger } from './logger/Logger';
+import { GenericFunction } from './context/async-context';
+import { AsyncFunction } from './cache';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
@@ -28,6 +30,49 @@ export interface CommandKitConfiguration {
 
 // @ts-ignore
 export let commandkit: CommandKit;
+
+export type BootstrapFunction =
+  | GenericFunction<[CommandKit]>
+  | AsyncFunction<[CommandKit]>;
+
+const bootstrapHooks = new Set<BootstrapFunction>();
+const onApplicationBootstrapHooks = new Set<BootstrapFunction>();
+
+/**
+ * Registers a bootstrap hook that will be called when the CommandKit instance is created.
+ * This is useful for plugins that need to run some code after the CommandKit instance is fully initialized.
+ * Note that not all commandkit dependiencs are available at this point. It is recommended to use the `onApplicationBootstrap` hook instead,
+ * if you need access to the commandkit dependencies.
+ * @param fn The bootstrap function to register.
+ * @example ```ts
+ * import { onBootstrap } from 'commandkit';
+ *
+ * onBootstrap(async (commandkit) => {
+ *   // Do something with the commandkit instance
+ * })
+ * ```
+ */
+export function onBootstrap<F extends BootstrapFunction>(fn: F): void {
+  bootstrapHooks.add(fn);
+}
+
+/**
+ * Registers a bootstrap hook that will be called when the CommandKit instance is created.
+ * This is useful for plugins that need to run some code after the CommandKit instance is fully initialized.
+ * @param fn The bootstrap function to register.
+ * @example ```ts
+ * import { onApplicationBootstrap } from 'commandkit';
+ *
+ * onApplicationBootstrap(async (commandkit) => {
+ *   // Do something with the commandkit instance
+ * })
+ * ```
+ */
+export function onApplicationBootstrap<F extends BootstrapFunction>(
+  fn: F,
+): void {
+  onApplicationBootstrapHooks.add(fn);
+}
 
 export class CommandKit extends EventEmitter {
   #started = false;
@@ -90,6 +135,37 @@ export class CommandKit extends EventEmitter {
 
     // @ts-ignore
     commandkit = CommandKit.instance;
+
+    this.#bootstrapHooks();
+  }
+
+  async #bootstrapHooks() {
+    for (const hook of bootstrapHooks) {
+      try {
+        await hook(this);
+      } catch (e) {
+        Logger.error('Error while executing bootstrap hook: ', e);
+      } finally {
+        bootstrapHooks.delete(hook);
+      }
+    }
+
+    // force clear just in case we missed something
+    bootstrapHooks.clear();
+  }
+
+  async #applicationBootstrapHooks() {
+    for (const hook of onApplicationBootstrapHooks) {
+      try {
+        await hook(this);
+      } catch (e) {
+        Logger.error('Error while executing application bootstrap hook: ', e);
+      } finally {
+        onApplicationBootstrapHooks.delete(hook);
+      }
+    }
+    // force clear just in case we missed something
+    onApplicationBootstrapHooks.clear();
   }
 
   /**
@@ -151,6 +227,8 @@ export class CommandKit extends EventEmitter {
     }
 
     this.#started = true;
+
+    await this.#applicationBootstrapHooks();
   }
 
   /**

@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { generateTypesPackage } from '../utils/types-package';
 
 /**
  * Creates a command line interface for CommandKit.
@@ -84,11 +85,12 @@ export async function bootstrapCommandkitCLI(
       }
     });
 
-  await program.parseAsync(argv, options);
-
   const types = join(process.cwd(), 'node_modules', 'commandkit-types');
 
   if (!existsSync(types)) {
     await mkdir(types, { recursive: true }).catch(() => {});
+    await generateTypesPackage(true).catch(() => {});
   }
+
+  await program.parseAsync(argv, options);
 }
