@@ -1,5 +1,5 @@
 import { IOType, spawn } from 'node:child_process';
-import { DevEnv } from './env';
+import { DevEnv, ProdEnv } from './env';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { panic } from './common';
@@ -33,7 +33,7 @@ export function createAppProcess(
     {
       cwd,
       windowsHide: true,
-      env: DevEnv(),
+      env: isDev ? DevEnv() : ProdEnv(),
       stdio,
     },
   );

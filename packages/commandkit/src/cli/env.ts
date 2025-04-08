@@ -1,30 +1,28 @@
-import { join } from 'node:path';
-
-export function DevEnv() {
-  return Object.assign({}, process.env, {
+export function DevEnv(_static = false) {
+  const common = {
     NODE_ENV: 'development',
     COMMANDKIT_IS_DEV: 'true',
-  });
+  };
+
+  if (_static) return Object.assign({}, common);
+
+  return Object.assign({}, process.env, common);
 }
 
-export function ProdEnv() {
-  return Object.assign({}, process.env, {
+export function ProdEnv(_static = false) {
+  const common = {
     NODE_ENV: 'production',
     COMMANDKIT_IS_DEV: 'false',
-  });
+  };
+
+  if (_static) return Object.assign({}, common);
+
+  return Object.assign({}, process.env, common);
 }
 
-export const CommonEnvFiles = ['.env'];
-export const DevEnvFiles = [
-  '.env.development',
-  '.env.development.local',
-  '.env.local',
-];
-export const ProdEnvFiles = [
-  '.env.production',
-  '.env.production.local',
-  '.env.local',
-];
+export const CommonEnvFiles = ['.env', '.env.local'];
+export const DevEnvFiles = ['.env.development', '.env.development.local'];
+export const ProdEnvFiles = ['.env.production', '.env.production.local'];
 
 export const devEnvFileArgs = [...CommonEnvFiles, ...DevEnvFiles];
 

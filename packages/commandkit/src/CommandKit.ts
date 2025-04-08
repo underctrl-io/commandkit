@@ -212,12 +212,13 @@ export class CommandKit extends EventEmitter {
         return plugin.onBeforeClientLogin?.(ctx);
       });
 
-      await this.options.client.login(
+      const botToken =
         token ??
-          this.options.client.token ??
-          process.env.TOKEN ??
-          process.env.DISCORD_TOKEN,
-      );
+        this.options.client.token ??
+        process.env.TOKEN ??
+        process.env.DISCORD_TOKEN;
+
+      await this.options.client.login(botToken);
 
       await this.plugins.execute((ctx, plugin) => {
         return plugin.onAfterClientLogin?.(ctx);

@@ -7,7 +7,7 @@ import {
 import { loadConfigFile } from '../config/loader';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { devEnvFileArgs, prodEnvFileArgs } from './env';
+import { DevEnv, devEnvFileArgs, ProdEnv, prodEnvFileArgs } from './env';
 import { rimraf } from 'rimraf';
 import { performTypeCheck } from './type-checker';
 import { copyLocaleFiles } from './common';
@@ -72,6 +72,7 @@ export async function buildApplication({
       sourcemap: true,
       target: 'node16',
       outDir: dest,
+      env: (isDev ? DevEnv(true) : ProdEnv(true)) as Record<string, string>,
       entry: [
         'src',
         `!${config.distDir}`,
