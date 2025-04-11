@@ -80,8 +80,8 @@ export const chatInput: SlashCommand = async (ctx) => {
   // you can also pass a discord.js locale enum to use custom locale
   // ctx.locale("fr") // uses french locale
   const { t, i18n } = ctx.locale()
-  //      ^ TFunction
-  //         ^ i18next instance
+  //      |  |__ i18next instance
+  //      |_____ TFunction
 
   ctx.interaction.reply({
     content: t("response", { latency: client.ping }),
