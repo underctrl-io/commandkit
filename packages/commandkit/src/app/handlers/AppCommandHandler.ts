@@ -109,10 +109,11 @@ export class AppCommandHandler {
   }
 
   public printBanner() {
+    const uncategorized = crypto.randomUUID();
     // Group commands by category
     const categorizedCommands = this.getCommandsArray().reduce(
       (acc, cmd) => {
-        const category = cmd.command.category || 'uncategorized';
+        const category = cmd.command.category || uncategorized;
         acc[category] = acc[category] || [];
         acc[category].push(cmd);
         return acc;
@@ -136,7 +137,7 @@ export class AppCommandHandler {
       const categoryPrefix = isLastCategory ? '└─' : '├─';
 
       // Print category header (skip for uncategorized)
-      if (category !== 'uncategorized') {
+      if (category !== uncategorized) {
         console.log(colors.cyan(`${categoryPrefix} ${colors.bold(category)}`));
       }
 
@@ -144,7 +145,7 @@ export class AppCommandHandler {
       commands.forEach((cmd, cmdIndex) => {
         const isLastCommand = cmdIndex === commands.length - 1;
         const commandPrefix =
-          category !== 'uncategorized'
+          category !== uncategorized
             ? (isLastCategory ? '   ' : '│  ') + (isLastCommand ? '└─' : '├─')
             : isLastCommand
               ? '└─'
