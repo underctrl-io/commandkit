@@ -10,8 +10,7 @@ const generate = _generate.default || _generate;
 
 const IMPORT_PATH = 'commandkit';
 const DIRECTIVE = 'use cache';
-const CACHE_IDENTIFIER =
-  'zzz_commandkit_secret_internal_use_cache_wrapper_do_not_use_or_you_will_be_fired';
+const CACHE_IDENTIFIER = 'zxcvbnm____';
 
 const generateRandomString = (length = 6) => {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

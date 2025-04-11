@@ -306,9 +306,7 @@ export function isCachedFunction(fn: GenericFunction): boolean {
 }
 
 /**
- * **WARNING!!!! DO NOT USE THIS UNLESS YOU KNOW WHAT YOU ARE DOING!**
  * @private
  * @internal
  */
-export const zzz_commandkit_secret_internal_use_cache_wrapper_do_not_use_or_you_will_be_fired: any =
-  useCache;
+export const zxcvbnm____: any = useCache;
