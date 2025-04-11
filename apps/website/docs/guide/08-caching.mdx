@@ -44,10 +44,10 @@ Let's build a simple XP system using CommandKit's caching feature. We'll create:
 ### XP Command
 
 ```js
-import { SlashCommandProps, CommandData, cacheTag } from 'commandkit';
+import { SlashCommand, CommandData, cacheTag } from 'commandkit';
 import { database } from '../database';
 
-export const data = {
+export const command: CommandData = {
   name: 'xp',
   description: 'Check your XP',
 };
@@ -63,7 +63,7 @@ async function getUserXP(guildId, userId) {
   return xp;
 }
 
-export async function run({ interaction }) {
+export const chatInput: SlashCommand = async ({ interaction }) => {
   await interaction.deferReply();
 
   const xp = await getUserXP(interaction.guildId, interaction.user.id);
@@ -124,10 +124,8 @@ const fetchPokemon = cache(
 async function fetchUserProfile(userId) {
   'use cache';
 
-  cacheTag({
-    tag: `user-${userId}`,
-    ttl: '1h',
-  });
+  cacheTag(`user-${userId}`);
+  cacheLife('1h');
 
   return database.getUserProfile(userId);
 }
@@ -231,27 +229,23 @@ By default, the cached data will be stored for 15 minutes unless `revalidate()` 
 
 ### Setting Cache Parameters
 
-When using the `"use cache"` directive, you can use `cacheTag()` to set cache parameters:
+When using the `"use cache"` directive, you can use `cacheTag()` or `cacheLife()` to set cache parameters:
 
 ```js
-import { cacheTag } from 'commandkit';
+import { cacheTag, cacheLife } from 'commandkit';
 
 async function fetchData() {
   'use cache';
 
-  cacheTag({
-    tag: 'user-data', // cache tag name
-    ttl: '1m', // TTL as string or number (in ms)
-  });
-  // Or just set the tag name
-  cacheTag('user-data');
+  cacheTag('user-data'); // cache tag name
+  cacheLife('1m'); // TTL as string or number (in ms)
 
   const data = await fetch('https://my-example-api.com/data');
   return data.json();
 }
 ```
 
-You can also set just the TTL using `cacheLife`:
+You can set the TTL using `cacheLife`:
 
 ```js
 import { cacheLife } from 'commandkit';
