@@ -1,4 +1,4 @@
-import { CommonPluginRuntime } from './runtime/runtime';
+import { CommonPluginRuntime } from './plugin-runtime/runtime';
 
 export type PluginOptions = Record<string, any>;
 

@@ -3,10 +3,10 @@ import {
   OnLoadArgs,
   OnResolveArgs,
   OnResolveResult,
-} from './runtime/types';
+} from './plugin-runtime/types';
 import { PluginCommon, PluginOptions } from './PluginCommon';
 import { MaybeFalsey } from './types';
-import { CompilerPluginRuntime } from './runtime/CompilerPluginRuntime';
+import { CompilerPluginRuntime } from './plugin-runtime/CompilerPluginRuntime';
 
 export interface PluginTransformParameters {
   args: OnLoadArgs;

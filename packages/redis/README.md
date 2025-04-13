@@ -32,3 +32,22 @@ async function getCachedData() {
   return data;
 }
 ```
+
+## Manual configuration
+
+If you want to configure the Redis client manually, you can do so by not registering this plugin and instead updating the cache provider at runtime:
+
+```ts
+import { onApplicationBootstrap } from 'commandkit';
+import { RedisCacheProvider } from '@commandkit/redis';
+import { Redis } from 'ioredis';
+
+// configure the redis client as needed
+const redis = new Redis();
+
+onApplicationBootstrap(async (commandkit) => {
+  const redisProvider = new RedisCacheProvider(redis);
+
+  commandkit.setCacheProvider(redisProvider)
+})
+```

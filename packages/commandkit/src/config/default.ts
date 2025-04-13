@@ -1,5 +1,5 @@
-import { CachePlugin } from '../plugins/runtime/builtin/cache/CachePlugin';
-import { MacroPlugin } from '../plugins/runtime/builtin/MacroPlugin';
+import { CachePlugin } from '../plugins/plugin-runtime/builtin/cache/CachePlugin';
+import { MacroPlugin } from '../plugins/plugin-runtime/builtin/MacroPlugin';
 import { ResolvedCommandKitConfig } from './utils';
 
 export const defaultConfig: ResolvedCommandKitConfig = {

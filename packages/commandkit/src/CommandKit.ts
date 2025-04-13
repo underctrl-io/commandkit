@@ -11,7 +11,7 @@ import { join } from 'node:path';
 import { AppCommandHandler } from './app/handlers/AppCommandHandler';
 import { CommandsRouter, EventsRouter } from './app/router';
 import { AppEventsHandler } from './app/handlers/AppEventsHandler';
-import { CommandKitPluginRuntime } from './plugins/runtime/CommandKitPluginRuntime';
+import { CommandKitPluginRuntime } from './plugins/plugin-runtime/CommandKitPluginRuntime';
 import { loadConfigFile } from './config/loader';
 import { COMMANDKIT_IS_DEV } from './utils/constants';
 import { registerDevHooks } from './utils/dev-hooks';

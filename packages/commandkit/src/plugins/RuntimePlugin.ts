@@ -1,6 +1,6 @@
 import { Interaction, Message, PartialMessage } from 'discord.js';
 import { PluginCommon, PluginOptions } from './PluginCommon';
-import type { CommandKitPluginRuntime } from './runtime/CommandKitPluginRuntime';
+import type { CommandKitPluginRuntime } from './plugin-runtime/CommandKitPluginRuntime';
 import { CommandBuilderLike, PreparedAppCommandExecution } from '../app';
 import { CommandKitEnvironment } from '../context/environment';
 import { CommandKitHMREvent } from '../utils/dev-hooks';
