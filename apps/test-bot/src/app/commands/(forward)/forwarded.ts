@@ -1,11 +1,11 @@
-import { CommandData, MessageCommand, SlashCommand } from 'commandkit';
+import { CommandData, MessageCommand, ChatInputCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'forwarded',
   description: 'Forwarded command response',
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   if (!ctx.forwarded) {
     return ctx.interaction.reply('This command was used directly');
   }

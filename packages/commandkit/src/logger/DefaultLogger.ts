@@ -14,7 +14,7 @@ const execHandlerKind = {
   autocomplete: 'Autocomplete',
   messageContextMenu: 'MessageContextMenu',
   userContextMenu: 'UserContextMenu',
-  chatInput: 'SlashCommand',
+  chatInput: 'ChatInputCommand',
   message: 'Message',
 };
 

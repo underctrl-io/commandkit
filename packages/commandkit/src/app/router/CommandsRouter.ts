@@ -134,6 +134,16 @@ export class CommandsRouter {
         if (this.isCommand(entry.name) || this.isMiddleware(entry.name)) {
           await this.handle(entry, category);
         }
+      } else if (
+        entry.isDirectory() &&
+        this.isCategory(entry.name) &&
+        category
+      ) {
+        // nested category
+        const nestedCategory = this.isCategory(entry.name)
+          ? `${category}:${entry.name.slice(1, -1)}`
+          : null;
+        await this.traverse(join(path, entry.name), nestedCategory);
       }
 
       // TODO: handle subcommands

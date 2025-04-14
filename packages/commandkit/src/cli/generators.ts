@@ -17,14 +17,14 @@ function determineExtension() {
 }
 
 function TS_COMMAND_SOURCE(name: string) {
-  return `import type { CommandData, SlashCommand, MessageCommand } from 'commandkit';
+  return `import type { CommandData, ChatInputCommand, MessageCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: '${name}',
   description: '${name} command',
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   await ctx.interaction.reply('Hello from ${name}!');
 };
 
@@ -44,7 +44,7 @@ export const command = {
 };
 
 /**
- * @type {import('commandkit').SlashCommand}
+ * @type {import('commandkit').ChatInputCommand}
  */
 export const chatInput = async (ctx) => {
   await ctx.interaction.reply('Hello from ${name}!');

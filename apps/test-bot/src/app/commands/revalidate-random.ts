@@ -1,11 +1,11 @@
-import { SlashCommandContext, CommandData, revalidate } from 'commandkit';
+import { ChatInputCommandContext, CommandData, revalidate } from 'commandkit';
 
 export const command: CommandData = {
   name: 'revalidate-random',
   description: 'This is a random command invalidation.',
 };
 
-export async function chatInput({ interaction }: SlashCommandContext) {
+export async function chatInput({ interaction }: ChatInputCommandContext) {
   await interaction.deferReply();
 
   const revalidated = await revalidate<number>('random');

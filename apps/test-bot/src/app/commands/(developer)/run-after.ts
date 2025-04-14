@@ -1,12 +1,12 @@
-import { CommandData, afterCommand, SlashCommand } from 'commandkit';
+import { CommandData, after, ChatInputCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'run-after',
   description: 'This is a run-after command',
 };
 
-export const chatInput: SlashCommand = async ({ interaction }) => {
-  afterCommand((env) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  after((env) => {
     console.log(
       `The command ${interaction.commandName} was executed successfully in ${env
         .getExecutionTime()

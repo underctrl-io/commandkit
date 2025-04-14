@@ -6,7 +6,7 @@ import {
 import {
   CommandData,
   ButtonKit,
-  SlashCommandContext,
+  ChatInputCommandContext,
   AutocompleteCommandContext,
 } from 'commandkit';
 
@@ -43,7 +43,10 @@ export async function autocomplete({
   interaction.respond(filtered);
 }
 
-export async function chatInput({ interaction, client }: SlashCommandContext) {
+export async function chatInput({
+  interaction,
+  client,
+}: ChatInputCommandContext) {
   if (!interaction.channel) return;
 
   const button = new ButtonKit()

@@ -24,14 +24,6 @@ export class AppCommandRunner {
     prepared: PreparedAppCommandExecution,
     source: Interaction | Message,
   ) {
-    if (
-      source instanceof Message &&
-      (source.editedTimestamp || source.partial)
-    ) {
-      // TODO: handle message edit
-      return;
-    }
-
     const { commandkit } = this.handler;
 
     const executionMode = this.getExecutionMode(source);
@@ -183,11 +175,17 @@ export class AppCommandRunner {
     await env.runDeferredFunctions();
 
     env.clearAllDeferredFunctions();
+
+    // plugins may have their own deferred function, useful for cleanup or post-command analytics
+    await this.handler.commandkit.plugins.execute(async (ctx, plugin) => {
+      await plugin.onAfterCommand(ctx, env);
+    });
   }
 
   public getExecutionMode(source: Interaction | Message): CommandExecutionMode {
     if (source instanceof Message) return CommandExecutionMode.Message;
-    if (source.isChatInputCommand()) return CommandExecutionMode.SlashCommand;
+    if (source.isChatInputCommand())
+      return CommandExecutionMode.ChatInputCommand;
     if (source.isAutocomplete()) {
       return CommandExecutionMode.Autocomplete;
     }

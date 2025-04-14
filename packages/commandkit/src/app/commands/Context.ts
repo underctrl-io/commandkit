@@ -8,20 +8,17 @@ import {
   UserContextMenuCommandInteraction,
   Client,
   Awaitable,
+  Guild,
+  TextBasedChannel,
 } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import {
   MessageCommandOptions,
   MessageCommandParser,
 } from './MessageCommandParser';
-import {
-  afterCommand,
-  cancelAfterCommand,
-  CommandKitEnvironment,
-} from '../../context/environment';
+import { CommandKitEnvironment } from '../../context/environment';
 import { GenericFunction, getContext } from '../../context/async-context';
 import { exitMiddleware, redirect } from '../middleware/signals';
-import { isCachedFunction } from '../../cache';
 import {
   LoadedCommand,
   ResolvableCommand,
@@ -29,7 +26,7 @@ import {
 } from '../handlers/AppCommandHandler';
 
 export const CommandExecutionMode = {
-  SlashCommand: 'chatInput',
+  ChatInputCommand: 'chatInput',
   MessageContextMenu: 'messageContextMenu',
   UserContextMenu: 'userContextMenu',
   Autocomplete: 'autocomplete',
@@ -70,7 +67,7 @@ export type MessageCommandMiddlewareContext = MiddlewareContext<'message'>;
 export type InteractionCommandMiddlewareContext = MiddlewareContext<
   'autocomplete' | 'chatInput' | 'messageContextMenu' | 'userContextMenu'
 >;
-export type SlashCommandContext = Context<'chatInput'>;
+export type ChatInputCommandContext = Context<'chatInput'>;
 export type SlashCommandMiddlewareContext = MiddlewareContext<'chatInput'>;
 export type AutocompleteCommandContext = Context<'autocomplete'>;
 export type AutocompleteCommandMiddlewareContext =
@@ -99,7 +96,7 @@ export type AnyCommandExecute<ContextType extends Context = Context> = (
   ctx: ContextType,
 ) => Awaitable<unknown>;
 
-export type SlashCommand = AnyCommandExecute<SlashCommandContext>;
+export type ChatInputCommand = AnyCommandExecute<ChatInputCommandContext>;
 export type AutocompleteCommand = AnyCommandExecute<AutocompleteCommandContext>;
 export type MessageContextMenuCommand =
   AnyCommandExecute<MessageContextMenuCommandContext>;
@@ -124,6 +121,26 @@ export class Context<
    * The message that triggered the command.
    */
   public readonly message: ContextParameters<ExecutionMode>['message'];
+
+  /**
+   * The guild where the command was triggered.
+   */
+  public readonly guild!: Guild | null;
+
+  /**
+   * The guild ID where the command was triggered.
+   */
+  public readonly guildId!: string | null;
+
+  /**
+   * The channel where the command was triggered.
+   */
+  public readonly channel!: TextBasedChannel | null;
+
+  /**
+   * The channel id where the command was triggered.
+   */
+  public readonly channelId!: string | null;
 
   /**
    * The client instance.
@@ -154,6 +171,20 @@ export class Context<
     this.client = commandkit.client;
     this.#store = config.store ?? new Map();
     this.command = config.command;
+
+    if (config.interaction) {
+      this.guild = config.interaction.guild;
+      this.guildId = config.interaction.guildId;
+      this.channel = config.interaction.channel;
+      this.channelId = config.interaction.channelId;
+    }
+
+    if (config.message) {
+      this.guild = config.message.guild;
+      this.guildId = config.message.guildId;
+      this.channel = config.message.channel;
+      this.channelId = config.message.channelId;
+    }
 
     if (this.config.environment) {
       this.config.environment.setContext(this);
@@ -254,12 +285,34 @@ export class Context<
     return this.config.executionMode;
   }
 
+  // /**
+  //  * The guild where this command was triggered.
+  //  */
+  // public get guild() {
+  //   if (this.isInteraction()) {
+  //     return this.interaction.guild;
+  //   } else {
+  //     return (<MessageCommandContext>this).message.guild;
+  //   }
+  // }
+
+  // /**
+  //  * The guild ID where this command was triggered.
+  //  */
+  // public get guildId() {
+  //   if (this.isInteraction()) {
+  //     return this.interaction.guildId;
+  //   } else {
+  //     return (<MessageCommandContext>this).message.guildId;
+  //   }
+  // }
+
   /**
    * Whether the command was triggered by an interaction.
    */
   public isInteraction(): this is InteractionCommandContext {
     return (
-      this.executionMode === CommandExecutionMode.SlashCommand ||
+      this.executionMode === CommandExecutionMode.ChatInputCommand ||
       this.executionMode === CommandExecutionMode.Autocomplete ||
       this.executionMode === CommandExecutionMode.MessageContextMenu ||
       this.executionMode === CommandExecutionMode.UserContextMenu
@@ -269,8 +322,8 @@ export class Context<
   /**
    * Whether the command was triggered by a slash command interaction.
    */
-  public isSlashCommand(): this is SlashCommandContext {
-    return this.executionMode === CommandExecutionMode.SlashCommand;
+  public isChatInputCommand(): this is ChatInputCommandContext {
+    return this.executionMode === CommandExecutionMode.ChatInputCommand;
   }
 
   /**
@@ -396,31 +449,6 @@ export class Context<
    */
   public exit() {
     exitMiddleware();
-  }
-
-  /**
-   * Defers the given function to be executed after this command's execution.
-   * @param fn The function to defer.
-   * @returns A unique identifier for the deferred function.
-   */
-  public defer(fn: GenericFunction<[CommandKitEnvironment]>): string {
-    return afterCommand(fn);
-  }
-
-  /**
-   * Cancels the deferred function with the given identifier.
-   * @param id The identifier of the deferred function.
-   */
-  public cancelDeferred(id: string): void {
-    cancelAfterCommand(id);
-  }
-
-  /**
-   * Validates if the given function is a cached function.
-   * @param fn The function to validate.
-   */
-  public isCached(fn: GenericFunction): boolean {
-    return isCachedFunction(fn);
   }
 }
 

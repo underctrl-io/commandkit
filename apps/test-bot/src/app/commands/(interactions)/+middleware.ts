@@ -7,7 +7,7 @@ export function beforeExecute(ctx: MiddlewareContext) {
   const user = ctx.isInteraction() ? ctx.interaction.user : ctx.message.author;
 
   if (ctx.commandName === 'prompt' && user.id === '159985870458322944') {
-    if (ctx.isSlashCommand()) {
+    if (ctx.isChatInputCommand()) {
       ctx.interaction.reply({
         content: 'You are not allowed to use this command.',
         flags: MessageFlags.Ephemeral,

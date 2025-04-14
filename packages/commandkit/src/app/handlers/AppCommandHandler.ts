@@ -7,9 +7,7 @@ import {
   ContextMenuCommandBuilder,
   Events,
   Interaction,
-  Locale,
   Message,
-  PartialMessage,
   SlashCommandBuilder,
 } from 'discord.js';
 import { Context } from '../commands/Context';
@@ -96,9 +94,6 @@ export class AppCommandHandler {
   public readonly registrar: CommandRegistrar;
   private onInteraction: GenericFunction<[Interaction]> | null = null;
   private onMessageCreate: GenericFunction<[Message]> | null = null;
-  private onMessageUpdate: GenericFunction<
-    [Message | PartialMessage, Message | PartialMessage]
-  > | null = null;
   public readonly commandRunner = new AppCommandRunner(this);
 
   public readonly externalCommandData = new Collection<string, Command>();
@@ -110,6 +105,7 @@ export class AppCommandHandler {
 
   public printBanner() {
     const uncategorized = crypto.randomUUID();
+
     // Group commands by category
     const categorizedCommands = this.getCommandsArray().reduce(
       (acc, cmd) => {
@@ -121,44 +117,124 @@ export class AppCommandHandler {
       {} as Record<string, LoadedCommand[]>,
     );
 
-    // Get all categories and sort them
-    const categories = Object.keys(categorizedCommands).sort();
-
     console.log(
       colors.green(
         `Loaded ${colors.magenta(this.loadedCommands.size.toString())} commands:`,
       ),
     );
 
-    // Print commands by category
-    categories.forEach((category, index) => {
-      const commands = categorizedCommands[category];
-      const isLastCategory = index === categories.length - 1;
-      const categoryPrefix = isLastCategory ? '└─' : '├─';
+    const categories = Object.keys(categorizedCommands).sort();
 
-      // Print category header (skip for uncategorized)
+    // Build category tree for all nesting depths
+    const categoryTree: Record<string, string[]> = {};
+
+    // Find the best parent for nested categories
+    categories.forEach((category) => {
+      if (category === uncategorized) return;
+
+      if (category.includes(':')) {
+        const parts = category.split(':');
+        let bestParent = null;
+
+        // Try to find the deepest existing parent
+        for (let i = parts.length - 1; i > 0; i--) {
+          const potentialParent = parts.slice(0, i).join(':');
+          if (categories.includes(potentialParent)) {
+            bestParent = potentialParent;
+            break;
+          }
+        }
+
+        // If we found a parent, add this category as its child
+        if (bestParent) {
+          categoryTree[bestParent] = categoryTree[bestParent] || [];
+          categoryTree[bestParent].push(category);
+        }
+      }
+    });
+
+    // Track categories we've processed to avoid duplicates
+    const processedCategories = new Set<string>();
+
+    // Recursive function to print a category and its children
+    const printCategory = (
+      category: string,
+      indent: string = '',
+      isLast: boolean = false,
+      parentPrefix: string = '',
+    ) => {
+      // Skip if already processed
+      if (processedCategories.has(category)) return;
+      processedCategories.add(category);
+
+      const commands = categorizedCommands[category];
+      const hasChildren =
+        categoryTree[category] && categoryTree[category].length > 0;
+      const thisPrefix = isLast ? '└─' : '├─';
+      const childIndent = parentPrefix + (isLast ? '   ' : '│  ');
+
+      // Print category name if not uncategorized
       if (category !== uncategorized) {
-        console.log(colors.cyan(`${categoryPrefix} ${colors.bold(category)}`));
+        // For nested categories, only print the last part after the colon
+        const displayName = category.includes(':')
+          ? category.split(':').pop()
+          : category;
+
+        console.log(
+          colors.cyan(`${indent}${thisPrefix} ${colors.bold(displayName!)}`),
+        );
       }
 
       // Print commands in this category
       commands.forEach((cmd, cmdIndex) => {
-        const isLastCommand = cmdIndex === commands.length - 1;
-        const commandPrefix =
-          category !== uncategorized
-            ? (isLastCategory ? '   ' : '│  ') + (isLastCommand ? '└─' : '├─')
-            : isLastCommand
-              ? '└─'
-              : '├─';
+        const cmdIsLast = cmdIndex === commands.length - 1 && !hasChildren;
+        const cmdPrefix = cmdIsLast ? '└─' : '├─';
+        const cmdIndent = category !== uncategorized ? childIndent : indent;
 
         const name = cmd.data.command.name;
         const hasMw = cmd.command.middlewares.length > 0;
         const middlewareIcon = hasMw ? colors.magenta(' (λ)') : '';
 
         console.log(
-          `${colors.green(commandPrefix)} ${colors.yellow(name)}${middlewareIcon}`,
+          `${colors.green(`${cmdIndent}${cmdPrefix}`)} ${colors.yellow(name)}${middlewareIcon}`,
         );
       });
+
+      // Process nested categories
+      if (hasChildren) {
+        const children = categoryTree[category].sort();
+        children.forEach((childCategory, idx) => {
+          const childIsLast = idx === children.length - 1;
+          printCategory(childCategory, childIndent, childIsLast, childIndent);
+        });
+      }
+    };
+
+    // Find and print top-level categories
+    const topLevelCategories = categories
+      .filter((category) => {
+        if (category === uncategorized) return true;
+
+        if (category.includes(':')) {
+          const parts = category.split(':');
+          // Check if any parent path exists as a category
+          for (let i = 1; i < parts.length; i++) {
+            const parentPath = parts.slice(0, i).join(':');
+            if (categories.includes(parentPath)) {
+              return false; // Not top-level, it has a parent
+            }
+          }
+          return true; // No parent found, so it's top-level
+        }
+
+        return true; // Not nested, so it's top-level
+      })
+      .sort();
+
+    // Print each top-level category
+    topLevelCategories.forEach((category, index) => {
+      const isLast = index === topLevelCategories.length - 1;
+      printCategory(category, '', isLast);
     });
   }
 
@@ -210,35 +286,8 @@ export class AppCommandHandler {
       return this.commandRunner.runCommand(prepared, message);
     };
 
-    this.onMessageUpdate ??= async (
-      oldMessage: Message | PartialMessage,
-      newMessage: Message | PartialMessage,
-    ) => {
-      const success = await this.commandkit.plugins.execute(
-        async (ctx, plugin) => {
-          return plugin.onBeforeMessageUpdateCommand(
-            ctx,
-            oldMessage,
-            newMessage,
-          );
-        },
-      );
-
-      // plugin will handle the message
-      if (success) return;
-      if (oldMessage.partial || newMessage.partial) return;
-      if (oldMessage.author.bot) return;
-
-      const prepared = await this.prepareCommandRun(newMessage);
-
-      if (!prepared) return;
-
-      return this.commandRunner.runCommand(prepared, newMessage);
-    };
-
     this.commandkit.client.on(Events.InteractionCreate, this.onInteraction);
     this.commandkit.client.on(Events.MessageCreate, this.onMessageCreate);
-    this.commandkit.client.on(Events.MessageUpdate, this.onMessageUpdate);
   }
 
   public async prepareCommandRun(

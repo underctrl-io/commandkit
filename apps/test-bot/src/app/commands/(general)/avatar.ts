@@ -1,6 +1,6 @@
 import {
   MessageCommandContext,
-  SlashCommandContext,
+  ChatInputCommandContext,
   UserContextMenuCommandContext,
 } from 'commandkit';
 import { ApplicationCommandOptionType } from 'discord.js';
@@ -37,7 +37,7 @@ export async function userContextMenu(ctx: UserContextMenuCommandContext) {
   });
 }
 
-export async function chatInput(ctx: SlashCommandContext) {
+export async function chatInput(ctx: ChatInputCommandContext) {
   const user = ctx.options.getUser('user') ?? ctx.interaction.user;
   const { t } = ctx.locale();
 

@@ -1,11 +1,11 @@
-import { CommandData, MessageCommand, SlashCommand } from 'commandkit';
+import { CommandData, MessageCommand, ChatInputCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'forward',
   description: 'Forwards this command to another command',
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   await ctx.forwardCommand('forwarded');
 };
 

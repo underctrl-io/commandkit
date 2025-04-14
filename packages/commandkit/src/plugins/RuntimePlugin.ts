@@ -68,16 +68,6 @@ export abstract class RuntimePlugin<
   ): Promise<void> {}
 
   /**
-   * Called before message update command is processed
-   * @param message The message
-   */
-  public async onBeforeMessageUpdateCommand(
-    ctx: CommandKitPluginRuntime,
-    oldMessage: Message | PartialMessage,
-    newMessage: Message | PartialMessage,
-  ): Promise<void> {}
-
-  /**
    * Called before command is executed. This method can execute the command itself.
    * @param source The source that triggered the command
    * @param command The command
@@ -173,6 +163,16 @@ export abstract class RuntimePlugin<
     ctx: CommandKitPluginRuntime,
     event: PreRegisterCommandsEvent,
   ): Promise<void> {}
+
+  /**
+   * Called after command and all of its deferred functions are executed.
+   * @param ctx The context
+   * @param env The environment of the command. This environment contains the command execution data such as command context and more.
+   */
+  async onAfterCommand(
+    ctx: CommandKitPluginRuntime,
+    env: CommandKitEnvironment,
+  ) {}
 }
 
 export function isRuntimePlugin(plugin: unknown): plugin is RuntimePlugin {

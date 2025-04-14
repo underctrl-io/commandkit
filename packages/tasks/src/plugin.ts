@@ -43,7 +43,7 @@ export class TaskPlugin extends RuntimePlugin<TaskPluginOptions> {
   }
 
   public async deactivate(): Promise<void> {
-    await this.manager.destroy();
+    await this.manager?.destroy();
     this.manager = null;
     hooks.clear();
   }

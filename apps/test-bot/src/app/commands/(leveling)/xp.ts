@@ -1,4 +1,4 @@
-import { SlashCommandContext, CommandData, cacheTag } from 'commandkit';
+import { ChatInputCommandContext, CommandData, cacheTag } from 'commandkit';
 import { database } from '../../../database/store.ts';
 
 export const command: CommandData = {
@@ -17,7 +17,7 @@ async function getUserXP(guildId: string, userId: string) {
   return xp;
 }
 
-export async function chatInput({ interaction }: SlashCommandContext) {
+export async function chatInput({ interaction }: ChatInputCommandContext) {
   await interaction.deferReply();
 
   const dataRetrievalStart = Date.now();

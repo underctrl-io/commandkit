@@ -1,6 +1,6 @@
 import {
   type CommandData,
-  type SlashCommand,
+  type ChatInputCommand,
   type MessageCommand,
   Logger,
 } from 'commandkit';
@@ -11,7 +11,7 @@ export const command: CommandData = {
   guilds: [process.env.DEV_GUILD_ID!],
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   Logger.log('Running server command');
   await ctx.interaction.reply('Hello from server!');
 };

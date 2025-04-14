@@ -8,7 +8,7 @@ import {
   MessageContextMenuCommandContext,
   UserContextMenuCommandContext,
   LoadedCommand,
-  SlashCommandContext,
+  ChatInputCommandContext,
   CommandKitHMREvent,
   HMREventType,
   getSourceDirectories,
@@ -151,7 +151,7 @@ export class LegacyHandlerPlugin extends RuntimePlugin<LegacyHandlerPluginOption
                   handler: ctx.commandkit,
                 })
             : undefined,
-          chatInput: (ctx: SlashCommandContext) =>
+          chatInput: (ctx: ChatInputCommandContext) =>
             command.chatInput?.({
               client: ctx.client as any,
               interaction: ctx.interaction as any,

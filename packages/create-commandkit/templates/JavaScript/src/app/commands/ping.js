@@ -7,7 +7,7 @@ export const command = {
 };
 
 /**
- * @param {import('commandkit').SlashCommandContext} ctx
+ * @param {import('commandkit').ChatInputCommandContext} ctx
  */
 export const chatInput = async (ctx) => {
   const latency = (ctx.client.ws.ping ?? -1).toString();

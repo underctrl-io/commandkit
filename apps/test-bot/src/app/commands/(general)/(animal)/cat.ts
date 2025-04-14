@@ -1,6 +1,6 @@
 import type {
   CommandData,
-  SlashCommand,
+  ChatInputCommand,
   MessageCommand,
   MessageContextMenuCommand,
 } from 'commandkit';
@@ -33,7 +33,7 @@ export const messageContextMenu: MessageContextMenuCommand = async (ctx) => {
   });
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   await ctx.interaction.reply('Hello from cat!');
 };
 

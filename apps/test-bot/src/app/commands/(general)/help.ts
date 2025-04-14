@@ -1,4 +1,4 @@
-import { CommandData, SlashCommand } from 'commandkit';
+import { CommandData, ChatInputCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'help',
@@ -12,7 +12,7 @@ function $botVersion(): string {
   return require(path).version;
 }
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   const { interaction } = ctx;
   await interaction.deferReply();
 

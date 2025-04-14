@@ -1,11 +1,11 @@
-import type { CommandData, SlashCommand, MessageCommand } from 'commandkit';
+import type { CommandData, ChatInputCommand, MessageCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'dog',
   description: 'dog command',
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   await ctx.interaction.reply('Hello from dog command!');
 };
 

@@ -191,9 +191,7 @@ export enum CommandKitEnvironmentType {
  * @param fn The function to run after the current command.
  * @returns The deferred function id. This can be used to cancel the deferred function.
  */
-export function afterCommand(
-  fn: GenericFunction<[CommandKitEnvironment]>,
-): string {
+export function after(fn: GenericFunction<[CommandKitEnvironment]>): string {
   const env = getContext();
 
   if (!env) {
@@ -204,10 +202,10 @@ export function afterCommand(
 }
 
 /**
- * Cancels a deferred function registered with `afterCommand`.
+ * Cancels a deferred function registered with `after`.
  * @param id The deferred function id to cancel.
  */
-export function cancelAfterCommand(id: string): void {
+export function cancelAfter(id: string): void {
   const env = getContext();
 
   if (!env) {
