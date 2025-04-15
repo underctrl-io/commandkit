@@ -69,10 +69,12 @@ export default async function refreshExchangeRate(ctx: TaskContext) {
 
 ## Dynamic Tasks
 
-Dynamic tasks are created at runtime and can be scheduled to run after a specified duration. They can also be cancelled or invoked manually. To create a dynamic task, use the `createTask` method from the `ctx` object.
+Dynamic tasks are created at runtime and can be scheduled to run after a specified duration. They can also be cancelled or invoked manually. To create a dynamic task, use the `tasks.create` method from the `ctx` object.
+
+### Defining a task
 
 ```ts
-// app/commands/unmute.ts
+// app/tasks/unmute.ts
 import type { TaskContext, TaskConfig } from '@commandkit/tasks';
 
 export interface UnmuteTaskData {
@@ -97,6 +99,7 @@ export default async function unmute(ctx: TaskContext<UnmuteTaskData>) {
 Then, you can create a dynamic task in your command:
 
 ```ts
+// app/commands/mute.ts
 import type { CommandData, SlashCommand } from 'commandkit';
 import { ApplicationCommandOptionType } from 'discord.js';
 
