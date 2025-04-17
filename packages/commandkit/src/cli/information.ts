@@ -4,6 +4,52 @@ import { version as commandkitVersion } from '../version';
 import fs from 'node:fs';
 import path from 'node:path';
 
+function $getKnownPlugins() {
+  'use macro';
+
+  // remove name from the list when that plugin is stable
+  const BLACKLISTED = new Set([
+    'commandkit', // core package itself, not a plugin
+    'create-commandkit', // generator, not a plugin
+    'tsconfig', // repo config related, not a plugin
+    'devtools-ui', // the ui part of devtools, not a plugin
+    // the plugins below are TBD
+    'devtools',
+    'tasks',
+  ]);
+
+  const { readdirSync, readFileSync } =
+    require('node:fs') as typeof import('node:fs');
+  const { join } = require('node:path') as typeof path;
+
+  const pluginsPath = join(__dirname, '..', '..', '..');
+
+  const entries = readdirSync(pluginsPath, { withFileTypes: true }).filter(
+    (e) => !BLACKLISTED.has(e.name),
+  );
+
+  const packages = entries.map((p) =>
+    join(p.parentPath, p.name, 'package.json'),
+  );
+
+  const knownPlugins: string[] = [];
+
+  for (const pkg of packages) {
+    try {
+      const { name } = JSON.parse(readFileSync(pkg, 'utf8'));
+      if (name && !BLACKLISTED.has(name)) {
+        knownPlugins.push(name);
+      }
+    } catch {
+      // Ignore errors
+    }
+  }
+
+  return knownPlugins;
+}
+
+const knownPlugins: string[] = $getKnownPlugins();
+
 function findPackageVersion(packageName: string) {
   try {
     const packageJsonPath = require.resolve(`${packageName}/package.json`);
@@ -82,13 +128,6 @@ function getBinaryVersion(binary: string) {
 }
 
 export async function showInformation() {
-  const knownPlugins = [
-    '@commandkit/redis',
-    '@commandkit/legacy',
-    '@commandkit/devtools',
-    '@commandkit/i18n',
-  ];
-
   const runtimeName: string = (() => {
     // @ts-ignore
     if ('Deno' in globalThis && typeof Deno !== 'undefined') return 'Deno';
