@@ -37,7 +37,7 @@ function $getKnownPlugins() {
   for (const pkg of packages) {
     try {
       const { name } = JSON.parse(readFileSync(pkg, 'utf8'));
-      if (name && !BLACKLISTED.has(name)) {
+      if (name && !BLACKLISTED.has(name.replace('@commandkit/', ''))) {
         knownPlugins.push(name);
       }
     } catch {
