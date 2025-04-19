@@ -8,7 +8,12 @@ import { TaskManager } from './TaskManager';
 
 export type ConfigureHook = AsyncFunction<[TaskManager]>;
 
-export interface TaskPluginOptions {}
+export interface TaskPluginOptions {
+  /**
+   * Path to the tasks directory. Default is app/tasks.
+   */
+  tasksDir?: string;
+}
 
 const hooks = new Set<ConfigureHook>();
 
@@ -24,6 +29,15 @@ export class TaskPlugin extends RuntimePlugin<TaskPluginOptions> {
     this.manager = new TaskManager(ctx.commandkit);
 
     await this.#initializeHooks();
+
+    // Initialize task manager after hooks have been run
+    try {
+      await this.manager.initialize();
+    } catch (error) {
+      Logger.error('Failed to initialize TaskManager:', error);
+    }
+
+    Logger.info('Task plugin activated');
   }
 
   async #initializeHooks() {
@@ -34,17 +48,13 @@ export class TaskPlugin extends RuntimePlugin<TaskPluginOptions> {
     for (const hook of hooks) {
       try {
         await hook(this.manager);
-      } catch (e) {
-        Logger.error(`Failed to execute task manager hook: ${hook.name}`, e);
+      } catch (error) {
+        Logger.error('Error in task hook:', error);
       }
     }
-
-    hooks.clear();
   }
 
   public async deactivate(): Promise<void> {
     await this.manager?.destroy();
-    this.manager = null;
-    hooks.clear();
   }
 }
