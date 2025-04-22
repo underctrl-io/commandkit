@@ -3,7 +3,7 @@ import CommandKit, {
   CommandData,
   OnRoleSelectMenuKitSubmit,
   RoleSelectMenu,
-  SlashCommand,
+  ChatInputCommand,
 } from 'commandkit';
 
 export const command: CommandData = {
@@ -24,7 +24,7 @@ const handleSelect: OnRoleSelectMenuKitSubmit = async (
   context.dispose();
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   const select = (
     <ActionRow>
       <RoleSelectMenu onSelect={handleSelect} />

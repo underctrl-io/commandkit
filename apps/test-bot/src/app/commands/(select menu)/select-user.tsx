@@ -2,7 +2,7 @@ import CommandKit, {
   ActionRow,
   CommandData,
   OnUserSelectMenuKitSubmit,
-  SlashCommand,
+  ChatInputCommand,
   UserSelectMenu,
 } from 'commandkit';
 
@@ -24,7 +24,7 @@ const handleSelect: OnUserSelectMenuKitSubmit = async (
   context.dispose();
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   const select = (
     <ActionRow>
       <UserSelectMenu onSelect={handleSelect} />

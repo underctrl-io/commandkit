@@ -309,4 +309,5 @@ export function isCachedFunction(fn: GenericFunction): boolean {
  * @private
  * @internal
  */
-export const zxcvbnm____: any = useCache;
+export const __SECRET_USE_CACHE_INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: any =
+  useCache;

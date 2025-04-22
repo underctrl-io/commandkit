@@ -3,7 +3,7 @@ import CommandKit, {
   ActionRow,
   CommandData,
   OnButtonKitClick,
-  SlashCommandContext,
+  ChatInputCommandContext,
 } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
@@ -40,7 +40,7 @@ function ButtonGrid() {
   );
 }
 
-export async function chatInput({ interaction }: SlashCommandContext) {
+export async function chatInput({ interaction }: ChatInputCommandContext) {
   await interaction.deferReply();
 
   await interaction.editReply({

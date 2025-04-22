@@ -1,4 +1,4 @@
-import { CachePlugin } from '../plugins/plugin-runtime/builtin/cache/CachePlugin';
+import { CachePlugin } from '../plugins/plugin-runtime/builtin/CachePlugin';
 import { MacroPlugin } from '../plugins/plugin-runtime/builtin/MacroPlugin';
 import { ResolvedCommandKitConfig } from './utils';
 

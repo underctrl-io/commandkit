@@ -1,7 +1,7 @@
 import CommandKit, {
   Button,
   ActionRow,
-  SlashCommandContext,
+  ChatInputCommandContext,
   CommandData,
   OnButtonKitClick,
 } from 'commandkit';
@@ -30,7 +30,7 @@ const handleCancel: OnButtonKitClick = async (interaction, context) => {
   context.dispose();
 };
 
-export async function chatInput({ interaction }: SlashCommandContext) {
+export async function chatInput({ interaction }: ChatInputCommandContext) {
   const buttons = (
     <ActionRow>
       <Button onClick={handleCancel} style={ButtonStyle.Primary}>

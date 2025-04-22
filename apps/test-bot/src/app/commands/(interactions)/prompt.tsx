@@ -5,7 +5,7 @@ import CommandKit, {
   ParagraphInput,
   OnModalKitSubmit,
   MessageCommandContext,
-  SlashCommandContext,
+  ChatInputCommandContext,
 } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
@@ -26,7 +26,7 @@ const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
   context.dispose();
 };
 
-export async function chatInput(ctx: SlashCommandContext) {
+export async function chatInput(ctx: ChatInputCommandContext) {
   const modal = (
     <Modal title={'Modal'} onSubmit={handleSubmit}>
       <ShortInput customId="name" label="Name" placeholder="John" required />

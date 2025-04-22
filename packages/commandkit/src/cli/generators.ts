@@ -1,6 +1,5 @@
 import { mkdir, writeFile, readdir } from 'fs/promises';
 import { join } from 'path';
-import { Locale } from 'discord.js';
 import { panic } from './common';
 import { existsSync } from 'fs';
 import colors from '../utils/colors';
