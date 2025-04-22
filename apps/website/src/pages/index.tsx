@@ -8,7 +8,7 @@ export default function Home(): React.JSX.Element {
         <img
           src="/img/logo.png"
           alt="CommandKit logo"
-          className="md:w-[230px] lg:w-[280px] mb-10 md:mb-0"
+          className="md:w-[250px] lg:w-[280px] mb-10 md:mb-0"
           width={250}
           height={250}
         />
@@ -36,7 +36,7 @@ export default function Home(): React.JSX.Element {
               to="/docs/api-reference/classes/ButtonKit"
               className="font-semibold bg-blue-500 py-2 px-4 rounded-full"
             >
-              API Reference
+              API <span className="hidden md:inline">Reference</span>
             </Link>
             <Link
               href="https://github.com/underctrl-io/commandkit"

@@ -35,6 +35,13 @@ const config: Config = {
     ],
   ],
   themeConfig: {
+    algolia: {
+      appId: 'S9ZEIJ6SBS',
+      apiKey: '6f7582f462a448cf1f47a56901595e6e',
+      indexName: 'commandkit-js',
+      contextualSearch: true,
+      insights: false,
+    },
     colorMode: {
       defaultMode: 'dark',
     },
