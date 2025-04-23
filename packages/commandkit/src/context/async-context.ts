@@ -43,11 +43,13 @@ export function makeContextAwareFunction<
       } finally {
         if (typeof finalizer === 'function') {
           // execute the finalizer function
-          try {
-            await finalizer(...args);
-          } catch {
-            // no-op
-          }
+          setImmediate(async () => {
+            try {
+              await finalizer(...args);
+            } catch {
+              // no-op
+            }
+          });
         }
       }
     });
