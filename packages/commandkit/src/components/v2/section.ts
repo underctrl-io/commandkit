@@ -1,8 +1,5 @@
-// import { TextDisplayBuilder, TextDisplayComponentData } from 'discord.js';
-
 import {
   ButtonBuilder,
-  ComponentBuilder,
   SectionBuilder,
   TextDisplayBuilder,
   ThumbnailBuilder,
@@ -32,4 +29,22 @@ export function Section(props: SectionProps): SectionBuilder {
   }
 
   return section;
+}
+
+export interface ThumbnailProps {
+  id?: number;
+  description?: string;
+  spoiler?: boolean;
+  url: string;
+}
+
+export function Thumbnail(props: ThumbnailProps) {
+  const thumbnail = new ThumbnailBuilder({
+    description: props.description,
+    spoiler: props.spoiler,
+    id: props.id,
+    media: { url: props.url },
+  });
+
+  return thumbnail;
 }

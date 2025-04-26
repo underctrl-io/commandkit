@@ -12,6 +12,7 @@ import CommandKit, {
   Section,
   Separator,
   TextDisplay,
+  Thumbnail,
 } from 'commandkit';
 import {
   AttachmentBuilder,
@@ -53,12 +54,16 @@ export const chatInput: ChatInputCommand = async (ctx) => {
       <TextDisplay content="# CommandKit Components v2 test" />
       <Section>
         <TextDisplay content="This is a section" />
+        <Thumbnail url="https://cdn.discordapp.com/embed/avatars/0.png" />
+      </Section>
+      <Separator spacing={SeparatorSpacingSize.Large} />
+      <Section>
+        <TextDisplay content="This is after separator" />
         <Button url="https://commandkit.dev" style={ButtonStyle.Link}>
           Website
         </Button>
       </Section>
-      <Separator spacing={SeparatorSpacingSize.Large} />
-      <TextDisplay content="This is after separator" />
+      <Separator spacing={SeparatorSpacingSize.Large} dividier />
       <File url="attachment://components-v2-are-awesome.md" />
       <Separator spacing={SeparatorSpacingSize.Large} dividier />
       <TextDisplay content="Discord's default avatars" />

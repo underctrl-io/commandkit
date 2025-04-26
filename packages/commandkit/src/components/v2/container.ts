@@ -8,6 +8,7 @@ import {
   SectionBuilder,
   SeparatorBuilder,
   TextDisplayBuilder,
+  ThumbnailBuilder,
 } from 'discord.js';
 import { applyId } from './common';
 
