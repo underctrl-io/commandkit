@@ -1,11 +1,14 @@
 import CommandKit, {
+  ActionRow,
   Button,
+  ChannelSelectMenu,
   ChatInputCommand,
   CommandData,
   Container,
   File,
   MediaGallery,
   MediaGalleryItem,
+  OnChannelSelectMenuKitSubmit,
   Section,
   Separator,
   TextDisplay,
@@ -31,6 +34,19 @@ const mediaItems: string[] = Array.from(
   (_, i) => `https://cdn.discordapp.com/embed/avatars/${i}.png`,
 );
 
+const handleSelect: OnChannelSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const selections = interaction.channels.map((v) => v.toString()).join(', ');
+
+  await interaction.reply({
+    content: `You selected: ${selections}`,
+  });
+
+  context.dispose();
+};
+
 export const chatInput: ChatInputCommand = async (ctx) => {
   const container = (
     <Container accentColor={Colors.Fuchsia}>
@@ -51,6 +67,9 @@ export const chatInput: ChatInputCommand = async (ctx) => {
           <MediaGalleryItem description="Gallery item description" url={item} />
         ))}
       </MediaGallery>
+      <ActionRow>
+        <ChannelSelectMenu onSelect={handleSelect} />
+      </ActionRow>
     </Container>
   );
 
