@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/express": "^5.0.1",
     "commandkit": "workspace:*",
-    "discord.js": "^14.17.3",
+    "discord.js": "^14.19.1",
     "tsconfig": "workspace:*",
     "typescript": "^5.8.3"
   },

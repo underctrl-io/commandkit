@@ -1,7 +1,7 @@
 import { ActionRowBuilder, TextInputBuilder } from 'discord.js';
-import type { ButtonKit } from '../button/ButtonKit';
+import type { ButtonKit } from '../v1/button/ButtonKit';
 import { warnUnstable } from '../../utils/warn-unstable';
-import { ModalKit } from '../modal/ModalKit';
+import { ModalKit } from '../v1/modal/ModalKit';
 
 export const ElementType = {
   ActionRow: 'action-row',

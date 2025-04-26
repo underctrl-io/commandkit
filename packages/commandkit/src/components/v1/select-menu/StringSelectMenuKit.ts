@@ -7,8 +7,8 @@ import {
   exitContext,
   getCommandKit,
   getContext,
-} from '../../context/async-context';
-import { EventInterceptorErrorHandler } from '../common/EventInterceptor';
+} from '../../../context/async-context';
+import { EventInterceptorErrorHandler } from '../../common/EventInterceptor';
 import {
   CommandKitSelectMenuBuilderInteractionCollectorDispatch,
   CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData,

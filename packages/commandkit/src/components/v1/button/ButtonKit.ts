@@ -1,58 +1,59 @@
 import {
-  Awaitable,
+  type Awaitable,
+  type ButtonInteraction,
+  ButtonStyle,
+  ButtonBuilder,
   Events,
-  ModalBuilder,
-  ModalSubmitInteraction,
 } from 'discord.js';
 import {
   exitContext,
   getCommandKit,
   getContext,
-} from '../../context/async-context';
+} from '../../../context/async-context';
 import {
   EventInterceptorContextData,
   EventInterceptorErrorHandler,
-} from '../common/EventInterceptor';
+} from '../../common/EventInterceptor';
 
-export type ModalKitPredicate = (
-  interaction: ModalSubmitInteraction,
+export type ButtonKitPredicate = (
+  interaction: ButtonInteraction,
 ) => Awaitable<boolean>;
 
 /**
- * The handler to run when a modal is submitted. This handler is called with the interaction as the first argument.
+ * The handler to run when a button is clicked. This handler is called with the interaction as the first argument.
  * If the first argument is null, it means that the interaction collector has been destroyed.
  */
-export type OnModalKitSubmit =
-  CommandKitModalBuilderInteractionCollectorDispatch;
+export type OnButtonKitClick =
+  CommandKitButtonBuilderInteractionCollectorDispatch;
 
 /**
  * The handler to run when the interaction collector ends. This handler is called with the reason as the first argument.
  * If the first argument is null, it means that the interaction collector has been destroyed.
  */
-export type OnModalKitEnd = CommandKitModalBuilderOnEnd;
+export type OnButtonKitEnd = CommandKitButtonBuilderOnEnd;
 
 /**
- * The handler to run when a modal is submitted. This handler is called with the interaction as the first argument.
+ * The handler to run when a button is clicked. This handler is called with the interaction as the first argument.
  * If the first argument is null, it means that the interaction collector has been destroyed.
  */
-export type CommandKitModalBuilderInteractionCollectorDispatch = (
-  interaction: ModalSubmitInteraction,
-  context: ModalKit,
+export type CommandKitButtonBuilderInteractionCollectorDispatch = (
+  interaction: ButtonInteraction,
+  context: ButtonKit,
 ) => Awaitable<void>;
 
-export type CommandKitModalBuilderOnEnd = (reason: string) => Awaitable<void>;
+export type CommandKitButtonBuilderOnEnd = (reason: string) => Awaitable<void>;
 
-export type CommandKitModalBuilderInteractionCollectorDispatchContextData =
+export type CommandKitButtonBuilderInteractionCollectorDispatchContextData =
   EventInterceptorContextData<Events.InteractionCreate>;
 
-export class ModalKit extends ModalBuilder {
-  #onSubmitHandler: CommandKitModalBuilderInteractionCollectorDispatch | null =
+export class ButtonKit extends ButtonBuilder {
+  #onClickHandler: CommandKitButtonBuilderInteractionCollectorDispatch | null =
     null;
-  #contextData: CommandKitModalBuilderInteractionCollectorDispatchContextData | null =
+  #contextData: CommandKitButtonBuilderInteractionCollectorDispatchContextData | null =
     {
-      autoReset: false,
+      autoReset: true,
       time: 5 * 60 * 1000,
-      once: true,
+      once: false,
     };
   #unsub: (() => void) | null = null;
 
@@ -64,38 +65,49 @@ export class ModalKit extends ModalBuilder {
   }
 
   /**
-   * Sets the handler to run when the modal is submitted.
-   * @param handler - The handler to run when the modal is submitted.
-   * @param data - The context data for the interaction collector.
-   * @returns This instance of the modal builder.
+   * Sets up an inline interaction collector for this button. This collector by default allows as many interactions as possible if it is actively used.
+   * If unused, this expires after 24 hours or custom time if specified.
+   * @param handler The handler to run when the button is clicked
+   * @param data The context data to use for the interaction collector
+   * @returns This button
    * @example
    * ```ts
-   * const modal = new ModalKit()
-   *  .setTitle('My Modal')
-   *  .setCustomId('my-modal')
-   *  .filter((interaction) => interaction.user.id === '1234567890')
-   *  .onSubmit(async (interaction) => {
-   *     await interaction.reply('You submitted the modal!');
-   *   })
-   *   .addComponents(actionRow1, actionRow2);
+   * const button = new ButtonKit()
+   *   .setLabel('Click me')
+   *   .setStyle(ButtonStyle.Primary)
+   *   .setCustomId('click_me')
+   *   .filter((interaction) => interaction.user.id === '1234567890')
+   *   .onClick(async (interaction) => {
+   *     await interaction.reply('You clicked me!');
+   *   });
+   *
+   * const row = new ActionRowBuilder().addComponents(button);
+   *
+   * const message = await channel.send({ content: 'Click the button', components: [row] });
+   *
+   * // Remove onClick handler and destroy the interaction collector
+   * button.onClick(null);
    * ```
    */
-  public onSubmit(
-    handler: CommandKitModalBuilderInteractionCollectorDispatch,
-    data?: CommandKitModalBuilderInteractionCollectorDispatchContextData,
+  public onClick(
+    handler: CommandKitButtonBuilderInteractionCollectorDispatch,
+    data?: CommandKitButtonBuilderInteractionCollectorDispatchContextData,
   ): this {
+    if (this.data.style === ButtonStyle.Link) {
+      throw new TypeError('Cannot setup "onClick" handler on link buttons.');
+    }
+
     if (!handler) {
       throw new TypeError(
         'Cannot setup "onClick" without a handler function parameter.',
       );
     }
 
-    if (this.#onSubmitHandler) {
+    if (this.#onClickHandler) {
       this.#destroyCollector();
     }
 
-    this.#onSubmitHandler = handler;
-
+    this.#onClickHandler = handler;
     if (data) {
       this.#contextData = {
         autoReset: data.autoReset ?? this.#contextData?.autoReset ?? true,
@@ -105,17 +117,16 @@ export class ModalKit extends ModalBuilder {
       };
     }
 
-    this.#setupCollector();
+    this.#setupInteractionCollector();
 
     return this;
   }
 
-  /**
-   * Sets the handler to run when the interaction collector ends.
-   * @param handler - The handler to run when the interaction collector ends.
-   * @returns This instance of the modal builder.
-   */
-  public onEnd(handler: CommandKitModalBuilderOnEnd): this {
+  public onEnd(handler: CommandKitButtonBuilderOnEnd): this {
+    if (this.data.style === ButtonStyle.Link) {
+      throw new TypeError('Cannot setup "onEnd" handler on link buttons.');
+    }
+
     if (!handler) {
       throw new TypeError(
         'Cannot setup "onEnd" without a handler function parameter.',
@@ -148,10 +159,9 @@ export class ModalKit extends ModalBuilder {
 
   /**
    * Sets a filter for the interaction collector.
-   * @param predicate - The filter to use for the interaction collector.
-   * @returns This instance of the modal builder.
+   * @param predicate The filter to use for the interaction collector
    */
-  public filter(predicate: ModalKitPredicate): this {
+  public filter(predicate: ButtonKitPredicate): this {
     this.#contextData ??= {
       autoReset: true,
       time: 5 * 60 * 1000,
@@ -167,22 +177,28 @@ export class ModalKit extends ModalBuilder {
     return this.data.custom_id ?? this.data.customId;
   }
 
-  #setupCollector() {
-    if (!this.#contextData) return;
+  #setupInteractionCollector() {
+    if (
+      this.data.style === ButtonStyle.Link ||
+      !this.#contextData ||
+      !this.#onClickHandler
+    )
+      return;
 
-    if (!this.customId) {
+    const myCustomId = this.customId ?? null;
+
+    if (myCustomId === null) {
       throw new TypeError(
-        'Cannot setup an modal collector without a custom ID.',
+        'Cannot setup "onClick" handler on a button without a custom id.',
       );
     }
 
     const interceptor = this.#getEventInterceptor();
-    if (!interceptor) return;
 
     this.#unsub = interceptor.subscribe(
       Events.InteractionCreate,
       async (interaction) => {
-        if (!interaction.isModalSubmit()) return;
+        if (!interaction.isButton()) return;
 
         const myCustomId = this.customId ?? null;
         const interactionCustomId = interaction.customId;
@@ -193,7 +209,7 @@ export class ModalKit extends ModalBuilder {
 
         if (filter && !(await filter(interaction))) return;
 
-        const handler = this.#onSubmitHandler;
+        const handler = this.#onClickHandler;
 
         if (!handler) return this.#unsub?.();
 
@@ -211,7 +227,7 @@ export class ModalKit extends ModalBuilder {
   #destroyCollector() {
     this.#unsub?.();
     this.#unsub = null;
-    this.#onSubmitHandler = null;
     this.#contextData = null;
+    this.#onClickHandler = null;
   }
 }

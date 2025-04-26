@@ -18,7 +18,7 @@ import { MentionableSelectMenuKit } from './MentionableSelectMenuKit';
 import { RoleSelectMenuKit } from './RoleSelectMenuKit';
 import { StringSelectMenuKit } from './StringSelectMenuKit';
 import { UserSelectMenuKit } from './UserSelectMenuKit';
-import { MaybeArray } from '../common/types';
+import { MaybeArray } from '../../common/types';
 import {
   CommandKitSelectMenuBuilderInteractionCollectorDispatch,
   CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData,

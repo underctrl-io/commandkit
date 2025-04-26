@@ -1,5 +1,5 @@
 import { ActionRowBuilder } from 'discord.js';
-import { AnyCommandKitElement, CommandKitElement } from '../common/element';
+import { AnyCommandKitElement, CommandKitElement } from '../../common/element';
 
 export interface ActionRowProps {
   children?: AnyCommandKitElement[] | AnyCommandKitElement;

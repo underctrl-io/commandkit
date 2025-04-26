@@ -1,13 +1,13 @@
 import { ActionRowBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
-import { MaybeArray } from '../common/types';
-import { CommandKitElement } from '../common/element';
+import { MaybeArray } from '../../common/types';
+import { CommandKitElement } from '../../common/element';
 import {
   CommandKitModalBuilderInteractionCollectorDispatchContextData,
   ModalKit,
   OnModalKitEnd,
   OnModalKitSubmit,
 } from './ModalKit';
-import { EventInterceptorErrorHandler } from '../common/EventInterceptor';
+import { EventInterceptorErrorHandler } from '../../common/EventInterceptor';
 
 export interface ModalProps {
   customId?: string;

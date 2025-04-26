@@ -1,5 +1,5 @@
 import { Awaitable, Events } from 'discord.js';
-import { EventInterceptorContextData } from '../common/EventInterceptor';
+import { EventInterceptorContextData } from '../../common/EventInterceptor';
 
 export type SelectMenuKitPredicate<T> = (interaction: T) => Awaitable<boolean>;
 

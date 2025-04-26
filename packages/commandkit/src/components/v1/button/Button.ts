@@ -5,9 +5,9 @@ import {
   type CommandKitButtonBuilderInteractionCollectorDispatch,
   type CommandKitButtonBuilderInteractionCollectorDispatchContextData,
 } from './ButtonKit';
-import { CommandKitElement } from '../common/element';
-import { MaybeArray } from '../common/types';
-import { EventInterceptorErrorHandler } from '../common/EventInterceptor';
+import { CommandKitElement } from '../../common/element';
+import { MaybeArray } from '../../common/types';
+import { EventInterceptorErrorHandler } from '../../common/EventInterceptor';
 
 export type ButtonChildrenLike = string | number | boolean;
 

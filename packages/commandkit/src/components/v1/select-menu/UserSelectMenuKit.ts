@@ -1,14 +1,14 @@
 import {
   Events,
-  MentionableSelectMenuBuilder,
-  MentionableSelectMenuInteraction,
+  UserSelectMenuBuilder,
+  UserSelectMenuInteraction,
 } from 'discord.js';
 import {
   exitContext,
   getCommandKit,
   getContext,
-} from '../../context/async-context';
-import { EventInterceptorErrorHandler } from '../common/EventInterceptor';
+} from '../../../context/async-context';
+import { EventInterceptorErrorHandler } from '../../common/EventInterceptor';
 import {
   CommandKitSelectMenuBuilderInteractionCollectorDispatch,
   CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData,
@@ -17,18 +17,18 @@ import {
   SelectMenuKitPredicate,
 } from './common';
 
-export type OnMentionableSelectMenuKitSubmit = OnSelectMenuKitSubmit<
-  MentionableSelectMenuInteraction,
-  MentionableSelectMenuKit
+export type OnUserSelectMenuKitSubmit = OnSelectMenuKitSubmit<
+  UserSelectMenuInteraction,
+  UserSelectMenuKit
 >;
 
-export type MentionableSelectMenuKitPredicate =
-  SelectMenuKitPredicate<MentionableSelectMenuInteraction>;
+export type UserSelectMenuKitPredicate =
+  SelectMenuKitPredicate<UserSelectMenuInteraction>;
 
-export class MentionableSelectMenuKit extends MentionableSelectMenuBuilder {
+export class UserSelectMenuKit extends UserSelectMenuBuilder {
   #onSelectHandler: CommandKitSelectMenuBuilderInteractionCollectorDispatch<
-    MentionableSelectMenuInteraction,
-    MentionableSelectMenuKit
+    UserSelectMenuInteraction,
+    UserSelectMenuKit
   > | null = null;
   #contextData: CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData | null =
     {
@@ -52,10 +52,10 @@ export class MentionableSelectMenuKit extends MentionableSelectMenuBuilder {
    * @returns This instance of the modal builder.
    * @example
    * ```ts
-   * const modal = new MentionableSelectMenuKit()
+   * const modal = new UserSelectMenuKit()
    *  .setTitle('My Modal')
    *  .setCustomId('my-modal')
-   *  .filter((interaction) => interaction.Mentionable.id === '1234567890')
+   *  .filter((interaction) => interaction.user.id === '1234567890')
    *  .onSelect(async (interaction) => {
    *     await interaction.reply('You submitted the modal!');
    *   })
@@ -64,8 +64,8 @@ export class MentionableSelectMenuKit extends MentionableSelectMenuBuilder {
    */
   public onSelect(
     handler: CommandKitSelectMenuBuilderInteractionCollectorDispatch<
-      MentionableSelectMenuInteraction,
-      MentionableSelectMenuKit
+      UserSelectMenuInteraction,
+      UserSelectMenuKit
     >,
     data?: CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData,
   ): this {
@@ -137,7 +137,7 @@ export class MentionableSelectMenuKit extends MentionableSelectMenuBuilder {
    * @returns This instance of the modal builder.
    */
   public filter(
-    predicate: SelectMenuKitPredicate<MentionableSelectMenuInteraction>,
+    predicate: SelectMenuKitPredicate<UserSelectMenuInteraction>,
   ): this {
     this.#contextData ??= {
       autoReset: true,
@@ -169,7 +169,7 @@ export class MentionableSelectMenuKit extends MentionableSelectMenuBuilder {
     this.#unsub = interceptor.subscribe(
       Events.InteractionCreate,
       async (interaction) => {
-        if (!interaction.isMentionableSelectMenu()) return;
+        if (!interaction.isUserSelectMenu()) return;
 
         const myCustomId = this.customId ?? null;
         const interactionCustomId = interaction.customId;
