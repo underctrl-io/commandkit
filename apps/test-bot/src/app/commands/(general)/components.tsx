@@ -13,6 +13,7 @@ import CommandKit, {
 import {
   AttachmentBuilder,
   ButtonStyle,
+  Colors,
   MessageFlags,
   SeparatorSpacingSize,
 } from 'discord.js';
@@ -32,7 +33,7 @@ const mediaItems: string[] = Array.from(
 
 export const chatInput: ChatInputCommand = async (ctx) => {
   const container = (
-    <Container>
+    <Container accentColor={Colors.Fuchsia}>
       <TextDisplay content="# CommandKit Components v2 test" />
       <Section>
         <TextDisplay content="This is a section" />
