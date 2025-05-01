@@ -12,7 +12,7 @@ If you are looking for support or want to provide suggestions, check out the [Di
 
 ## Links
 
-- [Website](https://commandkit.dev) ([source](https://github.com/underctrl-io/commandkit/tree/main/apps/docs))
+- [Website](https://commandkit.dev) ([source](https://github.com/underctrl-io/commandkit/tree/main/apps/website))
 - [Support Server](https://ctrl.lol/discord)
 - [CommandKit source](https://github.com/underctrl-io/commandkit/tree/main/packages/commandkit)
 - [npm](https://www.npmjs.com/package/commandkit)
