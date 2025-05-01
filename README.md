@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://raw.githubusercontent.com/underctrl-io/commandkit/main/apps/docs/public/ckit_logo.svg" width="60%" />
+    <img src="https://raw.githubusercontent.com/underctrl-io/commandkit/main/apps/website/static/img/ckit_logo.svg" width="60%" />
     <br />
     <a href="https://ctrl.lol/discord"><img src="https://img.shields.io/discord/1055188344188973066?color=5865F2&logo=discord&logoColor=white" alt="support server" /></a>
     <a href="https://www.npmjs.com/package/commandkit"><img src="https://img.shields.io/npm/v/commandkit?maxAge=3600" alt="npm version" /></a>
