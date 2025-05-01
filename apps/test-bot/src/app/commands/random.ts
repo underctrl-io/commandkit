@@ -1,16 +1,18 @@
-import { ChatInputCommandContext, CommandData, cache } from 'commandkit';
+import { ChatInputCommandContext, CommandData, cacheTag, cacheLife } from 'commandkit';
 
 export const command: CommandData = {
   name: 'random',
   description: 'This is a random command.',
 };
 
-const random = cache(
-  async () => {
-    return Math.random();
-  },
-  { name: 'random', ttl: 60_000 },
-);
+const random = async () => {
+  'use cache';
+  
+  cacheTag('random');
+  cacheLife('1m');
+  
+  return Math.random();
+}
 
 export async function chatInput({ interaction }: ChatInputCommandContext) {
   await interaction.deferReply();
