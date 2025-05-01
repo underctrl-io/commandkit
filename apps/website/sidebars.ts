@@ -25,6 +25,7 @@ const sidebars: SidebarsConfig = {
     'guide/using-cli',
     'guide/commandkit-config',
     'guide/caching',
+    'guide/resolve-message-commands-prefix',
   ],
 };
 

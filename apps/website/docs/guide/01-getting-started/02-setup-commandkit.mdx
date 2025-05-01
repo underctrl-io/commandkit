@@ -5,20 +5,41 @@ description: Setup a new CommandKit project manually, or using the create-comman
 
 You can quickly setup a new CommandKit project using `create-commandkit` — a command-line utility used for creating new discord.js applications with CommandKit. To get started, run the following command:
 
-```bash npm2yarn
+```sh npm2yarn
 npx create-commandkit@latest
 ```
 
 This will start the CLI in the current directory which will help you quickly setup a base CommandKit project.
 
-## Development version
+## Project structure
 
-If you'd like to try the latest development builds, you can use the `@dev` tag when setting up a CommandKit project using the CLI.
+By using the CLI to create a base project, you should get a project structure that looks like this:
+
+```
+.
+├── src/
+│   ├── app/
+│   │   ├── commands/
+│   │   │   └── ping.ts
+│   │   └── events/
+│   │       └── ready/
+│   │           └── log.ts
+│   └── app.ts
+├── .env
+├── .gitignore
+├── commandkit.config.ts
+├── package.json
+└── tsconfig.json
+```
+
+## Development version
 
 :::warning
 The development version is likely to have bugs.
 :::
 
-```bash npm2yarn
+If you'd like to try the latest development builds, you can use the `@dev` tag like so:
+
+```sh npm2yarn
 npx create-commandkit@dev
 ```

@@ -1,0 +1,47 @@
+---
+title: Custom command prefixes
+description: Implement custom prefixes for legacy/message commands
+---
+
+The default prefix for message (legacy) commands can be overridden using:
+
+```ts title="src/app.ts"
+import { commandkit } from 'commandkit';
+
+commandkit.setPrefixResolver(async (message) => {
+  // you can use `message` to fetch guild specific prefixes if needed
+  return '?';
+});
+```
+
+:::tip
+You can also return array of strings to support multiple custom prefixes.
+:::
+
+## With caching
+
+An example of this using CommandKit's caching could look like:
+
+```ts title="src/app.ts"
+import { commandkit, cacheTag } from 'commandkit';
+import { database } from '../database.ts';
+
+// this function's result will be automatically cached
+async function fetchGuildPrefix(guildId: string) {
+  'use cache';
+
+  cacheTag(`prefix:${guildId}`);
+
+  const setting = await database.findUnique({
+    where: { guildId },
+    select: { prefix: true },
+  });
+
+  // if no prefix is found, return the default prefix
+  return setting?.prefix ?? '!';
+}
+
+commandkit.setPrefixResolver((message) => {
+  return fetchGuildPrefix(message.guildId);
+});
+```

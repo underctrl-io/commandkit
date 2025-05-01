@@ -6,107 +6,83 @@ description: Learn how to install CommandKit.
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-First of all, create a `commandkit.config.ts` at the root of your project. This file is used to configure CommandKit and its plugins.
+If you don't want to use the CLI to automatically generate a base CommandKit project, you can integrate CommandKit manually into your application.
 
-```ts
+:::info
+While this guide primarily uses TypeScript, you can alternatively use JavaScript files to follow along if that's what you're comfortable with (e.g. `commandkit.config.js`, `app.js`, etc)
+:::
+
+## Configuration file
+
+To get started, create a file called `commandkit.config.ts` at the root of your project. This file is used to configure CommandKit and its plugins.
+
+```ts title="commandkit.config.ts"
 import { defineConfig } from 'commandkit';
 
 export default defineConfig({});
 ```
 
-Then, create a `src` folder and add `app.ts` file inside it.
+## Entrypoint file
 
-:::info
-You can also use `.js` files instead of `.ts`. CommandKit supports both JavaScript and TypeScript out of the box.
-:::
+Then, create a folder called `src`, followed by a file called `app.ts` inside it. The file should look like this:
 
-The `app.ts` file is the entrypoint of your bot. This file exports your discord.js client.
-
-```ts
+```ts title="src/app.ts"
 import { Client } from 'discord.js';
 
 const client = new Client({
-  intents: [...],
+  intents: ['Guilds', 'GuildMembers'],
 });
 
-// must export the client here
+// must export the `client` here
 export default client;
 ```
 
-You don't need to call `client.login()` as commandkit will do that for you. You should store your bot token in `.env` file under `DISCORD_TOKEN` or `TOKEN` variable.
+With the current entrypoint file created, it's important to understand that:
 
-Now, lets create a simple command. Create a `src/app/commands` folder and add `ping.ts` file inside it.
+1. The `app.ts` file is the entrypoint for this application. This file **must** export your discord.js client instance.
+2. You don't have to call `client.login()` as CommandKit will handle that for you.
+3. You should store your bot token as an environment variable with either `DISCORD_TOKEN` or `TOKEN` as the name.
 
-```ts
+## Adding commands
+
+To add a command, create a folder inside the `src/app` directory called `commands` and create your command file (e.g. `ping.ts`). This example will use a simple ping/pong command which will register as a chat input (slash) and message (legacy) command.
+
+```ts title="src/app/commands/ping.ts"
 import type { SlashCommand, CommandData, MessageCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'ping',
-  description: 'Ping pong!',
+  description: 'Pong!',
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
-  await ctx.interaction.reply('Pong!');
+export const chatInput: SlashCommand = async ({ interaction }) => {
+  await interaction.reply('Pong!');
 };
 
-// you can also add a message command handler
-export const message: MessageCommand = async (ctx) => {
-  await ctx.message.reply('Pong!');
+export const message: MessageCommand = async ({ message }) => {
+  await message.reply('Pong!');
 };
 ```
 
-This command will reply with `Pong!` when the user types `/ping` or `!ping` in the chat.
+This command will reply with "Pong!" when the user runs the `/ping` slash command, or sends `!ping` in the chat.
 
-:::info
-You can override the default prefix for message commands using:
-
-```ts
-import { commandkit } from 'commandkit';
-
-commandkit.setPrefixResolver(async (message) => {
-  // you can use `message` to fetch guild specific prefixes if needed
-  return '?';
-});
-```
-
-An example of this could be:
-
-```ts
-import { commandkit, cacheTag } from 'commandkit';
-import { database } from '../database.ts';
-
-// this function's result will be automatically cached
-async function fetchGuildPrefix(guildId: string) {
-  'use cache';
-
-  cacheTag(`prefix:${guildId}`);
-
-  const setting = await database.findUnique({
-    where: { guildId },
-    select: { prefix: true },
-  });
-
-  // if no prefix is found, return the default prefix
-  return setting?.prefix ?? '!';
-}
-
-commandkit.setPrefixResolver((message) => {
-  return fetchGuildPrefix(message.guildId);
-});
-```
-
-You can also return array of prefixes.
+:::tip
+Prefixes for your message (legacy) commands can be changed. Learn more [here](/docs/next/guide/resolve-message-commands-prefix).
 :::
 
-Now, lets run the bot. You can use `commandkit dev` to start the bot in development mode. This will automatically reload the bot when you make changes to your code.
+## Running the app in development
 
-```sh
+To run your application in development mode, you can use the `commandkit dev` command in your terminal. This will automatically reload the bot when you make changes to your code.
+
+```sh npm2yarn
 npx commandkit dev
 ```
 
-When running in development mode, CommandKit will generate a `.commandkit` folder in your project directory. This folder contains the compiled files used in development mode. You should not commit this folder to your version control system. You should add it to your `.gitignore` file.
+:::warning
+When running in development mode, CommandKit will generate a `.commandkit` folder in the root of your project. This folder contains the compiled files used in development mode. You should not commit this folder to your version control system by making sure you add it to your `.gitignore` file.
+:::
 
-## Production build
+## Building for production
 
 When you are ready to deploy your bot, you can use `commandkit build` to create a production build of your bot. This will create a `dist` folder in your project directory containing the compiled files.
 
@@ -114,20 +90,25 @@ When you are ready to deploy your bot, you can use `commandkit build` to create 
 npx commandkit build
 ```
 
-## Starting the bot in production mode
+:::warning
+After running your build script, CommandKit will generate a `.dist` folder in the root of your project. This folder contains the compiled files used for production. You should not commit this folder to your version control system by making sure you add it to your `.gitignore` file.
+:::
 
-You can use `commandkit start` to start the bot in production mode. This will load the environment variables from `.env` file in your project directory.
+## Running the app in production
+
+You can use `commandkit start` to start the bot in production mode. This will load the environment variables from the `.env` file in the root of your project directory.
 
 ```sh
 npx commandkit start
 ```
 
-If you want to manually start the bot in production mode, you can use the following command:
+:::info
+If you want to manually start the bot in production mode, you can alternatively use the following command:
 
 ```sh
 node dist/index.js
 ```
 
-:::info
-The `index.js` file is autogenerated by `CommandKit`.
+The `dist/index.js` file is generated by CommandKit.
+
 :::
