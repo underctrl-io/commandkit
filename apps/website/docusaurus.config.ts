@@ -84,7 +84,7 @@ const config: Config = {
       style: 'light',
       copyright: `
       <a
-        href="https://www.netlify.com"
+        href="https://www.netlify.com?utm_source=commandkit"
         target="_blank"
         rel="noopener noreferrer"
         className="mx-auto"

@@ -41,7 +41,7 @@ git checkout -b your-feature-or-bugfix
 3. Ensure that your changes don't break any existing functionality. You can test the functionality of your code depending on where you've made changes:
 
    1. If you've made changes to the CommandKit package, you can use the "apps/test-bot" project to test your own bot. Just make sure to create a new `.env` file with the template from the `.env.example` file provided. This also requires you to build the commandkit package locally (after you make your changes) because it's symlinked with pnpm workspaces.
-   2. If you've made changes to the docs, you can run `pnpm dev` inside "apps/docs" to spin up a local development server.
+   2. If you've made changes to the docs, you can run `pnpm dev` inside "apps/website" to spin up a local development server.
 
 4. Run `pnpm lint` from the root directory to ensure all lint scripts and formatting is valid.
 

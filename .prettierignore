@@ -1,12 +1,10 @@
 node_modules
 
-**/docs/.next/
 **/website/docs/api-reference
 **/website/versioned_docs
 **/website/versioned_sidebars
 .docusaurus
 **/devtools/ui
-.astro
 dist
 build
 .commandkit

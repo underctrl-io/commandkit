@@ -107,6 +107,7 @@ export class CommandRegistrar {
         ...c,
         guilds: Array.from(new Set(c.guilds?.filter(Boolean))),
       }));
+
     const globalCommands = commands.filter(
       (command) => !command.guilds?.filter(Boolean).length,
     );
