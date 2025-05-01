@@ -1,5 +1,5 @@
 import { DefaultLogger } from './DefaultLogger';
-import { ILogger } from './ILogger';
+import type { ILogger } from './ILogger';
 
 export interface CommandKitLoggerOptions {
   /**

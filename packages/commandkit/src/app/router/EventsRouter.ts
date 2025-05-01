@@ -151,7 +151,7 @@ export class EventsRouter {
     const namespace = isNamespace ? event.slice(1, -1) : (_namespace ?? null);
 
     for (const file of files) {
-      if (file.name.includes('_')) continue;
+      if (file.name.startsWith('_')) continue;
 
       if (file.isDirectory()) {
         const nextPath = join(path, file.name);
