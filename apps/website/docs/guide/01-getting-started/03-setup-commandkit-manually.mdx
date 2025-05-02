@@ -70,6 +70,20 @@ This command will reply with "Pong!" when the user runs the `/ping` slash comman
 Prefixes for your message (legacy) commands can be changed. Learn more [here](/docs/next/guide/resolve-message-commands-prefix).
 :::
 
+## Adding events
+
+To register and handle events emitted by discord.js, create a folder inside the `src/app` directory called `events` and create a folder with the name of the discord.js event you'd like to handle (e.g. ready, messageCreate, etc). This example will use the `ready` event.
+
+In the `src/app/events/{eventName}` directory, you can create files which will export default functions that will be called when the respective event is emitted by discord.js. Following the `ready` event example mentioned above, you may want to log when your bot comes online. The function for that will look like so:
+
+```ts title="src/app/events/log.ts"
+import type { Client } from 'discord.js';
+
+export default function (client: Client<true>) {
+  console.log(`Logged in as ${client.user.username}!`);
+}
+```
+
 ## Running the app in development
 
 To run your application in development mode, you can use the `commandkit dev` command in your terminal. This will automatically reload the bot when you make changes to your code.
