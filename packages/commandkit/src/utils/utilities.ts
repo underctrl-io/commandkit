@@ -110,3 +110,21 @@ export function devOnly<T extends (...args: any[]) => any>(fn: T): T {
 
   return f as T;
 }
+
+/**
+ * Custom error for stopping event propagation.
+ */
+export class StopEventPropagationError extends Error {
+  constructor() {
+    super('Event propagation stopped');
+    this.name = 'StopEventPropagationError';
+  }
+}
+
+/**
+ * Stops event propagation.
+ * @throws {StopEventPropagationError}
+ */
+export function stopEvents(): never {
+  throw new StopEventPropagationError();
+}

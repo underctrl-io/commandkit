@@ -2,6 +2,7 @@ import { CommandKit } from '../../CommandKit';
 import { ListenerFunction } from '../../events/CommandKitEventsChannel';
 import { Logger } from '../../logger/Logger';
 import { toFileURL } from '../../utils/resolve-file-url';
+import { StopEventPropagationError } from '../../utils/utilities';
 import { ParsedEvent } from '../router';
 
 export type EventListener = {
@@ -107,6 +108,17 @@ export class AppEventsHandler {
           try {
             await listener.handler(...args);
           } catch (e) {
+            // Check if this is a stop propagation signal
+            if (e instanceof StopEventPropagationError) {
+              Logger.debug(
+                `Event propagation stopped for ${name}${
+                  namespace ? ` of namespace ${namespace}` : ''
+                }`,
+              );
+              break; // Stop executing remaining listeners
+            }
+
+            // Otherwise log the error as usual
             Logger.error(
               `Error handling event ${name}${
                 namespace ? ` of namespace ${namespace}` : ''
@@ -127,6 +139,17 @@ export class AppEventsHandler {
             await listener.handler(...args);
             executedOnceListeners.add(listener.handler);
           } catch (e) {
+            // Check if this is a stop propagation signal
+            if (e instanceof StopEventPropagationError) {
+              Logger.debug(
+                `Event propagation stopped for ${name}${
+                  namespace ? ` of namespace ${namespace}` : ''
+                }`,
+              );
+              break; // Stop executing remaining listeners
+            }
+
+            // Otherwise log the error as usual
             Logger.error(
               `Error handling event ${name}${
                 namespace ? ` of namespace ${namespace}` : ''

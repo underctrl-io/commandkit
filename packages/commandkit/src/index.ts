@@ -21,6 +21,8 @@ export {
   getSourceDirectories,
   devOnly,
   debounce,
+  stopEvents,
+  StopEventPropagationError,
 } from './utils/utilities';
 export type { CommandKitHMREvent } from './utils/dev-hooks';
 export * from './utils/constants';
