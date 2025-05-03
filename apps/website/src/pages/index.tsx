@@ -33,7 +33,7 @@ export default function Home(): React.JSX.Element {
               Guide
             </Link>
             <Link
-              to="/docs/api-reference/classes/AppCommandHandler"
+              to="/docs/api-reference/classes/ButtonKit"
               className="font-semibold bg-blue-500 py-2 px-4 rounded-full"
             >
               API <span className="hidden md:inline">Reference</span>
