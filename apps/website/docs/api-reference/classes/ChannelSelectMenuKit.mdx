@@ -1,0 +1,166 @@
+---
+title: ChannelSelectMenuKit
+description: No description provided
+---
+
+
+## ChannelSelectMenuKit extends ChannelSelectMenuBuilder
+
+
+```typescript
+new ChannelSelectMenuKit(data)
+```
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| data | Partial\<APIChannelSelectComponent \| ChannelSelectMenuComponentData> | ✅ |
+
+
+## Properties
+### public data: any
+The API data associated with this component.
+
+## Methods
+### public addChannelTypes(types): this
+Adds channel types to this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| types | RestOrArray\<ChannelType> | ❌ | The channel types to use |
+### public addDefaultChannels(channels): this
+Adds default channels to this auto populated select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| channels | RestOrArray\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> | ❌ | The channels to add |
+### public clearId(): this
+Clears the id of this component, defaulting to a default incremented id.
+### public dispose(): ChannelSelectMenuKit
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/ChannelSelectMenuKit.ts#L193)
+### public filter(predicate): this
+Sets a filter for the interaction collector.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| predicate | SelectMenuKitPredicate\<ChannelSelectMenuInteraction> | ❌ | The filter to use for the interaction collector. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/ChannelSelectMenuKit.ts#L139)
+### public onEnd(handler): this
+Sets the handler to run when the interaction collector ends.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | CommandKitSelectMenuBuilderOnEnd | ❌ | The handler to run when the interaction collector ends. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/ChannelSelectMenuKit.ts#L103)
+### public onError(handler): this
+Sets the handler to run when the interaction collector ends.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | EventInterceptorErrorHandler | ❌ | The handler to run when the interaction collector ends. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/ChannelSelectMenuKit.ts#L121)
+### public onSelect(handler, data?): this
+Sets the handler to run when the modal is submitted.
+
+```ts
+const modal = new ChannelSelectMenuKit()
+ .setTitle('My Modal')
+ .setCustomId('my-modal')
+ .filter((interaction) => interaction.Channel.id === '1234567890')
+ .onSelect(async (interaction) => {
+    await interaction.reply('You submitted the modal!');
+  })
+  .addComponents(actionRow1, actionRow2);
+```
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | CommandKitSelectMenuBuilderInteractionCollectorDispatch\<ChannelSelectMenuInteraction | ChannelSelectMenuKit> | ❌ | The handler to run when the modal is submitted. |
+| data | CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData | ✅ | The context data for the interaction collector. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/ChannelSelectMenuKit.ts#L65)
+### public setChannelTypes(types): this
+Sets channel types for this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| types | RestOrArray\<ChannelType> | ❌ | The channel types to use |
+### public setCustomId(customId): this
+Sets the custom id for this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| customId | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The custom id to use |
+### public setDefaultChannels(channels): this
+Sets default channels for this auto populated select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| channels | RestOrArray\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> | ❌ | The channels to set |
+### public setDisabled(disabled?): this
+Sets whether this select menu is disabled.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| disabled | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ✅ | Whether this select menu is disabled |
+### public setId(id): this
+Sets the id (not the custom id) for this component.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| id | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The id for this component |
+### public setMaxValues(maxValues): this
+Sets the maximum values that must be selected in the select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| maxValues | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The maximum values that must be selected |
+### public setMinValues(minValues): this
+Sets the minimum values that must be selected in the select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| minValues | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The minimum values that must be selected |
+### public setPlaceholder(placeholder): this
+Sets the placeholder for this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| placeholder | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The placeholder to use |
+### public toJSON(): APIChannelSelectComponent
+BaseSelectMenuBuilder.toJSON
+### public static from(other): ChannelSelectMenuBuilder
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| other | APIChannelSelectComponent | JSONEncodable\<APIChannelSelectComponent> | ❌ |

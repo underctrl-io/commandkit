@@ -1,0 +1,166 @@
+---
+title: MentionableSelectMenuKit
+description: No description provided
+---
+
+
+## MentionableSelectMenuKit extends MentionableSelectMenuBuilder
+
+
+```typescript
+new MentionableSelectMenuKit(data)
+```
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| data | Partial\<APIMentionableSelectComponent \| MentionableSelectMenuComponentData> | ✅ |
+
+
+## Properties
+### public data: any
+The API data associated with this component.
+
+## Methods
+### public addDefaultRoles(roles): this
+Adds default roles to this auto populated select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| roles | RestOrArray\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> | ❌ | The roles to add |
+### public addDefaultUsers(users): this
+Adds default users to this auto populated select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| users | RestOrArray\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> | ❌ | The users to add |
+### public addDefaultValues(values): this
+Adds default values to this auto populated select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| values | RestOrArray\<APISelectMenuDefaultValue\<User>APISelectMenuDefaultValue\<Role>> | ❌ | The values to add |
+### public clearId(): this
+Clears the id of this component, defaulting to a default incremented id.
+### public dispose(): MentionableSelectMenuKit
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/MentionableSelectMenuKit.ts#L193)
+### public filter(predicate): this
+Sets a filter for the interaction collector.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| predicate | SelectMenuKitPredicate\<MentionableSelectMenuInteraction> | ❌ | The filter to use for the interaction collector. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/MentionableSelectMenuKit.ts#L139)
+### public onEnd(handler): this
+Sets the handler to run when the interaction collector ends.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | CommandKitSelectMenuBuilderOnEnd | ❌ | The handler to run when the interaction collector ends. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/MentionableSelectMenuKit.ts#L103)
+### public onError(handler): this
+Sets the handler to run when the interaction collector ends.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | EventInterceptorErrorHandler | ❌ | The handler to run when the interaction collector ends. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/MentionableSelectMenuKit.ts#L121)
+### public onSelect(handler, data?): this
+Sets the handler to run when the modal is submitted.
+
+```ts
+const modal = new MentionableSelectMenuKit()
+ .setTitle('My Modal')
+ .setCustomId('my-modal')
+ .filter((interaction) => interaction.Mentionable.id === '1234567890')
+ .onSelect(async (interaction) => {
+    await interaction.reply('You submitted the modal!');
+  })
+  .addComponents(actionRow1, actionRow2);
+```
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | CommandKitSelectMenuBuilderInteractionCollectorDispatch\<MentionableSelectMenuInteraction | MentionableSelectMenuKit> | ❌ | The handler to run when the modal is submitted. |
+| data | CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData | ✅ | The context data for the interaction collector. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/MentionableSelectMenuKit.ts#L65)
+### public setCustomId(customId): this
+Sets the custom id for this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| customId | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The custom id to use |
+### public setDefaultValues(values): this
+Sets default values for this auto populated select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| values | RestOrArray\<APISelectMenuDefaultValue\<User>APISelectMenuDefaultValue\<Role>> | ❌ | The values to set |
+### public setDisabled(disabled?): this
+Sets whether this select menu is disabled.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| disabled | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ✅ | Whether this select menu is disabled |
+### public setId(id): this
+Sets the id (not the custom id) for this component.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| id | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The id for this component |
+### public setMaxValues(maxValues): this
+Sets the maximum values that must be selected in the select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| maxValues | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The maximum values that must be selected |
+### public setMinValues(minValues): this
+Sets the minimum values that must be selected in the select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| minValues | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The minimum values that must be selected |
+### public setPlaceholder(placeholder): this
+Sets the placeholder for this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| placeholder | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The placeholder to use |
+### public toJSON(): APIMentionableSelectComponent
+ComponentBuilder.toJSON
+### public static from(other): MentionableSelectMenuBuilder
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| other | APIMentionableSelectComponent | JSONEncodable\<APIMentionableSelectComponent> | ❌ |

@@ -17,24 +17,60 @@ new AppCommandHandler(commandkit)
 
 ## Properties
 ### public commandkit: any
-- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L74)
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L102)
+### public commandRunner: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L97)
+### public externalCommandData: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L99)
+### public externalMiddlewareData: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L100)
+### public registrar: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L94)
 
 ## Methods
-### public applyLocalizations(command): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<RESTPostAPIContextMenuApplicationCommandsJSONBody | CommandBuilderLike>
+### public addExternalCommands(data): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 | Parameter | Type | Optional |
 | ----------- | ----------- | ----------- |
-| command | CommandBuilderLike | ❌ |
+| data | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<Command> | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L240)
-### public getCommandsArray(): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>
-- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L76)
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L422)
+### public addExternalMiddleware(data): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| data | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<Middleware> | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L414)
+### public getCommandsArray(): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<LoadedCommand>
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L241)
 ### public loadCommands(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
-- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L166)
-### public prepareCommandRun(source): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<null | PreparedAppCommandExecution>
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L443)
+### public prepareCommandRun(source, cmdName?): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<null | PreparedAppCommandExecution>
 | Parameter | Type | Optional |
 | ----------- | ----------- | ----------- |
 | source | [Interaction](https://discord.js.org/docs/packages/discord.js/main/Interaction:Class) | Message | ❌ |
+| cmdName | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ✅ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/command-handler/AppCommandHandler.ts#L83)
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L293)
+### public printBanner(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L106)
+### public registerCommandHandler(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L245)
+### public registerExternalLoadedCommands(data): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| data | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<LoadedCommand> | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L436)
+### public registerExternalLoadedMiddleware(data): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| data | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<LoadedMiddleware> | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L430)
+### public reloadCommands(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/handlers/AppCommandHandler.ts#L403)

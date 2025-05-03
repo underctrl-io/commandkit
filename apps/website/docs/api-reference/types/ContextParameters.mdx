@@ -7,7 +7,9 @@ description: No description provided
 
 | Property | Type | Value |
 | ----------- | ----------- | ----------- |
-| environment | [CommandKitEnvironment](/next/api-reference/classes/CommandKitEnvironment) | N/A |
+| command | LoadedCommand | N/A |
+| customArgs | Args | N/A |
+| environment | [CommandKitEnvironment](/docs/api-reference/classes/CommandKitEnvironment) | N/A |
 | executionMode | T | N/A |
 | forwarded | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | N/A |
 | interaction | T extends 'chatInput' ? ChatInputCommandInteraction : T extends 'messageContextMenu' ? MessageContextMenuCommandInteraction : T extends 'userContextMenu' ? UserContextMenuCommandInteraction : T extends 'autocomplete' ? AutocompleteInteraction : never | N/A |
@@ -16,4 +18,4 @@ description: No description provided
 | store | Map\<string, any> | N/A |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/app/commands/Context.ts#L38)
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/commands/Context.ts#L39)

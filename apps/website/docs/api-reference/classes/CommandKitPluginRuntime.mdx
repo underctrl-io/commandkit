@@ -1,0 +1,61 @@
+---
+title: CommandKitPluginRuntime
+description: No description provided
+---
+
+
+## CommandKitPluginRuntime
+
+
+```typescript
+new CommandKitPluginRuntime(commandkit)
+```
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| commandkit | [CommandKit](/docs/api-reference/classes/CommandKit) | ❌ |
+
+
+## Properties
+### public commandkit: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts#L15)
+
+## Methods
+### public capture(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts#L77)
+### public execute(f): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<undefined | true | R>
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| f | AsyncFunction\<\[ | CommandKitPluginRuntime | RuntimePlugin | ] | undefined | R> | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts#L81)
+### public getPlugin(pluginName): null | RuntimePlugin
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| pluginName | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts#L17)
+### public registerPlugin(plugin): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| plugin | RuntimePlugin | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts#L36)
+### public softRegisterPlugin(plugin): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| plugin | RuntimePlugin | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts#L21)
+### public unregisterAllPlugins(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts#L71)
+### public unregisterPlugin(plugin): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| plugin | RuntimePlugin | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts#L53)

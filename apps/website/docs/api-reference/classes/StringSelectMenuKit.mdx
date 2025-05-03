@@ -1,0 +1,176 @@
+---
+title: StringSelectMenuKit
+description: No description provided
+---
+
+
+## StringSelectMenuKit extends StringSelectMenuBuilder
+
+
+```typescript
+new StringSelectMenuKit(data)
+```
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| data | Partial\<APIStringSelectComponent \| StringSelectMenuComponentData> | ✅ |
+
+
+## Properties
+### public data: any
+The API data associated with this component.
+### public options: any
+The options within this select menu.
+
+## Methods
+### public addOptions(options): this
+Adds options to this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| options | RestOrArray\<StringSelectMenuOptionBuilder | SelectMenuComponentOptionData | APISelectMenuOption> | ❌ | The options to add |
+### public clearId(): this
+Clears the id of this component, defaulting to a default incremented id.
+### public dispose(): StringSelectMenuKit
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/StringSelectMenuKit.ts#L193)
+### public filter(predicate): this
+Sets a filter for the interaction collector.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| predicate | SelectMenuKitPredicate\<StringSelectMenuInteraction> | ❌ | The filter to use for the interaction collector. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/StringSelectMenuKit.ts#L139)
+### public onEnd(handler): this
+Sets the handler to run when the interaction collector ends.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | CommandKitSelectMenuBuilderOnEnd | ❌ | The handler to run when the interaction collector ends. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/StringSelectMenuKit.ts#L103)
+### public onError(handler): this
+Sets the handler to run when the interaction collector ends.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | EventInterceptorErrorHandler | ❌ | The handler to run when the interaction collector ends. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/StringSelectMenuKit.ts#L121)
+### public onSelect(handler, data?): this
+Sets the handler to run when the modal is submitted.
+
+```ts
+const modal = new StringSelectMenuKit()
+ .setTitle('My Modal')
+ .setCustomId('my-modal')
+ .filter((interaction) => interaction.user.id === '1234567890')
+ .onSelect(async (interaction) => {
+    await interaction.reply('You submitted the modal!');
+  })
+  .addComponents(actionRow1, actionRow2);
+```
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| handler | CommandKitSelectMenuBuilderInteractionCollectorDispatch\<StringSelectMenuInteraction | StringSelectMenuKit> | ❌ | The handler to run when the modal is submitted. |
+| data | CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData | ✅ | The context data for the interaction collector. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/components/v1/select-menu/StringSelectMenuKit.ts#L65)
+### public setCustomId(customId): this
+Sets the custom id for this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| customId | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The custom id to use |
+### public setDisabled(disabled?): this
+Sets whether this select menu is disabled.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| disabled | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ✅ | Whether this select menu is disabled |
+### public setId(id): this
+Sets the id (not the custom id) for this component.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| id | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The id for this component |
+### public setMaxValues(maxValues): this
+Sets the maximum values that must be selected in the select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| maxValues | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The maximum values that must be selected |
+### public setMinValues(minValues): this
+Sets the minimum values that must be selected in the select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| minValues | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The minimum values that must be selected |
+### public setOptions(options): this
+Sets the options for this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| options | RestOrArray\<StringSelectMenuOptionBuilder | SelectMenuComponentOptionData | APISelectMenuOption> | ❌ | The options to set |
+### public setPlaceholder(placeholder): this
+Sets the placeholder for this select menu.
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| placeholder | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The placeholder to use |
+### public spliceOptions(index, deleteCount, options): this
+Removes, replaces, or inserts options for this select menu.
+
+Remove the first option:
+```ts
+selectMenu.spliceOptions(0, 1);
+```
+
+Remove the first n option:
+```ts
+const n = 4;
+selectMenu.spliceOptions(0, n);
+```
+
+Remove the last option:
+```ts
+selectMenu.spliceOptions(-1, 1);
+```
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| index | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The index to start at |
+| deleteCount | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The number of options to remove |
+| options | RestOrArray\<StringSelectMenuOptionBuilder | APISelectMenuOption> | ❌ | The replacing option objects or builders |
+### public toJSON(): APIStringSelectComponent
+BaseSelectMenuBuilder.toJSON
+### public static from(other): StringSelectMenuBuilder
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| other | APIStringSelectComponent | JSONEncodable\<APIStringSelectComponent> | ❌ |

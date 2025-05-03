@@ -1,0 +1,40 @@
+---
+title: StopEventPropagationError
+description: Custom error for stopping event propagation.
+---
+
+
+## StopEventPropagationError extends [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+Custom error for stopping event propagation.
+
+
+
+```typescript
+new StopEventPropagationError()
+```
+
+
+## Properties
+### public cause: any
+
+### public message: any
+
+### public name: any
+
+### public stack: any
+
+### public static prepareStackTrace: any
+Optional override for formatting stack traces
+### public static stackTraceLimit: any
+
+
+## Methods
+### public static captureStackTrace(targetObject, constructorOpt?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+Create .stack property on a target object
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| targetObject | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | ❌ |
+| constructorOpt | [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function) | ✅ |

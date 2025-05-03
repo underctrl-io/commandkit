@@ -1,24 +1,18 @@
 ---
 title: defineConfig
-description: No description provided
+description: Define the configuration for CommandKit.
 ---
 
 
-### defineConfig(config): \{
-  antiCrash | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
-  clearRestartLogs | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
-  envExtra | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
-  minify | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
-  nodeOptions | : [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>;
-  outDir | : [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ;
-  requirePolyfill | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
-  sourcemap | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)'inline';
-  watch | : [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ;
-}
+### defineConfig(config): ResolvedCommandKitConfig
 
-| Parameter | Type | Optional |
-| ----------- | ----------- | ----------- |
-| config | Partial\<[CommandKitConfig](/next/api-reference/types/CommandKitConfig)> | ❌ |
+Define the configuration for CommandKit.
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/f8cc07d11d2ae5ed7f529adff1649936223e27b2/packages/commandkit/src/config.ts#L56)
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| config | Partial\<CommandKitConfig> | ❌ | The configuration to use. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/config/config.ts#L20)

@@ -1,0 +1,80 @@
+---
+title: CompilerPlugin
+description: No description provided
+---
+
+
+## CompilerPlugin extends PluginCommon\<T, CompilerPluginRuntime>
+
+
+```typescript
+new CompilerPlugin(options)
+```
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| options | T | ❌ |
+
+
+## Properties
+### public name: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L9)
+### public options: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L10)
+
+## Methods
+### public activate(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+Called when this plugin is activated
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| ctx | CompilerPluginRuntime | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L15)
+### public deactivate(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+Called when this plugin is deactivated
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| ctx | CompilerPluginRuntime | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L20)
+### public onBuildEnd(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+Called when a build is ended
+
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/CompilerPlugin.ts#L61)
+### public onBuildStart(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+Called when a build is started
+
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/CompilerPlugin.ts#L56)
+### public resolve(args): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<MaybeFalsey\<ResolveResult>>
+Called when a resolve is requested to this plugin
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| args | OnResolveArgs | ❌ | The arguments for the resolve |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/CompilerPlugin.ts#L47)
+### public transform(params): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<MaybeFalsey\<TransformedResult>>
+Called when transformation is requested to this plugin
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| params | PluginTransformParameters | ❌ | The parameters for the transformation |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/CompilerPlugin.ts#L36)

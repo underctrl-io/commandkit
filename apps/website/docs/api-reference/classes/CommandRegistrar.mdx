@@ -1,0 +1,58 @@
+---
+title: CommandRegistrar
+description: No description provided
+---
+
+
+## CommandRegistrar
+
+
+```typescript
+new CommandRegistrar(commandkit)
+```
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| commandkit | [CommandKit](/docs/api-reference/classes/CommandKit) | ❌ | The commandkit instance. |
+
+
+## Properties
+### public commandkit: any
+The commandkit instance.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/register/CommandRegistrar.ts#L18)
+
+## Methods
+### public getCommandsData(): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CommandData>
+Gets the commands data.
+
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/register/CommandRegistrar.ts#L30)
+### public register(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+Registers loaded commands.
+
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/register/CommandRegistrar.ts#L79)
+### public updateGlobalCommands(commands): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+Updates the global commands.
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| commands | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CommandData> | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/register/CommandRegistrar.ts#L122)
+### public updateGuildCommands(commands): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+Updates the guild commands.
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| commands | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CommandData> | ❌ |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/app/register/CommandRegistrar.ts#L160)

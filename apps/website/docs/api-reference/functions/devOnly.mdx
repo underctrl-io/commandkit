@@ -1,0 +1,23 @@
+---
+title: devOnly
+description: Creates a function from the given function that runs only in development mode.
+---
+
+
+### devOnly(fn): T
+
+Creates a function from the given function that runs only in development mode.
+
+```ts
+const devOnlyFn = devOnly(() => {
+  console.log('This function runs only in development mode');
+});
+devOnlyFn(); // This will log the message only in development mode
+```
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| fn | T | ❌ | The function to run in development mode. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/utils/utilities.ts#L104)
