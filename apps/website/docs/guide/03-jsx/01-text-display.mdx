@@ -1,0 +1,20 @@
+---
+title: Text Display
+description: Use the Text Display component using JSX
+---
+
+## Usage
+
+```ts title="src/app/commands/ping.tsx"
+import { type ChatInputCommand, TextDisplay } from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const textComponent = <TextDisplay content="This is a text display component" />
+
+  await ctx.interaction.reply({
+    components: [textComponent],
+    flags: MessageFlags.IsComponentsV2,
+  })
+};
+```

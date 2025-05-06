@@ -22,6 +22,11 @@ const sidebars: SidebarsConfig = {
         //
       ],
     },
+    {
+      type: 'category',
+      label: 'Using JSX',
+      items: ['guide/jsx/text-display'],
+    },
     'guide/using-cli',
     'guide/commandkit-config',
     'guide/caching',
