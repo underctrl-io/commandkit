@@ -28,11 +28,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
       <TextDisplay content="Discord Avatars Gallery" />
       <MediaGallery>
         {images.map((url, index) => (
-          <MediaGalleryItem
-            key={index}
-            url={url}
-            description={`Avatar ${index + 1}`}
-          />
+          <MediaGalleryItem url={url} description={`Avatar ${index + 1}`} />
         ))}
       </MediaGallery>
     </>
@@ -70,11 +66,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
       <TextDisplay content="Dynamic Avatar Gallery" />
       <MediaGallery>
         {mediaItems.map((url, index) => (
-          <MediaGalleryItem
-            key={index}
-            url={url}
-            description={`Avatar ${index + 1}`}
-          />
+          <MediaGalleryItem url={url} description={`Avatar ${index + 1}`} />
         ))}
       </MediaGallery>
     </>

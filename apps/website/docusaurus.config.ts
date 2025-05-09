@@ -2,6 +2,8 @@ import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
+const UPPERCASE = new Set(['jsx', 'cli', 'api']);
+
 const config: Config = {
   title: 'CommandKit',
   tagline: 'A Discord.js handler',
@@ -27,9 +29,42 @@ const config: Config = {
           ],
           editUrl:
             'https://github.com/underctrl-io/commandkit/tree/main/apps/website/',
+          sidebarItemsGenerator: async (args) => {
+            const items = await args.defaultSidebarItemsGenerator(args);
+
+            const transform = (item: any) => {
+              if (item.type === 'category') {
+                return {
+                  ...item,
+                  label: UPPERCASE.has(item.label?.toLowerCase())
+                    ? item.label.toUpperCase()
+                    : item.label
+                        .replace(/-/g, ' ')
+                        .replace(/\b\w/g, (char) => char.toUpperCase()),
+                  items: item?.items?.map?.(transform),
+                };
+              }
+
+              return item;
+            };
+
+            return items.map(transform);
+          },
         },
         theme: {
           customCss: './src/css/custom.css',
+        },
+        sitemap: {
+          lastmod: 'date',
+          changefreq: 'weekly',
+          priority: 0.5,
+          ignorePatterns: ['/tags/**'],
+          filename: 'sitemap.xml',
+          createSitemapItems: async (params) => {
+            const { defaultCreateSitemapItems, ...rest } = params;
+            const items = await defaultCreateSitemapItems(rest);
+            return items.filter((item) => !item.url.includes('/page/'));
+          },
         },
       } satisfies Preset.Options,
     ],
