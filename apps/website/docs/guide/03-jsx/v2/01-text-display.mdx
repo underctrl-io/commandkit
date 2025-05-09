@@ -1,0 +1,64 @@
+---
+title: Text Display
+description: Display text content in your Discord messages using the TextDisplay component
+---
+
+The `TextDisplay` component is the most basic component in CommandKit that allows you to show text content in your Discord messages. It supports Discord's markdown syntax for rich text formatting.
+
+## Basic Usage
+
+```tsx title="src/app/commands/example.tsx"
+import { type ChatInputCommand, TextDisplay } from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const textComponent = <TextDisplay content="Hello, world!" />;
+
+  await ctx.interaction.reply({
+    components: [textComponent],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Text Formatting
+
+The `TextDisplay` component supports Discord's markdown syntax. Here are some examples:
+
+```tsx title="src/app/commands/formatting.tsx"
+import { type ChatInputCommand, TextDisplay } from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const formattedText = (
+    <TextDisplay
+      content={`
+# Heading
+**Bold text**
+*Italic text*
+~~Strikethrough~~
+\`\`\`code block\`\`\`
+    `}
+    />
+  );
+
+  await ctx.interaction.reply({
+    components: [formattedText],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Common Use Cases
+
+1. **Simple Messages**: Display plain text messages
+2. **Formatted Content**: Show formatted text using Discord's markdown
+3. **Code Blocks**: Display code snippets with syntax highlighting
+4. **Lists**: Create ordered and unordered lists
+
+## Tips
+
+- Always wrap your text content in the `TextDisplay` component
+- Use Discord's markdown syntax for rich text formatting
+- For multi-line text, use template literals (\`\`) for better readability
+- Remember to include the `MessageFlags.IsComponentsV2` flag in your reply

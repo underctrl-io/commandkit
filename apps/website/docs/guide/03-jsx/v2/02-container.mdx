@@ -1,0 +1,96 @@
+---
+title: Container
+description: Organize and style your message components using the Container component
+---
+
+The `Container` component is a fundamental building block in CommandKit that allows you to organize and style multiple components together. It provides a consistent layout and can be customized with an accent color.
+
+## Basic Usage
+
+```tsx title="src/app/commands/container-example.tsx"
+import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
+import { Colors, MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const container = (
+    <Container accentColor={Colors.Blue}>
+      <TextDisplay content="Welcome to my bot!" />
+      <TextDisplay content="This is a container example" />
+    </Container>
+  );
+
+  await ctx.interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Styling
+
+The `Container` component accepts an `accentColor` prop that can be used to customize its appearance:
+
+```tsx title="src/app/commands/container-styling.tsx"
+import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
+import { Colors, MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const container = (
+    <Container accentColor={Colors.Fuchsia}>
+      <TextDisplay content="This container has a fuchsia accent color" />
+    </Container>
+  );
+
+  await ctx.interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Nesting Components
+
+You can nest various components inside a Container:
+
+```tsx title="src/app/commands/container-nesting.tsx"
+import {
+  type ChatInputCommand,
+  Container,
+  TextDisplay,
+  Section,
+  Separator,
+} from 'commandkit';
+import { Colors, MessageFlags, SeparatorSpacingSize } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const container = (
+    <Container accentColor={Colors.Green}>
+      <TextDisplay content="# Main Title" />
+      <Section>
+        <TextDisplay content="This is a section" />
+      </Section>
+      <Separator spacing={SeparatorSpacingSize.Large} />
+      <Section>
+        <TextDisplay content="This is another section" />
+      </Section>
+    </Container>
+  );
+
+  await ctx.interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Best Practices
+
+1. **Organization**: Use containers to group related components together
+2. **Visual Hierarchy**: Create clear visual sections using nested components
+3. **Consistency**: Maintain consistent accent colors across related containers
+4. **Readability**: Keep container content organized and well-structured
+
+## Available Props
+
+- `accentColor`: Discord color to use as the container's accent color
+- `children`: React components to render inside the container

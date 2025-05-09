@@ -1,28 +1,40 @@
 ---
 title: Caching
-description: A guide on how to implement caching in your bot using CommandKit.
+description: A comprehensive guide on implementing caching in your Discord bot using CommandKit.
 ---
 
-Caching is a technique used to store data in a temporary storage to reduce the time it takes to fetch the data from the original source. This can be useful in Discord bots to reduce the number of database queries or external API calls.
+Caching is a technique that stores frequently accessed data in a temporary storage to improve performance and reduce load on your primary data sources. In Discord bots, this can significantly reduce database queries and external API calls.
 
-CommandKit provides an easy way to implement caching in your bot without having to worry about the underlying implementation. This guide will show you how to use the caching feature in CommandKit.
+CommandKit provides a powerful yet simple caching system that works out of the box. This guide will show you how to effectively use caching in your bot.
 
-## Setting up the cache
+## Understanding CommandKit's Cache System
 
-By default, commandkit enables in-memory caching. This means that the cache will be stored in the bot's memory and will be lost when the bot restarts.
-You can provide a custom cache store using the `setCacheProvider` method.
+CommandKit's caching system is built on a provider-based architecture, allowing you to choose where your cache data is stored. The system includes:
 
-```js
-import { commandkit } from 'commandkit';
+- In-memory caching (default)
+- Redis caching (via `@commandkit/redis`)
+- Custom cache providers (extendable)
 
-commandkit.setCacheProvider(new MyCustomCacheProvider());
-```
+### Default In-Memory Cache
 
-The `MyCustomCacheProvider` class should extend `CacheProvider` from CommandKit and implement the required methods. You may use this to store the cache in redis, a database or a file system.
+By default, CommandKit uses an in-memory cache provider. This means:
 
-CommandKit officially provides a `RedisCache` provider as well with `@commandkit/redis` package. You can enable redis cache provider by initializing it in your commandkit config file.
+- Cache data is stored in your bot's memory
+- Data is lost when the bot restarts
+- Perfect for development and small bots
+- No additional setup required
 
-```js
+### Setting Up Redis Cache
+
+For production bots, Redis caching is recommended as it:
+
+- Persists across bot restarts
+- Can be shared across multiple bot instances
+- Provides better performance for large datasets
+
+To use Redis caching:
+
+```ts
 import { defineConfig } from 'commandkit';
 import { redis } from '@commandkit/redis';
 
@@ -31,17 +43,95 @@ export default defineConfig({
 });
 ```
 
+For custom Redis configuration:
+
+```ts
+import { onApplicationBootstrap } from 'commandkit';
+import { RedisCache } from '@commandkit/redis';
+import { Redis } from 'ioredis';
+
+onApplicationBootstrap(async (commandkit) => {
+  const redis = new Redis({
+    // Your Redis configuration
+    host: 'localhost',
+    port: 6379,
+  });
+
+  commandkit.setCacheProvider(new RedisCache(redis));
+});
+```
+
+## Using the Cache
+
+CommandKit provides a simple and powerful way to implement caching using the `"use cache"` directive:
+
+```ts
+async function getUserProfile(userId: string) {
+  'use cache';
+
+  // This result will be cached
+  return await database.getUser(userId);
+}
+```
+
+You can customize the cache behavior using helper functions:
+
+```ts
+import { cacheTag, cacheLife } from 'commandkit';
+
+async function getUserProfile(userId: string) {
+  'use cache';
+
+  // Set a custom cache key
+  cacheTag(`user:${userId}`);
+
+  // Set cache duration to 1 hour
+  cacheLife('1h');
+
+  return await database.getUser(userId);
+}
+```
+
+## Cache Duration Format
+
+You can specify cache duration in multiple formats:
+
+- Milliseconds: `ttl: 60000` (1 minute)
+- String shortcuts:
+  - `'5s'` - 5 seconds
+  - `'1m'` - 1 minute
+  - `'2h'` - 2 hours
+  - `'1d'` - 1 day
+
+## Managing Cache Data
+
+### Invalidating Cache
+
+To remove cached data:
+
+```ts
+import { invalidate } from 'commandkit';
+
+// Remove specific cache entry
+await invalidate('user:123');
+```
+
+### Revalidating Cache
+
+To force refresh cached data:
+
+```ts
+import { revalidate } from 'commandkit';
+
+// Revalidate and get fresh data
+const freshData = await revalidate('user:123');
+```
+
 ## Real World Example: XP System
 
-Let's build a simple XP system using CommandKit's caching feature. We'll create:
+Let's build a simple XP system using CommandKit's caching:
 
-- A message event to give XP
-- A command to check XP
-- Commands to manage the XP cache
-
-### XP Command
-
-```js
+```ts
 import { SlashCommand, CommandData, cacheTag } from 'commandkit';
 import { database } from '../database';
 
@@ -50,12 +140,12 @@ export const command: CommandData = {
   description: 'Check your XP',
 };
 
-// This function will be cached
-async function getUserXP(guildId, userId) {
+// Cached function to get user XP
+async function getUserXP(guildId: string, userId: string) {
   'use cache';
 
   const key = `xp:${guildId}:${userId}`;
-  cacheTag(key); // Use the database key as cache tag
+  cacheTag(key);
 
   const xp = (await database.get(key)) ?? 0;
   return xp;
@@ -64,19 +154,18 @@ async function getUserXP(guildId, userId) {
 export const chatInput: SlashCommand = async ({ interaction }) => {
   await interaction.deferReply();
 
-  const xp = await getUserXP(interaction.guildId, interaction.user.id);
+  const xp = await getUserXP(interaction.guildId!, interaction.user.id);
 
   return interaction.editReply(`You have ${xp} XP!`);
-}
+};
 ```
 
 ### XP Event Handler
 
-```js
+```ts
 import { invalidate } from 'commandkit';
 import { database } from '../database';
 
-// Give XP when user sends a message
 export default async function (message) {
   if (message.author.bot || !message.inGuild()) return;
 
@@ -85,208 +174,146 @@ export default async function (message) {
   const xp = Math.floor(Math.random() * 10) + 1;
 
   await database.set(key, oldXp + xp);
-  await invalidate(key); // Invalidate cache so next xp check is fresh
+  await invalidate(key); // Invalidate cache after update
 }
 ```
-
-In this example:
-
-1. The XP command caches user XP data to avoid database queries
-2. When a user sends a message, they get random XP
-3. The cache is invalidated after XP update so next check shows new value
-
-## Common Caching Patterns
-
-### Pattern 1: Cache with Auto-Expiry
-
-```js
-import { cache } from 'commandkit';
-
-// Cache API results for 5 minutes
-const fetchPokemon = cache(
-  async (name) => {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    return response.json();
-  },
-  {
-    tag: 'pokemon-data',
-    ttl: '5m', // Expires after 5 minutes
-  },
-);
-```
-
-### Pattern 2: Manual Cache Control
-
-```js
-// Using "use cache" directive with manual control
-async function fetchUserProfile(userId) {
-  'use cache';
-
-  cacheTag(`user-${userId}`);
-  cacheLife('1h');
-
-  return database.getUserProfile(userId);
-}
-
-// Invalidate cache when profile updates
-async function updateUserProfile(userId, data) {
-  await database.updateUserProfile(userId, data);
-  await invalidate(`user-${userId}`);
-}
-```
-
-### Pattern 3: Forced Refresh with Revalidation
-
-```js
-import { revalidate as revalidate } from 'commandkit';
-
-// Command to force refresh server stats
-export async function run({ interaction }) {
-  await interaction.deferReply();
-
-  // Force refresh and get new data
-  const newStats = await revalidate('server-stats');
-
-  return interaction.editReply({
-    content: `Stats refreshed! New member count: ${newStats.members}`,
-  });
-}
-```
-
-## Cache Duration Format
-
-You can specify cache duration in multiple formats:
-
-- As milliseconds: `ttl: 60000` (1 minute)
-- As string shortcuts:
-  - `'5s'` - 5 seconds
-  - `'1m'` - 1 minute
-  - `'2h'` - 2 hours
-  - `'1d'` - 1 day etc.
 
 ## Best Practices
 
-1. **Choose Good Cache Keys:**
-
-   - Use meaningful, unique cache tags
-   - Include relevant IDs (like `user-123` or `guild-456`)
-
-2. **Set Appropriate TTL:**
+1. **Choose Appropriate Cache Duration**
 
    - Short TTL for frequently changing data
    - Longer TTL for static content
-   - Consider invalidating manually for important updates
+   - Consider your data update patterns
 
-3. **Handle Cache Misses:**
+2. **Use Meaningful Cache Keys**
 
-   - Cache functions should handle cases when data isn't found
-   - Provide default values when appropriate
+   - Include relevant IDs (e.g., `user:123`)
+   - Use consistent naming patterns
+   - Consider data relationships
 
-4. **Invalidate Strategically:**
-   - Invalidate cache when underlying data changes
-   - Consider using `revalidate()` for controlled updates
+3. **Handle Cache Misses**
 
-## Using the cache
+   - Always provide fallback values
+   - Consider error cases
+   - Implement proper error handling
 
-### Using commandkit CLI
+4. **Invalidate Strategically**
 
-```js
-async function fetchData() {
-  'use cache';
+   - Invalidate when data changes
+   - Use `revalidate()` for controlled updates
+   - Consider cache dependencies
 
-  // Fetch data from an external source
-  const data = await fetch('https://my-example-api.com/data');
+5. **Monitor Cache Performance**
+   - Watch memory usage with in-memory cache
+   - Monitor Redis memory if using Redis
+   - Adjust TTL based on usage patterns
 
-  return data.json();
+## Advanced Usage
+
+### Custom Cache Provider
+
+You can create a custom cache provider by extending the `CacheProvider` class:
+
+```ts
+import { CacheProvider } from 'commandkit';
+
+class MyCustomCache extends CacheProvider {
+  async get<T>(key: string) {
+    // Implement get logic
+  }
+
+  async set<T>(key: string, value: T, ttl?: number) {
+    // Implement set logic
+  }
+
+  async exists(key: string) {
+    // Implement exists logic
+  }
+
+  async delete(key: string) {
+    // Implement delete logic
+  }
+
+  async clear() {
+    // Implement clear logic
+  }
+
+  async expire(key: string, ttl: number) {
+    // Implement expire logic
+  }
 }
 ```
 
-:::tip
-The `'use cache'` directive will only work if you are using the commandkit cli to run your bot. Any function decorated with `'use cache'` will be automatically cached.
-:::
+Then use it in your bot:
 
-### Using the cache manually
+```ts
+import { commandkit } from 'commandkit';
 
-```js
-import { cache } from 'commandkit';
-
-const fetchData = cache(
-  async () => {
-    // Fetch data from an external source
-    const data = await fetch('https://my-example-api.com/data');
-    return data.json();
-  },
-  {
-    tag: 'user-data', // Optional cache tag name
-    ttl: '1m', // TTL as string or number (in ms)
-  },
-);
+commandkit.setCacheProvider(new MyCustomCache());
 ```
 
-By default, the cached data will be stored for 15 minutes unless `revalidate()` or `invalidate()` is called. You can specify a custom TTL (time to live) either as milliseconds or as a time string.
+### How It Works Under the Hood
 
-### Setting Cache Parameters
+The `"use cache"` directive is a powerful feature that transforms your functions into cached versions. Here's how it works:
 
-When using the `"use cache"` directive, you can use `cacheTag()` or `cacheLife()` to set cache parameters:
+1. **Compilation Process**
 
-```js
-import { cacheTag, cacheLife } from 'commandkit';
+   - The `"use cache"` directive is transformed into a higher-order function during compilation
+   - This transformation wraps your original function with caching logic
+   - The compiler handles all the boilerplate code for you
 
-async function fetchData() {
+2. **Runtime Behavior**
+
+   - When a cached function is called, it first checks the cache provider for existing data
+   - If cached data exists and is valid, it's returned immediately
+   - If no cache exists or it's expired:
+     - The original function is executed
+     - The result is stored in the cache
+     - The result is returned to the caller
+
+3. **Cache Context**
+
+   - Each cached function call runs in a cache context
+   - This context manages:
+     - Cache keys and tags
+     - TTL (Time To Live) settings
+     - Cache invalidation rules
+
+4. **Cache Provider Integration**
+   - The cache provider (in-memory or Redis) handles the actual storage
+   - It manages:
+     - Data serialization/deserialization
+     - TTL enforcement
+     - Memory management
+     - Cache eviction policies
+
+Here's a simplified view of what happens when you use the directive:
+
+```ts
+// Your code
+async function getUserProfile(userId: string) {
   'use cache';
-
-  cacheTag('user-data'); // cache tag name
-  cacheLife('1m'); // TTL as string or number (in ms)
-
-  const data = await fetch('https://my-example-api.com/data');
-  return data.json();
+  cacheTag(`user:${userId}`);
+  return database.getUser(userId);
 }
+
+// What happens under the hood (simplified)
+const cachedGetUserProfile = async (userId: string) => {
+  const cacheKey = `user:${userId}`;
+  const cached = await cacheProvider.get(cacheKey);
+
+  if (cached) return cached.value;
+
+  const result = await database.getUser(userId);
+  await cacheProvider.set(cacheKey, result, DEFAULT_TTL);
+  return result;
+};
 ```
 
-You can set the TTL using `cacheLife`:
+This architecture ensures:
 
-```js
-import { cacheLife } from 'commandkit';
-
-async function fetchData() {
-  'use cache';
-
-  cacheLife('1m'); // TTL as string
-  // or
-  cacheLife(60_000); // TTL in milliseconds
-
-  const data = await fetch('https://my-example-api.com/data');
-  return data.json();
-}
-```
-
-## Managing Cache Data
-
-### Invalidating Cache
-
-To immediately remove cached data:
-
-```js
-import { invalidate } from 'commandkit';
-
-// Remove the cache entry immediately
-await invalidate('user-data');
-```
-
-### Revalidating Cache
-
-To force refresh the cached data:
-
-```js
-import { revalidate } from 'commandkit';
-
-// Revalidate and get fresh data
-const freshData = await revalidate('user-data');
-```
-
-The revalidation process will:
-
-1. Remove the existing cache entry
-2. Re-execute the cached function to get fresh data
-3. Store the new data in cache
-4. Return the fresh data
+- Efficient caching with minimal boilerplate
+- Consistent cache behavior across your application
+- Easy integration with different cache providers
+- Type safety and proper error handling

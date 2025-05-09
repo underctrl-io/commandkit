@@ -1,0 +1,47 @@
+---
+title: Action Row
+description: Learn how to use the ActionRow component to group interactive components
+---
+
+# Action Row
+
+The ActionRow component is a container that groups interactive components like buttons and select menus together in a single row. In Discord, you can have up to 5 components in a single row.
+
+## Basic Usage
+
+```tsx
+import { ActionRow, Button } from 'commandkit';
+
+const row = (
+  <ActionRow>
+    <Button>Click me!</Button>
+    <Button>Another button</Button>
+  </ActionRow>
+);
+```
+
+## With Select Menus
+
+```tsx
+import {
+  ActionRow,
+  StringSelectMenu,
+  StringSelectMenuOption,
+} from 'commandkit';
+
+const row = (
+  <ActionRow>
+    <StringSelectMenu>
+      <StringSelectMenuOption label="Option 1" value="1" />
+      <StringSelectMenuOption label="Option 2" value="2" />
+    </StringSelectMenu>
+  </ActionRow>
+);
+```
+
+## Important Notes
+
+- You can have up to 5 components in a single ActionRow
+- Each message can have up to 5 ActionRows
+- Components in the same row will be displayed horizontally
+- ActionRow is required when using interactive components in messages

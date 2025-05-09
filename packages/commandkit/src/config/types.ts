@@ -41,7 +41,7 @@ export interface CommandKitConfig {
     /**
      * Whether to ignore type checking during builds.
      */
-    ignoreDuringBuilds?: boolean;
+    ignoreBuildErrors?: boolean;
   };
   /**
    * Whether to generate static command handler data in production builds.

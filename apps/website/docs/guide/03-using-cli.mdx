@@ -1,17 +1,19 @@
 ---
 title: Using CommandKit CLI
-description: Learn how to use CommandKit CLI to start, build, and manage your bot application.
+description: Learn how to use CommandKit CLI to start, build, and manage your Discord bot application with comprehensive examples and best practices.
 ---
 
-CommandKit CLI allows you to start, build, and manage your bot application. It also includes features such as HMR during development, anti-crash, etc. so you can be rest assured your bot won't crash and go offline during production.
+CommandKit CLI is a powerful tool that streamlines the development and deployment of your Discord bot application. It provides essential features like Hot Module Replacement (HMR), automatic crash recovery, and TypeScript support out of the box.
 
-To get a list of the available CLI commands, run the following command inside your project directory:
+## Getting Started
+
+To view all available CLI commands, run the following in your project directory:
 
 ```sh
 npx commandkit --help
 ```
 
-The output should look something like this:
+You'll see a list of available commands and options:
 
 ```sh
 Usage: commandkit [options] [command]
@@ -27,27 +29,96 @@ Commands:
   help [command]           display help for command
 ```
 
-:::info
-CommandKit does not perform type checking on your code yet. You need to do that
-yourself using `tsc --noEmit` command or any other tool of your choice.
-:::
+## Core Commands
 
-## Available commands
+### Development Mode (`commandkit dev`)
 
-### Build
+The development mode is optimized for local development with features like:
 
-`commandkit build` creates an optimized production build of your bot application. By default, commandkit emits the build to `dist/` directory in your project. It supports typescript out of the box.
+- **Hot Module Replacement (HMR)**: Automatically reloads your bot when you make changes to commands or events
+- **TypeScript Support**: Built-in TypeScript compilation and type checking
+- **Environment Variables**: Automatic loading of `.env` files
+- **Error Handling**: Detailed error messages and stack traces
 
-CommandKit also injects anti-crash script in your production build to prevent your bot from crashing due to cases like unhandled promise rejections. Although, it's recommended to handle these cases yourself. You can disable this behavior by setting `antiCrash: false` in your `commandkit.config.js` file.
+Example usage:
 
-### Development
+```sh
+# Start development server
+npx commandkit dev
+```
 
-`commandkit dev` starts your bot in development mode. It supports hot reloading out of the box to restart your bot only when it's needed. Changes made to commands/events files are automatically reloaded without restarting the bot. CommandKit automatically loads your environment variables from `.env` file in your project directory, without you having to worry about it. It also supports typescript out of the box.
+### Production Build (`commandkit build`)
 
-### Production
+Creates an optimized production build of your bot application with:
 
-`commandkit start` starts your bot in production mode. You need to run `commandkit build` before running this command. This command also loads the environment variables from `.env` file in your project directory.
+- **TypeScript Compilation**: Converts TypeScript to JavaScript
+- **Type Checking**: Validates your code for type errors
+- **Code Optimization**: Minifies and optimizes your code
+- **Output Directory**: Builds to `dist/` by default
 
-### Create
+Configuration options in `commandkit.config.ts`:
 
-`commandkit create` creates new commands, events, or locale files. You can use this command to quickly scaffold new files in your project.
+```typescript
+import { defineConfig } from 'commandkit';
+
+export default defineConfig({
+  typescript: {
+    ignoreBuildErrors: true, // skip type checking
+  },
+});
+```
+
+### Production Mode (`commandkit start`)
+
+Runs your bot in production mode. Always run `commandkit build` first.
+
+```sh
+# Build and start in production
+npx commandkit build
+npx commandkit start
+```
+
+### File Generation (`commandkit create`)
+
+Quickly scaffold new files in your project:
+
+```sh
+# Create a new command
+npx commandkit create command ping
+
+# Create a new event
+npx commandkit create event ready
+```
+
+## Best Practices
+
+1. **Development Workflow**:
+
+   - Use `commandkit dev` during development for instant feedback
+   - Enable debug mode when troubleshooting issues
+   - Keep your `.env` file updated with all required variables
+
+2. **Production Deployment**:
+
+   - Always run `commandkit build` before deploying
+   - Test the production build locally before deployment
+   - Use environment variables for sensitive data
+
+3. **TypeScript Usage**:
+   - Enable strict type checking in development
+   - Use type annotations for better code quality
+   - Consider using `ignoreBuildErrors` only in specific cases
+
+## Troubleshooting
+
+Common issues and solutions:
+
+- **Build Errors**: Check TypeScript configuration and type definitions
+- **Environment Variables**: Ensure `.env` file exists and contains required variables
+- **Hot Reload Issues**: Verify file paths and module exports. Hot reload only works for commands, events and the paths supported by the active plugins. Changes made to other paths will trigger full reload.
+
+For more detailed information about specific commands and options, use:
+
+```sh
+npx commandkit help <command>
+```

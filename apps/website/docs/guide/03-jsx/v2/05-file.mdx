@@ -1,0 +1,107 @@
+---
+title: File
+description: Display file attachments in your messages using the File component
+---
+
+The `File` component allows you to display file attachments in your Discord messages. This is useful for sharing text files, markdown files, or other file types.
+
+## Basic Usage
+
+```tsx title="src/app/commands/file-example.tsx"
+import {
+  type ChatInputCommand,
+  Container,
+  File,
+  TextDisplay,
+} from 'commandkit';
+import { AttachmentBuilder, Colors, MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const fileContent = '# Hello World\nThis is a test file.';
+
+  const container = (
+    <Container accentColor={Colors.Blue}>
+      <TextDisplay content="Here's a file:" />
+      <File url="attachment://example.md" />
+    </Container>
+  );
+
+  await ctx.interaction.reply({
+    components: [container],
+    files: [
+      new AttachmentBuilder(Buffer.from(fileContent), {
+        name: 'example.md',
+      }),
+    ],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Multiple Files
+
+You can display multiple files in a single message:
+
+```tsx title="src/app/commands/multiple-files.tsx"
+import {
+  type ChatInputCommand,
+  Container,
+  File,
+  TextDisplay,
+} from 'commandkit';
+import { AttachmentBuilder, Colors, MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const files = [
+    {
+      name: 'readme.md',
+      content: '# Readme\nThis is a readme file.',
+    },
+    {
+      name: 'config.json',
+      content: JSON.stringify({ setting: 'value' }, null, 2),
+    },
+  ];
+
+  const container = (
+    <Container accentColor={Colors.Green}>
+      <TextDisplay content="# Project Files" />
+      {files.map((file) => (
+        <File key={file.name} url={`attachment://${file.name}`} />
+      ))}
+    </Container>
+  );
+
+  await ctx.interaction.reply({
+    components: [container],
+    files: files.map(
+      (file) =>
+        new AttachmentBuilder(Buffer.from(file.content), {
+          name: file.name,
+        }),
+    ),
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Best Practices
+
+1. **File Names**: Use clear, descriptive file names
+2. **File Types**: Ensure the file type matches the content
+3. **File Size**: Keep files small to avoid Discord's size limits
+4. **Organization**: Group related files together
+5. **Context**: Provide context about the files using TextDisplay components
+
+## Available Props
+
+### File
+
+- `url`: The URL of the file attachment (must start with "attachment://")
+
+## Common Use Cases
+
+1. **Documentation**: Share markdown files with documentation
+2. **Configuration**: Display configuration files
+3. **Code Snippets**: Share code files with syntax highlighting
+4. **Logs**: Show log files or error reports

@@ -1,9 +1,9 @@
 ---
-title: CommandKit config file
-description: Learn how to configure CommandKit CLI for your project.
+title: CommandKit Configuration
+description: Learn how to configure CommandKit CLI for your project with detailed examples and best practices.
 ---
 
-CommandKit CLI can be configured using `commandkit.config` file in the root of your project directory (for example, by `package.json`). You can use either of the following files:
+CommandKit CLI can be configured using a `commandkit.config` file in the root of your project directory (typically alongside `package.json`). You can use any of the following file formats:
 
 - `commandkit.config.js`
 - `commandkit.config.mjs`
@@ -12,24 +12,132 @@ CommandKit CLI can be configured using `commandkit.config` file in the root of y
 
 Throughout this guide, we'll be using `commandkit.config.ts` as an example.
 
-The following is the sample configuration required to run your bot:
+## Basic Configuration
 
-```js title="commandkit.config.ts"
+Here's a minimal configuration to get started:
+
+```ts title="commandkit.config.ts"
 import { defineConfig } from 'commandkit';
 
 export default defineConfig({});
 ```
 
-## Options
+## Configuration Options
 
-The following options are available in the configuration file:
+### Plugins
 
-- `plugins`: An array of commandkit plugins to use in your project. CommandKit plugins may add compile time or runtime features to your project.
-- `esbuildPlugins`: An array of esbuild plugins to use in your project. This is useful if you want to use esbuild plugins in your project.
-- `compilerOptions`: An object containing compiler options for your project.
-- `compilerOptions.macro.development`: When set to `true`, it enables macro compilation during development.
-- `compilerOptions.cache.development`: When set to `true`, it enables `use cache` directive during development.
-- `distDir`: The output directory for the build. By default, it is set to `dist`.
-- `env`: An object containing static environment variables definitions.
-- `typedCommands`: A boolean value that enables type definitions generation for commands during development.
-- `typedLocales`: A boolean value that enables locales autocompletion during development.
+The `plugins` array allows you to extend CommandKit's functionality with additional features:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { somePlugin } from '@commandkit/some-plugin';
+
+export default defineConfig({
+  plugins: [
+    somePlugin({
+      // Plugin specific options
+    }),
+  ],
+});
+```
+
+### ESBuild Plugins
+
+Customize your build process with esbuild plugins:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { someEsbuildPlugin } from 'some-esbuild-plugin';
+
+export default defineConfig({
+  esbuildPlugins: [
+    someEsbuildPlugin({
+      // Plugin specific options
+    }),
+  ],
+});
+```
+
+### Compiler Options
+
+Fine-tune the compilation process with these options:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+
+export default defineConfig({
+  compilerOptions: {
+    macro: {
+      development: true, // Enables "use macro" directive compilation during development
+    },
+    cache: {
+      development: true, // Enables "use cache" directive usage during development
+    },
+  },
+});
+```
+
+### Build Output
+
+Customize where your compiled code is output:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+
+export default defineConfig({
+  distDir: 'build', // Changes output directory from default 'dist' to 'build'
+});
+```
+
+### Environment Variables
+
+Define static environment variables for your project:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+
+export default defineConfig({
+  env: {
+    NODE_ENV: 'development',
+    API_URL: 'http://localhost:3000',
+  },
+});
+```
+
+## Best Practices
+
+1. **Type Safety**: Always use `commandkit.config.ts` for better type checking and IDE support.
+2. **Security**: Always store sensitive information in `.env` file and make sure it is not committed to your version control system.
+3. **Plugin Management**:
+
+   - Only include necessary plugins to keep build times fast
+   - Plugins have full access to your discord bot. So always be careful when installing the plugins.
+
+## Complete Example
+
+Here's a comprehensive configuration example:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { somePlugin } from '@commandkit/some-plugin';
+import { someEsbuildPlugin } from 'some-esbuild-plugin';
+
+export default defineConfig({
+  plugins: [somePlugin()],
+  esbuildPlugins: [someEsbuildPlugin()],
+  compilerOptions: {
+    macro: {
+      development: true,
+    },
+    cache: {
+      development: true,
+    },
+  },
+  distDir: 'dist',
+  env: {
+    NODE_ENV: 'development',
+  },
+  typedCommands: true,
+  typedLocales: true,
+});
+```

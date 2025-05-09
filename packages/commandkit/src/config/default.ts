@@ -18,7 +18,7 @@ export const defaultConfig: ResolvedCommandKitConfig = {
   },
   static: true,
   typescript: {
-    ignoreDuringBuilds: false,
+    ignoreBuildErrors: false,
   },
   distDir: 'dist',
   env: {},

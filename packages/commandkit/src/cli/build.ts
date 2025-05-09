@@ -27,7 +27,7 @@ export async function buildApplication({
 }: ApplicationBuildOptions) {
   const config = await loadConfigFile(configPath);
 
-  if (!isDev && !config?.typescript?.ignoreDuringBuilds) {
+  if (!isDev && !config?.typescript?.ignoreBuildErrors) {
     await performTypeCheck(configPath || process.cwd());
   }
 
