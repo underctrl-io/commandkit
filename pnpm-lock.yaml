@@ -218,9 +218,6 @@ importers:
 
   packages/devtools:
     dependencies:
-      '@types/jsonwebtoken':
-        specifier: ^9.0.9
-        version: 9.0.9
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -237,6 +234,9 @@ importers:
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.1
+      '@types/jsonwebtoken':
+        specifier: ^9.0.9
+        version: 9.0.9
       commandkit:
         specifier: workspace:*
         version: link:../commandkit
