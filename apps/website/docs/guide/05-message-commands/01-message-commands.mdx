@@ -1,0 +1,114 @@
+---
+title: Message Commands
+description: Learn how to create and manage message commands in your Discord bot using CommandKit.
+---
+
+Message commands are the primitive way to interact with discord bots. They are typically prefixed with a special character (like `!`, `?`, or `>`), and are used to trigger specific actions or responses from the bot. This guide will help you understand how to implement and manage message commands in your Discord bot using CommandKit.
+
+:::info
+CommandKit supports message commands out of the box, allowing you to create and manage them easily. You can also customize the prefix used for message commands, making it flexible for different use cases. See [Resolve Message Commands Prefix](./02-resolve-message-commands-prefix.mdx) for more details.
+:::
+
+## Creating Message Commands
+
+To create a message command, you can just export a function named `message` from your command file. This function will be called whenever a message command is triggered.
+
+```ts
+import { MessageCommand } from 'commandkit';
+
+export const message: MessageCommand = async (ctx) => {
+  const message = ctx.message;
+
+  await message.reply('Hello, world!');
+};
+```
+
+It's that simple! The `ctx` object contains the message context, which includes the message itself, the user who sent it, and other useful information.
+
+CommandKit also offers interaction-like message options parser, allowing you to define options for your message commands. This is useful for creating more complex commands that require additional parameters.
+
+```ts
+import { MessageCommand } from 'commandkit';
+
+export const message: MessageCommand = async (ctx) => {
+  const message = ctx.message;
+  // !command user:@someone
+  const user = ctx.options.getUser('user');
+
+  await message.reply('Hello, world!');
+};
+```
+
+Alternatively, you can also use the arguments approach to get the options:
+
+```ts
+import { MessageCommand } from 'commandkit';
+
+export const message: MessageCommand = async (ctx) => {
+  const message = ctx.message;
+  // !say <message>
+  const args = ctx.args();
+  const text = args.join(' ');
+
+  if (!text) {
+    return message.reply('Please provide a message to say.');
+  }
+
+  await message.reply(`You said: ${text}`);
+};
+```
+
+### Hybrid command example
+
+The following example demonstrates how to create a command that works both as a slash command and a message command. This is useful for commands that you want to be accessible in both contexts.
+
+```ts
+import { MessageCommand, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+
+export const command = {
+  name: 'avatar',
+  description: 'This is an avatar command.',
+  options: [
+    {
+      name: 'user',
+      description: 'The user to get the avatar for.',
+      type: ApplicationCommandOptionType.User,
+    },
+  ],
+};
+
+export const chatInput: ChatInputCommand = (ctx) => {
+  const user = ctx.options.getUser('user') ?? ctx.interaction.user;
+
+  await ctx.interaction.reply({
+    embeds: [
+      {
+        title: `Avatar of ${user.username}`,
+        image: {
+          url: user.displayAvatarURL({ size: 2048 }),
+        },
+        color: 0x7289da,
+      },
+    ],
+  });
+};
+
+export const message: MessageCommand = async (ctx) => {
+  const user = ctx.options.getUser('user') ?? ctx.message.author;
+  // alternatively, in arguments mode you could use:
+  // const user = ctx.message.mentions.users.first() ?? ctx.message.author;
+
+  await ctx.message.reply({
+    embeds: [
+      {
+        title: `Avatar of ${user.username}`,
+        image: {
+          url: user.displayAvatarURL({ size: 2048 }),
+        },
+        color: 0x7289da,
+      },
+    ],
+  });
+};
+```

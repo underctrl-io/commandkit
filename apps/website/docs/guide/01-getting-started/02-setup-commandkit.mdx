@@ -32,6 +32,33 @@ By using the CLI to create a base project, you should get a project structure th
 └── tsconfig.json
 ```
 
+:::info
+The `src/app.ts` file is the main entry point for your application. This file default exports the discord.js client which commandkit loads at runtime. For example, the `src/app.ts` file looks like this:
+
+```ts
+import { Client } from 'discord.js';
+
+const client = new Client({
+  intents: [
+    /* add stuff */
+  ],
+});
+
+// setting up the token manually
+client.token = process.env.MY_BOT_TOKEN;
+
+export default client;
+```
+
+Notice how we are not calling `client.login()` in this file. This is because commandkit will automatically call `client.login()` for you when the application starts.
+
+Also, you might have noticed that we are not using anything from commandkit in this file. This is because commandkit is designed to reduce boilerplate code and make it easier to build discord bot applications.
+:::
+
+:::info
+The `src/app` directory is a special directory that commandkit understands. All the commands and events in this directory will be automatically registered when the application starts.
+:::
+
 ## Development version
 
 :::warning

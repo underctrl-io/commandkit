@@ -1,0 +1,34 @@
+---
+title: cacheLife function
+description: The cacheLife function is used to set the cache duration for a cache context.
+---
+
+The `cacheLife` function is used to set the cache duration for a cache context. This allows you to specify how long the cached data should be considered valid before it expires and needs to be refreshed.
+
+## Basic Usage
+
+```ts
+import { cacheLife } from 'commandkit';
+import { database } from '../database.ts';
+
+async function getUserProfile(userId: string) {
+  'use cache';
+
+  // Set cache duration to 1 hour
+  cacheLife('1h');
+
+  // Fetch user data from the database
+  return await database.getUser(userId);
+}
+```
+
+## Cache Duration Format
+
+You can specify cache duration in multiple formats:
+
+- **Milliseconds**: `cacheLife(60_000);` // 1 minute
+- **String shortcuts**:
+  - `'5s'` - 5 seconds
+  - `'1m'` - 1 minute
+  - `'2h'` - 2 hours
+  - `'1d'` - 1 day

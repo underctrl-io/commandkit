@@ -1,0 +1,33 @@
+---
+title: cacheTag function
+description: The cacheTag function is used to set a custom cache key for the current cache context.
+---
+
+The `cacheTag` function is used to set a custom cache key for the current cache context. This is useful when you want to invalidate or manage cache entries based on specific tags. This is particularly helpful in scenarios where you want to have on-demand cache invalidation.
+
+## Basic Usage
+
+```ts
+import { cacheTag, invalidate } from 'commandkit';
+
+async function fetchData() {
+  'use cache';
+
+  // Set a custom cache tag
+  cacheTag('my-custom-tag');
+
+  // Fetch data from an API or database
+  const data = await fetch('https://api.example.com/data');
+  return data.json();
+}
+
+async function invalidateCache() {
+  // Invalidate the cache using the custom tag
+  await invalidate('my-custom-tag');
+  // the next call to fetchData will execute the function again and cache the result
+}
+```
+
+:::info
+The `cacheTag` function may only be called inside the scope of a function that has the `'use cache'` directive. Any attempt to call it outside of that context will result in an error.
+:::

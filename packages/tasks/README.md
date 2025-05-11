@@ -100,7 +100,7 @@ Then, you can create a dynamic task in your command:
 
 ```ts
 // app/commands/mute.ts
-import type { CommandData, SlashCommand } from 'commandkit';
+import type { CommandData, ChatInputCommand } from 'commandkit';
 import { ApplicationCommandOptionType } from 'discord.js';
 
 export const command: CommandData = {
@@ -122,7 +122,7 @@ export const command: CommandData = {
   ]
 };
 
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   const userToMute = ctx.options.getUser('user', true);
   const duration = ctx.options.getString('duration', true);
 

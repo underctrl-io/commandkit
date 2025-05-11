@@ -50,14 +50,14 @@ With the current entrypoint file created, it's important to understand that:
 To add a command, create a folder inside the `src/app` directory called `commands` and create your command file (e.g. `ping.ts`). This example will use a simple ping/pong command which will register as a chat input (slash) and message (legacy) command.
 
 ```ts title="src/app/commands/ping.ts"
-import type { SlashCommand, CommandData, MessageCommand } from 'commandkit';
+import type { ChatInputCommand, CommandData, MessageCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'ping',
   description: 'Pong!',
 };
 
-export const chatInput: SlashCommand = async ({ interaction }) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   await interaction.reply('Pong!');
 };
 

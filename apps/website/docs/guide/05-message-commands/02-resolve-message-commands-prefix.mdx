@@ -35,7 +35,7 @@ return ['?', '!', '>'];
 For more complex applications, you might want different prefixes for different servers. Here's how to implement that:
 
 ```ts title="src/app.ts"
-import { commandkit, cacheTag } from 'commandkit';
+import { onApplicationBootstrap, cacheTag } from 'commandkit';
 import { database } from '../database.ts';
 
 async function fetchGuildPrefix(guildId: string) {
@@ -52,10 +52,16 @@ async function fetchGuildPrefix(guildId: string) {
   return setting?.prefix ?? '!';
 }
 
-commandkit.setPrefixResolver((message) => {
-  return fetchGuildPrefix(message.guildId);
+onApplicationBootstrap((commandkit) => {
+  commandkit.setPrefixResolver((message) => {
+    return fetchGuildPrefix(message.guildId);
+  });
 });
 ```
+
+:::info
+The `"use cache"` directive is a custom directive that tells CommandKit to cache the result of the function automatically. See the [Caching in CommandKit](../04-caching/01-caching-in-commandkit.mdx) guide for more details.
+:::
 
 ### Best Practices
 

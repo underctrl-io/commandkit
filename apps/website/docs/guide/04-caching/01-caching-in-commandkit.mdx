@@ -1,11 +1,15 @@
 ---
-title: Caching
+title: Caching in CommandKit
 description: A comprehensive guide on implementing caching in your Discord bot using CommandKit.
 ---
 
 Caching is a technique that stores frequently accessed data in a temporary storage to improve performance and reduce load on your primary data sources. In Discord bots, this can significantly reduce database queries and external API calls.
 
 CommandKit provides a powerful yet simple caching system that works out of the box. This guide will show you how to effectively use caching in your bot.
+
+:::info
+CommandKit makes the use of a custom `"use cache"` directive to simplify the caching boilerplate. This enables you to focus on your problem domain rather than unnecessary boilerplate logic.
+:::
 
 ## Understanding CommandKit's Cache System
 
@@ -132,7 +136,7 @@ const freshData = await revalidate('user:123');
 Let's build a simple XP system using CommandKit's caching:
 
 ```ts
-import { SlashCommand, CommandData, cacheTag } from 'commandkit';
+import { ChatInputCommand, CommandData, cacheTag } from 'commandkit';
 import { database } from '../database';
 
 export const command: CommandData = {
@@ -151,7 +155,7 @@ async function getUserXP(guildId: string, userId: string) {
   return xp;
 }
 
-export const chatInput: SlashCommand = async ({ interaction }) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   await interaction.deferReply();
 
   const xp = await getUserXP(interaction.guildId!, interaction.user.id);

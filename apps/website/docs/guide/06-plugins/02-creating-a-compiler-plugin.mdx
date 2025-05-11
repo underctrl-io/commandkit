@@ -1,0 +1,78 @@
+---
+title: Creating a Compiler Plugin
+description: This guide will walk you through the process of creating a compiler plugin for CommandKit. Compiler plugins are used at compile time to modify the way CommandKit compiles your application. They are used to add new features or modify existing ones.
+---
+
+CommandKit Compiler Plugins are a powerful way to extend the functionality of your CommandKit application by modifying the way CommandKit compiles your application. They are used to add new features or modify existing ones. For example, you can use a compiler plugin to transform the source code itself (e.g. CommandKit's `use cache` or `use macro` directives).
+
+## Creating a Compiler Plugin
+
+### Using esbuild plugins
+
+You can also use esbuild plugins as compiler plugins. This is useful if you want to use esbuild plugins to transform your source code.
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { someEsbuildPlugin } from 'some-esbuild-plugin';
+
+export default defineConfig({
+  esbuildPlugins: [someEsbuildPlugin()],
+});
+```
+
+### Using custom compiler plugins
+
+You can also create custom compiler plugins by extending the `CompilerPlugin` class. This is useful if you want to create a custom plugin that modifies the way CommandKit compiles your application.
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { CompilerPlugin } from 'some-commandkit-compiler-plugin';
+
+export default defineConfig({
+  plugins: [someCompilerPlugin()],
+});
+```
+
+## Creating a Compiler Plugin
+
+To create a compiler plugin, you need to create a new class that extends the `CompilerPlugin` class. This class should implement the `transform` method, which is called by CommandKit to transform the source code. The `transform` method should return the transformed source code.
+
+```ts title="my-plugin.ts"
+import {
+  CompilerPlugin,
+  MaybeFalsey,
+  PluginTransformParameters,
+  TransformedResult,
+} from 'commandkit';
+
+export class MyPlugin extends CompilerPlugin {
+  // this is the name of the plugin
+  public readonly name = 'my-plugin';
+
+  public async activate(ctx: CompilerPluginRuntime): Promise<void> {
+    // this is where you can keep initialization logic
+  }
+
+  public async deactivate(ctx: CompilerPluginRuntime): Promise<void> {
+    // this is where you can keep cleanup logic
+  }
+
+  public async transform(
+    params: PluginTransformParameters,
+  ): Promise<MaybeFalsey<TransformedResult>> {
+    const { contents } = params;
+
+    // this is just an example, you can do whatever you want with the contents
+    const transformedContents = contents.replace(
+      /console\.log/g,
+      'console.warn',
+    );
+
+    // return the transformed contents
+    return {
+      contents: result,
+      loader: params.loader,
+    };
+  }
+}
+```

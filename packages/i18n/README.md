@@ -75,7 +75,7 @@ The `$command` key defines localization for the command name and description (or
 This plugin adds `locale()` function to your command context. You can use it to localize your command responses.
 
 ```ts
-export const chatInput: SlashCommand = async (ctx) => {
+export const chatInput: ChatInputCommand = async (ctx) => {
   // ctx.locale() auto infers the localization of the current guild
   // you can also pass a discord.js locale enum to use custom locale
   // ctx.locale("fr") // uses french locale
