@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import { cacheDirectivePlugin } from './src/plugins/runtime/builtin/cache/UseCacheTransformer';
+import { vite as cacheDirectivePlugin } from 'directive-to-hof';
 import { join } from 'path';
 
 export default defineConfig({
@@ -17,20 +17,12 @@ export default defineConfig({
     },
   },
   plugins: [
-    {
-      name: 'use-cache',
-      async transform(code, id) {
-        const valid = /\.(c|m)?(t|j)sx?$/.test(id);
-        if (!valid) return null;
-
-        const { contents } = await cacheDirectivePlugin(code, { path: id });
-
-        return {
-          code: contents,
-          map: null,
-        };
-      },
-    },
+    cacheDirectivePlugin({
+      directive: 'use cache',
+      importPath: 'commandkit',
+      importName: '__SECRET_USE_CACHE_INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+      asyncOnly: true,
+    }),
   ],
   optimizeDeps: {
     esbuildOptions: {

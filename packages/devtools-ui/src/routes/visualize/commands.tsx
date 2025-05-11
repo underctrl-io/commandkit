@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import type React from 'react';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -11,7 +11,8 @@ import {
   Command,
   Shield,
 } from 'lucide-react';
-import { commandsData } from '@/lib/commands-data';
+import { useQuery } from '@tanstack/react-query';
+import { useClient } from '@/context/client-context';
 
 export const Route = createFileRoute('/visualize/commands')({
   component: CommandHierarchy,
@@ -170,23 +171,22 @@ const TreeNode = ({
 };
 
 function CommandHierarchy() {
-  const [data, setData] = useState<CommandsData | null>(null);
   const [selectedCommand, setSelectedCommand] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // In a real application, you would fetch this data from an API
-    // For this example, we're using the provided JSON data directly
-    try {
-      setData(commandsData);
-      setLoading(false);
-    } catch (err) {
-      setError('Failed to load command data');
-      setLoading(false);
-      console.error(err);
-    }
-  }, []);
+  const client = useClient<true>();
+  const {
+    data,
+    isError: error,
+    isLoading: loading,
+  } = useQuery({
+    queryKey: ['commands'],
+    enabled: Boolean(client),
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    queryFn: async () => {
+      const res = await client.api.get<CommandsData>('/commands');
+      return res.data;
+    },
+  });
 
   // Group commands by category
   const groupedCommands = data
@@ -201,7 +201,7 @@ function CommandHierarchy() {
         },
         {} as Record<string, CommandData[]>,
       )
-    : {};
+    : ({} as Record<string, CommandData[]>);
 
   if (loading) {
     return (
@@ -228,20 +228,22 @@ function CommandHierarchy() {
           <h2 className="text-xl font-bold mb-4">Commands</h2>
 
           <div className="command-tree">
-            {Object.entries(groupedCommands).map(([category, commands]) => (
-              <TreeNode key={category} name={category}>
-                {commands.map((command) => (
-                  <TreeNode
-                    key={command.id}
-                    name={command.name}
-                    isCommand={true}
-                    hasMiddleware={command.middlewares.length > 0}
-                    onClick={() => setSelectedCommand(command.id)}
-                    isSelected={selectedCommand === command.id}
-                  />
-                ))}
-              </TreeNode>
-            ))}
+            {(Object.entries(groupedCommands) as [string, CommandData[]][]).map(
+              ([category, commands]) => (
+                <TreeNode key={category} name={category}>
+                  {commands.map((command) => (
+                    <TreeNode
+                      key={command.id}
+                      name={command.name}
+                      isCommand={true}
+                      hasMiddleware={command.middlewares.length > 0}
+                      onClick={() => setSelectedCommand(command.id)}
+                      isSelected={selectedCommand === command.id}
+                    />
+                  ))}
+                </TreeNode>
+              ),
+            )}
           </div>
         </div>
 

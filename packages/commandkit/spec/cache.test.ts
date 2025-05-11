@@ -1,19 +1,21 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import CommandKit, {
+import {
   cache,
   cacheTag,
   cacheLife,
   isCachedFunction,
   invalidate,
   revalidate,
-} from '../src';
-import { Client } from 'discord.js';
+  CommandKit,
+  // @ts-ignore
+} from 'commandkit';
 import { setTimeout } from 'node:timers/promises';
+import { Client } from 'discord.js';
 
 describe('Cache', () => {
   let commandkit!: CommandKit, client!: Client;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     client = new Client({
       intents: [],
     });

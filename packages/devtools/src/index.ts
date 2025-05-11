@@ -1,11 +1,18 @@
-import { CommandKitPluginRuntime, Logger, RuntimePlugin } from 'commandkit';
+import {
+  COMMANDKIT_BOOTSTRAP_MODE,
+  CommandKitPluginRuntime,
+  Logger,
+  RuntimePlugin,
+} from 'commandkit';
 import { startServer } from './server/app';
 import type { Server } from 'node:http';
+
+const DEFAULT_PORT = 4356;
 
 export interface DevtoolsPluginOptions {
   /**
    * The port to use for the devtools server.
-   * @default 3482
+   * @default 4356
    */
   port?: number;
   /**
@@ -20,6 +27,11 @@ export interface DevtoolsPluginOptions {
     username: string;
     password: string;
   };
+  /**
+   * Whether to bypass authentication in development mode.
+   * @default true
+   */
+  bypassAuthInDev?: boolean;
 }
 
 export class DevtoolsPlugin extends RuntimePlugin<DevtoolsPluginOptions> {
@@ -27,9 +39,20 @@ export class DevtoolsPlugin extends RuntimePlugin<DevtoolsPluginOptions> {
   private server: Server | null = null;
 
   public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
-    this.server = await startServer(this.options.port ?? 3482, ctx.commandkit);
+    if (
+      !this.options.enableOnProduction &&
+      COMMANDKIT_BOOTSTRAP_MODE === 'production'
+    ) {
+      return;
+    }
+
+    this.server = await startServer(
+      this.options.port ?? DEFAULT_PORT,
+      ctx.commandkit,
+      this.options.bypassAuthInDev ? undefined : this.options.credential,
+    );
     Logger.info(
-      `Devtools server started on port ${this.options.port ?? 3482}.`,
+      `Devtools server started on port ${this.options.port ?? DEFAULT_PORT}.`,
     );
   }
 
@@ -43,8 +66,9 @@ export class DevtoolsPlugin extends RuntimePlugin<DevtoolsPluginOptions> {
 
 export function devtools(options?: DevtoolsPluginOptions) {
   return new DevtoolsPlugin({
-    port: 3482,
+    port: DEFAULT_PORT,
     enableOnProduction: false,
+    bypassAuthInDev: true,
     ...options,
   });
 }

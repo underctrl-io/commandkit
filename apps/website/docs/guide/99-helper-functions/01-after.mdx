@@ -9,17 +9,17 @@ It is guaranteed to be called after the command has been executed, regardless of
 ## Usage
 
 ```ts
-import { after, ChatInputCommand } from "commandkit";
+import { after, ChatInputCommand } from 'commandkit';
 
 export const chatInput: ChatInputCommand = async (ctx) => {
-    after(() => {
-        // This code will be executed after the command has been executed
-        console.log("Command has been executed");
-    });
+  after(() => {
+    // This code will be executed after the command has been executed
+    console.log('Command has been executed');
+  });
 
-    await ctx.interaction.reply({
-        content: "Hello World",
-        ephemeral: true
-    });
-}
+  await ctx.interaction.reply({
+    content: 'Hello World',
+    ephemeral: true,
+  });
+};
 ```

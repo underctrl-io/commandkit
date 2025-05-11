@@ -11,10 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root';
+import { Route as GuildsImport } from './routes/guilds';
 import { Route as IndexImport } from './routes/index';
 import { Route as VisualizeCommandsImport } from './routes/visualize/commands';
 
 // Create/Update Routes
+
+const GuildsRoute = GuildsImport.update({
+  id: '/guilds',
+  path: '/guilds',
+  getParentRoute: () => rootRoute,
+} as any);
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -39,6 +46,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport;
       parentRoute: typeof rootRoute;
     };
+    '/guilds': {
+      id: '/guilds';
+      path: '/guilds';
+      fullPath: '/guilds';
+      preLoaderRoute: typeof GuildsImport;
+      parentRoute: typeof rootRoute;
+    };
     '/visualize/commands': {
       id: '/visualize/commands';
       path: '/visualize/commands';
@@ -53,36 +67,41 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
+  '/guilds': typeof GuildsRoute;
   '/visualize/commands': typeof VisualizeCommandsRoute;
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
+  '/guilds': typeof GuildsRoute;
   '/visualize/commands': typeof VisualizeCommandsRoute;
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexRoute;
+  '/guilds': typeof GuildsRoute;
   '/visualize/commands': typeof VisualizeCommandsRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/visualize/commands';
+  fullPaths: '/' | '/guilds' | '/visualize/commands';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/visualize/commands';
-  id: '__root__' | '/' | '/visualize/commands';
+  to: '/' | '/guilds' | '/visualize/commands';
+  id: '__root__' | '/' | '/guilds' | '/visualize/commands';
   fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
+  GuildsRoute: typeof GuildsRoute;
   VisualizeCommandsRoute: typeof VisualizeCommandsRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GuildsRoute: GuildsRoute,
   VisualizeCommandsRoute: VisualizeCommandsRoute,
 };
 
@@ -97,11 +116,15 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/guilds",
         "/visualize/commands"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/guilds": {
+      "filePath": "guilds.tsx"
     },
     "/visualize/commands": {
       "filePath": "visualize/commands.tsx"

@@ -9,15 +9,15 @@ It is typically used in the context of event handlers to control the flow of exe
 ## Usage
 
 ```ts title="./src/app/events/messageCreate/event.ts"
-import { stopEvents } from "commandkit";
-import { Message } from "discord.js";
+import { stopEvents } from 'commandkit';
+import { Message } from 'discord.js';
 
 export default async function onMessageCreate(message: Message) {
-    console.log("Message received:", message.content);
+  console.log('Message received:', message.content);
 
-    // Stop further event handlers of messageCreate from being executed after this point
-    stopEvents();
-    // code below will not be executed
+  // Stop further event handlers of messageCreate from being executed after this point
+  stopEvents();
+  // code below will not be executed
 }
 ```
 

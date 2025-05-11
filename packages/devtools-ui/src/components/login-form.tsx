@@ -12,11 +12,9 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/store/auth.store';
 import { useState } from 'react';
 import { toast } from 'sonner';
-
-const VALID_CREDS = {
-  username: 'superadmin',
-  password: 'superadmin',
-};
+import { useMutation } from '@tanstack/react-query';
+import { useClient } from '@/context/client-context';
+import Loader from './loader';
 
 export function LoginForm({
   className,
@@ -25,23 +23,28 @@ export function LoginForm({
   const { setAuthenticated } = useAuth();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const client = useClient();
 
-  const handleSubmit = () => {
-    const usernameValid = username === VALID_CREDS.username;
-    const passwordValid = password === VALID_CREDS.password;
-
-    const isAllowed = usernameValid && passwordValid;
-
-    if (!isAllowed) {
+  const { isPending, mutate } = useMutation({
+    mutationFn: async () => {
+      return client.login(username, password);
+    },
+    onError() {
       toast.error('Invalid credentials', {
         description: 'The credentials you provided are invalid.',
       });
-      return;
-    }
+    },
+    onSuccess() {
+      toast.success('Login successful', {
+        description: 'You have successfully logged in.',
+      });
+      setAuthenticated(true);
+    },
+  });
 
-    sessionStorage.setItem('authenticated', 'true');
-    setAuthenticated(true);
-  };
+  if (isPending) {
+    return <Loader />;
+  }
 
   return (
     <div className={cn('flex flex-col gap-6 w-[20%]', className)} {...props}>
@@ -49,7 +52,7 @@ export function LoginForm({
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
-            Enter your credentials below to login to your account
+            Enter your credentials below to proceed
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -77,7 +80,13 @@ export function LoginForm({
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="button" className="w-full" onClick={handleSubmit}>
+            <Button
+              type="button"
+              className="w-full"
+              onClick={() => {
+                mutate();
+              }}
+            >
               Login
             </Button>
           </div>

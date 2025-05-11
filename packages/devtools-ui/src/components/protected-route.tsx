@@ -1,32 +1,45 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import { LoginForm } from './login-form';
 import { useAuth } from '@/store/auth.store';
+import { useQuery } from '@tanstack/react-query';
+import { useClient } from '@/context/client-context';
 
 export function ProtectedRoute({ children }: React.PropsWithChildren) {
   const { authenticated, setAuthenticated } = useAuth();
-  const [loading, setLoading] = React.useState(true);
+  const client = useClient();
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const data = sessionStorage.getItem('authenticated');
+  const { isLoading, isError } = useQuery({
+    queryKey: [],
+    enabled: !authenticated,
+    queryFn: async () => {
+      const user = await client.fetchMe();
 
-      if (data === 'true') {
+      if (user) {
         setAuthenticated(true);
+      } else {
+        setAuthenticated(false);
       }
 
-      setLoading(false);
-    }, 2000);
+      return user;
+    },
+    refetchOnWindowFocus: true,
+  });
 
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="h-screen grid place-items-center">
         <FaSpinner className="size-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="h-screen grid place-items-center">
+        <h1 className="text-2xl text-red-500">
+          An error occurred while fetching user data.
+        </h1>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { CommandKit } from '../src/index';
+// @ts-ignore
+import CommandKit from 'commandkit';
 import { Client } from 'discord.js';
 
 describe('CommandKit', () => {

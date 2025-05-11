@@ -3,6 +3,7 @@ import { ProtectedRoute } from '@/components/protected-route';
 import { SiteHeader } from '@/components/site-header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
+import { ClientProvider } from '@/context/client-context';
 import { createRootRoute } from '@tanstack/react-router';
 import { Outlet } from '@tanstack/react-router';
 import { ThemeProvider } from 'next-themes';
@@ -18,7 +19,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'CommandKit DevTools',
       },
     ],
   }),
@@ -31,22 +32,24 @@ function RootComponent() {
       attribute="class"
       defaultTheme="system"
       enableSystem
-      disableTransitionOnChange
+      disableTransitionOnChange={false}
     >
       <Toaster />
-      <ProtectedRoute>
-        <div className="[--header-height:calc(theme(spacing.14))]">
-          <SidebarProvider className="flex flex-col">
-            <SiteHeader />
-            <div className="flex flex-1">
-              <AppSidebar />
-              <SidebarInset>
-                <Outlet />
-              </SidebarInset>
-            </div>
-          </SidebarProvider>
-        </div>
-      </ProtectedRoute>
+      <ClientProvider>
+        <ProtectedRoute>
+          <div className="[--header-height:calc(theme(spacing.14))]">
+            <SidebarProvider className="flex flex-col">
+              <SiteHeader />
+              <div className="flex flex-1">
+                <AppSidebar />
+                <SidebarInset>
+                  <Outlet />
+                </SidebarInset>
+              </div>
+            </SidebarProvider>
+          </div>
+        </ProtectedRoute>
+      </ClientProvider>
     </ThemeProvider>
   );
 }

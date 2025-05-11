@@ -17,6 +17,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Link } from '@tanstack/react-router';
+import { useClient } from '@/context/client-context';
 
 const data = {
   user: {
@@ -29,7 +30,7 @@ const data = {
       title: 'Commands',
       url: '/visualize/commands',
       icon: SquareTerminal,
-      isActive: true,
+      isActive: false,
     },
     {
       title: 'Events',
@@ -45,7 +46,7 @@ const data = {
     },
     {
       title: 'Guilds',
-      url: '#',
+      url: '/guilds',
       icon: FaDiscord,
       isActive: false,
     },
@@ -82,6 +83,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const client = useClient<true>();
+
   return (
     <Sidebar
       className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
@@ -110,7 +113,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser
+          user={{
+            avatar: client.user.data.displayAvatarURL,
+            name: client.user.data.globalName || client.user?.data.username,
+            username: client.user.data.username,
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
   );

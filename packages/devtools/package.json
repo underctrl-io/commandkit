@@ -11,6 +11,7 @@
     "build": "pnpm run build:ui && pnpm run copy-ui && tsc"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "commandkit": "workspace:*",
     "discord.js": "^14.19.1",
@@ -22,6 +23,9 @@
     "ui"
   ],
   "dependencies": {
-    "express": "^4.21.2"
+    "@types/jsonwebtoken": "^9.0.9",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
   }
 }
