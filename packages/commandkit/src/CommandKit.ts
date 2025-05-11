@@ -86,6 +86,8 @@ export class CommandKit extends EventEmitter {
     getMessageCommandPrefix: () => '!',
   };
 
+  public readonly store = new Map<string, any>();
+
   public commandsRouter!: CommandsRouter;
   public eventsRouter!: EventsRouter;
   public readonly commandHandler = new AppCommandHandler(this);

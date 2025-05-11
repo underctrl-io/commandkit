@@ -6,7 +6,7 @@ import type {
   i18n,
   InitOptions,
 } from 'i18next';
-import {
+import CommandKit, {
   CommandKitPluginRuntime,
   Context as NativeContext,
   Logger,
@@ -96,6 +96,32 @@ NativeContext.prototype.locale = function (locale?: Locale) {
   } satisfies CommandLocalizationContext;
 };
 
+/**
+ * Retrieves the i18n instance from the commandkit store.
+ * @param commandkit The commandkit instance.
+ * @returns The i18n instance.
+ * @throws Error if the i18n instance is not found in the store.
+ * @example
+ * ```ts
+ * import { getI18n } from '@commandkit/i18n';
+ * import { commandkit } from 'commandkit';
+ *
+ * const i18n = getI18n(commandkit);
+ *
+ * // Use the i18n instance
+ * i18n.t('key');
+ * ```
+ */
+export function getI18n(commandkit: CommandKit): i18n {
+  const i18n = commandkit.store.get('i18n:plugin:instance') as i18n;
+
+  if (!i18n) {
+    throw new Error('I18n not found, is the I18nPlugin registered?');
+  }
+
+  return i18n;
+}
+
 export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
   public readonly name = 'I18nPlugin';
   private i18n!: i18n;
@@ -103,6 +129,8 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
 
   public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
     this.i18n = i18next;
+
+    ctx.commandkit.store.set('i18n:plugin:instance', this.i18n);
 
     this.i18n.use(FsBackend);
 
