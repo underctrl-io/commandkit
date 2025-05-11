@@ -3,6 +3,7 @@ import { ListenerFunction } from '../../events/CommandKitEventsChannel';
 import { Logger } from '../../logger/Logger';
 import { toFileURL } from '../../utils/resolve-file-url';
 import { StopEventPropagationError } from '../../utils/utilities';
+import { runInEventWorkerContext } from '../events/EventWorkerContext';
 import { ParsedEvent } from '../router';
 
 export type EventListener = {
@@ -104,59 +105,83 @@ export class AppEventsHandler {
 
       // Create main handler for regular "on" listeners
       const mainHandler: ListenerFunction = async (...args) => {
-        for (const listener of onListeners) {
-          try {
-            await listener.handler(...args);
-          } catch (e) {
-            // Check if this is a stop propagation signal
-            if (e instanceof StopEventPropagationError) {
-              Logger.debug(
-                `Event propagation stopped for ${name}${
-                  namespace ? ` of namespace ${namespace}` : ''
-                }`,
-              );
-              break; // Stop executing remaining listeners
-            }
+        await runInEventWorkerContext(
+          {
+            event: name,
+            namespace: namespace ?? null,
+            data: data.event,
+            commandkit: this.commandkit,
+          },
+          async () => {
+            for (const listener of onListeners) {
+              try {
+                await listener.handler(...args);
+              } catch (e) {
+                // Check if this is a stop propagation signal
+                if (e instanceof StopEventPropagationError) {
+                  Logger.debug(
+                    `Event propagation stopped for ${name}${
+                      namespace ? ` of namespace ${namespace}` : ''
+                    }`,
+                  );
+                  break; // Stop executing remaining listeners
+                }
 
-            // Otherwise log the error as usual
-            Logger.error(
-              `Error handling event ${name}${
-                namespace ? ` of namespace ${namespace}` : ''
-              }`,
-              e,
-            );
-          }
-        }
+                // Otherwise log the error as usual
+                Logger.error(
+                  `Error handling event ${name}${
+                    namespace ? ` of namespace ${namespace}` : ''
+                  }`,
+                  e,
+                );
+              }
+            }
+          },
+        );
       };
 
       // Create handler for "once" listeners with cleanup logic
       const onceHandler: ListenerFunction = async (...args) => {
+        let broken = false;
+
         for (const listener of onceListeners) {
-          try {
-            // Skip if already executed (shouldn't happen with proper .once registration, but just in case)
-            if (executedOnceListeners.has(listener.handler)) continue;
+          if (broken) break; // Stop executing remaining listeners if propagation was stopped
 
-            await listener.handler(...args);
-            executedOnceListeners.add(listener.handler);
-          } catch (e) {
-            // Check if this is a stop propagation signal
-            if (e instanceof StopEventPropagationError) {
-              Logger.debug(
-                `Event propagation stopped for ${name}${
-                  namespace ? ` of namespace ${namespace}` : ''
-                }`,
-              );
-              break; // Stop executing remaining listeners
-            }
+          await runInEventWorkerContext(
+            {
+              event: name,
+              namespace: namespace ?? null,
+              data: data.event,
+              commandkit: this.commandkit,
+            },
+            async () => {
+              try {
+                // Skip if already executed (shouldn't happen with proper .once registration, but just in case)
+                if (executedOnceListeners.has(listener.handler)) return;
 
-            // Otherwise log the error as usual
-            Logger.error(
-              `Error handling event ${name}${
-                namespace ? ` of namespace ${namespace}` : ''
-              }`,
-              e,
-            );
-          }
+                await listener.handler(...args);
+                executedOnceListeners.add(listener.handler);
+              } catch (e) {
+                // Check if this is a stop propagation signal
+                if (e instanceof StopEventPropagationError) {
+                  Logger.debug(
+                    `Event propagation stopped for ${name}${
+                      namespace ? ` of namespace ${namespace}` : ''
+                    }`,
+                  );
+                  broken = true; // Stop executing remaining listeners
+                }
+
+                // Otherwise log the error as usual
+                Logger.error(
+                  `Error handling event ${name}${
+                    namespace ? ` of namespace ${namespace}` : ''
+                  }`,
+                  e,
+                );
+              }
+            },
+          );
         }
 
         // Cleanup: Remove once listeners that have been executed

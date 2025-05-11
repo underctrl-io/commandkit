@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { COMMANDKIT_IS_DEV } from './constants';
 import { getConfig } from '../config/config';
+import { eventWorkerContext } from '../app/events/EventWorkerContext';
 
 let appDir: string | null = null;
 let currentDir: string | null = null;
@@ -126,5 +127,9 @@ export class StopEventPropagationError extends Error {
  * @throws {StopEventPropagationError}
  */
 export function stopEvents(): never {
+  if (!eventWorkerContext.getStore()) {
+    throw new Error('stopEvents() may only be called inside an event handler');
+  }
+
   throw new StopEventPropagationError();
 }

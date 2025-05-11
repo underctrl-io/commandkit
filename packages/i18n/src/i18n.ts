@@ -66,6 +66,10 @@ export interface CommandLocalizationContext {
    * The locale to use for the command.
    */
   locale: Locale;
+  /**
+   * Whether the localization context is from event worker context.
+   */
+  isEventWorker?: boolean;
 }
 
 declare module 'commandkit' {
