@@ -3,6 +3,8 @@ import { authRouter } from './routes/auth';
 import { commandsRouter } from './routes/commands';
 import { auth } from './middlewares/auth.middleware';
 import { guildsRouter } from './routes/guilds';
+import { pluginsRouter } from './routes/plugins';
+import { eventsRouter } from './routes/events';
 
 export const api: Router = Router();
 
@@ -17,3 +19,5 @@ api.use('/auth', authRouter);
 api.use(auth());
 api.use('/commands', commandsRouter);
 api.use('/guilds', guildsRouter);
+api.use('/plugins', pluginsRouter);
+api.use('/events', eventsRouter);

@@ -5,7 +5,13 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const router = createRouter({ routeTree });
+const router = createRouter({
+  routeTree,
+  defaultPreload: 'intent',
+  defaultStaleTime: 5000,
+  scrollRestoration: true,
+  defaultViewTransition: true,
+});
 
 declare module '@tanstack/react-router' {
   interface Register {

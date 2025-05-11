@@ -15,6 +15,10 @@ export class CompilerPluginRuntime {
 
   public constructor(private readonly plugins: CompilerPlugin[]) {}
 
+  public getPlugins() {
+    return this.plugins;
+  }
+
   public isEmpty() {
     return !this.plugins.length;
   }

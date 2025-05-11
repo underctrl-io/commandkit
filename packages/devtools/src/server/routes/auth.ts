@@ -34,7 +34,15 @@ app.post('/login', (req, res) => {
 app.use(auth());
 
 app.get('/@me', (req, res) => {
-  res.json(getClient().user.toJSON());
+  const client = getClient();
+  const data: any = client.user.toJSON();
+
+  res.json({
+    ...data,
+    guilds: client.guilds.cache.size,
+    channels: client.channels.cache.size,
+    users: client.users.cache.size,
+  });
 });
 
 export { app as authRouter };

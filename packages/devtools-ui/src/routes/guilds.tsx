@@ -20,8 +20,8 @@ function RouteComponent() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['guilds'],
     queryFn: async () => {
-      const res = await client.fetchGuilds();
-      return res.guilds;
+      const res = await client.guilds.fetch();
+      return res;
     },
   });
 
@@ -38,6 +38,7 @@ function RouteComponent() {
 
   return (
     <div className="grid grid-cols-3 gap-4 p-4">
+      <h1 className="text-2xl font-bold  col-span-3">Guilds</h1>
       {data!.map((guild) => (
         <Card key={guild.id} className="border p-4 rounded">
           <CardHeader>

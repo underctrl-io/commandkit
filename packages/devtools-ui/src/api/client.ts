@@ -1,9 +1,14 @@
 import { axiosClient } from './axios';
 import { ClientUser } from './structures/client-user';
-import { GuildResponse } from './types';
+import { EventManager } from './structures/events';
+import { GuildManager } from './structures/guilds';
+import { PluginManager } from './structures/plugins';
 
 export class Client<Ready extends boolean = boolean> {
   public api = axiosClient;
+  public guilds = new GuildManager(this);
+  public plugins = new PluginManager(this);
+  public events = new EventManager(this);
 
   private _user: ClientUser | null = null;
 
@@ -28,11 +33,6 @@ export class Client<Ready extends boolean = boolean> {
     this._user = new ClientUser(this, data);
 
     return this._user;
-  }
-
-  public async fetchGuilds() {
-    const { data } = await this.api.get<GuildResponse>('/guilds');
-    return data;
   }
 
   public async login(username: string, password: string) {

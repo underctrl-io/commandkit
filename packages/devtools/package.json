@@ -1,16 +1,18 @@
 {
   "name": "@commandkit/devtools",
   "description": "CommandKit devtools",
-  "version": "0.1.0",
+  "version": "0.0.0-dev.0",
   "main": "dist/index.js",
   "type": "commonjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "build:ui": "pnpm --filter=@commandkit/devtools-ui build",
     "copy-ui": "node -e \"require('node:fs').cpSync('../devtools-ui/dist', './ui', {recursive:true})\"",
-    "build": "pnpm run build:ui && pnpm run copy-ui && tsc"
+    "build": "pnpm run build:ui && pnpm run copy-ui && pnpm run build:server",
+    "build:server": "tsc"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "commandkit": "workspace:*",
@@ -23,7 +25,6 @@
     "ui"
   ],
   "dependencies": {
-    "@types/jsonwebtoken": "^9.0.9",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2"

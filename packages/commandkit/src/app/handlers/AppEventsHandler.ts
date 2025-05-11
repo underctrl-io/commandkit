@@ -1,3 +1,4 @@
+import { Collection } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { ListenerFunction } from '../../events/CommandKitEventsChannel';
 import { Logger } from '../../logger/Logger';
@@ -20,9 +21,36 @@ export interface LoadedEvent {
   executedOnceListeners?: Set<ListenerFunction>; // Track executed once listeners
 }
 
+export interface AppEventsHandlerLoadedData {
+  name: string;
+  namespace: string | null;
+  onceListeners: number;
+  regularListeners: number;
+  metadata: ParsedEvent;
+}
+
 export class AppEventsHandler {
-  private loadedEvents = new Map<string, LoadedEvent>();
+  private loadedEvents = new Collection<string, LoadedEvent>();
   public constructor(public readonly commandkit: CommandKit) {}
+
+  public getEvents(): AppEventsHandlerLoadedData[] {
+    if (this.loadedEvents.size === 0) return [];
+
+    const events = this.loadedEvents.toJSON();
+
+    return events.map(
+      (event) =>
+        ({
+          name: event.name,
+          namespace: event.namespace,
+          onceListeners: event.listeners.filter((listener) => listener.once)
+            .length,
+          regularListeners: event.listeners.filter((listener) => !listener.once)
+            .length,
+          metadata: event.event,
+        }) satisfies AppEventsHandlerLoadedData,
+    );
+  }
 
   public async reloadEvents() {
     this.unregisterAll();

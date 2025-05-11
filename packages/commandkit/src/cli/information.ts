@@ -14,7 +14,6 @@ function $getKnownPlugins() {
     'tsconfig', // repo config related, not a plugin
     'devtools-ui', // the ui part of devtools, not a plugin
     // the plugins below are TBD
-    'devtools',
     'tasks',
   ]);
 

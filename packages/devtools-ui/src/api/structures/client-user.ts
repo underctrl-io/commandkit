@@ -18,6 +18,9 @@ export interface ClientUserData {
   tag: string;
   avatarURL: string;
   displayAvatarURL: string;
+  guilds: number;
+  users: number;
+  channels: number;
 }
 
 export class ClientUser {

@@ -14,7 +14,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useClient } from '@/context/client-context';
 
-export const Route = createFileRoute('/visualize/commands')({
+export const Route = createFileRoute('/commands')({
   component: CommandHierarchy,
 });
 
@@ -221,7 +221,7 @@ function CommandHierarchy() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Command Hierarchy</h1>
+      <h1 className="text-2xl font-bold mb-6">Commands</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 border rounded-lg p-4 bg-muted/50 shadow-sm overflow-auto max-h-[80vh]">

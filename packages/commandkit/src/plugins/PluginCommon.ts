@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { CommonPluginRuntime } from './plugin-runtime/runtime';
 
 export type PluginOptions = Record<string, any>;
@@ -6,6 +7,8 @@ export abstract class PluginCommon<
   T extends PluginOptions = PluginOptions,
   C extends CommonPluginRuntime = CommonPluginRuntime,
 > {
+  public readonly id = randomUUID();
+  public readonly loadedAt = Date.now();
   public abstract readonly name: string;
   public constructor(protected readonly options: T) {}
 

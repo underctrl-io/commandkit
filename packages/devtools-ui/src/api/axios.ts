@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_COMMANDKIT_API || '/api',
+  baseURL: import.meta.env.DEV ? 'http://localhost:4356/api' : '/api',
 });
 
 axiosClient.interceptors.request.use((config) => {

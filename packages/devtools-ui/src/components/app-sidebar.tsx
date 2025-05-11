@@ -28,19 +28,19 @@ const data = {
   navMain: [
     {
       title: 'Commands',
-      url: '/visualize/commands',
+      url: '/commands',
       icon: SquareTerminal,
       isActive: false,
     },
     {
       title: 'Events',
-      url: '#',
+      url: '/events',
       icon: BellIcon,
       isActive: false,
     },
     {
       title: 'Plugins',
-      url: '#',
+      url: '/plugins',
       icon: PlugIcon,
       isActive: false,
     },

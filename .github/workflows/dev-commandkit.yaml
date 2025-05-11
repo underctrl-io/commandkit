@@ -11,6 +11,8 @@ on:
       - 'packages/legacy/**'
       - 'packages/redis/**'
       - 'packages/i18n/**'
+      - 'packages/devtools/**'
+      - 'packages/devtools-ui/**'
 
 jobs:
   release:
@@ -26,6 +28,7 @@ jobs:
             '@commandkit/legacy',
             '@commandkit/redis',
             '@commandkit/i18n',
+            '@commandkit/devtools',
           ]
         include:
           - package: commandkit
@@ -38,6 +41,8 @@ jobs:
             path: packages/redis
           - package: '@commandkit/i18n'
             path: packages/i18n
+          - package: '@commandkit/devtools'
+            path: packages/devtools
       fail-fast: false
     steps:
       - uses: pnpm/action-setup@v2

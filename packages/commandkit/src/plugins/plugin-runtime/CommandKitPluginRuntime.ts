@@ -14,6 +14,10 @@ export class CommandKitPluginRuntime {
 
   public constructor(public readonly commandkit: CommandKit) {}
 
+  public getPlugins() {
+    return this.plugins;
+  }
+
   public getPlugin(pluginName: string): RuntimePlugin | null {
     return this.plugins.get(pluginName) ?? null;
   }
