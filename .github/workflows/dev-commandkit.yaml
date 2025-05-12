@@ -12,88 +12,94 @@ on:
       - 'packages/redis/**'
       - 'packages/i18n/**'
       - 'packages/devtools/**'
-      - 'packages/devtools-ui/**' # not a package but devtools depends on it
+      - 'packages/devtools-ui/**' # this is not a package we want to publish, but devtools depends on it
       - 'packages/cache/**'
 
 jobs:
-  release:
-    name: 🚀 Publish Dev Build
+  publish:
+    name: 🚀 Publish Dev Builds
     runs-on: macos-latest
-    timeout-minutes: 7
-    strategy:
-      matrix:
-        package:
-          [
-            commandkit,
-            create-commandkit,
-            '@commandkit/legacy',
-            '@commandkit/redis',
-            '@commandkit/i18n',
-            '@commandkit/devtools',
-            '@commandkit/cache',
-          ]
-        include:
-          - package: commandkit
-            path: packages/commandkit
-          - package: create-commandkit
-            path: packages/create-commandkit
-          - package: '@commandkit/legacy'
-            path: packages/legacy
-          - package: '@commandkit/redis'
-            path: packages/redis
-          - package: '@commandkit/i18n'
-            path: packages/i18n
-          - package: '@commandkit/devtools'
-            path: packages/devtools
-          - package: '@commandkit/cache'
-            path: packages/cache
-      fail-fast: false
+    timeout-minutes: 10
     steps:
       - uses: pnpm/action-setup@v2
         with:
           version: '9.15.0'
 
-      - name: 📚 Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: 🟢 Node
-        uses: actions/setup-node@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - name: 🍳 Prepare
+      - name: 🍳 Install dependencies
         run: pnpm install
 
-      - name: 🔢 Update Version
+      - name: 🔢 Set version suffix
+        id: version
+        run: echo "suffix=-dev.$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: 📝 Update package versions
         run: |
-          cd ${{ matrix.path }}
-          node -e "const pkg = require('./package.json'); \
-          const newVersion = pkg.version + '-dev.' + new Date().toISOString().replace(/[:\-T]/g, '').substr(0,14); \
-          pkg.version = newVersion; \
-          require('fs').writeFileSync('./package.json', JSON.stringify(pkg, null, 2));"
+          suffix="${{ steps.version.outputs.suffix }}"
+          for dir in packages/*; do
+            [ -f "$dir/package.json" ] || continue
+            node -e "
+              const fs = require('fs');
+              const path = '$dir/package.json';
+              const pkg = require(path);
+              pkg.version += '$suffix';
+              fs.writeFileSync(path, JSON.stringify(pkg, null, 2));
+            "
+          done
+
+      - name: 🧱 Build packages
+        run: pnpm build
+
+      - name: 🚀 Publish each package
         env:
-          DEBIAN_FRONTEND: noninteractive
-
-      - name: 🧱 Build
-        run: pnpm run build
-
-      - name: 🚚 Publish
-        run: pnpm --filter=${{ matrix.package }} publish --no-git-checks --access public --tag dev
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
-
-      - name: 🚫 Deprecate Previous Dev Version
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         run: |
-          PACKAGE_NAME=${{ matrix.package }}
-          ALL_VERSIONS=$(npm info $PACKAGE_NAME versions -json)
-          VERSION_TO_DEPRECATE=$(echo $ALL_VERSIONS | node -e "
-              const versions = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8'));
-              const devVersions = versions.filter(v => v.includes('-dev.'));
-              const versionToDeprecate = devVersions[devVersions.length - 2];
-              console.log(versionToDeprecate);
-          ")
-          echo Deprecating version $VERSION_TO_DEPRECATE
-          npm deprecate $PACKAGE_NAME@$VERSION_TO_DEPRECATE "Deprecated dev version."
+          PACKAGES=(
+            "commandkit:packages/commandkit"
+            "create-commandkit:packages/create-commandkit"
+            "@commandkit/legacy:packages/legacy"
+            "@commandkit/redis:packages/redis"
+            "@commandkit/i18n:packages/i18n"
+            "@commandkit/devtools:packages/devtools"
+            "@commandkit/cache:packages/cache"
+          )
+
+          for entry in "${PACKAGES[@]}"; do
+            IFS=":" read -r name path <<< "$entry"
+            echo "📦 Publishing $name..."
+            (pnpm --filter="$name" publish --no-git-checks --access public --tag dev && echo "✅ Published $name") || echo "❌ Failed to publish $name"
+          done
+
+      - name: 🚫 Deprecate previous dev versions
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: |
+          PACKAGES=(
+            "commandkit"
+            "create-commandkit"
+            "@commandkit/legacy"
+            "@commandkit/redis"
+            "@commandkit/i18n"
+            "@commandkit/devtools"
+            "@commandkit/cache"
+          )
+
+          for pkg in "${PACKAGES[@]}"; do
+            echo "📉 Deprecating previous dev version of $pkg..."
+            (
+              ALL_VERSIONS=$(npm info "$pkg" versions -json)
+              VERSION_TO_DEPRECATE=$(echo "$ALL_VERSIONS" | node -e "
+                const versions = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8'));
+                const devVersions = versions.filter(v => v.includes('-dev.'));
+                const versionToDeprecate = devVersions[devVersions.length - 2];
+                console.log(versionToDeprecate);
+              ")
+              [ -n "$VERSION_TO_DEPRECATE" ] && npm deprecate "$pkg@$VERSION_TO_DEPRECATE" "Deprecated dev version." && echo "✅ Deprecated $VERSION_TO_DEPRECATE"
+            ) || echo "⚠️ Skipped deprecation for $pkg (maybe not enough dev versions)"
+          done
