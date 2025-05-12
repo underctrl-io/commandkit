@@ -23,11 +23,19 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - name: 🍳 Prepare
-        run: pnpm install
+      - name: 💾 Cache pnpm store
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: 🍳 Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: 👷 Build
-        run: pnpm run --filter commandkit build
+        run: pnpm build
 
       - name: ✨ Lint
         run: pnpm lint
