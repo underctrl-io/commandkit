@@ -4,7 +4,7 @@ import { createAppProcess } from './app-process';
 import { existsSync } from 'fs';
 import { panic } from './common';
 import { buildApplication } from './build';
-import { isCompilerPlugin } from '../plugins';
+import { CompilerPlugin, isCompilerPlugin } from '../plugins';
 import { createSpinner } from './utils';
 
 export async function bootstrapProductionServer(configPath?: string) {
@@ -36,7 +36,9 @@ export async function createProductionBuild(configPath?: string) {
   await buildApplication({
     configPath: cwd,
     isDev: false,
-    plugins: config.plugins.filter((p) => isCompilerPlugin(p)),
+    plugins: config.plugins.filter((p) =>
+      isCompilerPlugin(p),
+    ) as CompilerPlugin[],
     esbuildPlugins: config.esbuildPlugins,
   });
 

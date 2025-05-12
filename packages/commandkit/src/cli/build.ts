@@ -11,9 +11,10 @@ import { DevEnv, devEnvFileArgs, ProdEnv, prodEnvFileArgs } from './env';
 import { rimraf } from 'rimraf';
 import { performTypeCheck } from './type-checker';
 import { copyLocaleFiles } from './common';
+import { MaybeArray } from '../components';
 
 export interface ApplicationBuildOptions {
-  plugins?: CompilerPlugin[];
+  plugins?: MaybeArray<CompilerPlugin>[] | Array<CompilerPlugin>;
   esbuildPlugins?: any[];
   isDev?: boolean;
   configPath?: string;
@@ -31,7 +32,9 @@ export async function buildApplication({
     await performTypeCheck(configPath || process.cwd());
   }
 
-  const pluginRuntime = new CompilerPluginRuntime(plugins || []);
+  const pluginRuntime = new CompilerPluginRuntime(
+    (plugins || []) as CompilerPlugin[],
+  );
   const esbuildPluginList: any[] = pluginRuntime.isEmpty()
     ? []
     : [pluginRuntime.toEsbuildPlugin()];
