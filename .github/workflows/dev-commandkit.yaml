@@ -18,7 +18,7 @@ on:
 jobs:
   publish:
     name: 🚀 Publish Dev Builds
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: pnpm/action-setup@v2
@@ -32,8 +32,16 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      - name: 💾 Cache pnpm store
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
       - name: 🍳 Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: 🔢 Set version suffix
         id: version
