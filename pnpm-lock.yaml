@@ -487,6 +487,9 @@ importers:
         specifier: ^5.4.2
         version: 5.4.2
     devDependencies:
+      '@commandkit/cache':
+        specifier: workspace:*
+        version: link:../cache
       commandkit:
         specifier: workspace:*
         version: link:../commandkit
