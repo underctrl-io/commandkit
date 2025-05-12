@@ -17,18 +17,3 @@ onApplicationBootstrap((commandkit) => {
 ```
 
 You can register multiple `onApplicationBootstrap` hooks, and they will be called in the order they were registered.
-
-## Example: Setting Up a Cache Provider
-
-```ts
-import { onApplicationBootstrap } from 'commandkit';
-import { RedisCache } from '@commandkit/redis';
-
-onApplicationBootstrap(async (commandkit) => {
-  commandkit.setCacheProvider(new RedisCache({...}));
-});
-```
-
-:::info
-Note that `@commandkit/redis` provides a plugin to register the cache provider automatically. This example is for demonstration purposes only.
-:::

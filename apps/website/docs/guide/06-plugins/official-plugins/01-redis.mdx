@@ -67,7 +67,7 @@ async function getCachedData() {
 If you need more control over the Redis client configuration, you can set up the cache provider manually instead of using the plugin:
 
 ```ts
-import { onApplicationBootstrap } from 'commandkit';
+import { setCacheProvider } from '@commandkit/cache';
 import { RedisCacheProvider } from '@commandkit/redis';
 import { Redis } from 'ioredis';
 
@@ -78,12 +78,10 @@ const redis = new Redis({
   // Add other Redis options as needed
 });
 
-onApplicationBootstrap(async (commandkit) => {
-  const redisProvider = new RedisCacheProvider(redis);
+const redisProvider = new RedisCacheProvider(redis);
 
-  // Register the provider with CommandKit
-  commandkit.setCacheProvider(redisProvider);
-});
+// Register the provider with CommandKit
+setCacheProvider(redisProvider);
 ```
 
 This approach gives you full control over the Redis client configuration while still integrating with CommandKit's caching system.
