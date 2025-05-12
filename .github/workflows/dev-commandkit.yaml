@@ -67,7 +67,7 @@ jobs:
       - name: 🚀 Publish each package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+          # NPM_CONFIG_PROVENANCE: true
         run: |
           PACKAGES=(
             "commandkit:packages/commandkit"
