@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "commandkit": "workspace:*",
+    "@commandkit/cache": "workspace:*",
     "@commandkit/devtools": "workspace:*",
     "@commandkit/i18n": "workspace:*",
     "@commandkit/legacy": "workspace:*",

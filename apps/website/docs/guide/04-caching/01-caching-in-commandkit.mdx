@@ -5,11 +5,43 @@ description: A comprehensive guide on implementing caching in your Discord bot u
 
 Caching is a technique that stores frequently accessed data in a temporary storage to improve performance and reduce load on your primary data sources. In Discord bots, this can significantly reduce database queries and external API calls.
 
-CommandKit provides a powerful yet simple caching system that works out of the box. This guide will show you how to effectively use caching in your bot.
+CommandKit provides a powerful yet simple caching system through `@commandkit/cache` plugin. This guide will show you how to effectively use caching in your bot.
 
 :::info
 CommandKit makes the use of a custom `"use cache"` directive to simplify the caching boilerplate. This enables you to focus on your problem domain rather than unnecessary boilerplate logic.
 :::
+
+## Initializing the Cache Plugin
+
+To get started with caching in CommandKit, you need to install the `@commandkit/cache` package:
+
+```bash
+npm install @commandkit/cache
+```
+
+Then, import the cache plugin and add it to your CommandKit configuration:
+
+```ts
+import { defineConfig } from 'commandkit';
+import { cache } from '@commandkit/cache';
+
+export default defineConfig({
+  plugins: [cache()],
+});
+```
+
+This will set up the default in-memory cache provider. You can also configure a custom cache provider if needed, which we will discuss later in this guide.
+
+Now any function that uses the `"use cache"` directive will automatically be cached.
+
+```ts
+async function fetchData() {
+  'use cache';
+
+  // This result will be cached
+  return database.getData();
+}
+```
 
 ## Understanding CommandKit's Cache System
 
@@ -40,29 +72,28 @@ To use Redis caching:
 
 ```ts
 import { defineConfig } from 'commandkit';
+import { cache } from '@commandkit/cache';
 import { redis } from '@commandkit/redis';
 
 export default defineConfig({
-  plugins: [redis()],
+  plugins: [cache(), redis()],
 });
 ```
 
 For custom Redis configuration:
 
 ```ts
-import { onApplicationBootstrap } from 'commandkit';
+import { setCacheProvider } from '@commandkit/cache';
 import { RedisCache } from '@commandkit/redis';
 import { Redis } from 'ioredis';
 
-onApplicationBootstrap(async (commandkit) => {
-  const redis = new Redis({
-    // Your Redis configuration
-    host: 'localhost',
-    port: 6379,
-  });
-
-  commandkit.setCacheProvider(new RedisCache(redis));
+const redis = new Redis({
+  // Your Redis configuration
+  host: 'localhost',
+  port: 6379,
 });
+
+setCacheProvider(new RedisCache(redis));
 ```
 
 ## Using the Cache
@@ -81,7 +112,7 @@ async function getUserProfile(userId: string) {
 You can customize the cache behavior using helper functions:
 
 ```ts
-import { cacheTag, cacheLife } from 'commandkit';
+import { cacheTag, cacheLife } from '@commandkit/cache';
 
 async function getUserProfile(userId: string) {
   'use cache';
@@ -114,7 +145,7 @@ You can specify cache duration in multiple formats:
 To remove cached data:
 
 ```ts
-import { invalidate } from 'commandkit';
+import { invalidate } from '@commandkit/cache';
 
 // Remove specific cache entry
 await invalidate('user:123');
@@ -125,7 +156,7 @@ await invalidate('user:123');
 To force refresh cached data:
 
 ```ts
-import { revalidate } from 'commandkit';
+import { revalidate } from '@commandkit/cache';
 
 // Revalidate and get fresh data
 const freshData = await revalidate('user:123');
@@ -136,7 +167,8 @@ const freshData = await revalidate('user:123');
 Let's build a simple XP system using CommandKit's caching:
 
 ```ts
-import { ChatInputCommand, CommandData, cacheTag } from 'commandkit';
+import { ChatInputCommand, CommandData } from 'commandkit';
+import { cacheTag } from '@commandkit/cache';
 import { database } from '../database';
 
 export const command: CommandData = {
@@ -167,7 +199,7 @@ export const chatInput: ChatInputCommand = async ({ interaction }) => {
 ### XP Event Handler
 
 ```ts
-import { invalidate } from 'commandkit';
+import { invalidate } from '@commandkit/cache';
 import { database } from '../database';
 
 export default async function (message) {
@@ -220,7 +252,7 @@ export default async function (message) {
 You can create a custom cache provider by extending the `CacheProvider` class:
 
 ```ts
-import { CacheProvider } from 'commandkit';
+import { CacheProvider } from '@commandkit/cache';
 
 class MyCustomCache extends CacheProvider {
   async get<T>(key: string) {
@@ -252,9 +284,9 @@ class MyCustomCache extends CacheProvider {
 Then use it in your bot:
 
 ```ts
-import { commandkit } from 'commandkit';
+import { setCacheProvider } from '@commandkit/cache';
 
-commandkit.setCacheProvider(new MyCustomCache());
+setCacheProvider(new MyCustomCache());
 ```
 
 ### How It Works Under the Hood

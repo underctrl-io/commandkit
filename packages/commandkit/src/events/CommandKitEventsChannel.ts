@@ -1,7 +1,6 @@
 import EventEmitter from 'node:events';
-import type { AsyncFunction } from '../cache';
 import type { CommandKit } from '../CommandKit';
-import type { GenericFunction } from '../context/async-context';
+import type { AsyncFunction, GenericFunction } from '../context/async-context';
 
 export type ListenerFunction = GenericFunction | AsyncFunction;
 

@@ -3,10 +3,16 @@ import { CommonPluginRuntime } from './plugin-runtime/runtime';
 
 export type PluginOptions = Record<string, any>;
 
+export enum PluginType {
+  Compiler = 'compiler',
+  Runtime = 'runtime',
+}
+
 export abstract class PluginCommon<
   T extends PluginOptions = PluginOptions,
   C extends CommonPluginRuntime = CommonPluginRuntime,
 > {
+  public abstract readonly type: PluginType;
   public readonly id = randomUUID();
   public readonly loadedAt = Date.now();
   public abstract readonly name: string;

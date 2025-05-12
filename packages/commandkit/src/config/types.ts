@@ -5,7 +5,7 @@ export interface CommandKitConfig {
   /**
    * The plugins to use with CommandKit.
    */
-  plugins?: MaybeArray<CommandKitPlugin[]>;
+  plugins?: CommandKitPlugin[] | Array<CommandKitPlugin[]>;
   /**
    * The esbuild plugins to use with CommandKit.
    */
@@ -21,15 +21,6 @@ export interface CommandKitConfig {
       /**
        * Whether to enable macro function compilation in development mode.
        * @default false
-       */
-      development?: boolean;
-    };
-    /**
-     * Cached function compiler configuration.
-     */
-    cache?: {
-      /**
-       * Whether to enable caching of compiled functions in development mode.
        */
       development?: boolean;
     };

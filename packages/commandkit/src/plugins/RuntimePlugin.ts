@@ -1,5 +1,10 @@
 import { Interaction, Message, PartialMessage } from 'discord.js';
-import { PluginCommon, PluginOptions } from './PluginCommon';
+import {
+  isPlugin,
+  PluginCommon,
+  PluginOptions,
+  PluginType,
+} from './PluginCommon';
 import type { CommandKitPluginRuntime } from './plugin-runtime/CommandKitPluginRuntime';
 import { CommandBuilderLike, PreparedAppCommandExecution } from '../app';
 import { CommandKitEnvironment } from '../context/environment';
@@ -9,6 +14,7 @@ import { PreRegisterCommandsEvent } from '../app/register/CommandRegistrar';
 export abstract class RuntimePlugin<
   T extends PluginOptions = PluginOptions,
 > extends PluginCommon<T, CommandKitPluginRuntime> {
+  public readonly type = PluginType.Runtime;
   /**
    * Called before commands are loaded
    */
@@ -176,5 +182,5 @@ export abstract class RuntimePlugin<
 }
 
 export function isRuntimePlugin(plugin: unknown): plugin is RuntimePlugin {
-  return plugin instanceof RuntimePlugin;
+  return isPlugin(plugin) && plugin.type === PluginType.Runtime;
 }

@@ -5,3 +5,4 @@ export * from './plugin-runtime/CommandKitPluginRuntime';
 export * from './plugin-runtime/CompilerPluginRuntime';
 export * from './plugin-runtime/types';
 export * from './plugin-runtime/runtime';
+export * from './plugin-runtime/builtin/CommonDirectiveTransformer';

@@ -4,7 +4,12 @@ import {
   OnResolveArgs,
   OnResolveResult,
 } from './plugin-runtime/types';
-import { PluginCommon, PluginOptions } from './PluginCommon';
+import {
+  isPlugin,
+  PluginCommon,
+  PluginOptions,
+  PluginType,
+} from './PluginCommon';
 import { MaybeFalsey } from './types';
 import { CompilerPluginRuntime } from './plugin-runtime/CompilerPluginRuntime';
 
@@ -28,6 +33,8 @@ export interface ResolveResult {
 export abstract class CompilerPlugin<
   T extends PluginOptions = PluginOptions,
 > extends PluginCommon<T, CompilerPluginRuntime> {
+  public readonly type = PluginType.Compiler;
+
   /**
    * Called when transformation is requested to this plugin
    * @param params The parameters for the transformation
@@ -62,5 +69,5 @@ export abstract class CompilerPlugin<
 }
 
 export function isCompilerPlugin(plugin: unknown): plugin is CompilerPlugin {
-  return plugin instanceof CompilerPlugin;
+  return isPlugin(plugin) && plugin.type === PluginType.Compiler;
 }

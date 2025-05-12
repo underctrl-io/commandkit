@@ -10,12 +10,12 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as PluginsImport } from './routes/plugins'
-import { Route as GuildsImport } from './routes/guilds'
-import { Route as EventsImport } from './routes/events'
-import { Route as CommandsImport } from './routes/commands'
-import { Route as IndexImport } from './routes/index'
+import { Route as rootRoute } from './routes/__root';
+import { Route as PluginsImport } from './routes/plugins';
+import { Route as GuildsImport } from './routes/guilds';
+import { Route as EventsImport } from './routes/events';
+import { Route as CommandsImport } from './routes/commands';
+import { Route as IndexImport } from './routes/index';
 
 // Create/Update Routes
 
@@ -23,116 +23,116 @@ const PluginsRoute = PluginsImport.update({
   id: '/plugins',
   path: '/plugins',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const GuildsRoute = GuildsImport.update({
   id: '/guilds',
   path: '/guilds',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const EventsRoute = EventsImport.update({
   id: '/events',
   path: '/events',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const CommandsRoute = CommandsImport.update({
   id: '/commands',
   path: '/commands',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexImport;
+      parentRoute: typeof rootRoute;
+    };
     '/commands': {
-      id: '/commands'
-      path: '/commands'
-      fullPath: '/commands'
-      preLoaderRoute: typeof CommandsImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/commands';
+      path: '/commands';
+      fullPath: '/commands';
+      preLoaderRoute: typeof CommandsImport;
+      parentRoute: typeof rootRoute;
+    };
     '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/events';
+      path: '/events';
+      fullPath: '/events';
+      preLoaderRoute: typeof EventsImport;
+      parentRoute: typeof rootRoute;
+    };
     '/guilds': {
-      id: '/guilds'
-      path: '/guilds'
-      fullPath: '/guilds'
-      preLoaderRoute: typeof GuildsImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/guilds';
+      path: '/guilds';
+      fullPath: '/guilds';
+      preLoaderRoute: typeof GuildsImport;
+      parentRoute: typeof rootRoute;
+    };
     '/plugins': {
-      id: '/plugins'
-      path: '/plugins'
-      fullPath: '/plugins'
-      preLoaderRoute: typeof PluginsImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/plugins';
+      path: '/plugins';
+      fullPath: '/plugins';
+      preLoaderRoute: typeof PluginsImport;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/commands': typeof CommandsRoute
-  '/events': typeof EventsRoute
-  '/guilds': typeof GuildsRoute
-  '/plugins': typeof PluginsRoute
+  '/': typeof IndexRoute;
+  '/commands': typeof CommandsRoute;
+  '/events': typeof EventsRoute;
+  '/guilds': typeof GuildsRoute;
+  '/plugins': typeof PluginsRoute;
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/commands': typeof CommandsRoute
-  '/events': typeof EventsRoute
-  '/guilds': typeof GuildsRoute
-  '/plugins': typeof PluginsRoute
+  '/': typeof IndexRoute;
+  '/commands': typeof CommandsRoute;
+  '/events': typeof EventsRoute;
+  '/guilds': typeof GuildsRoute;
+  '/plugins': typeof PluginsRoute;
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/commands': typeof CommandsRoute
-  '/events': typeof EventsRoute
-  '/guilds': typeof GuildsRoute
-  '/plugins': typeof PluginsRoute
+  __root__: typeof rootRoute;
+  '/': typeof IndexRoute;
+  '/commands': typeof CommandsRoute;
+  '/events': typeof EventsRoute;
+  '/guilds': typeof GuildsRoute;
+  '/plugins': typeof PluginsRoute;
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/commands' | '/events' | '/guilds' | '/plugins'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/commands' | '/events' | '/guilds' | '/plugins'
-  id: '__root__' | '/' | '/commands' | '/events' | '/guilds' | '/plugins'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '/' | '/commands' | '/events' | '/guilds' | '/plugins';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/' | '/commands' | '/events' | '/guilds' | '/plugins';
+  id: '__root__' | '/' | '/commands' | '/events' | '/guilds' | '/plugins';
+  fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CommandsRoute: typeof CommandsRoute
-  EventsRoute: typeof EventsRoute
-  GuildsRoute: typeof GuildsRoute
-  PluginsRoute: typeof PluginsRoute
+  IndexRoute: typeof IndexRoute;
+  CommandsRoute: typeof CommandsRoute;
+  EventsRoute: typeof EventsRoute;
+  GuildsRoute: typeof GuildsRoute;
+  PluginsRoute: typeof PluginsRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -141,11 +141,11 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   GuildsRoute: GuildsRoute,
   PluginsRoute: PluginsRoute,
-}
+};
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
 /* ROUTE_MANIFEST_START
 {

@@ -7,6 +7,15 @@ const context = new AsyncLocalStorage<CommandKitEnvironment>();
 
 export type GenericFunction<A extends any[] = any[]> = (...args: A) => any;
 
+/**
+ * Represents an async function that can be cached
+ * @template R - Array of argument types
+ * @template T - Return type
+ */
+export type AsyncFunction<R extends any[] = any[], T = any> = (
+  ...args: R
+) => Promise<T>;
+
 export function exitContext<T>(fn: () => T): T {
   return context.exit(fn);
 }

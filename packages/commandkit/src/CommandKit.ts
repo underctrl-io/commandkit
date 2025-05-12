@@ -1,8 +1,6 @@
 import EventEmitter from 'node:events';
 import type { CommandKitOptions } from './types';
 import colors from './utils/colors';
-import { CacheProvider } from './cache/CacheProvider';
-import { MemoryCache } from './cache/MemoryCache';
 import { createElement, Fragment } from './components';
 import { EventInterceptor } from './components/common/EventInterceptor';
 import { Awaitable, Events, Locale, Message } from 'discord.js';
@@ -20,8 +18,7 @@ import { CommandKitEventsChannel } from './events/CommandKitEventsChannel';
 import { isRuntimePlugin } from './plugins';
 import { generateTypesPackage } from './utils/types-package';
 import { Logger } from './logger/Logger';
-import { GenericFunction } from './context/async-context';
-import { AsyncFunction } from './cache';
+import { AsyncFunction, GenericFunction } from './context/async-context';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
@@ -120,14 +117,6 @@ export class CommandKit extends EventEmitter {
     }
 
     super();
-
-    if (
-      options.cacheProvider !== null &&
-      (!options.cacheProvider ||
-        !(options.cacheProvider instanceof CacheProvider))
-    ) {
-      options.cacheProvider = new MemoryCache();
-    }
 
     this.plugins = new CommandKitPluginRuntime(this);
 
@@ -273,29 +262,6 @@ export class CommandKit extends EventEmitter {
   setDefaultLocale(locale: Locale) {
     this.config.defaultLocale = locale;
     return this;
-  }
-
-  /**
-   * Sets the cache provider.
-   * @param provider The cache provider.
-   */
-  setCacheProvider(provider: CacheProvider) {
-    if (!(provider instanceof CacheProvider)) {
-      throw new Error(
-        colors.red('Cache provider must be an instance of CacheProvider.'),
-      );
-    }
-
-    this.options.cacheProvider = provider;
-    return this;
-  }
-
-  /**
-   * Resolves the current cache provider.
-   */
-  getCacheProvider(): CacheProvider | null {
-    const provider = this.options.cacheProvider;
-    return provider ?? null;
   }
 
   /**

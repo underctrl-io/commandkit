@@ -1,4 +1,5 @@
-import { CommandData, invalidate, ChatInputCommandContext } from 'commandkit';
+import { invalidate } from '@commandkit/cache';
+import { CommandData, ChatInputCommandContext } from 'commandkit';
 
 export const command: CommandData = {
   name: 'invalidate-random',

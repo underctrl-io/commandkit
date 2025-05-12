@@ -1,9 +1,5 @@
-import {
-  ChatInputCommandContext,
-  CommandData,
-  cacheTag,
-  cacheLife,
-} from 'commandkit';
+import { cacheLife, cacheTag } from '@commandkit/cache';
+import { ChatInputCommandContext, CommandData } from 'commandkit';
 
 export const command: CommandData = {
   name: 'random',

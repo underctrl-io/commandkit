@@ -1,8 +1,9 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { GenericFunction, getCommandKit } from '../context/async-context';
+import { AsyncFunction, GenericFunction } from 'commandkit';
 import { randomUUID } from 'node:crypto';
 import ms from 'ms';
 import { createObjectHash } from './utils';
+import { getCacheProvider } from './cache-plugin';
 
 const cacheContext = new AsyncLocalStorage<CacheContext>();
 const fnStore = new Map<
@@ -32,15 +33,6 @@ export interface CacheContext {
 }
 
 /**
- * Represents an async function that can be cached
- * @template R - Array of argument types
- * @template T - Return type
- */
-export type AsyncFunction<R extends any[] = any[], T = any> = (
-  ...args: R
-) => Promise<T>;
-
-/**
  * Configuration options for cache behavior
  */
 export interface CacheMetadata {
@@ -48,24 +40,6 @@ export interface CacheMetadata {
   ttl?: number | string;
   /** Custom name for the cache entry */
   name?: string;
-}
-
-/**
- * Retrieves the configured cache provider from CommandKit context
- * @internal
- * @throws {Error} When no cache provider is configured
- */
-function getCacheProvider() {
-  const commandkit = getCommandKit(true);
-  const provider = commandkit.getCacheProvider();
-
-  if (!provider) {
-    throw new Error(
-      `Cache provider was not found, please provide a cache provider to commandkit.`,
-    );
-  }
-
-  return provider;
 }
 
 /**
@@ -244,22 +218,40 @@ export function cacheLife(ttl: number | string): void {
 
 /**
  * Removes a cached value by its tag
- * @param tag - The cache tag to invalidate
+ * @param tag - The cache tag to invalidate. Can be a single tag or an array of tags.
  * @throws {Error} When the cache key is not found
  * @example
  * ```ts
  * await invalidate('user:123');
+ * // or
+ * await invalidate(['user:123', 'user:456']);
  * ```
  */
-export async function invalidate(tag: string): Promise<void> {
+export async function invalidate(tag: string | string[]): Promise<void> {
   const provider = getCacheProvider();
-  const entry = Array.from(fnStore.values()).find(
-    (v) => v.key === tag || v.hash === tag,
-  );
 
-  if (!entry) return;
+  let errors: Error[] = [];
+  for (const t of Array.isArray(tag) ? tag : [tag]) {
+    try {
+      const entry = Array.from(fnStore.values()).find(
+        (v) => v.key === t || v.hash === t,
+      );
 
-  await provider.delete(entry.key);
+      if (!entry) continue;
+
+      await provider.delete(entry.key);
+    } catch (e) {
+      errors.push(e as Error);
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(
+      `Failed to invalidate cache for tags: ${errors
+        .map((e) => e.message)
+        .join(', ')}`,
+    );
+  }
 }
 
 /**

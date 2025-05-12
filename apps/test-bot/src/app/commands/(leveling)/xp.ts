@@ -1,5 +1,6 @@
-import { ChatInputCommandContext, CommandData, cacheTag } from 'commandkit';
+import { ChatInputCommandContext, CommandData } from 'commandkit';
 import { database } from '../../../database/store.ts';
+import { cacheTag } from '@commandkit/cache';
 
 export const command: CommandData = {
   name: 'xp',

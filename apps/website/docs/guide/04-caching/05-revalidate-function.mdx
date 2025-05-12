@@ -1,0 +1,218 @@
+---
+title: revalidate Function
+description: How to use the revalidate function to refresh cached data while maintaining performance in CommandKit.
+---
+
+The `revalidate` function is a powerful tool in CommandKit's caching system that allows you to refresh cached data on-demand. Unlike `invalidate` which simply removes cached data, `revalidate` fetches fresh data and updates the cache in a single operation.
+
+## Basic Usage
+
+The `revalidate` function refreshes a specific cached entry and returns the updated data:
+
+```ts
+import { revalidate } from '@commandkit/cache';
+
+// Fetch fresh data and update the cache
+const freshData = await revalidate('user:123');
+```
+
+## Passing Arguments to the Cached Function
+
+The `revalidate` function also accepts additional arguments that will be passed to the original cached function:
+
+```ts
+import { revalidate } from '@commandkit/cache';
+
+// Pass additional arguments to the cached function during revalidation
+const freshData = await revalidate('userPosts', userId, { limit: 10 });
+```
+
+This is particularly useful when:
+
+1. Your cached function requires arguments to execute
+2. You need to pass different arguments than what was used in the original cache
+3. You want to update cache with different parameters
+
+## How revalidate Works
+
+When you call `revalidate` with a cache key, it:
+
+1. Finds the original function that generated the cached data
+2. Executes that function to get fresh data, passing along any provided arguments
+3. Updates the cache with this fresh data
+4. Returns the fresh data to you
+
+This is different from manually invalidating and then fetching, as it's done in a single operation.
+
+## Benefits of Using revalidate
+
+1. **Simplified Code**
+
+   No need to write separate invalidation and fetching logic.
+
+2. **Consistent Cache State**
+
+   The cache is always left in a valid state with fresh data.
+
+3. **Performance**
+
+   Other parts of your application can continue using the cached data without interruption.
+
+## When to Use revalidate
+
+The `revalidate` function is ideal for scenarios where you need fresh data but also want to ensure the cache remains populated:
+
+1. **Periodic Refreshes**
+
+   When you want to update cached data at regular intervals:
+
+   ```ts
+   // Set up a periodic refresh of leaderboard data
+   setInterval(
+     async () => {
+       await revalidate('leaderboard:global');
+       console.log('Global leaderboard refreshed');
+     },
+     60 * 60 * 1000,
+   ); // Refresh hourly
+   ```
+
+2. **Triggered Updates**
+
+   When specific actions should result in refreshed cached data:
+
+   ```ts
+   async function completeUserQuest(userId: string, questId: string) {
+     // Process the quest completion
+     await database.completeQuest(userId, questId);
+
+     // Refresh the user's quest data in the cache
+     const updatedQuestData = await revalidate(`quests:${userId}`);
+
+     return updatedQuestData;
+   }
+   ```
+
+3. **Revalidating with Different Parameters**
+
+   When you need to refresh cache with specific parameters:
+
+   ```ts
+   // Original cached function might have been called with default parameters
+   // Now we want to revalidate with specific parameters
+   const updatedUserData = await revalidate('userData', userId, {
+     includeDetails: true,
+   });
+   ```
+
+## Revalidating Multiple Items
+
+You can revalidate multiple cache items at once by passing an array of keys:
+
+```ts
+import { revalidate } from '@commandkit/cache';
+
+const [freshUserData, freshGuildData] = await Promise.all([
+  revalidate(`user:${userId}`),
+  revalidate(`guild:${guildId}`),
+]);
+```
+
+## Conditional Revalidation
+
+Sometimes, you may want to revalidate cache only under certain conditions:
+
+```ts
+import { revalidate } from '@commandkit/cache';
+
+async function getUserProfile(userId: string, forceRefresh = false) {
+  const cacheKey = `user:${userId}`;
+
+  if (forceRefresh) {
+    return await revalidate(cacheKey);
+  }
+
+  // Use the regular cached function (defined elsewhere)
+  return await getCachedUserProfile(userId);
+}
+```
+
+## Error Handling
+
+As with any asynchronous operation, proper error handling is important:
+
+```ts
+try {
+  const freshData = await revalidate('user:123');
+  console.log('Cache revalidated successfully:', freshData);
+} catch (error) {
+  console.error('Failed to revalidate cache:', error);
+  // Handle error gracefully - perhaps fall back to stale data
+}
+```
+
+## Combining with Other Caching Functions
+
+You can use `revalidate` in conjunction with other caching functions for more complex scenarios:
+
+```ts
+import { revalidate } from '@commandkit/cache';
+
+async function refreshAndExtendCache(userId: string) {
+  // Revalidate the data with these new settings
+  return await revalidate(`user:${userId}`);
+}
+```
+
+## Best Practices
+
+1. **Use Strategically**
+
+   `revalidate` is more resource-intensive than a simple cache read, so use it only when fresh data is truly needed.
+
+2. **Respect Rate Limits**
+
+   Be mindful of rate limits when revalidating data that requires API calls.
+
+3. **Implement Throttling**
+
+   Consider adding throttling to prevent abuse of revalidation, especially in user-triggered scenarios.
+
+4. **Consider Stale-While-Revalidate Pattern**
+
+   For UI operations, consider showing stale data immediately while revalidating in the background:
+
+   ```ts
+   async function getUserDataWithRefresh(userId: string) {
+     // Get potentially stale data immediately
+     const staleData = await getUserData(userId);
+
+     // Revalidate in the background for next time
+     revalidate(`user:${userId}`).catch(console.error);
+
+     // Return the stale data for now
+     return staleData;
+   }
+   ```
+
+5. **Pass Appropriate Arguments**
+
+   When revalidating functions that require arguments, make sure to provide all necessary parameters:
+
+   ```ts
+   // If the cached function requires specific arguments
+   const cachedFetchItems = cache(async (category: string, limit: number) => {
+     return await api.fetchItems(category, limit);
+   });
+
+   // When revalidating, provide all required arguments
+   const freshItems = await revalidate('items:electronics', 'electronics', 10);
+   ```
+
+6. **Monitor Revalidation Performance**
+
+   Keep track of how long revalidations take and adjust your strategy if they become too slow.
+
+## Conclusion
+
+The `revalidate` function provides a powerful way to refresh your cached data while maintaining the performance benefits of caching. By using it strategically and passing appropriate arguments when needed, you can ensure your bot always presents fresh information for critical operations while still benefiting from cache performance for most requests.

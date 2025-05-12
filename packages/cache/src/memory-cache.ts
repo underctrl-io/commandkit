@@ -1,4 +1,4 @@
-import { CacheEntry, CacheProvider } from './CacheProvider';
+import { CacheEntry, CacheProvider } from './cache-provider';
 
 export class MemoryCache extends CacheProvider {
   #cache = new Map<string, CacheEntry>();

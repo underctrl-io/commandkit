@@ -1,0 +1,40 @@
+{
+  "name": "@commandkit/cache",
+  "version": "0.0.0",
+  "description": "CommandKit plugin that provides caching apis",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underctrl-io/commandkit.git"
+  },
+  "keywords": [
+    "commandkit",
+    "cache",
+    "caching",
+    "cache management",
+    "commandkit cache"
+  ],
+  "author": "twilight <hello@twlite.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/underctrl-io/commandkit/issues"
+  },
+  "homepage": "https://github.com/underctrl-io/commandkit#readme",
+  "devDependencies": {
+    "@types/ms": "^0.7.34",
+    "commandkit": "workspace:*",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "ms": "^2.1.3"
+  }
+}

@@ -1,6 +1,6 @@
 import type { Message } from 'discord.js';
-import { invalidate } from 'commandkit';
 import { database } from '../../../database/store.ts';
+import { invalidate } from '@commandkit/cache';
 
 export default async function (message: Message) {
   if (message.author.bot || !message.inGuild()) return;

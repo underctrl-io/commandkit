@@ -1,13 +1,13 @@
 import { Collection } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { RuntimePlugin } from '../RuntimePlugin';
-import { AsyncFunction } from '../../cache';
 import {
   CommandKitErrorCodes,
   createCommandKitError,
   isErrorType,
 } from '../../utils/error-codes';
 import { Logger } from '../../logger/Logger';
+import { AsyncFunction } from '../../context/async-context';
 
 export class CommandKitPluginRuntime {
   private plugins = new Collection<string, RuntimePlugin>();
