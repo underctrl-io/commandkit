@@ -16,11 +16,14 @@ on:
       - 'packages/cache/**'
 
 jobs:
-  release:
-    name: 🚀 Publish Dev Build
+  build-and-publish:
+    name: 🧱 Build & Publish Dev Builds
     runs-on: macos-latest
-    timeout-minutes: 7
+    timeout-minutes: 10
+
+    # Define package configuration and ensure failures don't stop other packages
     strategy:
+      fail-fast: false # This ensures that if one matrix job fails, others continue
       matrix:
         package:
           [
@@ -47,8 +50,9 @@ jobs:
             path: packages/devtools
           - package: '@commandkit/cache'
             path: packages/cache
-      fail-fast: false
+
     steps:
+      # Setup environment
       - uses: pnpm/action-setup@v2
         with:
           version: '9.15.0'
@@ -62,38 +66,70 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - name: 🍳 Prepare
-        run: pnpm install
+      # Build step - runs only once per workflow
+      - name: 🍳 Install & Build (First matrix job only)
+        if: ${{ matrix.package == 'commandkit' }}
+        continue-on-error: false
+        id: build
+        run: |
+          pnpm install
+          pnpm run build
+          echo "::set-output name=built::true"
+
+      # Wait for the first job to complete the build
+      - name: ⏱️ Wait for build (Non-first matrix jobs only)
+        if: ${{ matrix.package != 'commandkit' }}
+        run: |
+          echo "Waiting for the first job to complete the build..."
+          sleep 5
 
       - name: 🔢 Update Version
+        continue-on-error: true
+        id: update-version
         run: |
           cd ${{ matrix.path }}
           node -e "const pkg = require('./package.json'); \
           const newVersion = pkg.version + '-dev.' + new Date().toISOString().replace(/[:\-T]/g, '').substr(0,14); \
           pkg.version = newVersion; \
-          require('fs').writeFileSync('./package.json', JSON.stringify(pkg, null, 2));"
+          require('fs').writeFileSync('./package.json', JSON.stringify(pkg, null, 2)); \
+          console.log('::set-output name=success::true');"
         env:
           DEBIAN_FRONTEND: noninteractive
 
-      - name: 🧱 Build
-        run: pnpm run build
-
       - name: 🚚 Publish
+        if: steps.update-version.outputs.success == 'true' || steps.update-version.conclusion == 'success'
+        continue-on-error: true
+        id: publish
         run: pnpm --filter=${{ matrix.package }} publish --no-git-checks --access public --tag dev
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
 
       - name: 🚫 Deprecate Previous Dev Version
+        if: steps.publish.conclusion == 'success'
+        continue-on-error: true
         run: |
           PACKAGE_NAME=${{ matrix.package }}
-          ALL_VERSIONS=$(npm info $PACKAGE_NAME versions -json)
-          VERSION_TO_DEPRECATE=$(echo $ALL_VERSIONS | node -e "
-              const versions = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8'));
-              const devVersions = versions.filter(v => v.includes('-dev.'));
-              const versionToDeprecate = devVersions[devVersions.length - 2];
-              console.log(versionToDeprecate);
-          ")
-          echo Deprecating version $VERSION_TO_DEPRECATE
-          npm deprecate $PACKAGE_NAME@$VERSION_TO_DEPRECATE "Deprecated dev version."
+          ALL_VERSIONS=$(npm info $PACKAGE_NAME versions -json || echo "[]")
+          if [ "$ALL_VERSIONS" != "[]" ]; then
+            VERSION_TO_DEPRECATE=$(echo $ALL_VERSIONS | node -e "
+                try {
+                  const versions = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8'));
+                  const devVersions = versions.filter(v => v.includes('-dev.'));
+                  const versionToDeprecate = devVersions.length >= 2 ? devVersions[devVersions.length - 2] : null;
+                  console.log(versionToDeprecate || '');
+                } catch (e) {
+                  console.error('Error processing versions:', e.message);
+                  console.log('');
+                }
+            ")
+            echo "Deprecating version $VERSION_TO_DEPRECATE"
+            if [ -n "$VERSION_TO_DEPRECATE" ]; then
+              npm deprecate $PACKAGE_NAME@$VERSION_TO_DEPRECATE "Deprecated dev version."
+            else
+              echo "No previous dev version found to deprecate"
+            fi
+          else
+            echo "Failed to fetch package versions, skipping deprecation"
+          fi
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

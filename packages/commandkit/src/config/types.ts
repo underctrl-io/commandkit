@@ -4,8 +4,9 @@ import { CommandKitPlugin } from '../plugins';
 export interface CommandKitConfig {
   /**
    * The plugins to use with CommandKit.
+   * Can be a single plugin, an array of plugins, or a nested array of plugins.
    */
-  plugins?: CommandKitPlugin[] | Array<CommandKitPlugin[]>;
+  plugins?: MaybeArray<CommandKitPlugin>[] | Array<CommandKitPlugin>;
   /**
    * The esbuild plugins to use with CommandKit.
    */

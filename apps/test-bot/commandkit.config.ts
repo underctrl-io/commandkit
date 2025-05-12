@@ -9,6 +9,6 @@ export default defineConfig({
     i18n(),
     legacy({ skipBuiltInValidations: true }),
     devtools(),
-    ...cache(),
+    cache(),
   ],
 });
