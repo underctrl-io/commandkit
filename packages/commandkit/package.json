@@ -12,6 +12,7 @@
     "dist",
     "bin",
     "./jsx-runtime.cjs",
+    "./jsx-runtime.mjs",
     "./jsx-runtime.d.ts"
   ],
   "exports": {
@@ -22,7 +23,7 @@
     },
     "./jsx-runtime": {
       "require": "./jsx-runtime.cjs",
-      "import": "./jsx-runtime.cjs",
+      "import": "./jsx-runtime.mjs",
       "types": "./jsx-runtime.d.ts"
     }
   },
