@@ -18,9 +18,8 @@
     "alwaysStrict": true,
     "noEmit": true,
     "declaration": false,
-    "jsx": "react",
-    "jsxFactory": "CommandKit.createElement",
-    "jsxFragmentFactory": "CommandKit.Fragment"
+    "jsx": "react-jsx",
+    "jsxImportSource": "commandkit"
   },
   "include": ["src", "commandkit.config.mjs", "commandkit-env.d.ts"],
   "exclude": ["dist", "node_modules", ".commandkit"]

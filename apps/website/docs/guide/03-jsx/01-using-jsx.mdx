@@ -116,13 +116,16 @@ JSX makes your code more maintainable:
 
 ## Setup
 
-CommandKit automatically configures JSX support in your project. When you import CommandKit, it sets up the necessary JSX runtime:
+CommandKit automatically configures JSX support in your project. If you are doing a manual setup, ensure you have the following in your `tsconfig.json` or `jsconfig.json`:
 
-```tsx
-import CommandKit from 'commandkit';
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "commandkit"
+  }
+}
 ```
-
-This import is required as CommandKit uses `CommandKit.createElement` and `CommandKit.Fragment` under the hood to transform JSX into Discord message components.
 
 ## Available Components
 
@@ -150,7 +153,6 @@ CommandKit provides JSX versions of all Discord.js builders:
 ## Example Usage
 
 ```tsx
-import CommandKit from 'commandkit';
 import { Button, ActionRow } from 'commandkit';
 
 const message = (
@@ -168,7 +170,6 @@ const message = (
 CommandKit provides full TypeScript support for JSX components. All components are properly typed, providing autocomplete and type checking:
 
 ```tsx
-import CommandKit from 'commandkit';
 import { Button, OnButtonKitClick } from 'commandkit';
 
 const handleClick: OnButtonKitClick = async (interaction, context) => {
@@ -219,19 +220,13 @@ No additional configuration is needed to use JSX in your CommandKit project.
 
 ## Best Practices
 
-1. Always import CommandKit as the default import:
-
-```tsx
-import CommandKit from 'commandkit';
-```
-
-2. Use named imports for specific components:
+1. Use named imports for specific components:
 
 ```tsx
 import { Button, ActionRow } from 'commandkit';
 ```
 
-3. Keep component trees readable with proper indentation:
+2. Keep component trees readable with proper indentation:
 
 ```tsx
 const message = (
@@ -245,13 +240,13 @@ const message = (
 );
 ```
 
-4. Use TypeScript for better type safety and developer experience:
+3. Use TypeScript for better type safety and developer experience:
 
 ```tsx
 import type { OnButtonKitClick } from 'commandkit';
 ```
 
-5. Create custom components for reusable Discord.js objects:
+4. Create custom components for reusable Discord.js objects:
 
 ```tsx
 function CustomEmbed({

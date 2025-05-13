@@ -64,8 +64,12 @@ export async function buildApplication({
       shims: true,
       keepNames: true,
       minify: false,
-      jsxFactory: 'CommandKit.createElement',
-      jsxFragment: 'CommandKit.Fragment',
+      esbuildOptions: (options) => {
+        options.jsx = 'automatic';
+        options.jsxImportSource = 'commandkit';
+
+        return options;
+      },
       minifyIdentifiers: false,
       minifySyntax: false,
       silent: !!isDev,

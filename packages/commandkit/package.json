@@ -3,14 +3,29 @@
   "description": "Beginner friendly command & event handler for Discord.js",
   "version": "1.0.0",
   "license": "MIT",
+  "type": "commonjs",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": "./bin/index.mjs",
   "files": [
     "dist",
-    "bin"
+    "bin",
+    "./jsx-runtime.cjs",
+    "./jsx-runtime.d.ts"
   ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./jsx-runtime": {
+      "require": "./jsx-runtime.cjs",
+      "import": "./jsx-runtime.cjs",
+      "types": "./jsx-runtime.d.ts"
+    }
+  },
   "scripts": {
     "lint": "tsc --noEmit",
     "dev": "pnpm run --filter=test-bot dev",

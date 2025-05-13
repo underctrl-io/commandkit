@@ -49,7 +49,10 @@ export function Fragment(
   props: FragmentElementProps,
 ): CommandKitElementData[ElementType][] {
   warnUnstable('CommandKit JSX');
-  return Array.isArray(props.children) ? props.children.flat() : props.children;
+
+  return Array.isArray(props.children)
+    ? props.children.flat()
+    : [props.children];
 }
 
 export function createElement(
@@ -58,5 +61,7 @@ export function createElement(
   ...children: any[]
 ): CommandKitElement<ElementType> {
   warnUnstable('CommandKit JSX');
-  return type({ ...props, children });
+  return type({ ...props, children: props.children ?? children });
 }
+
+export { createElement as jsx, createElement as jsxs };

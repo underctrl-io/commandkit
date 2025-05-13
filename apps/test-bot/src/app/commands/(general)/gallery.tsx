@@ -1,4 +1,4 @@
-import CommandKit, {
+import {
   ChatInputCommand,
   CommandData,
   MediaGallery,

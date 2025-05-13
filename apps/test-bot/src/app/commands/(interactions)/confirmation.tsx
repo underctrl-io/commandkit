@@ -1,4 +1,4 @@
-import CommandKit, {
+import {
   Button,
   ActionRow,
   ChatInputCommandContext,
@@ -8,7 +8,7 @@ import CommandKit, {
 import { ButtonStyle, MessageFlags } from 'discord.js';
 
 export const command: CommandData = {
-  name: 'confirm',
+  name: 'confirmation',
   description: 'This is a confirm command.',
 };
 
