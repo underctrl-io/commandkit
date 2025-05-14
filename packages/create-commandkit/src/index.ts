@@ -60,7 +60,7 @@ const lang = (await select({
 })) as Language;
 
 const token = (await password({
-  message: 'Enter your bot token (stored in .env):',
+  message: 'Enter your Discord bot token (stored in .env, optional):',
   mask: colors.gray('*'),
 })) as string;
 

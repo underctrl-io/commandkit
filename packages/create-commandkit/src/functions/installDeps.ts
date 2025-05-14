@@ -1,4 +1,5 @@
 import { type IOType, execSync } from 'node:child_process';
+import ora from 'ora';
 
 import type { Language, PackageManager } from '../types';
 
@@ -32,19 +33,28 @@ export function installDeps({
   lang,
   stdio = 'pipe',
 }: InstallDepsProps) {
-  if (dependencies[lang].dependencies.length) {
-    const depsCommand = `${manager} add ${dependencies[lang].dependencies.join(
-      ' ',
-    )}`;
+  const spinner = ora('Installing dependencies...').start();
 
-    execSync(depsCommand, { cwd: dir, stdio });
-  }
+  try {
+    if (dependencies[lang].dependencies.length) {
+      const depsCommand = `${manager} add ${dependencies[
+        lang
+      ].dependencies.join(' ')}`;
 
-  if (dependencies[lang].devDependencies.length) {
-    const devDepsCommand = `${manager} add -D ${dependencies[
-      lang
-    ].devDependencies.join(' ')}`;
+      execSync(depsCommand, { cwd: dir, stdio });
+    }
 
-    execSync(devDepsCommand, { cwd: dir, stdio });
+    if (dependencies[lang].devDependencies.length) {
+      const devDepsCommand = `${manager} add -D ${dependencies[
+        lang
+      ].devDependencies.join(' ')}`;
+
+      execSync(devDepsCommand, { cwd: dir, stdio });
+    }
+
+    spinner.succeed('Dependencies installed successfully!');
+  } catch (error) {
+    spinner.fail('Failed to install dependencies');
+    throw error;
   }
 }
