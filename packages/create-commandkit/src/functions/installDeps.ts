@@ -31,7 +31,7 @@ export function installDeps({
   manager,
   dir,
   lang,
-  stdio = 'pipe',
+  stdio = 'inherit',
 }: InstallDepsProps) {
   const spinner = ora('Installing dependencies...').start();
 
