@@ -2,7 +2,7 @@ import { join } from 'path';
 import { loadConfigFile } from '../config/loader';
 import { createAppProcess } from './app-process';
 import { existsSync } from 'fs';
-import { panic } from './common';
+import { findEntrypoint, panic } from './common';
 import { buildApplication } from './build';
 import { CompilerPlugin, isCompilerPlugin } from '../plugins';
 import { createSpinner } from './utils';
@@ -11,7 +11,7 @@ export async function bootstrapProductionServer(configPath?: string) {
   process.env.COMMANDKIT_BOOTSTRAP_MODE = 'production';
   const cwd = configPath || process.cwd();
   const config = await loadConfigFile(cwd);
-  const mainFile = join(config.distDir, 'index.js');
+  const mainFile = findEntrypoint(config.distDir);
 
   if (!existsSync(mainFile)) {
     panic(

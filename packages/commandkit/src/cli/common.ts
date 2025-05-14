@@ -13,6 +13,15 @@ export function write(message: any) {
   process.stdout.write('\n');
 }
 
+export function findEntrypoint(dir: string) {
+  const target = join(dir, 'sharding-manager.js');
+
+  // if sharding manager exists, return that file instead
+  if (fs.existsSync(target)) return target;
+
+  return join(dir, 'index.js');
+}
+
 /**
  * @returns {never}
  */

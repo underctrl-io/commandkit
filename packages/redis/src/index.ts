@@ -68,7 +68,7 @@ export class RedisCache extends CacheProvider {
       return undefined;
     }
 
-    return JSON.parse(value) as T;
+    return this.deserialize(value) as T;
   }
 
   /**
@@ -78,12 +78,14 @@ export class RedisCache extends CacheProvider {
    * @param ttl The time-to-live for the cache entry in milliseconds.
    */
   public async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-    const serialized = await this.serialize(value);
+    const serialized = this.serialize(value);
+    const finalValue =
+      serialized instanceof Promise ? await serialized : serialized;
 
     if (typeof ttl === 'number') {
-      await this.redis.set(key, serialized, 'PX', ttl);
+      await this.redis.set(key, finalValue, 'PX', ttl);
     } else {
-      await this.redis.set(key, serialized);
+      await this.redis.set(key, finalValue);
     }
   }
 

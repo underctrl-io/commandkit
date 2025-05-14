@@ -11,7 +11,7 @@ const fnStore = new Map<
   {
     key: string;
     hash: string;
-    ttl: number;
+    ttl?: number;
     original: GenericFunction;
     memo: GenericFunction;
   }
@@ -28,7 +28,7 @@ export interface CacheContext {
     /** Custom name for the cache entry */
     name?: string;
     /** Time-to-live in milliseconds */
-    ttl?: number;
+    ttl?: number | null;
   };
 }
 
@@ -84,7 +84,7 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
       {
         params: {
           name: keyHash,
-          ttl: resolvedTTL ?? DEFAULT_TTL,
+          ttl: resolvedTTL,
         },
       },
       async () => {
@@ -110,16 +110,16 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
         if (result != null) {
           // Get the final key name (might have been modified by cacheTag)
           const finalKey = context.params.name!;
-          const ttl = context.params.ttl ?? DEFAULT_TTL;
+          const ttl = context.params.ttl;
 
           // Store the result
-          await provider.set(finalKey, result, ttl);
+          await provider.set(finalKey, result, ttl ?? undefined);
 
           // Update function store
           fnStore.set(keyHash, {
             key: finalKey,
             hash: keyHash,
-            ttl,
+            ttl: ttl ?? undefined,
             original: fn,
             memo,
           });
@@ -210,7 +210,7 @@ export function cacheLife(ttl: number | string): void {
   }
 
   if (ttl == null || !['string', 'number'].includes(typeof ttl)) {
-    throw new Error('cacheLife() must be called with a ttl.');
+    throw new Error('cacheLife() must be called with a ttl value.');
   }
 
   context.params.ttl = typeof ttl === 'string' ? ms(ttl) : ttl;

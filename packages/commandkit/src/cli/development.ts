@@ -10,10 +10,11 @@ import { ChildProcess } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { randomUUID } from 'node:crypto';
 import { HMREventType } from '../utils/constants';
+import { findEntrypoint } from './common';
 
 async function buildAndStart(configPath: string, skipStart = false) {
   const config = await loadConfigFile(configPath);
-  const mainFile = join('.commandkit', 'index.js');
+  const mainFile = findEntrypoint('.commandkit');
 
   await buildApplication({
     configPath,

@@ -32,7 +32,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
         title: 'Help',
         description: commands,
         footer: {
-          text: `Bot Version: ${botVersion}`,
+          text: `Bot Version: ${botVersion} | Shard ID ${interaction.guild?.shardId ?? 'N/A'}`,
         },
         color: 0x7289da,
         timestamp: new Date().toISOString(),
