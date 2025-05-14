@@ -5,7 +5,6 @@ import { getClient, getConfig } from '../store';
 export function auth() {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!getConfig().credential) {
-      req.bot = getClient();
       return next();
     }
 
@@ -20,8 +19,6 @@ export function auth() {
     if (!auth) {
       return void res.status(401).json({ message: 'Unauthorized' });
     }
-
-    req.bot = getClient();
 
     next();
   };

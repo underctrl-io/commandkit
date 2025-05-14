@@ -51,8 +51,11 @@ export class DevtoolsPlugin extends RuntimePlugin<DevtoolsPluginOptions> {
       ctx.commandkit,
       this.options.bypassAuthInDev ? undefined : this.options.credential,
     );
-    Logger.info(
-      `Devtools server started on port ${this.options.port ?? DEFAULT_PORT}.`,
+
+    queueMicrotask(() =>
+      Logger.info(
+        `Devtools plugin started on port http://localhost:${this.options.port ?? DEFAULT_PORT}.`,
+      ),
     );
   }
 

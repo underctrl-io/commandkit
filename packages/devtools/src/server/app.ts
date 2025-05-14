@@ -19,12 +19,6 @@ app.use(cors());
 app.use(express.static(staticDir));
 app.use('/api', api);
 
-declare module 'express' {
-  interface Request {
-    bot: Client;
-  }
-}
-
 export async function startServer(
   port: number,
   commandkit: CommandKit,
