@@ -1,17 +1,15 @@
-import type { PackageManager } from '../types';
 import { type IOType, execSync } from 'child_process';
-import { commands } from '../utils';
-
 import fs from 'fs-extra';
 import path from 'node:path';
+
+import type { PackageManager } from '../types';
+import { commands } from '../utils';
 
 interface SetupProps {
   manager: PackageManager;
   token: string;
   dir: string;
   stdio?: IOType;
-  installDeps?: boolean;
-  devDeps?: boolean;
 }
 
 export async function setup({
@@ -19,8 +17,6 @@ export async function setup({
   token,
   dir,
   stdio = 'pipe',
-  installDeps = false,
-  devDeps = false,
 }: SetupProps) {
   await fs.emptyDir(dir);
   execSync(commands.init[manager], { cwd: dir, stdio });
@@ -34,20 +30,6 @@ export async function setup({
   packageJson.version = '0.1.0';
   packageJson.private = true;
   packageJson.description = 'A CommandKit project';
-
-  if (!installDeps) {
-    packageJson.dependencies = {
-      commandkit: '^0.1.1-dev.20250330115847',
-      'discord.js': '^14.18.0',
-    };
-
-    if (devDeps) {
-      packageJson.devDependencies = {
-        '@types/node': '^22.13.14',
-        typescript: '^5.8.2',
-      };
-    }
-  }
 
   packageJson.scripts = {
     dev: 'commandkit dev',

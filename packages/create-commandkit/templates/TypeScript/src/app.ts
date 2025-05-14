@@ -1,12 +1,7 @@
-import { Client, IntentsBitField } from 'discord.js';
+import { Client } from 'discord.js';
 
 const client = new Client({
-  intents: [
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMembers,
-    IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.MessageContent,
-  ],
+  intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent'],
 });
 
 export default client;

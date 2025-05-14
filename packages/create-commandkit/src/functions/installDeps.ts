@@ -1,6 +1,23 @@
-import type { Language, PackageManager } from '../types';
 import { type IOType, execSync } from 'node:child_process';
-import { dependencies } from '../utils';
+
+import type { Language, PackageManager } from '../types';
+
+const baseDependencies = [
+  // TODO: use latest tag for CommandKit v1
+  'commandkit@dev',
+  'discord.js',
+];
+
+const dependencies = {
+  js: {
+    dependencies: baseDependencies,
+    devDependencies: ['@types/node'],
+  },
+  ts: {
+    dependencies: baseDependencies,
+    devDependencies: ['@types/node', 'typescript'],
+  },
+};
 
 interface InstallDepsProps {
   manager: PackageManager;
