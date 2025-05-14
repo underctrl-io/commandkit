@@ -59,6 +59,7 @@ export class AppCommandRunner {
     if (prepared.middlewares.length) {
       await provideContext(env, async () => {
         for (const middleware of prepared.middlewares) {
+          if (!middleware.data.beforeExecute) continue;
           try {
             await middleware.data.beforeExecute(ctx);
           } catch (e) {
@@ -163,7 +164,16 @@ export class AppCommandRunner {
     if (!middlewaresCanceled && prepared.middlewares.length) {
       await provideContext(env, async () => {
         for (const middleware of prepared.middlewares) {
-          await middleware.data.afterExecute(ctx);
+          if (!middleware.data.afterExecute) continue;
+          try {
+            await middleware.data.afterExecute(ctx);
+          } catch (e) {
+            if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
+              return;
+            }
+
+            throw e;
+          }
         }
       });
     }

@@ -447,7 +447,7 @@ export class Context<
    * If this is called inside a command itself, it will skip all post-stage middlewares.
    * If this is called inside post-stage middleware, it will skip all other post-stage middlewares.
    */
-  public exit() {
+  public exit(): never {
     exitMiddleware();
   }
 }
