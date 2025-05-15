@@ -1,4 +1,6 @@
 import { CommandData, ChatInputCommand } from 'commandkit';
+import { redEmbedColor } from '../../../feature-flags/red-embed-color';
+import { Colors, MessageFlags } from 'discord.js';
 
 export const command: CommandData = {
   name: 'help',
@@ -13,6 +15,8 @@ function $botVersion(): string {
 }
 
 export const chatInput: ChatInputCommand = async (ctx) => {
+  const showRedColor = await redEmbedColor();
+
   const { interaction } = ctx;
   await interaction.deferReply();
 
@@ -34,7 +38,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
         footer: {
           text: `Bot Version: ${botVersion} | Shard ID ${interaction.guild?.shardId ?? 'N/A'}`,
         },
-        color: 0x7289da,
+        color: showRedColor ? Colors.Red : Colors.Blurple,
         timestamp: new Date().toISOString(),
       },
     ],

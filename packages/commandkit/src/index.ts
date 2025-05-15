@@ -15,6 +15,7 @@ export * from './app/router/index';
 export type * from './types';
 export * from './version';
 export * from './plugins/index';
+export * from './flags/feature-flags';
 export {
   getCurrentDirectory,
   getSourceDirectories,

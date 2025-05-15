@@ -1,0 +1,119 @@
+---
+title: Feature Flags
+description: Feature flags are a powerful tool for controlling the visibility of features in your application. They allow you to enable or disable features for specific users or groups, making it easier to test and roll out new functionality.
+---
+
+Feature flags are a powerful tool for controlling the visibility of features in your application. They allow you to enable or disable features for specific users or groups, making it easier to test and roll out new functionality. This is particularly useful to perform A/B testing, gradual rollouts, and canary releases.
+
+CommandKit natively offers a feature flag system that allows you to define flags in your configuration and use them in your code. This system is designed to be simple and flexible, allowing you to easily manage feature flags across your application.
+
+## Possible Use Cases
+
+- **Maintenance Mode**: You can use feature flags to enable or disable features in your application during maintenance. This allows you to perform maintenance tasks without affecting the user experience.
+- **A/B Testing**: You can use feature flags to test different versions of a feature with different users. For example, you can show one version of a button to 50% of users and another version to the other 50%.
+- **Gradual Rollouts**: You can use feature flags to gradually roll out a new feature to a small percentage of users before rolling it out to everyone. This allows you to monitor the feature's performance and make adjustments as needed.
+- **Canary Releases**: You can use feature flags to release a new feature to a small group of users before rolling it out to everyone. This allows you to test the feature in a production environment and catch any issues before they affect all users.
+- **Feature Toggles**: You can use feature flags to enable or disable features in your application without deploying new code. This allows you to quickly turn features on or off as needed.
+- **User Segmentation**: You can use feature flags to enable or disable features for specific users or groups. This allows you to customize the user experience based on user preferences or behavior.
+- **Testing and Debugging**: You can use feature flags to enable or disable features for testing and debugging purposes. This allows you to isolate issues and test specific features without affecting the entire application.
+
+## Defining Feature Flags
+
+Feature flags may be defined in any file in your project (except `app.ts`). The recommended place to define them is in `src/flags` directory.
+
+```ts title="src/flags/showRedColorInsteadOfBlue.ts"
+import { flag } from 'commandkit';
+
+export const showRedColorInsteadOfBlue = flag({
+  name: 'show-red-color-instead-of-blue',
+  description: 'Show red color instead of blue in embeds',
+  decide() {
+    // show red color instead of blue in embeds
+    // to 50% of users
+    return Math.random() > 0.5;
+  },
+});
+```
+
+## Using Feature Flags
+
+Once you have defined a feature flag, you can use it in your code to control the visibility of features. You can use the `isEnabled` method to check if a feature flag is enabled or not.
+
+```ts title="src/commands/hello.ts"
+import { ChatInputCommand, CommandData } from 'commandkit';
+import { showRedColorInsteadOfBlue } from '../flags/showRedColorInsteadOfBlue';
+
+export const command: CommandData = {
+  name: 'hello',
+  description: 'Hello world command',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const showRedColor = await showRedColorInsteadOfBlue();
+
+  await ctx.interaction.reply({
+    embeds: [
+      {
+        title: 'Hello world',
+        description: 'This is a hello world command',
+        color: showRedColor ? 0xff0000 : 0x0000ff,
+      },
+    ],
+  });
+};
+```
+
+Now there's a 50% chance that the embed will be red instead of blue. You can use this feature flag to test the new color scheme with a subset of users before rolling it out to everyone.
+
+## Context Identification
+
+Sometimes you may want to identify specific users or groups for feature flags. For example, you may want to show a secret feature to server boosters only.
+In order to identify the context of the flag, you can add the `identify` method to the flag definition.
+
+```ts title="src/flags/showRedColorInsteadOfBlue.ts"
+import { flag } from 'commandkit';
+import { GuildMember } from 'discord.js';
+
+interface Entity {
+  isBooster: boolean;
+}
+
+export const showRedColorInsteadOfBlue = flag<boolean, Entity>({
+  key: 'show-red-color-instead-of-blue',
+  description: 'Show red color instead of blue in embeds',
+  identify(ctx) {
+    let member: GuildMember | null = null;
+
+    if (ctx.command) {
+      member = (ctx.command.interaction || ctx.command.message)
+        ?.member as GuildMember;
+    } else if (ctx.event) {
+      // handle event specific context
+      if (ctx.event.event === 'guildMemberUpdate') {
+        const [_oldMember, newMember] =
+          ctx.event.argumentsAs('guildMemberUpdate');
+
+        member = newMember as GuildMember;
+      }
+    }
+
+    return { isBooster: member?.premiumSince !== null };
+  },
+  decide({ entities }) {
+    return entities.isBooster;
+  },
+});
+```
+
+:::info
+Flags with `identify` method only work inside the middlewares, commands and events. If you need to use flags outside of the context of these, you have to manually pass the result of the `identify` method to `flagDeclaration.run` method:
+
+```ts
+// passing the value directly
+const result = await myFlag.run({ identify: { isBooster: true } });
+// or passing as a function
+const result = await myFlag.run({ identify: () => ({ isBooster: true }) });
+```
+
+This is not recommended must of the time but may be useful in some cases.
+:::

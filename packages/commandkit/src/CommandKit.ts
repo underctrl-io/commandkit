@@ -19,6 +19,7 @@ import { isRuntimePlugin } from './plugins';
 import { generateTypesPackage } from './utils/types-package';
 import { Logger } from './logger/Logger';
 import { AsyncFunction, GenericFunction } from './context/async-context';
+import { FlagStore } from './flags/store';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
@@ -84,6 +85,7 @@ export class CommandKit extends EventEmitter {
   };
 
   public readonly store = new Map<string, any>();
+  public readonly flags = new FlagStore();
 
   public commandsRouter!: CommandsRouter;
   public eventsRouter!: EventsRouter;

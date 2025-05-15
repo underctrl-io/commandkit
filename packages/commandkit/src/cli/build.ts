@@ -159,9 +159,9 @@ async function injectEntryFile(
 ${isDev ? `\n\n// Injected for development\n${wrapInAsyncIIFE([envScript(isDev), antiCrashScript, requireScript])}\n\n` : wrapInAsyncIIFE([envScript(isDev), requireScript])}
 
 import { CommandKit } from 'commandkit';
-import app from './app.js';
 
 async function bootstrap() {
+  const app = await import('./app.js').then((m) => m.default ?? m);
   const commandkit = new CommandKit({
     client: app,
   });

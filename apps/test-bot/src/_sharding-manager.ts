@@ -1,3 +1,4 @@
+// remove _ prefix from this file name to enable sharding
 import { ShardingManager } from 'discord.js';
 import { join } from 'node:path';
 

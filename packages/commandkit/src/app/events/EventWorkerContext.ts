@@ -7,6 +7,7 @@ export interface EventWorkerContext {
   namespace: string | null;
   data: ParsedEvent;
   commandkit: CommandKit;
+  arguments: any[];
 }
 
 export const eventWorkerContext = new AsyncLocalStorage<EventWorkerContext>();

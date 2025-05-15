@@ -139,6 +139,7 @@ export class AppEventsHandler {
             namespace: namespace ?? null,
             data: data.event,
             commandkit: this.commandkit,
+            arguments: args,
           },
           async () => {
             for (const listener of onListeners) {
@@ -181,6 +182,7 @@ export class AppEventsHandler {
               namespace: namespace ?? null,
               data: data.event,
               commandkit: this.commandkit,
+              arguments: args,
             },
             async () => {
               try {
