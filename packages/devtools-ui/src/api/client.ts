@@ -3,6 +3,7 @@ import { ClientUser } from './structures/client-user';
 import { EventManager } from './structures/events';
 import { GuildManager } from './structures/guilds';
 import { PluginManager } from './structures/plugins';
+import { FeatureFlag } from './types';
 
 export class Client<Ready extends boolean = boolean> {
   public api = axiosClient;
@@ -33,6 +34,13 @@ export class Client<Ready extends boolean = boolean> {
     this._user = new ClientUser(this, data);
 
     return this._user;
+  }
+
+  public async getFeatureFlags() {
+    const { data } = await this.api.get<{ flags: FeatureFlag[] }>(
+      '/feature-flags',
+    );
+    return data;
   }
 
   public async login(username: string, password: string) {

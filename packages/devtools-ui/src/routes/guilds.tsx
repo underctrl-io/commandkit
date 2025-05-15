@@ -38,9 +38,9 @@ function RouteComponent() {
 
   return (
     <div className="grid grid-cols-3 gap-4 p-4">
-      <h1 className="text-2xl font-bold  col-span-3">Guilds</h1>
+      <h1 className="text-2xl font-bold col-span-3">Guilds</h1>
       {data!.map((guild) => (
-        <Card key={guild.id} className="border p-4 rounded">
+        <Card key={guild.id} className="border py-4 rounded">
           <CardHeader>
             <Avatar className="h-12 w-12 rounded-lg">
               <AvatarImage src={guild.iconURL!} alt={guild.name} />

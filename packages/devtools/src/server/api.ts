@@ -5,6 +5,7 @@ import { auth } from './middlewares/auth.middleware';
 import { guildsRouter } from './routes/guilds';
 import { pluginsRouter } from './routes/plugins';
 import { eventsRouter } from './routes/events';
+import { flagsRouter } from './routes/feature-flags';
 
 export const api: Router = Router();
 
@@ -21,3 +22,4 @@ api.use('/commands', commandsRouter);
 api.use('/guilds', guildsRouter);
 api.use('/plugins', pluginsRouter);
 api.use('/events', eventsRouter);
+api.use('/feature-flags', flagsRouter);

@@ -61,3 +61,9 @@ export interface GuildResponse {
     bannerURL: string | null;
   }>;
 }
+
+export interface FeatureFlag {
+  key: string;
+  description: string | null;
+  hasIdentify: boolean;
+}

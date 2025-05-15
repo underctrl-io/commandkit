@@ -74,7 +74,7 @@ export interface FlagRunner<E, R> {
 }
 
 export class FeatureFlag<R, T> {
-  public constructor(private options: FeatureFlagDefinition<R, T>) {
+  public constructor(public readonly options: FeatureFlagDefinition<R, T>) {
     const FlagStore = getCommandKit(true).flags;
 
     if (FlagStore.has(options.key)) {

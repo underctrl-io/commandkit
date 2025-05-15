@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { BellIcon, PlugIcon, SquareTerminal, WrenchIcon } from 'lucide-react';
+import {
+  BellIcon,
+  PlugIcon,
+  SquareTerminal,
+  WrenchIcon,
+  ScanEye,
+} from 'lucide-react';
 import { VscGithub } from 'react-icons/vsc';
 import { FaDiscord } from 'react-icons/fa';
 
@@ -48,6 +54,12 @@ const data = {
       title: 'Guilds',
       url: '/guilds',
       icon: FaDiscord,
+      isActive: false,
+    },
+    {
+      title: 'Feature Flags',
+      url: '/feature-flags',
+      icon: ScanEye,
       isActive: false,
     },
   ],
