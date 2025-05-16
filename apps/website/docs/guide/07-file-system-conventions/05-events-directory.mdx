@@ -1,20 +1,21 @@
 ---
 title: Events Directory
-description: The events directory is used to define the events for your application.
+description: The events directory is used to define the events for your Discord.js application.
 ---
 
-CommandKit provides a special directory called `events` inside the `src/app` directory. This directory is used to define the events for your application. Each event is defined in its own file, and the file name should match the event name. For example, if you have an event called `messageCreate`, you should create a file called `messageCreate.ts` (or `messageCreate.js`) in the `src/app/events` directory.
+CommandKit provides a special directory called `events` inside the `src/app` directory. This directory is used to define the events for your Discord.js application. Each event is defined in its own directory, and the directory name should match the Discord.js event name. Inside each event directory, you can create multiple function files that will be executed when the event is triggered. For example, if you have an event called `messageCreate`, you should create a directory called `messageCreate` in the `src/app/events` directory, and place your event handler functions inside it.
 
 ```
-| src/
-  | app/
-  | events/
-    | messageCreate/
-      | give-xp.ts
-      | log.ts
-    | ready/
-      | log.ts
-      | initialize.ts
+.
+└── src/
+    └── app/
+        └── events/
+            ├── messageCreate/
+            │   ├── give-xp.ts
+            │   └── log.ts
+            └── ready/
+                ├── log.ts
+                └── initialize.ts
 ```
 
 CommandKit also supports using custom events in the `events` directory. Custom events must be defined in a namespaced directory, which are handled by the active plugins. For example, if you have a custom event called `guildMemberBoost`, you can create a file called `src/app/events/(custom)/guildMemberBoost/handler.ts` which will be handled by the appropriate active plugins.
