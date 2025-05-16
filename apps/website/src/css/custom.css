@@ -1,6 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme) important;
+@import 'tailwindcss/utilities.css' layer(utilities) important;
+
+@custom-variant dark (&:is([data-theme="dark"] *));
 
 /**
  * Any CSS included here will be global. The classic template

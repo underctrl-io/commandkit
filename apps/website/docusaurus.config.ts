@@ -138,21 +138,7 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
-  plugins: [
-    function tailwindPlugin(context, options) {
-      return {
-        name: 'tailwind-plugin',
-        configurePostCss(postcssOptions) {
-          postcssOptions.plugins = [
-            require('postcss-import'),
-            require('tailwindcss'),
-            require('autoprefixer'),
-          ];
-          return postcssOptions;
-        },
-      };
-    },
-  ],
+  plugins: ['./src/plugins/tailwind-config.js'],
 };
 
 export default config;

@@ -31,10 +31,11 @@
     "@docusaurus/remark-plugin-npm2yarn": "^3.7.0",
     "@docusaurus/tsconfig": "3.7.0",
     "@docusaurus/types": "3.7.0",
+    "@tailwindcss/postcss": "^4.1.7",
     "autoprefixer": "^10.4.20",
     "micro-docgen": "^0.3.5",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^4.0.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.7",
     "typescript": "~5.8.0"
   },
   "browserslist": {
