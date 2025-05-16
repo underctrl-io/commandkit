@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/underctrl-io/commandkit#readme",
   "devDependencies": {
-    "@types/ms": "^0.7.34",
+    "@types/ms": "^2.0.0",
     "commandkit": "workspace:*",
     "tsconfig": "workspace:*",
     "typescript": "^5.7.3"
