@@ -150,6 +150,8 @@ export class EventsRouter {
     // if event = (something) pattern then namespace is something
     const namespace = isNamespace ? event.slice(1, -1) : (_namespace ?? null);
 
+    files.sort((a, b) => a.name.localeCompare(b.name));
+
     for (const file of files) {
       if (file.name.startsWith('_')) continue;
 
