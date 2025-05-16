@@ -1,29 +1,19 @@
-name: (CommandKit) Publish Dev Builds
+name: Publish development builds
 
 on:
+  schedule:
+    - cron: '0 */12 * * *'
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - 'packages/commandkit/**'
-      - 'packages/create-commandkit/**'
-      - 'packages/legacy/**'
-      - 'packages/redis/**'
-      - 'packages/i18n/**'
-      - 'packages/devtools/**'
-      - 'packages/devtools-ui/**' # this is not a package we want to publish, but devtools depends on it
-      - 'packages/cache/**'
 
 jobs:
   publish:
-    name: 🚀 Publish Dev Builds
+    name: Publish development builds
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: pnpm/action-setup@v4
         with:
-          version: '9.15.0'
+          version: '10.11.0'
 
       - uses: actions/checkout@v4
 
@@ -32,7 +22,7 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - name: 💾 Cache pnpm store
+      - name: Cache pnpm store
         uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
@@ -40,14 +30,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
-      - name: 🍳 Install dependencies
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 🔢 Set version suffix
+      - name: Set version suffix
         id: version
         run: echo "suffix=-dev.$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
 
-      - name: 📝 Update package versions
+      - name: Update package versions
         run: |
           suffix="${{ steps.version.outputs.suffix }}"
           for dir in packages/*; do
@@ -61,13 +51,12 @@ jobs:
             "
           done
 
-      - name: 🧱 Build packages
-        run: pnpm build
+      - name: Build packages
+        run: turbo build --filter='./packages/*'
 
-      - name: 🚀 Publish each package
+      - name: Publish packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-          # NPM_CONFIG_PROVENANCE: true
         run: |
           PACKAGES=(
             "commandkit:packages/commandkit"
@@ -81,11 +70,11 @@ jobs:
 
           for entry in "${PACKAGES[@]}"; do
             IFS=":" read -r name path <<< "$entry"
-            echo "📦 Publishing $name..."
+            echo "Publishing $name..."
             (pnpm --filter="$name" publish --no-git-checks --access public --tag dev && echo "✅ Published $name") || echo "❌ Failed to publish $name"
           done
 
-      - name: 🚫 Deprecate previous dev versions
+      - name: Deprecate previous development versions
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         run: |
@@ -100,7 +89,7 @@ jobs:
           )
 
           for pkg in "${PACKAGES[@]}"; do
-            echo "📉 Deprecating previous dev version of $pkg..."
+            echo "Deprecating previous development version of $pkg..."
             (
               ALL_VERSIONS=$(npm info "$pkg" versions -json)
               VERSION_TO_DEPRECATE=$(echo "$ALL_VERSIONS" | node -e "
@@ -109,6 +98,6 @@ jobs:
                 const versionToDeprecate = devVersions[devVersions.length - 2];
                 console.log(versionToDeprecate);
               ")
-              [ -n "$VERSION_TO_DEPRECATE" ] && npm deprecate "$pkg@$VERSION_TO_DEPRECATE" "Deprecated dev version." && echo "✅ Deprecated $VERSION_TO_DEPRECATE"
-            ) || echo "⚠️ Skipped deprecation for $pkg (maybe not enough dev versions)"
+              [ -n "$VERSION_TO_DEPRECATE" ] && npm deprecate "$pkg@$VERSION_TO_DEPRECATE" "Deprecated development version." && echo "✅ Deprecated $VERSION_TO_DEPRECATE"
+            ) || echo "⚠️ Skipped deprecation for $pkg (maybe not enough development versions)"
           done

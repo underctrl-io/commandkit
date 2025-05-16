@@ -1,0 +1,47 @@
+name: Publish latest builds
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish:
+    name: Publish latest builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '10.11.0'
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: turbo build --filter='./packages/*'
+
+      - name: Publish packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: |
+          PACKAGES=(
+            "commandkit:packages/commandkit"
+            "create-commandkit:packages/create-commandkit"
+            "@commandkit/legacy:packages/legacy"
+            "@commandkit/redis:packages/redis"
+            "@commandkit/i18n:packages/i18n"
+            "@commandkit/devtools:packages/devtools"
+            "@commandkit/cache:packages/cache"
+          )
+
+          for entry in "${PACKAGES[@]}"; do
+            IFS=":" read -r name path <<< "$entry"
+            echo "Publishing $name..."
+            (pnpm --filter="$name" publish --no-git-checks --access public && echo "✅ Published $name") || echo "❌ Failed to publish $name"
+          done
