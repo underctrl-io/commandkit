@@ -36,7 +36,7 @@
   "dependencies": {
     "@clack/prompts": "^0.7.0",
     "fs-extra": "^11.1.1",
-    "gradient-string": "^2.0.2",
+    "gradient-string": "^3.0.0",
     "ora": "^8.0.1",
     "picocolors": "^1.1.1"
   },
