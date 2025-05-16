@@ -44,7 +44,7 @@ jobs:
           done
 
       - name: Build packages
-        run: turbo build --filter='./packages/*'
+        run: pnpm dlx turbo build --filter='./packages/*'
 
       - name: Publish packages
         env:
