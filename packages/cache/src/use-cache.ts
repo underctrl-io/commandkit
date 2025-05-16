@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { AsyncFunction, GenericFunction } from 'commandkit';
 import { randomUUID } from 'node:crypto';
-import ms from 'ms';
+import ms, { type StringValue } from 'ms';
 import { createObjectHash } from './utils';
 import { getCacheProvider } from './cache-plugin';
 
@@ -76,7 +76,7 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
     const resolvedTTL =
       isLocal && params?.ttl != null
         ? typeof params.ttl === 'string'
-          ? ms(params.ttl)
+          ? ms(params.ttl as StringValue)
           : params.ttl
         : null;
 
@@ -213,7 +213,7 @@ export function cacheLife(ttl: number | string): void {
     throw new Error('cacheLife() must be called with a ttl value.');
   }
 
-  context.params.ttl = typeof ttl === 'string' ? ms(ttl) : ttl;
+  context.params.ttl = typeof ttl === 'string' ? ms(ttl as StringValue) : ttl;
 }
 
 /**
