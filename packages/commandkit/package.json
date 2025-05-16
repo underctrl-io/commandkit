@@ -47,7 +47,7 @@
   ],
   "dependencies": {
     "chokidar": "^4.0.3",
-    "commander": "^12.1.0",
+    "commander": "^13.0.0",
     "directive-to-hof": "^0.0.2",
     "dotenv": "^16.4.7",
     "ms": "^2.1.3",
