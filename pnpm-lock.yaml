@@ -27,7 +27,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: ^22.10.2
-        version: 20.17.47
+        version: 22.15.18
       micro-docgen:
         specifier: ^0.3.5
         version: 0.3.5
@@ -3688,9 +3688,6 @@ packages:
 
   '@types/node@20.17.12':
     resolution: {integrity: sha512-vo/wmBgMIiEA23A/knMfn/cf37VnuF52nZh5ZoW0GWt4e4sxNquibrMRJ7UQsA06+MBx9r/H1jsI9grYjQCQlw==}
-
-  '@types/node@20.17.47':
-    resolution: {integrity: sha512-3dLX0Upo1v7RvUimvxLeXqwrfyKxUINk0EAM83swP2mlSUcwV73sZy8XhNz8bcZ3VbsfQyC/y6jRdL5tgCNpDQ==}
 
   '@types/node@22.10.2':
     resolution: {integrity: sha512-Xxr6BBRCAOQixvonOye19wnzyDiUtTeqldOOmj3CkeblonbccA12PFwlufvRdrpjXxqnmUaeiU5EOA+7s5diUQ==}
@@ -12387,10 +12384,6 @@ snapshots:
   '@types/node@17.0.45': {}
 
   '@types/node@20.17.12':
-    dependencies:
-      undici-types: 6.19.8
-
-  '@types/node@20.17.47':
     dependencies:
       undici-types: 6.19.8
 
