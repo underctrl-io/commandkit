@@ -213,8 +213,8 @@ importers:
         specifier: ^11.1.1
         version: 11.2.0
       gradient-string:
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^3.0.0
+        version: 3.0.0
       ora:
         specifier: ^8.0.1
         version: 8.1.1
@@ -5338,9 +5338,9 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  gradient-string@2.0.2:
-    resolution: {integrity: sha512-rEDCuqUQ4tbD78TpzsMtt5OIf0cBCSDWSJtUDaF6JsAh+k0v9r++NzxNEG87oDZx9ZwGhD8DaezR2L/yrw0Jdw==}
-    engines: {node: '>=10'}
+  gradient-string@3.0.0:
+    resolution: {integrity: sha512-frdKI4Qi8Ihp4C6wZNB565de/THpIaw3DjP5ku87M+N9rNSGmPTjfkq61SdRXB7eCaL8O1hkKDvf6CDMtOzIAg==}
+    engines: {node: '>=14'}
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
@@ -14322,9 +14322,9 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  gradient-string@2.0.2:
+  gradient-string@3.0.0:
     dependencies:
-      chalk: 4.1.2
+      chalk: 5.4.1
       tinygradient: 1.1.5
 
   graphemer@1.4.0: {}
