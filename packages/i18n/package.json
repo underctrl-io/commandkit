@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/underctrl-io/commandkit#readme",
   "dependencies": {
-    "i18next": "^24.2.3",
+    "i18next": "^25.0.0",
     "i18next-fs-backend": "^2.6.0"
   },
   "devDependencies": {
