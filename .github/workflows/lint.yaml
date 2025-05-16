@@ -27,4 +27,4 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: turbo lint
+        run: pnpm dlx turbo lint
