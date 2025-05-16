@@ -6,6 +6,7 @@
   "type": "commonjs",
   "types": "dist/index.d.ts",
   "scripts": {
+    "lint": "tsc --noEmit",
     "build:ui": "pnpm --filter=@commandkit/devtools-ui build",
     "copy-ui": "node -e \"require('node:fs').cpSync('../devtools-ui/dist', './ui', {recursive:true})\"",
     "build": "pnpm run build:ui && pnpm run copy-ui && pnpm run build:server",

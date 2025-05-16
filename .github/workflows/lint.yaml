@@ -8,35 +8,23 @@ on:
 
 jobs:
   build:
-    name: 🔍 Lint
+    name: Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: pnpm/action-setup@v4
         with:
-          version: '9.15.0'
+          version: '10.11.0'
 
-      - name: 📚 Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: 🟢 Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - name: 💾 Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
-      - name: 🍳 Install dependencies
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 👷 Build
-        run: pnpm build
-
-      - name: ✨ Lint
-        run: pnpm lint
+      - name: Lint
+        run: turbo lint
