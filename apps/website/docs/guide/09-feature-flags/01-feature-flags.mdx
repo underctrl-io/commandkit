@@ -37,7 +37,7 @@ export const showRedColorInsteadOfBlue = flag({
 
 ## Using Feature Flags
 
-Once you have defined a feature flag, you can use it in your code to control the visibility of features. You can use the `isEnabled` method to check if a feature flag is enabled or not.
+Once you have defined a feature flag, you can use it in your code to control the visibility of features. You can use the function returned by the `flag` function to check if a feature flag is enabled or not.
 
 ```ts title="src/commands/hello.ts"
 import { ChatInputCommand, CommandData } from 'commandkit';
