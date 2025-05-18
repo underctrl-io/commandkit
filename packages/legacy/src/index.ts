@@ -12,8 +12,9 @@ import {
   CommandKitHMREvent,
   HMREventType,
   getSourceDirectories,
+  CommandKitEventDispatch,
 } from 'commandkit';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { loadLegacyValidations } from './loadLegacyValidations.js';
 import { CommandData, loadLegacyCommands } from './loadLegacyCommands.js';
 import { existsSync } from 'node:fs';
@@ -105,6 +106,21 @@ export class LegacyHandlerPlugin extends RuntimePlugin<LegacyHandlerPluginOption
   ): Promise<void> {
     const middlewareIds = await this.loadValidations(ctx);
     await this.loadCommands(ctx, middlewareIds);
+  }
+
+  public async willEmitEvent(
+    ctx: CommandKitPluginRuntime,
+    event: CommandKitEventDispatch,
+  ): Promise<void> {
+    const eventPath = resolve(event.metadata.path);
+    const ourPath = resolve(this.options.eventsPath);
+
+    if (!eventPath.startsWith(ourPath)) return;
+
+    event.accept();
+
+    // legacy handler injects the client to the last argument
+    event.args.push(ctx.commandkit.client);
   }
 
   private async loadCommands(

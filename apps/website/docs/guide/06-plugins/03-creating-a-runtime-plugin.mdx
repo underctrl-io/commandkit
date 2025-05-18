@@ -183,6 +183,35 @@ async onEventsRouterInit(ctx: CommandKitPluginRuntime): Promise<void> {
 }
 ```
 
+## Event handler hooks
+
+These hooks are called when processing events.
+
+#### `willEmitEvent(ctx, event)`
+
+Called before an event is emitted.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `event`: The event object being emitted.
+
+**Example use case:** Modify event data before it's emitted, or cancel the event.
+
+```typescript
+async willEmitEvent(
+  ctx: CommandKitPluginRuntime,
+  event: CommandKitEventDispatch
+): Promise<void> {
+  // prevent other plugins from handling this event
+  event.accept();
+  // Modify event data
+  event.args.push('This is a custom argument');
+}
+```
+
+Now the event listener will receive the modified event data.
+
 ## Command Registration Hooks
 
 These hooks are called during the command registration process, allowing you to modify commands before they're registered with Discord.

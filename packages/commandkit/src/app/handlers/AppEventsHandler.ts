@@ -6,6 +6,7 @@ import { toFileURL } from '../../utils/resolve-file-url';
 import { StopEventPropagationError } from '../../utils/utilities';
 import { runInEventWorkerContext } from '../events/EventWorkerContext';
 import { ParsedEvent } from '../router';
+import { CommandKitEventDispatch } from '../../plugins';
 
 export type EventListener = {
   handler: ListenerFunction;
@@ -133,6 +134,27 @@ export class AppEventsHandler {
 
       // Create main handler for regular "on" listeners
       const mainHandler: ListenerFunction = async (...args) => {
+        let accepted = false;
+
+        const event: CommandKitEventDispatch = {
+          name,
+          args,
+          namespace: namespace ?? null,
+          once: false,
+          metadata: data.event,
+          accept() {
+            if (accepted) return;
+            accepted = true;
+          },
+        };
+
+        await this.commandkit.plugins
+          .execute(async (ctx, plugin) => {
+            if (accepted) return;
+            return plugin.willEmitEvent?.(ctx, event);
+          })
+          .catch(Object);
+
         await runInEventWorkerContext(
           {
             event: name,
@@ -172,6 +194,26 @@ export class AppEventsHandler {
       // Create handler for "once" listeners with cleanup logic
       const onceHandler: ListenerFunction = async (...args) => {
         let broken = false;
+        let accepted = false;
+
+        const event: CommandKitEventDispatch = {
+          name,
+          args,
+          namespace: namespace ?? null,
+          once: true,
+          metadata: data.event,
+          accept() {
+            if (accepted) return;
+            accepted = true;
+          },
+        };
+
+        await this.commandkit.plugins
+          .execute(async (ctx, plugin) => {
+            if (accepted) return;
+            return plugin.willEmitEvent?.(ctx, event);
+          })
+          .catch(Object);
 
         for (const listener of onceListeners) {
           if (broken) break; // Stop executing remaining listeners if propagation was stopped

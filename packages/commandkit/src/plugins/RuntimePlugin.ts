@@ -1,4 +1,4 @@
-import { Interaction, Message, PartialMessage } from 'discord.js';
+import { Interaction, Message } from 'discord.js';
 import {
   isPlugin,
   PluginCommon,
@@ -10,6 +10,7 @@ import { CommandBuilderLike, PreparedAppCommandExecution } from '../app';
 import { CommandKitEnvironment } from '../context/environment';
 import { CommandKitHMREvent } from '../utils/dev-hooks';
 import { PreRegisterCommandsEvent } from '../app/register/CommandRegistrar';
+import { CommandKitEventDispatch } from './types';
 
 export abstract class RuntimePlugin<
   T extends PluginOptions = PluginOptions,
@@ -178,6 +179,16 @@ export abstract class RuntimePlugin<
   async onAfterCommand(
     ctx: CommandKitPluginRuntime,
     env: CommandKitEnvironment,
+  ) {}
+
+  /**
+   * Called before emitting an event
+   * @param ctx The context
+   * @param event The event that is being emitted
+   */
+  public async willEmitEvent(
+    ctx: CommandKitPluginRuntime,
+    event: CommandKitEventDispatch,
   ) {}
 }
 
