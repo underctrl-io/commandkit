@@ -1,8 +1,10 @@
 import { TextDisplayBuilder, TextDisplayComponentData } from 'discord.js';
 
+export type StringEncodable = string | number | boolean;
+
 export interface TextDisplayProps
   extends Omit<TextDisplayComponentData, 'type' | 'content'> {
-  children?: string | string[];
+  children?: StringEncodable | StringEncodable[];
   content?: string;
 }
 
@@ -13,7 +15,11 @@ export function TextDisplay(props: TextDisplayProps) {
     if (Array.isArray(props.children)) {
       textDisplay.setContent(props.children.join(' '));
     } else {
-      textDisplay.setContent(props.children);
+      textDisplay.setContent(
+        typeof props.children === 'string'
+          ? props.children
+          : String(props.children),
+      );
     }
   }
 

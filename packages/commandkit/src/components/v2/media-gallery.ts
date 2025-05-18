@@ -12,6 +12,7 @@ export function MediaGallery(props: MediaGalleryProps) {
   applyId(props, gallery);
 
   if (props.children != null) {
+    if (!Array.isArray(props.children)) props.children = [props.children];
     gallery.addItems(props.children.flat());
   }
 

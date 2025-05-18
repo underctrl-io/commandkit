@@ -17,6 +17,7 @@ export function Section(props: SectionProps): SectionBuilder {
   applyId(props, section);
 
   if (props.children != null) {
+    if (!Array.isArray(props.children)) props.children = [props.children];
     for (const accessory of props.children.flat()) {
       if (accessory instanceof ThumbnailBuilder) {
         section.setThumbnailAccessory(accessory);

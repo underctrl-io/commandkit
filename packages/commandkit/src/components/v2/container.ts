@@ -8,7 +8,6 @@ import {
   SectionBuilder,
   SeparatorBuilder,
   TextDisplayBuilder,
-  ThumbnailBuilder,
 } from 'discord.js';
 import { applyId } from './common';
 
@@ -30,7 +29,10 @@ export function Container(props: ContainerProps): ContainerBuilder {
     container.setSpoiler(props.spoiler);
   }
 
-  if (props.children?.length) {
+  if (props.children != null) {
+    if (!Array.isArray(props.children)) props.children = [props.children];
+    if (props.children.length === 0) return container;
+
     for (const child of props.children.flat()) {
       if (child instanceof TextDisplayBuilder) {
         container.addTextDisplayComponents(child);
