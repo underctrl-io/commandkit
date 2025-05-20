@@ -3,9 +3,16 @@ import { CommandKitEnvironment } from './environment';
 import { CommandKit } from '../CommandKit';
 import { isCommandKitError } from '../utils/error-codes';
 
+const kCommandWorker = Symbol('commandkitCommandWorker');
 const context = new AsyncLocalStorage<CommandKitEnvironment>();
 
 export type GenericFunction<A extends any[] = any[]> = (...args: A) => any;
+
+export function isCommandWorkerContext(
+  worker: any,
+): worker is CommandKitEnvironment {
+  return worker && Reflect.get(worker, kCommandWorker) === true;
+}
 
 /**
  * Represents an async function that can be cached
@@ -24,6 +31,7 @@ export function provideContext<R>(
   value: CommandKitEnvironment,
   receiver: () => R,
 ): R {
+  Reflect.set(value, kCommandWorker, true);
   return context.run(value, receiver);
 }
 

@@ -167,6 +167,16 @@ export class EventsRouter {
     }
 
     if (!isNamespace) {
+      const existing = this.events.get(event);
+
+      if (existing) {
+        existing.listeners = Array.from(
+          new Set([...existing.listeners, ...listeners]),
+        );
+
+        return;
+      }
+
       this.events.set(event, { event, path, listeners, namespace });
     }
   }

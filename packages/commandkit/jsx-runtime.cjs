@@ -1,4 +1,4 @@
-const { jsx, jsxs, Fragment } = require('./dist/index.js');
+const { jsx, jsxs, Fragment } = require('./dist/components/common/element.js');
 
 module.exports = {
   jsx,

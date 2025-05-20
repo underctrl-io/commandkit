@@ -3,14 +3,16 @@ import { esbuildPluginUseMacro } from 'use-macro';
 
 export default defineConfig({
   format: ['cjs'],
-  entry: ['src/index.ts'],
+  entry: ['src'],
   outDir: './dist',
   sourcemap: true,
   watch: false,
-  minifyIdentifiers: false,
+  minify: true,
+  minifyIdentifiers: true,
   keepNames: true,
   dts: true,
   shims: true,
+  splitting: false,
   skipNodeModulesBundle: true,
   clean: true,
   target: 'node16',

@@ -1,1 +1,1 @@
-export { jsx, jsxs, Fragment } from './dist/index';
+export { jsx, jsxs, Fragment } from './dist/components/common/element';
