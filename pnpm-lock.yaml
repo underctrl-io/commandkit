@@ -402,7 +402,7 @@ importers:
         version: 1.1.2(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       zod:
         specifier: ^3.24.2
-        version: 3.25.8
+        version: 3.25.13
       zustand:
         specifier: ^5.0.3
         version: 5.0.4(@types/react@19.1.4)(immer@9.0.21)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
@@ -513,7 +513,7 @@ importers:
     devDependencies:
       bullmq:
         specifier: ^5.48.1
-        version: 5.52.3
+        version: 5.53.0
       commandkit:
         specifier: workspace:*
         version: link:../commandkit
@@ -3760,8 +3760,8 @@ packages:
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
 
-  bullmq@5.52.3:
-    resolution: {integrity: sha512-UaVkg+uSgylYWjD6/d8TVm87SjDVZ5jKwDVh/pJACmStn71aIzOIpGazh2JrkGISgT10Q/lG2I40FhPg0KgNCQ==}
+  bullmq@5.53.0:
+    resolution: {integrity: sha512-AbzcwR+9GdgrenolOC9kApF+TkUKZpUCMiFbXgRYw9ivWhOfLCqKeajIptM7NdwhY7cpXgv+QpbweUuQZUxkyA==}
 
   bundle-require@5.1.0:
     resolution: {integrity: sha512-3WrrOuZiyaaZPWiEt4G3+IffISVC9HYlWueJEBWED4ZH4aIAC2PnkdnuRrR94M+w6yGWn4AglWtJtBI8YqvgoA==}
@@ -8234,8 +8234,8 @@ packages:
     resolution: {integrity: sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==}
     engines: {node: '>=12.20'}
 
-  zod@3.25.8:
-    resolution: {integrity: sha512-iJPWX8HoZ2VE21VrhHGU9jVo/kVDUQyqM9vF0MxDhW/fp2sAl1eVwGJgiYZdHGiMwQJImXIW80lKk0MnfDxqiQ==}
+  zod@3.25.13:
+    resolution: {integrity: sha512-Q8mvk2iWi7rTDfpQBsu4ziE7A6AxgzJ5hzRyRYQkoV3A3niYsXVwDaP1Kbz3nWav6S+VZ6k2OznFn8ZyDHvIrg==}
 
   zustand@5.0.4:
     resolution: {integrity: sha512-39VFTN5InDtMd28ZhjLyuTnlytDr9HfwO512Ai4I8ZABCoyAj4F1+sr7sD1jP/+p7k77Iko0Pb5NhgBFDCX0kQ==}
@@ -10180,7 +10180,7 @@ snapshots:
 
   '@docusaurus/react-loadable@6.0.0(react@19.1.0)':
     dependencies:
-      '@types/react': 19.1.4
+      '@types/react': 19.0.12
       react: 19.1.0
 
   '@docusaurus/remark-plugin-npm2yarn@3.7.0':
@@ -11647,7 +11647,7 @@ snapshots:
       '@tanstack/virtual-file-routes': 1.115.0
       prettier: 3.5.3
       tsx: 4.19.4
-      zod: 3.25.8
+      zod: 3.25.13
     optionalDependencies:
       '@tanstack/react-router': 1.120.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
@@ -11669,7 +11669,7 @@ snapshots:
       babel-dead-code-elimination: 1.0.10
       chokidar: 3.6.0
       unplugin: 2.2.2
-      zod: 3.25.8
+      zod: 3.25.13
     optionalDependencies:
       '@tanstack/react-router': 1.120.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       vite: 6.3.5(@types/node@22.15.21)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.37.0)(tsx@4.19.4)(yaml@2.7.0)
@@ -11907,7 +11907,7 @@ snapshots:
   '@types/react-router@5.1.20':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.1.4
+      '@types/react': 19.0.12
 
   '@types/react@19.0.12':
     dependencies:
@@ -12454,7 +12454,7 @@ snapshots:
 
   buffer-from@1.1.2: {}
 
-  bullmq@5.52.3:
+  bullmq@5.53.0:
     dependencies:
       cron-parser: 4.9.0
       ioredis: 5.4.2
@@ -16281,7 +16281,7 @@ snapshots:
 
   regenerator-transform@0.15.2:
     dependencies:
-      '@babel/runtime': 7.27.1
+      '@babel/runtime': 7.27.0
 
   regexpu-core@6.2.0:
     dependencies:
@@ -17639,7 +17639,7 @@ snapshots:
 
   yocto-queue@1.1.1: {}
 
-  zod@3.25.8: {}
+  zod@3.25.13: {}
 
   zustand@5.0.4(@types/react@19.1.4)(immer@9.0.21)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)):
     optionalDependencies:
