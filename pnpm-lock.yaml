@@ -402,7 +402,7 @@ importers:
         version: 1.1.2(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       zod:
         specifier: ^3.24.2
-        version: 3.25.27
+        version: 3.25.28
       zustand:
         specifier: ^5.0.3
         version: 5.0.5(@types/react@19.1.5)(immer@9.0.21)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
@@ -8237,8 +8237,8 @@ packages:
     resolution: {integrity: sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==}
     engines: {node: '>=12.20'}
 
-  zod@3.25.27:
-    resolution: {integrity: sha512-xkYsE+ztNLzBeoAG8Ipd2ICr86gyMpovQlB+Vid1LT7V16/Dj0z+Up1u1qxNX58cmJ/AtG2mvGw/7+jK48xEYw==}
+  zod@3.25.28:
+    resolution: {integrity: sha512-/nt/67WYKnr5by3YS7LroZJbtcCBurDKKPBPWWzaxvVCGuG/NOsiKkrjoOhI8mJ+SQUXEbUzeB3S+6XDUEEj7Q==}
 
   zustand@5.0.5:
     resolution: {integrity: sha512-mILtRfKW9xM47hqxGIxCv12gXusoY/xTSHBYApXozR0HmQv299whhBeeAcRy+KrPPybzosvJBCOmVjq6x12fCg==}
@@ -11652,7 +11652,7 @@ snapshots:
       '@tanstack/virtual-file-routes': 1.115.0
       prettier: 3.5.3
       tsx: 4.19.4
-      zod: 3.25.27
+      zod: 3.25.28
     optionalDependencies:
       '@tanstack/react-router': 1.120.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
@@ -11674,7 +11674,7 @@ snapshots:
       babel-dead-code-elimination: 1.0.10
       chokidar: 3.6.0
       unplugin: 2.2.2
-      zod: 3.25.27
+      zod: 3.25.28
     optionalDependencies:
       '@tanstack/react-router': 1.120.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       vite: 6.3.5(@types/node@22.15.21)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.37.0)(tsx@4.19.4)(yaml@2.7.0)
@@ -17645,7 +17645,7 @@ snapshots:
 
   yocto-queue@1.1.1: {}
 
-  zod@3.25.27: {}
+  zod@3.25.28: {}
 
   zustand@5.0.5(@types/react@19.1.5)(immer@9.0.21)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)):
     optionalDependencies:
