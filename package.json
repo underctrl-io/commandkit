@@ -8,8 +8,8 @@
     "apps/*"
   ],
   "scripts": {
-    "lint": "pnpm run --filter=\"./packages/*\" lint",
-    "build": "pnpm run --filter=\"./packages/*\" build",
+    "lint": "turbo run --filter=\"./packages/*\" lint",
+    "build": "turbo run --filter=\"./packages/*\" build",
     "publish-package": "pnpm publish-package",
     "build-docs": "pnpm run --filter=\"./apps/website\" build",
     "docgen": "tsx ./scripts/docgen.ts && pnpm format",
