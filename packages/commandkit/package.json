@@ -20,7 +20,9 @@
     "./config.cjs",
     "./config.d.ts",
     "./components.cjs",
-    "./components.d.ts"
+    "./components.d.ts",
+    "./flag.cjs",
+    "./flag.d.ts"
   ],
   "exports": {
     ".": {
@@ -52,6 +54,11 @@
       "require": "./components.cjs",
       "import": "./components.cjs",
       "types": "./components.d.ts"
+    },
+    "./flag": {
+      "require": "./flag.cjs",
+      "import": "./flag.cjs",
+      "types": "./flag.d.ts"
     }
   },
   "scripts": {
