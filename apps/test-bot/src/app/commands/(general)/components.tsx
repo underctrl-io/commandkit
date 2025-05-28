@@ -63,9 +63,9 @@ export const chatInput: ChatInputCommand = async (ctx) => {
           Website
         </Button>
       </Section>
-      <Separator spacing={SeparatorSpacingSize.Large} dividier />
+      <Separator spacing={SeparatorSpacingSize.Large} divider />
       <File url="attachment://components-v2-are-awesome.md" />
-      <Separator spacing={SeparatorSpacingSize.Large} dividier />
+      <Separator spacing={SeparatorSpacingSize.Large} divider />
       <TextDisplay content="Discord's default avatars" />
       <MediaGallery>
         {mediaItems.map((item) => (

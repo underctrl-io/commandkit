@@ -1,4 +1,4 @@
-import { flag } from 'commandkit';
+import { flag } from 'commandkit/flag';
 
 export const redEmbedColor = flag({
   key: 'red-embed-color',
