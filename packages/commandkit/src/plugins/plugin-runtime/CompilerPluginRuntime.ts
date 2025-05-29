@@ -37,7 +37,6 @@ export class CompilerPluginRuntime {
         }
       } catch (e: any) {
         const err = e instanceof Error ? e : new Error(e);
-        console.log(err);
         throw new Error(
           `Plugin ${plugin.name} failed to transform: ${err.message}`,
         );

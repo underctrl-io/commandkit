@@ -8,13 +8,11 @@ import {
   Client,
   ClientEvents,
   ContextMenuCommandInteraction,
-  Events,
   Guild,
   Message,
   TextBasedChannel,
 } from 'discord.js';
 import { LoadedCommand } from '../app';
-import { FlagStore } from './store';
 
 export type MaybePromise<T> = T | Promise<T>;
 
