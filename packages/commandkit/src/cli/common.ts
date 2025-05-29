@@ -122,6 +122,8 @@ export async function loadConfigFileFromPath(
 
   const isTs = await ensureTypeScript(target);
 
+  let generatedFilePath: string | undefined;
+
   if (isTs && ts) {
     const { transpileModule } = ts;
     const src = fs.readFileSync(target, 'utf8');
@@ -134,11 +136,15 @@ export async function loadConfigFileFromPath(
       fileName: target,
     });
 
-    const nodeModulesPath = await generateTypesPackage();
+    await generateTypesPackage();
+
+    const nodeModulesPath = process.cwd();
 
     const tmpFile = join(nodeModulesPath, 'compiled-commandkit.config.mjs');
 
     fs.writeFileSync(tmpFile, outputText);
+
+    generatedFilePath = tmpFile;
 
     target = tmpFile;
   }
@@ -149,6 +155,14 @@ export async function loadConfigFileFromPath(
   const config = await import(`file://${target}`).then(
     (conf) => conf.default || conf,
   );
+
+  if (generatedFilePath) {
+    try {
+      fs.unlinkSync(generatedFilePath);
+    } catch {
+      //
+    }
+  }
 
   return config;
 }

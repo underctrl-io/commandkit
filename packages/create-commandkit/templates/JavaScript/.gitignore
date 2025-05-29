@@ -8,6 +8,7 @@ dist
 
 # commandkit
 .commandkit
+compiled-commandkit.config.mjs
 
 # env
 **/*.env*
