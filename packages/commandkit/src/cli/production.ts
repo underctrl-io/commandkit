@@ -39,7 +39,7 @@ export async function createProductionBuild(configPath?: string) {
     plugins: config.plugins.filter((p) =>
       isCompilerPlugin(p),
     ) as CompilerPlugin[],
-    esbuildPlugins: config.esbuildPlugins,
+    rolldownPlugins: config.rolldownPlugins,
   });
 
   spinner.succeed('Production build completed!');

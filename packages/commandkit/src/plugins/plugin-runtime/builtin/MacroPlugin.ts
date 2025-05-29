@@ -23,15 +23,19 @@ export class MacroPlugin extends CompilerPlugin {
     params: PluginTransformParameters,
   ): Promise<MaybeFalsey<TransformedResult>> {
     if (!this.options.enabled) return null;
+    if (/\.json$/.test(params.id)) return null;
 
-    const { contents, loader } = await this.macroTransformer.transform(
-      params.contents.toString(),
-      params.path,
+    const { contents } = await this.macroTransformer.transform(
+      params.code,
+      params.id,
     );
 
     return {
-      contents,
-      loader,
+      code:
+        typeof contents === 'string'
+          ? contents
+          : new TextDecoder().decode(contents),
+      map: null,
     };
   }
 }

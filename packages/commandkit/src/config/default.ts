@@ -1,9 +1,10 @@
 import { MacroPlugin } from '../plugins/plugin-runtime/builtin/MacroPlugin';
 import { ResolvedCommandKitConfig } from './utils';
+import json from '@rollup/plugin-json';
 
 export const defaultConfig: ResolvedCommandKitConfig = {
   plugins: [new MacroPlugin({ enabled: true })],
-  esbuildPlugins: [],
+  rolldownPlugins: [json() as any],
   compilerOptions: {
     macro: {
       development: false,

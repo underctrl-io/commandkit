@@ -1,9 +1,4 @@
-import {
-  Loader,
-  OnLoadArgs,
-  OnResolveArgs,
-  OnResolveResult,
-} from './plugin-runtime/types';
+import { OnResolveArgs } from './plugin-runtime/types';
 import {
   isPlugin,
   PluginCommon,
@@ -14,20 +9,13 @@ import { MaybeFalsey } from './types';
 import { CompilerPluginRuntime } from './plugin-runtime/CompilerPluginRuntime';
 
 export interface PluginTransformParameters {
-  args: OnLoadArgs;
-  path: string;
-  contents: string | Uint8Array;
-  loader?: Loader;
+  code: string;
+  id: string;
 }
 
 export interface TransformedResult {
-  contents?: string | Uint8Array;
-  loader?: Loader;
-}
-
-export interface ResolveResult {
-  path?: string;
-  external?: boolean;
+  code?: string;
+  map?: string | null;
 }
 
 export abstract class CompilerPlugin<
@@ -45,27 +33,6 @@ export abstract class CompilerPlugin<
   ): Promise<MaybeFalsey<TransformedResult>> {
     return null;
   }
-
-  /**
-   * Called when a resolve is requested to this plugin
-   * @param args The arguments for the resolve
-   * @returns The resolved result
-   */
-  public async resolve(
-    args: OnResolveArgs,
-  ): Promise<MaybeFalsey<ResolveResult>> {
-    return null;
-  }
-
-  /**
-   * Called when a build is started
-   */
-  public async onBuildStart(): Promise<void> {}
-
-  /**
-   * Called when a build is ended
-   */
-  public async onBuildEnd(): Promise<void> {}
 }
 
 export function isCompilerPlugin(plugin: unknown): plugin is CompilerPlugin {

@@ -37,9 +37,9 @@ export function defineConfig(
       ...defaultConfig.env,
       ...config.env,
     },
-    esbuildPlugins: [
-      ...(config.esbuildPlugins ?? []),
-      ...(defaultConfig.esbuildPlugins ?? []),
+    rolldownPlugins: [
+      ...(config.rolldownPlugins ?? []),
+      ...(defaultConfig.rolldownPlugins ?? []),
     ],
     plugins: [...(config.plugins ?? []), ...(defaultConfig.plugins ?? [])].flat(
       Infinity,

@@ -20,7 +20,7 @@ async function buildAndStart(configPath: string, skipStart = false) {
     configPath,
     isDev: true,
     plugins: config.plugins.flat(2).filter((p) => isCompilerPlugin(p)),
-    esbuildPlugins: config.esbuildPlugins,
+    rolldownPlugins: config.rolldownPlugins,
   });
 
   if (skipStart) return null as never;
