@@ -74,6 +74,7 @@ export function onApplicationBootstrap<F extends BootstrapFunction>(
 
 export class CommandKit extends EventEmitter {
   #started = false;
+  private options: CommandKitOptions;
   public eventInterceptor!: EventInterceptor;
 
   public static readonly createElement = createElement;
@@ -89,10 +90,10 @@ export class CommandKit extends EventEmitter {
 
   public commandsRouter!: CommandsRouter;
   public eventsRouter!: EventsRouter;
-  public readonly commandHandler = new AppCommandHandler(this);
-  public readonly eventHandler = new AppEventsHandler(this);
-  public readonly plugins: CommandKitPluginRuntime;
-  public readonly events = new CommandKitEventsChannel(this);
+  public commandHandler!: AppCommandHandler;
+  public eventHandler!: AppEventsHandler;
+  public plugins!: CommandKitPluginRuntime;
+  public events!: CommandKitEventsChannel;
 
   static instance: CommandKit | undefined = undefined;
 
@@ -102,7 +103,7 @@ export class CommandKit extends EventEmitter {
    * @param options - The default CommandKit configuration.
    * @see {@link https://commandkit.js.org/docs/guide/commandkit-setup}
    */
-  constructor(private readonly options: CommandKitOptions) {
+  constructor(options: CommandKitOptions) {
     if (CommandKit.instance) {
       process.emitWarning(
         'CommandKit instance already exists. Having multiple instance in same project is discouraged and it may lead to unexpected behavior.',
@@ -120,11 +121,13 @@ export class CommandKit extends EventEmitter {
 
     super();
 
-    this.plugins = new CommandKitPluginRuntime(this);
+    this.options = options;
 
     if (!CommandKit.instance) {
       CommandKit.instance = this;
     }
+
+    this.plugins = new CommandKitPluginRuntime(this);
 
     // @ts-ignore
     commandkit = CommandKit.instance;
@@ -279,6 +282,10 @@ export class CommandKit extends EventEmitter {
 
     const commandsPath = this.getPath('commands')!;
     const events = this.getPath('events')!;
+
+    this.commandHandler = new AppCommandHandler(this);
+    this.eventHandler = new AppEventsHandler(this);
+    this.events = new CommandKitEventsChannel(this);
 
     this.commandsRouter = new CommandsRouter({
       entrypoint: commandsPath,

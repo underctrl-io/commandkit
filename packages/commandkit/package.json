@@ -64,7 +64,7 @@
   "scripts": {
     "lint": "tsc --noEmit",
     "dev": "pnpm run --filter=test-bot dev",
-    "build": "tsup",
+    "build": "tsdown",
     "publish-package": "npm publish",
     "test": "vitest"
   },
@@ -80,6 +80,7 @@
     "event handler"
   ],
   "dependencies": {
+    "@rollup/plugin-json": "^6.1.0",
     "chokidar": "^4.0.3",
     "commander": "^13.0.0",
     "directive-to-hof": "^0.0.2",
@@ -89,7 +90,7 @@
     "picocolors": "^1.1.1",
     "rfdc": "^1.3.1",
     "rimraf": "^6.0.0",
-    "tsup": "^8.4.0",
+    "tsdown": "^0.12.4",
     "use-macro": "^1.1.0"
   },
   "devDependencies": {

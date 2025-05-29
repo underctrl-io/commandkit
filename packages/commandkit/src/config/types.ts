@@ -8,9 +8,9 @@ export interface CommandKitConfig {
    */
   plugins?: MaybeArray<CommandKitPlugin>[] | Array<CommandKitPlugin>;
   /**
-   * The esbuild plugins to use with CommandKit.
+   * The rolldown plugins to use with CommandKit.
    */
-  esbuildPlugins?: any[];
+  rolldownPlugins?: any[];
   /**
    * The compiler options to use with CommandKit.
    */
