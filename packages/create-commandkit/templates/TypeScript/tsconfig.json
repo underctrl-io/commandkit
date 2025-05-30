@@ -18,7 +18,11 @@
     "noEmit": true,
     "declaration": false,
     "jsx": "react-jsx",
-    "jsxImportSource": "commandkit"
+    "jsxImportSource": "commandkit",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src", "commandkit.config.ts", "commandkit-env.d.ts"],
   "exclude": ["dist", "node_modules", ".commandkit"]

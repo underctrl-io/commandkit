@@ -7,16 +7,16 @@ CommandKit Compiler Plugins are a powerful way to extend the functionality of yo
 
 ## Creating a Compiler Plugin
 
-### Using esbuild plugins
+### Using rolldown plugins
 
-You can also use esbuild plugins as compiler plugins. This is useful if you want to use esbuild plugins to transform your source code.
+You can also use rolldown plugins as compiler plugins. This is useful if you want to use rolldown plugins to transform your source code.
 
 ```ts title="commandkit.config.ts"
 import { defineConfig } from 'commandkit';
-import { someEsbuildPlugin } from 'some-esbuild-plugin';
+import { someRolldownPlugin } from 'some-rolldown-plugin';
 
 export default defineConfig({
-  esbuildPlugins: [someEsbuildPlugin()],
+  rolldownPlugins: [someRolldownPlugin()],
 });
 ```
 
@@ -76,3 +76,43 @@ export class MyPlugin extends CompilerPlugin {
   }
 }
 ```
+
+## Extending commandkit templates
+
+CommandKit templates are a way to autogenerate files and other contents through `commandkit create` command. CommandKit by default comes with `command` and `event` templates. Compiler plugins can register custom templates to be used by the `commandkit create` command.
+
+```ts title="my-plugin.ts"
+import { CompilerPlugin, CompilerPluginRuntime } from 'commandkit';
+
+export class MyPlugin extends CompilerPlugin {
+  public readonly name = 'my-plugin';
+
+  public async activate(ctx: CompilerPluginRuntime): Promise<void> {
+    // Registers `commandkit create event <name> <path>` template
+    ctx.registerTemplate('event', async (args: string[]) => {
+      const [name, path] = args;
+
+      const template = `
+      export default async function on${name[0].toUpperCase() + name.slice(1)}() {
+        console.log('${name} event fired!');
+      };
+      `.trim();
+
+      await writeFile(join(path, 'event.ts'), template);
+    });
+  }
+
+  public async deactivate(ctx: CompilerPluginRuntime): Promise<void> {
+    // remove the template from the registry when the plugin is deactivated
+    ctx.unregisterTemplate('event');
+  }
+}
+```
+
+:::warning
+The `registerTemplate` method must be called inside the `activate` method, and the `unregisterTemplate` method must be called inside the `deactivate` method.
+:::
+
+:::info
+Plugins may override the default templates by registering their own templates with the same name.
+:::

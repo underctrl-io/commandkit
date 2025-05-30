@@ -1,4 +1,3 @@
-import { OnResolveArgs } from './plugin-runtime/types';
 import {
   isPlugin,
   PluginCommon,

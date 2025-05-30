@@ -22,7 +22,15 @@
     "./components.cjs",
     "./components.d.ts",
     "./flag.cjs",
-    "./flag.d.ts"
+    "./flag.d.ts",
+    "./cache.cjs",
+    "./cache.d.ts",
+    "./i18n.cjs",
+    "./i18n.d.ts",
+    "./logger.cjs",
+    "./logger.d.ts",
+    "./events.cjs",
+    "./events.d.ts"
   ],
   "exports": {
     ".": {
@@ -59,6 +67,26 @@
       "require": "./flag.cjs",
       "import": "./flag.cjs",
       "types": "./flag.d.ts"
+    },
+    "./cache": {
+      "require": "./cache.cjs",
+      "import": "./cache.cjs",
+      "types": "./cache.d.ts"
+    },
+    "./i18n": {
+      "require": "./i18n.cjs",
+      "import": "./i18n.cjs",
+      "types": "./i18n.d.ts"
+    },
+    "./logger": {
+      "require": "./logger.cjs",
+      "import": "./logger.cjs",
+      "types": "./logger.d.ts"
+    },
+    "./events": {
+      "require": "./events.cjs",
+      "import": "./events.cjs",
+      "types": "./events.d.ts"
     }
   },
   "scripts": {

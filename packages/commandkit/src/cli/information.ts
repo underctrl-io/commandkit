@@ -157,16 +157,16 @@ export async function showInformation() {
       commandkit: commandkitVersion,
       'discord.js': findPackageVersion('discord.js') || 'N/A',
       typescript: findPackageVersion('typescript') || 'N/A',
-      esbuild: findPackageVersion('esbuild') || 'N/A',
-      tsup: findPackageVersion('tsup') || 'N/A',
-      ...knownPlugins.reduce(
-        (acc, plugin) => {
-          acc[plugin] = findPackageVersion(plugin) || 'N/A';
-          return acc;
-        },
-        {} as Record<string, string>,
-      ),
+      rolldown: findPackageVersion('rolldown') || 'N/A',
+      tsdown: findPackageVersion('tsdown') || 'N/A',
     },
+    'CommandKit Plugins': knownPlugins.reduce(
+      (acc, plugin) => {
+        acc[plugin] = findPackageVersion(plugin) || 'N/A';
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
   };
 
   let output = '';

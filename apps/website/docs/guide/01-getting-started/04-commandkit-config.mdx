@@ -41,17 +41,17 @@ export default defineConfig({
 });
 ```
 
-### ESBuild Plugins
+### Rolldown Plugins
 
-Customize your build process with esbuild plugins:
+Customize your build process with rolldown plugins:
 
 ```ts title="commandkit.config.ts"
 import { defineConfig } from 'commandkit';
-import { someEsbuildPlugin } from 'some-esbuild-plugin';
+import { someRolldownPlugin } from 'some-rolldown-plugin';
 
 export default defineConfig({
-  esbuildPlugins: [
-    someEsbuildPlugin({
+  rolldownPlugins: [
+    someRolldownPlugin({
       // Plugin specific options
     }),
   ],
@@ -120,11 +120,11 @@ Here's a comprehensive configuration example:
 ```ts title="commandkit.config.ts"
 import { defineConfig } from 'commandkit';
 import { somePlugin } from '@commandkit/some-plugin';
-import { someEsbuildPlugin } from 'some-esbuild-plugin';
+import { someRolldownPlugin } from 'some-rolldown-plugin';
 
 export default defineConfig({
   plugins: [somePlugin()],
-  esbuildPlugins: [someEsbuildPlugin()],
+  rolldownPlugins: [someRolldownPlugin()],
   compilerOptions: {
     macro: {
       development: true,

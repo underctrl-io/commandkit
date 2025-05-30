@@ -14,7 +14,11 @@
     "alwaysStrict": false,
     "checkJs": false,
     "strict": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src", "commandkit.config.ts", "commandkit-env.d.ts"]
 }

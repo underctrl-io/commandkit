@@ -1,6 +1,6 @@
 import { CommandData, ChatInputCommand } from 'commandkit';
-import { redEmbedColor } from '../../../feature-flags/red-embed-color';
-import { Colors, MessageFlags } from 'discord.js';
+import { redEmbedColor } from '@/feature-flags/red-embed-color';
+import { Colors } from 'discord.js';
 
 export const command: CommandData = {
   name: 'help',

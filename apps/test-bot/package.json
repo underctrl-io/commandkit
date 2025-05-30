@@ -10,11 +10,11 @@
     "node": "node"
   },
   "dependencies": {
-    "commandkit": "workspace:*",
     "@commandkit/cache": "workspace:*",
     "@commandkit/devtools": "workspace:*",
     "@commandkit/i18n": "workspace:*",
     "@commandkit/legacy": "workspace:*",
+    "commandkit": "workspace:*",
     "discord.js": "^14.19.1",
     "dotenv": "^16.4.7"
   },

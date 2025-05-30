@@ -13,3 +13,5 @@ export interface CommandKitEventDispatch {
   metadata: ParsedEvent;
   accept(): void;
 }
+
+export type TemplateHandler = (args: string[]) => Promise<void> | void;

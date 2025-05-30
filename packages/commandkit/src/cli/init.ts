@@ -2,6 +2,13 @@ import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { generateTypesPackage } from '../utils/types-package';
+import { loadConfigFile } from '../config/loader';
+import {
+  CompilerPlugin,
+  CompilerPluginRuntime,
+  isCompilerPlugin,
+} from '../plugins';
+import { panic } from './common';
 
 /**
  * Creates a command line interface for CommandKit.
@@ -71,17 +78,63 @@ export async function bootstrapCommandkitCLI(
 
   program
     .command('create')
-    .description('Create new commands or events files')
-    .option('-c, --command', 'Create a new command')
-    .option('-e, --event', 'Create a new event')
-    .argument('<name>', 'The name of the command or event')
-    .action(async (name, options) => {
-      if (options.command) {
-        await generateCommand(name);
-      } else if (options.event) {
-        await generateEvent(name);
-      } else {
-        console.error('Please specify what to create: --command or --event');
+    .description(
+      'Create new files using built-in templates or custom plugin templates',
+    )
+    .argument(
+      '<template>',
+      'The template to use (e.g. command, event, or custom plugin template)',
+    )
+    .argument('[args...]', 'Additional arguments for the template')
+    .action(async (template, args) => {
+      // Handle custom plugin templates
+      const { plugins } = await loadConfigFile();
+      const runtime = new CompilerPluginRuntime(
+        plugins.filter((p) => isCompilerPlugin(p)) as CompilerPlugin[],
+      );
+
+      try {
+        await runtime.init();
+        const templateHandler = runtime.getTemplate(template);
+
+        if (!templateHandler) {
+          // Handle built-in templates
+          if (template === 'command') {
+            const [name] = args;
+            if (!name) {
+              panic('Command name is required');
+            }
+            await generateCommand(name);
+            return;
+          }
+
+          if (template === 'event') {
+            const [name] = args;
+            if (!name) {
+              panic('Event name is required');
+            }
+            await generateEvent(name);
+            return;
+          }
+
+          const valid = Array.from(
+            new Set([
+              'command',
+              'event',
+              ...Array.from(runtime.getTemplates().keys()),
+            ]),
+          ).map((t) => `"${t}"`);
+
+          panic(
+            `Template "${template}" not found. Available templates: ${valid.join(', ')}`,
+          );
+        }
+
+        await templateHandler(args);
+      } catch (e: any) {
+        panic(`Failed to execute template "${template}": ${e?.message || e}`);
+      } finally {
+        await runtime.destroy();
       }
     });
 
