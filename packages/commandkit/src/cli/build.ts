@@ -61,6 +61,7 @@ export async function buildApplication({
         },
         moduleTypes: {
           '.json': 'js',
+          '.node': 'binary',
         },
       },
       plugins: rolldownPlugins,
