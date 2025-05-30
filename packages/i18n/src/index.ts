@@ -18,4 +18,5 @@ export function i18n(options?: LocalizationPluginOptions) {
   return localization;
 }
 
-export * from './hooks';
+export { locale } from './hooks';
+export { getI18n, type CommandLocalizationContext } from './i18n';
