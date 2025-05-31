@@ -52,11 +52,14 @@ export class DevtoolsPlugin extends RuntimePlugin<DevtoolsPluginOptions> {
       this.options.bypassAuthInDev ? undefined : this.options.credential,
     );
 
-    queueMicrotask(() =>
+    // TODO: come up with a better solution
+    // print this message after artificial delay
+    // to ensure it is easily visible
+    setTimeout(() => {
       Logger.info(
         `Devtools plugin started on port http://localhost:${this.options.port ?? DEFAULT_PORT}.`,
-      ),
-    );
+      );
+    }, 150);
   }
 
   public async deactivate(ctx: CommandKitPluginRuntime): Promise<void> {
