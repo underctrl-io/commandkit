@@ -70,6 +70,7 @@ export async function buildApplication({
       sourcemap: true,
       target: 'node16',
       outDir: dest,
+      env: config.env || {},
       entry: [
         'src',
         `!${config.distDir}`,
