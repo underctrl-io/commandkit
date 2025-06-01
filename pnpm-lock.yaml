@@ -182,7 +182,7 @@ importers:
         specifier: ^6.0.0
         version: 6.0.1
       tsdown:
-        specifier: ^0.12.4
+        specifier: ^0.12.5
         version: 0.12.5(typescript@5.8.3)
       use-macro:
         specifier: ^1.1.0
@@ -14379,7 +14379,7 @@ snapshots:
 
   history@4.10.1:
     dependencies:
-      '@babel/runtime': 7.27.3
+      '@babel/runtime': 7.27.4
       loose-envify: 1.4.0
       resolve-pathname: 3.0.0
       tiny-invariant: 1.3.3
