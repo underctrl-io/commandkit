@@ -1,6 +1,9 @@
+import { I18nCliTemplatePlugin } from './cli';
 import { I18nPlugin, LocalizationPluginOptions } from './i18n';
 
-export function i18n(options?: LocalizationPluginOptions) {
+export function i18n(
+  options?: LocalizationPluginOptions,
+): [I18nPlugin, I18nCliTemplatePlugin] {
   const opt = {
     ...options,
     i18nOptions: {
@@ -15,8 +18,9 @@ export function i18n(options?: LocalizationPluginOptions) {
 
   const localization = new I18nPlugin(opt);
 
-  return localization;
+  return [localization, new I18nCliTemplatePlugin({})];
 }
 
+export { I18nCliTemplatePlugin };
 export { locale } from './hooks';
-export { getI18n, type CommandLocalizationContext } from './i18n';
+export { getI18n, I18nPlugin, type CommandLocalizationContext } from './i18n';

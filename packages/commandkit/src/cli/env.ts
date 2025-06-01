@@ -27,3 +27,7 @@ export const ProdEnvFiles = ['.env.production', '.env.production.local'];
 export const devEnvFileArgs = [...CommonEnvFiles, ...DevEnvFiles];
 
 export const prodEnvFileArgs = [...CommonEnvFiles, ...ProdEnvFiles];
+
+export function setCLIEnv() {
+  process.env.COMMANDKIT_IS_CLI = 'true';
+}

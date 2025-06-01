@@ -1,7 +1,7 @@
 export const COMMANDKIT_CACHE_TAG = Symbol('kCommandKitCacheTag');
 
 export const COMMANDKIT_IS_DEV = process.env.COMMANDKIT_IS_DEV === 'true';
-
+export const COMMANDKIT_IS_CLI = process.env.COMMANDKIT_IS_CLI === 'true';
 export const COMMANDKIT_IS_TEST = process.env.COMMANDKIT_IS_TEST === 'true';
 
 export const COMMANDKIT_BOOTSTRAP_MODE = (process.env

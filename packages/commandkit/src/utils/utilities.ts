@@ -1,19 +1,28 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { COMMANDKIT_IS_DEV } from './constants';
+import { COMMANDKIT_IS_CLI, COMMANDKIT_IS_DEV } from './constants';
 import { getConfig } from '../config/config';
 import { eventWorkerContext } from '../app/events/EventWorkerContext';
 
 let appDir: string | null = null;
 let currentDir: string | null = null;
 
+function getSrcDir() {
+  if (COMMANDKIT_IS_CLI) {
+    return 'src';
+  }
+
+  if (COMMANDKIT_IS_DEV) {
+    return '.commandkit';
+  }
+
+  return getConfig().distDir;
+}
+
 export function getCurrentDirectory(): string {
   if (currentDir) return currentDir;
-
-  let root = join(
-    process.cwd(),
-    COMMANDKIT_IS_DEV ? '.commandkit' : getConfig().distDir,
-  );
+  const src = getSrcDir();
+  let root = join(process.cwd(), src);
 
   if (!existsSync(root)) root = process.cwd();
 
@@ -38,10 +47,7 @@ export function getSourceDirectories(): string[] {
 export function findAppDirectory(): string | null {
   if (appDir) return appDir;
 
-  let root = join(
-    process.cwd(),
-    COMMANDKIT_IS_DEV ? '.commandkit' : getConfig().distDir,
-  );
+  let root = join(process.cwd(), getSrcDir());
 
   if (!existsSync(root)) root = process.cwd();
 

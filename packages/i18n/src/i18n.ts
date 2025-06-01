@@ -183,13 +183,17 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
     Logger.info('I18nPlugin has been activated');
   }
 
-  private getLoadPath() {
-    return join(getCurrentDirectory(), '/app/locales/{{lng}}/{{ns}}.json');
+  public static getLoadPath(
+    cwd = getCurrentDirectory(),
+    lng = '{{lng}}',
+    ns = '{{ns}}',
+  ) {
+    return join(cwd, `/app/locales/${lng}/${ns}.json`);
   }
 
   private async scanLocaleDirectory() {
     const endPattern = /{{lng}}(\/|\\){{ns}}.json$/;
-    const localesPath = this.getLoadPath();
+    const localesPath = I18nPlugin.getLoadPath();
     const scanDirTarget = localesPath.replace(endPattern, '');
 
     if (!existsSync(scanDirTarget)) {
@@ -301,7 +305,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
   }
 
   private getBackendOptions() {
-    const loadPath = this.getLoadPath();
+    const loadPath = I18nPlugin.getLoadPath();
 
     return {
       loadPath: function (lng: string, namespace: string) {

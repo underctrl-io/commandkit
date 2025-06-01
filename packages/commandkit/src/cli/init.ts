@@ -30,6 +30,7 @@ export async function bootstrapCommandkitCLI(
   const { generateCommand, generateEvent } = await import('./generators');
   const { version } = await import('../version');
   const { showInformation } = await import('./information');
+  const { setCLIEnv } = await import('./env');
 
   const program = new Command('commandkit');
 
@@ -72,6 +73,7 @@ export async function bootstrapCommandkitCLI(
     .description('Build your project for production usage.')
     .option('-c, --config [path]', 'Path to your commandkit config file.')
     .action(() => {
+      setCLIEnv();
       const options = program.opts();
       return createProductionBuild(options.config);
     });
@@ -87,6 +89,8 @@ export async function bootstrapCommandkitCLI(
     )
     .argument('[args...]', 'Additional arguments for the template')
     .action(async (template, args) => {
+      setCLIEnv();
+
       // Handle custom plugin templates
       const { plugins } = await loadConfigFile();
       const runtime = new CompilerPluginRuntime(
