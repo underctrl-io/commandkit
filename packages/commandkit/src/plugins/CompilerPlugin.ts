@@ -35,5 +35,8 @@ export abstract class CompilerPlugin<
 }
 
 export function isCompilerPlugin(plugin: unknown): plugin is CompilerPlugin {
-  return isPlugin(plugin) && plugin.type === PluginType.Compiler;
+  return (
+    plugin instanceof CompilerPlugin ||
+    (isPlugin(plugin) && plugin.type === PluginType.Compiler)
+  );
 }

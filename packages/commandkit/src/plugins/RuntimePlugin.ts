@@ -193,5 +193,8 @@ export abstract class RuntimePlugin<
 }
 
 export function isRuntimePlugin(plugin: unknown): plugin is RuntimePlugin {
-  return isPlugin(plugin) && plugin.type === PluginType.Runtime;
+  return (
+    plugin instanceof RuntimePlugin ||
+    (isPlugin(plugin) && plugin.type === PluginType.Runtime)
+  );
 }

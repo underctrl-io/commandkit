@@ -67,11 +67,9 @@ export async function buildApplication({
       plugins: rolldownPlugins,
       platform: 'node',
       skipNodeModulesBundle: true,
-      name: 'CommandKit',
       sourcemap: true,
       target: 'node16',
       outDir: dest,
-      env: (isDev ? DevEnv(true) : ProdEnv(true)) as Record<string, string>,
       entry: [
         'src',
         `!${config.distDir}`,
