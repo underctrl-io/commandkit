@@ -133,3 +133,68 @@ export function stopEvents(): never {
 
   throw new StopEventPropagationError();
 }
+
+export interface SimpleProxy<T extends object> {
+  proxy: T;
+  setTarget(newTarget: T): void;
+}
+
+/**
+ * Creates a simple proxy object that mirrors the target object.
+ * @param target The target object to proxy.
+ * @returns The proxied object.
+ */
+export function createProxy<T extends object>(target: T): SimpleProxy<T> {
+  let _target = target;
+
+  const proxy = new Proxy(_target, {
+    get(target, prop, receiver) {
+      return Reflect.get(_target, prop, receiver);
+    },
+    set(target, prop, value, receiver) {
+      return Reflect.set(_target, prop, value, receiver);
+    },
+    deleteProperty(target, prop) {
+      return Reflect.deleteProperty(_target, prop);
+    },
+    has(target, prop) {
+      return Reflect.has(_target, prop);
+    },
+    ownKeys(target) {
+      return Reflect.ownKeys(_target);
+    },
+    getOwnPropertyDescriptor(target, prop) {
+      return Reflect.getOwnPropertyDescriptor(_target, prop);
+    },
+    defineProperty(target, prop, attributes) {
+      return Reflect.defineProperty(_target, prop, attributes);
+    },
+    getPrototypeOf(target) {
+      return Reflect.getPrototypeOf(_target);
+    },
+    setPrototypeOf(target, proto) {
+      return Reflect.setPrototypeOf(_target, proto);
+    },
+    isExtensible(target) {
+      return Reflect.isExtensible(_target);
+    },
+    preventExtensions(target) {
+      return Reflect.preventExtensions(_target);
+    },
+    apply(target, thisArg, args) {
+      // @ts-ignore
+      return Reflect.apply(_target, thisArg, args);
+    },
+    construct(target, args, newTarget) {
+      // @ts-ignore
+      return Reflect.construct(_target, args, newTarget);
+    },
+  });
+
+  return {
+    proxy,
+    setTarget(newTarget: T) {
+      _target = newTarget;
+    },
+  };
+}

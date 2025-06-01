@@ -13,7 +13,7 @@ export interface CommandKitOptions {
   /**
    * The Discord.js client object to use with CommandKit.
    */
-  client: Client;
+  client?: Client;
 }
 
 /**

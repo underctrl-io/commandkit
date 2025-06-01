@@ -3,8 +3,8 @@ import type { CommandKitOptions } from './types';
 import colors from './utils/colors';
 import { createElement, Fragment } from './components';
 import { EventInterceptor } from './components/common/EventInterceptor';
-import { Awaitable, Events, Locale, Message } from 'discord.js';
-import { findAppDirectory } from './utils/utilities';
+import { Awaitable, Client, Events, Locale, Message } from 'discord.js';
+import { createProxy, findAppDirectory, SimpleProxy } from './utils/utilities';
 import { join } from 'node:path';
 import { AppCommandHandler } from './app/handlers/AppCommandHandler';
 import { CommandsRouter, EventsRouter } from './app/router';
@@ -25,9 +25,6 @@ export interface CommandKitConfiguration {
   defaultLocale: Locale;
   getMessageCommandPrefix: (message: Message) => Awaitable<string | string[]>;
 }
-
-// @ts-ignore
-export let commandkit: CommandKit;
 
 export type BootstrapFunction =
   | GenericFunction<[CommandKit]>
@@ -74,7 +71,8 @@ export function onApplicationBootstrap<F extends BootstrapFunction>(
 
 export class CommandKit extends EventEmitter {
   #started = false;
-  private options: CommandKitOptions;
+  #clientProxy: SimpleProxy<Client> | null = createProxy({} as Client);
+  #client!: Client;
   public eventInterceptor!: EventInterceptor;
 
   public static readonly createElement = createElement;
@@ -103,7 +101,7 @@ export class CommandKit extends EventEmitter {
    * @param options - The default CommandKit configuration.
    * @see {@link https://commandkit.js.org/docs/guide/commandkit-setup}
    */
-  constructor(options: CommandKitOptions) {
+  constructor(options: CommandKitOptions = {}) {
     if (CommandKit.instance) {
       process.emitWarning(
         'CommandKit instance already exists. Having multiple instance in same project is discouraged and it may lead to unexpected behavior.',
@@ -113,24 +111,17 @@ export class CommandKit extends EventEmitter {
       );
     }
 
-    if (!options.client) {
-      throw new Error(
-        colors.red('"client" is required when instantiating CommandKit.'),
-      );
-    }
-
     super();
-
-    this.options = options;
 
     if (!CommandKit.instance) {
       CommandKit.instance = this;
     }
 
-    this.plugins = new CommandKitPluginRuntime(this);
+    if (options?.client) {
+      this.setClient(options.client);
+    }
 
-    // @ts-ignore
-    commandkit = CommandKit.instance;
+    this.plugins = new CommandKitPluginRuntime(this);
 
     this.#bootstrapHooks();
   }
@@ -171,7 +162,7 @@ export class CommandKit extends EventEmitter {
   async start(token?: string | false) {
     if (this.#started) return;
 
-    if (!this.options.client) {
+    if (!this.#client) {
       throw new Error(
         colors.red('"client" is required when starting CommandKit.'),
       );
@@ -199,7 +190,7 @@ export class CommandKit extends EventEmitter {
     this.commandHandler.registerCommandHandler();
     this.incrementClientListenersCount();
 
-    if (token !== false && !this.options.client.isReady()) {
+    if (token !== false && !this.client.isReady()) {
       this.client.once(Events.ClientReady, async () => {
         await this.commandHandler.registrar.register();
       });
@@ -210,16 +201,16 @@ export class CommandKit extends EventEmitter {
 
       const botToken =
         token ??
-        this.options.client.token ??
+        this.client.token ??
         process.env.TOKEN ??
         process.env.DISCORD_TOKEN;
 
-      await this.options.client.login(botToken);
+      await this.client.login(botToken);
 
       await this.plugins.execute((ctx, plugin) => {
         return plugin.onAfterClientLogin?.(ctx);
       });
-    } else if (this.options.client.isReady()) {
+    } else if (this.client.isReady()) {
       await this.commandHandler.registrar.register();
     }
 
@@ -272,8 +263,33 @@ export class CommandKit extends EventEmitter {
   /**
    * Get the client attached to this CommandKit instance.
    */
-  get client() {
-    return this.options.client;
+  get client(): Client {
+    const client = this.#client || this.#clientProxy?.proxy;
+
+    if (!client) {
+      throw new Error('Client instance is not set');
+    }
+
+    return client;
+  }
+
+  /**
+   * Sets the client attached to this CommandKit instance.
+   * @param client The client to set.
+   */
+  setClient(client: Client) {
+    this.#client = client;
+
+    // update the proxy target if it exists
+    if (this.#clientProxy) {
+      // this is a hack to update the proxy target
+      // because some of the dependencies of commandkit may
+      // depend on the client instance
+      this.#clientProxy.setTarget(client);
+      this.#clientProxy = null;
+    }
+
+    return this;
   }
 
   async #init() {
@@ -350,18 +366,14 @@ export class CommandKit extends EventEmitter {
    * Increment the client listeners count.
    */
   incrementClientListenersCount() {
-    this.options.client.setMaxListeners(
-      this.options.client.getMaxListeners() + 1,
-    );
+    this.client.setMaxListeners(this.client.getMaxListeners() + 1);
   }
 
   /**
    * Decrement the client listeners count.
    */
   decrementClientListenersCount() {
-    this.options.client.setMaxListeners(
-      this.options.client.getMaxListeners() - 1,
-    );
+    this.client.setMaxListeners(this.client.getMaxListeners() - 1);
   }
 
   /**
@@ -388,3 +400,5 @@ export class CommandKit extends EventEmitter {
     }
   }
 }
+
+export const commandkit = CommandKit.instance || new CommandKit();
