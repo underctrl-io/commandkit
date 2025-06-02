@@ -16,7 +16,6 @@ const fnStore = new Map<
     memo: GenericFunction;
   }
 >();
-const DEFAULT_TTL = ms('15m');
 const CACHE_FN_ID = `__cache_fn_id_${Date.now()}__${Math.random()}__`;
 const CACHED_FN_SYMBOL = Symbol('commandkit.cache.sentinel');
 
@@ -301,5 +300,13 @@ export function isCachedFunction(fn: GenericFunction): boolean {
  * @private
  * @internal
  */
-export const __SECRET_USE_CACHE_INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: any =
-  useCache;
+export const $ckitiucw: any = useCache;
+
+if (!('$ckitiucw' in globalThis)) {
+  Object.defineProperty(globalThis, '$ckitiucw', {
+    value: useCache,
+    configurable: false,
+    enumerable: false,
+    writable: false,
+  });
+}

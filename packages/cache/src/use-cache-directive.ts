@@ -14,7 +14,7 @@ export class UseCacheDirectivePlugin extends CommonDirectiveTransformer {
       ...options,
       directive: 'use cache',
       importPath: '@commandkit/cache',
-      importName: '__SECRET_USE_CACHE_INTERNAL_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+      importName: '$ckitiucw',
       asyncOnly: true,
     });
   }

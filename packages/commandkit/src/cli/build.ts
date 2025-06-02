@@ -16,6 +16,20 @@ export interface ApplicationBuildOptions {
   configPath?: string;
 }
 
+// emit public env variables and given env variables
+function mergeDefinitionsIfNeeded(env: Record<string, string>) {
+  const values = Object.fromEntries(
+    Object.entries(process.env).filter(
+      ([k]) => !(k in env) && k.startsWith('COMMANDKIT_PUBLIC_'),
+    ),
+  );
+
+  return {
+    ...env,
+    ...values,
+  };
+}
+
 export async function buildApplication({
   plugins,
   rolldownPlugins,
@@ -70,7 +84,7 @@ export async function buildApplication({
       sourcemap: true,
       target: 'node16',
       outDir: dest,
-      env: config.env || {},
+      env: mergeDefinitionsIfNeeded(config.env || {}),
       entry: [
         'src',
         `!${config.distDir}`,
@@ -78,7 +92,7 @@ export async function buildApplication({
         '!**/*.test.*',
         '!**/*.spec.*',
       ],
-      unbundle: false,
+      unbundle: !!isDev,
     });
 
     await copyLocaleFiles('src', dest);
