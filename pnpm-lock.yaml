@@ -183,7 +183,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: ^0.12.5
-        version: 0.12.5(typescript@5.8.3)
+        version: 0.12.6(typescript@5.8.3)
       use-macro:
         specifier: ^1.1.0
         version: 1.1.0
@@ -7887,16 +7887,19 @@ packages:
   ts-mixer@6.0.4:
     resolution: {integrity: sha512-ufKpbmrugz5Aou4wcr5Wc1UUFWOLhq+Fm6qa6P0w0K5Qw2yhaUoiWszhCVuNQyNwrlGiscHOmqYoAox1PtvgjA==}
 
-  tsdown@0.12.5:
-    resolution: {integrity: sha512-5tzqVakJOdIVJLBB6K1e7L4pPTkyLxArkidwsY1jd4P1/4GplYxeHGRmGz8evsXaPJW6IumdbDvIVnmWMnIy2A==}
+  tsdown@0.12.6:
+    resolution: {integrity: sha512-NIqmptXCYc0iZzSGNpFtWATTDM5MyqDfV7bhgqfrw8KJlEFLI9zYyF4uFDheEvudTMNH5dkcQUJaklpmHsA37A==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
+      '@arethetypeswrong/core': ^0.18.1
       publint: ^0.3.0
       typescript: ^5.0.0
       unplugin-lightningcss: ^0.4.0
       unplugin-unused: ^0.5.0
     peerDependenciesMeta:
+      '@arethetypeswrong/core':
+        optional: true
       publint:
         optional: true
       typescript:
@@ -14379,7 +14382,7 @@ snapshots:
 
   history@4.10.1:
     dependencies:
-      '@babel/runtime': 7.27.4
+      '@babel/runtime': 7.27.3
       loose-envify: 1.4.0
       resolve-pathname: 3.0.0
       tiny-invariant: 1.3.3
@@ -17416,7 +17419,7 @@ snapshots:
 
   ts-mixer@6.0.4: {}
 
-  tsdown@0.12.5(typescript@5.8.3):
+  tsdown@0.12.6(typescript@5.8.3):
     dependencies:
       ansis: 4.1.0
       cac: 6.7.14
