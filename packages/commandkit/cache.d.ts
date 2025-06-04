@@ -1,1 +1,13 @@
-export { cacheTag, cacheLife, invalidate, revalidate } from '@commandkit/cache';
+export {
+  cacheTag,
+  cacheLife,
+  revalidateTag,
+  cleanup,
+  MemoryCache,
+  CacheProvider,
+  CacheEntry,
+  isCachedFunction,
+  setCacheProvider,
+  getCacheProvider,
+  // @ts-ignore
+} from '@commandkit/cache';

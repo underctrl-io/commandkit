@@ -2,8 +2,8 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { AsyncFunction, GenericFunction } from 'commandkit';
 import { randomUUID } from 'node:crypto';
 import ms, { type StringValue } from 'ms';
-import { createObjectHash } from './utils';
 import { getCacheProvider } from './cache-plugin';
+import stableHash from 'stable-hash';
 
 const cacheContext = new AsyncLocalStorage<CacheContext>();
 const fnStore = new Map<
@@ -14,10 +14,21 @@ const fnStore = new Map<
     ttl?: number;
     original: GenericFunction;
     memo: GenericFunction;
+    tags: Set<string>;
+    lastAccess: number;
   }
 >();
 const CACHE_FN_ID = `__cache_fn_id_${Date.now()}__${Math.random()}__`;
 const CACHED_FN_SYMBOL = Symbol('commandkit.cache.sentinel');
+
+// WeakMap to store function metadata without preventing garbage collection
+const fnMetadata = new WeakMap<
+  GenericFunction,
+  { id: string; buildId: string }
+>();
+
+// Generate a stable build ID that persists across restarts
+const BUILD_ID = randomUUID();
 
 /**
  * Context for managing cache operations within an async scope
@@ -28,6 +39,7 @@ export interface CacheContext {
     name?: string;
     /** Time-to-live in milliseconds */
     ttl?: number | null;
+    tags: Set<string>;
   };
 }
 
@@ -39,6 +51,7 @@ export interface CacheMetadata {
   ttl?: number | string;
   /** Custom name for the cache entry */
   name?: string;
+  tags?: string[];
 }
 
 /**
@@ -66,11 +79,22 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
     throw new Error('Illegal use of cache function.');
   }
 
-  const fnId = randomUUID();
+  // Get or create function metadata
+  let metadata = fnMetadata.get(fn);
+  if (!metadata) {
+    metadata = {
+      id: randomUUID(),
+      buildId: BUILD_ID,
+    };
+    fnMetadata.set(fn, metadata);
+  }
 
   const memo = (async (...args) => {
-    const forcedName = isLocal ? params?.name : null;
-    const keyHash = forcedName ?? (await createObjectHash(fnId, ...args));
+    const keyHash = await stableHash({
+      fnId: metadata.id,
+      buildId: metadata.buildId,
+      args,
+    });
 
     const resolvedTTL =
       isLocal && params?.ttl != null
@@ -82,8 +106,8 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
     return cacheContext.run(
       {
         params: {
-          name: keyHash,
           ttl: resolvedTTL,
+          tags: new Set(params?.tags ?? []),
         },
       },
       async () => {
@@ -94,33 +118,33 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
           throw new Error('Cache context was not found.');
         }
 
-        // Get the effective cache key, preferring any existing association
         const storedFn = fnStore.get(keyHash);
-        const effectiveKey = storedFn?.key ?? context.params.name!;
+        const effectiveKey = storedFn?.key ?? keyHash;
 
-        // Try to get cached value using effective key
+        // Update last access time
+        if (storedFn) {
+          storedFn.lastAccess = Date.now();
+        }
+
         const cached = await provider.get(effectiveKey);
-        if (cached && cached.value != null) return cached.value;
+        if (cached && cached.value != null) {
+          return cached.value;
+        }
 
-        // If we reach here, we need to cache the value
         const result = await fn(...args);
 
-        // Only cache if result is not null/undefined
         if (result != null) {
-          // Get the final key name (might have been modified by cacheTag)
-          const finalKey = context.params.name!;
           const ttl = context.params.ttl;
+          await provider.set(keyHash, result, ttl ?? undefined);
 
-          // Store the result
-          await provider.set(finalKey, result, ttl ?? undefined);
-
-          // Update function store
           fnStore.set(keyHash, {
-            key: finalKey,
+            key: keyHash,
             hash: keyHash,
             ttl: ttl ?? undefined,
             original: fn,
             memo,
+            tags: context.params.tags,
+            lastAccess: Date.now(),
           });
         }
 
@@ -140,27 +164,6 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
   }
 
   return memo;
-}
-
-/**
- * Wraps an async function with caching capability
- * @template R - Array of argument types
- * @template F - Type of the async function
- * @param fn - The async function to cache
- * @param params - Optional cache configuration
- * @returns The wrapped function with caching behavior
- * @example
- * ```ts
- * const cachedFetch = cache(async (id: string) => {
- *   return await db.findOne(id);
- * }, { ttl: '1h' });
- * ```
- */
-export function cache<R extends any[], F extends AsyncFunction<R>>(
-  fn: F,
-  params?: CacheMetadata,
-): F {
-  return useCache(fn, CACHE_FN_ID, params);
 }
 
 /**
@@ -186,7 +189,7 @@ export function cacheTag(tag: string): void {
     throw new Error('cacheTag() must be called with a tag name.');
   }
 
-  context.params.name = tag;
+  context.params.tags.add(tag);
 }
 
 /**
@@ -216,69 +219,19 @@ export function cacheLife(ttl: number | string): void {
 }
 
 /**
- * Removes a cached value by its tag
- * @param tag - The cache tag to invalidate. Can be a single tag or an array of tags.
- * @throws {Error} When the cache key is not found
- * @example
- * ```ts
- * await invalidate('user:123');
- * // or
- * await invalidate(['user:123', 'user:456']);
- * ```
- */
-export async function invalidate(tag: string | string[]): Promise<void> {
-  const provider = getCacheProvider();
-
-  let errors: Error[] = [];
-  for (const t of Array.isArray(tag) ? tag : [tag]) {
-    try {
-      const entry = Array.from(fnStore.values()).find(
-        (v) => v.key === t || v.hash === t,
-      );
-
-      if (!entry) continue;
-
-      await provider.delete(entry.key);
-    } catch (e) {
-      errors.push(e as Error);
-    }
-  }
-
-  if (errors.length > 0) {
-    throw new Error(
-      `Failed to invalidate cache for tags: ${errors
-        .map((e) => e.message)
-        .join(', ')}`,
-    );
-  }
-}
-
-/**
- * Forces a refresh of cached data by its tag (on-demand revalidation)
- * @template T - Type of the cached value
+ * Marks cache entries for invalidation by their tag. The invalidation only happens when the path is next visited.
  * @param tag - The cache tag to revalidate
- * @param args - Arguments to pass to the cached function
- * @returns Fresh data from the cached function
- * @throws {Error} When the cache key or function is not found
  * @example
  * ```ts
- * const freshData = await revalidate('user:123');
+ * await revalidateTag('user:123');
  * ```
  */
-export async function revalidate<T = unknown>(
-  tag: string,
-  ...args: any[]
-): Promise<T> {
+export async function revalidateTag(tag: string): Promise<void> {
   const provider = getCacheProvider();
-  const entry = Array.from(fnStore.values()).find(
-    (v) => v.key === tag || v.hash === tag,
-  );
+  const entries = Array.from(fnStore.values()).filter((v) => v.tags.has(tag));
 
-  if (!entry) return undefined as T;
-
-  await provider.delete(entry.key);
-
-  return entry.memo(...args);
+  // Batch delete operations for better performance
+  await Promise.all(entries.map((entry) => provider.delete(entry.key)));
 }
 
 /**
@@ -294,6 +247,24 @@ export async function revalidate<T = unknown>(
  */
 export function isCachedFunction(fn: GenericFunction): boolean {
   return Object.prototype.hasOwnProperty.call(fn, CACHED_FN_SYMBOL);
+}
+
+// Cleanup function to remove stale entries
+export async function cleanup(
+  maxAge: number = 24 * 60 * 60 * 1000,
+): Promise<void> {
+  const now = Date.now();
+  const staleEntries = Array.from(fnStore.entries()).filter(
+    ([_, entry]) => now - entry.lastAccess > maxAge,
+  );
+
+  const provider = getCacheProvider();
+  await Promise.all(
+    staleEntries.map(async ([key, entry]) => {
+      await provider.delete(entry.key);
+      fnStore.delete(key);
+    }),
+  );
 }
 
 /**

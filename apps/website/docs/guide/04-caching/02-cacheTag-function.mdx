@@ -1,33 +1,166 @@
 ---
-title: cacheTag function
-description: The cacheTag function is used to set a custom cache key for the current cache context.
+title: cacheTag Function
+description: Learn how to use cacheTag to manage cache entries with tags for targeted revalidation.
 ---
 
-The `cacheTag` function is used to set a custom cache key for the current cache context. This is useful when you want to invalidate or manage cache entries based on specific tags. This is particularly helpful in scenarios where you want to have on-demand cache invalidation.
+# cacheTag Function
+
+The `cacheTag` function allows you to add tags to your cache entries, making it easier to manage and invalidate related cache entries together.
 
 ## Basic Usage
 
 ```ts
-import { cacheTag, invalidate } from '@commandkit/cache';
-
-async function fetchData() {
+async function fetchUserData(userId: string) {
   'use cache';
 
-  // Set a custom cache tag
-  cacheTag('my-custom-tag');
+  // Add a tag to this cache entry
+  cacheTag(`user:${userId}`);
 
-  // Fetch data from an API or database
-  const data = await fetch('https://api.example.com/data');
-  return data.json();
-}
-
-async function invalidateCache() {
-  // Invalidate the cache using the custom tag
-  await invalidate('my-custom-tag');
-  // the next call to fetchData will execute the function again and cache the result
+  const userData = await db.users.findOne(userId);
+  return userData;
 }
 ```
 
-:::info
-The `cacheTag` function may only be called inside the scope of a function that has the `'use cache'` directive. Any attempt to call it outside of that context will result in an error.
-:::
+## Why Use Tags?
+
+Tags are useful when you want to:
+
+- Group related cache entries
+- Invalidate multiple cache entries at once
+- Manage cache entries by category
+- Implement targeted cache invalidation
+
+## Example Use Cases
+
+### Grouping Related Data
+
+```ts
+async function fetchGuildData(guildId: string) {
+  'use cache';
+
+  // Tag all guild-related data
+  cacheTag(`guild:${guildId}`);
+
+  const [settings, members, roles] = await Promise.all([
+    db.guilds.findOne(guildId),
+    db.members.find({ guildId }),
+    db.roles.find({ guildId }),
+  ]);
+
+  return { settings, members, roles };
+}
+```
+
+### Categorizing Cache Entries
+
+```ts
+async function fetchUserStats(userId: string) {
+  'use cache';
+
+  // Add multiple tags for different categories
+  cacheTag(`user:${userId}`);
+  cacheTag('stats');
+
+  const stats = await calculateUserStats(userId);
+  return stats;
+}
+```
+
+### Targeted Revalidation
+
+```ts
+// Later in your code
+import { revalidateTag } from '@commandkit/cache';
+
+// This will invalidate all cache entries tagged with 'user:123'
+await revalidateTag('user:123');
+```
+
+## Best Practices
+
+1. **Use Consistent Naming**:
+
+   - Follow a consistent pattern (e.g., `type:id`)
+   - Make tags descriptive and meaningful
+   - Use hierarchical tags when appropriate
+
+2. **Group Related Data**:
+
+   - Tag related cache entries with the same tag
+   - Use multiple tags for cross-category entries
+   - Consider data relationships when tagging
+
+3. **Avoid Over-tagging**:
+   - Don't add unnecessary tags
+   - Use tags purposefully
+   - Consider the impact on revalidation
+
+## Common Patterns
+
+### Resource-based Tags
+
+```ts
+async function fetchUserResources(userId: string) {
+  'use cache';
+
+  // User resources
+  cacheTag(`user:${userId}`);
+  cacheTag(`user:${userId}:profile`);
+  cacheTag(`user:${userId}:settings`);
+
+  return await Promise.all([
+    fetchUserProfile(userId),
+    fetchUserSettings(userId),
+  ]);
+}
+
+async function fetchGuildResources(guildId: string) {
+  'use cache';
+
+  // Guild resources
+  cacheTag(`guild:${guildId}`);
+  cacheTag(`guild:${guildId}:members`);
+  cacheTag(`guild:${guildId}:roles`);
+
+  return await Promise.all([
+    fetchGuildMembers(guildId),
+    fetchGuildRoles(guildId),
+  ]);
+}
+```
+
+### Category-based Tags
+
+```ts
+async function fetchContent() {
+  'use cache';
+
+  // Content categories
+  cacheTag('content:announcements');
+  cacheTag('content:rules');
+  cacheTag('content:welcome');
+
+  return await Promise.all([
+    fetchAnnouncements(),
+    fetchRules(),
+    fetchWelcomeMessage(),
+  ]);
+}
+
+async function fetchSystemData() {
+  'use cache';
+
+  // System categories
+  cacheTag('system:config');
+  cacheTag('system:stats');
+  cacheTag('system:logs');
+
+  return await Promise.all([fetchConfig(), fetchStats(), fetchLogs()]);
+}
+```
+
+## Related
+
+- [Caching in CommandKit](./01-caching-in-commandkit.mdx)
+- [cacheLife Function](./03-cacheLife-function.mdx)
+- [revalidateTag Function](./05-revalidateTag-function.mdx)

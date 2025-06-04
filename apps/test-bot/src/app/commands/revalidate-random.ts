@@ -1,4 +1,4 @@
-import { revalidate } from '@commandkit/cache';
+import { revalidateTag } from '@commandkit/cache';
 import { ChatInputCommandContext, CommandData } from 'commandkit';
 
 export const command: CommandData = {
@@ -9,9 +9,9 @@ export const command: CommandData = {
 export async function chatInput({ interaction }: ChatInputCommandContext) {
   await interaction.deferReply();
 
-  const revalidated = await revalidate<number>('random');
+  await revalidateTag('random');
 
   return interaction.editReply({
-    content: `Random value has been revalidated. The new value will be ${revalidated}`,
+    content: `Random value has been revalidated.`,
   });
 }

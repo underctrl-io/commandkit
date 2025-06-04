@@ -1,6 +1,6 @@
 import type { Message } from 'discord.js';
 import { database } from '../../../database/store.ts';
-import { invalidate } from '@commandkit/cache';
+import { revalidateTag } from '@commandkit/cache';
 
 export default async function (message: Message) {
   if (message.author.bot || !message.inGuild()) return;
@@ -12,5 +12,5 @@ export default async function (message: Message) {
   const newXp = oldXp + xp;
 
   await database.set(key, newXp);
-  await invalidate(key);
+  await revalidateTag(key);
 }

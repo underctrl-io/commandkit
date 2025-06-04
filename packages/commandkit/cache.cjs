@@ -1,13 +1,23 @@
 const {
   cacheTag,
   cacheLife,
-  invalidate,
-  revalidate,
+  revalidateTag,
+  cleanup,
+  MemoryCache,
+  CacheProvider,
+  isCachedFunction,
+  setCacheProvider,
+  getCacheProvider,
 } = require('@commandkit/cache');
 
 module.exports = {
   cacheTag,
   cacheLife,
-  invalidate,
-  revalidate,
+  revalidateTag,
+  cleanup,
+  MemoryCache,
+  CacheProvider,
+  isCachedFunction,
+  setCacheProvider,
+  getCacheProvider,
 };
