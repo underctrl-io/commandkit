@@ -5,6 +5,7 @@ import {
   eventWorkerContext,
   CommandKitEnvironment,
 } from 'commandkit';
+import { TFunction } from 'i18next';
 
 /**
  * Gets the localization context. If the context originates from the event worker context, the returned t function is not bound to the command.
@@ -30,7 +31,7 @@ export function locale(locale?: Locale): CommandLocalizationContext {
     const detectedLocale: Locale = locale || commandkit.config.defaultLocale;
 
     return {
-      t: i18n.t,
+      t: i18n.getFixedT(context.event),
       locale: detectedLocale,
       i18n,
       isEventWorker: true,
@@ -44,4 +45,19 @@ export function locale(locale?: Locale): CommandLocalizationContext {
   }
 
   return context.locale(locale);
+}
+
+/**
+ * Fetches the translation function for the given locale and namespace.
+ * @param lng The locale to use.
+ * @param ns The namespace to use.
+ * @param keyPrefix The key prefix to use.
+ * @returns The translation function.
+ */
+export function fetchT(
+  lng: string | string[],
+  ns?: string | null,
+  keyPrefix?: string,
+): TFunction {
+  return locale().i18n.getFixedT(lng, ns, keyPrefix);
 }

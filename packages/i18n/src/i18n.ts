@@ -193,6 +193,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
 
   private async scanLocaleDirectory() {
     const endPattern = /{{lng}}(\/|\\){{ns}}.json$/;
+    const eventFilePattern = /\.event\.json$/;
     const localesPath = I18nPlugin.getLoadPath();
     const scanDirTarget = localesPath.replace(endPattern, '');
 
@@ -211,6 +212,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
 
     for (const file of files) {
       const isValidLocale = DISCORD_LOCALES.has(file.name as Locale);
+
       if (file.isDirectory()) {
         if (!isValidLocale) {
           Logger.warn(`I18nPlugin: Invalid locale directory ${file.name}`);
@@ -229,16 +231,24 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
 
             if (!/\.json$/.test(ext)) continue;
 
-            const name = basename(file.name, ext);
-            namespaces.add(name);
+            let name: string;
+            const isEvent = eventFilePattern.test(file.name);
+            // Handle event files specially
+            if (isEvent) {
+              name = file.name.replace('.event.json', '');
+            } else {
+              name = basename(file.name, ext);
+            }
+            namespaces.add(`${isEvent ? 'event_' : ''}${name}`);
 
             const locale = basename(file.parentPath);
 
-            await this.loadMetadata(
-              join(file.parentPath, file.name),
-              locale,
-              name,
-            );
+            if (!isEvent)
+              await this.loadMetadata(
+                join(file.parentPath, file.name),
+                locale,
+                name,
+              );
           }
         }
       } else if (file.isFile()) {
@@ -246,12 +256,24 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
 
         if (!/\.json$/.test(ext)) continue;
 
-        const name = basename(file.name, ext);
-        namespaces.add(name);
+        let name: string;
+        const isEvent = eventFilePattern.test(file.name);
+        // Handle event files specially
+        if (isEvent) {
+          name = file.name.replace('.event.json', '');
+        } else {
+          name = basename(file.name, ext);
+        }
+        namespaces.add(`${isEvent ? 'event_' : ''}${name}`);
 
         const locale = basename(file.parentPath);
 
-        await this.loadMetadata(join(file.parentPath, file.name), locale, name);
+        if (!isEvent)
+          await this.loadMetadata(
+            join(file.parentPath, file.name),
+            locale,
+            name,
+          );
       }
     }
 

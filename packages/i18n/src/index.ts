@@ -22,5 +22,5 @@ export function i18n(
 }
 
 export { I18nCliTemplatePlugin };
-export { locale } from './hooks';
+export { locale, fetchT } from './hooks';
 export { getI18n, I18nPlugin, type CommandLocalizationContext } from './i18n';
