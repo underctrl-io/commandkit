@@ -1,6 +1,6 @@
 import { Redis, type RedisOptions } from 'ioredis';
 import { CommandKitPluginRuntime, RuntimePlugin } from 'commandkit';
-import { CacheProvider, setCacheProvider } from '@commandkit/cache';
+import { CacheProvider, CacheEntry, setCacheProvider } from '@commandkit/cache';
 
 export type Awaitable<T> = T | Promise<T>;
 export type SerializeFunction = (value: any) => Awaitable<string>;
@@ -61,14 +61,20 @@ export class RedisCache extends CacheProvider {
    * @param key The key to retrieve the value for.
    * @returns The value stored in the cache, or `undefined` if it does not exist.
    */
-  public async get<T>(key: string): Promise<T | undefined> {
+  public async get<T>(key: string): Promise<CacheEntry<T> | undefined> {
     const value = await this.redis.get(key);
 
     if (value === null) {
       return undefined;
     }
 
-    return this.deserialize(value) as T;
+    const entry = this.deserialize(value) as CacheEntry<T>;
+    if (entry.ttl && Date.now() > entry.ttl) {
+      await this.delete(key);
+      return undefined;
+    }
+
+    return entry;
   }
 
   /**
@@ -78,7 +84,12 @@ export class RedisCache extends CacheProvider {
    * @param ttl The time-to-live for the cache entry in milliseconds.
    */
   public async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-    const serialized = this.serialize(value);
+    const entry: CacheEntry<T> = {
+      value,
+      ttl: ttl != null ? Date.now() + ttl : undefined,
+    };
+
+    const serialized = this.serialize(entry);
     const finalValue =
       serialized instanceof Promise ? await serialized : serialized;
 
