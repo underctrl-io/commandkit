@@ -14,6 +14,7 @@ import {
 } from 'discord.js';
 import { LoadedCommand } from '../app';
 import { defer, JsonSerialize } from '../utils/utilities';
+import { AnalyticsEvents } from '../analytics/constants';
 
 export type MaybePromise<T> = T | Promise<T>;
 
@@ -160,7 +161,7 @@ export class FeatureFlag<R, T> {
 
     defer(async () => {
       await this.commandkit.analytics.track({
-        name: 'feature_flag_metrics',
+        name: AnalyticsEvents.FEATURE_FLAG_METRICS,
         data: {
           flag: this.options.key,
           identificationTime: identificationTime.toFixed(2),
@@ -171,7 +172,7 @@ export class FeatureFlag<R, T> {
 
     defer(async () => {
       await this.commandkit.analytics.track({
-        name: 'feature_flag_decision',
+        name: AnalyticsEvents.FEATURE_FLAG_DECISION,
         id:
           entities &&
           typeof entities === 'object' &&
