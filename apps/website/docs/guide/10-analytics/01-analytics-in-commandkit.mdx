@@ -20,10 +20,11 @@ CommandKit's analytics system is designed to be provider-agnostic. This means:
 
 CommandKit automatically tracks various anonymous metrics:
 
-- Command execution counts and success rates
-- Feature flag usage statistics
-- Cache performance metrics
-- Guild count changes
+- Command execution events (`command_execution`)
+- Cache performance metrics:
+  - Cache hits (`cache_hit`)
+  - Cache misses (`cache_miss`)
+  - Cache revalidations (`cache_revalidated`)
 - Anonymous interaction patterns
 
 ## Installation

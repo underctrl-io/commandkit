@@ -76,11 +76,10 @@ await analytics.identify({
 
 CommandKit automatically tracks the following anonymous events in PostHog:
 
-- `command_executed`: Command execution counts and success rates
-- `command_error`: Error rates and types (without personal data)
-- `guild_count`: Changes in total guild count
-- `feature_flag_used`: Feature flag usage statistics
-- `cache_operation`: Cache performance metrics
+- `command_execution`: Command execution events
+- `cache_hit`: Cache hit events
+- `cache_miss`: Cache miss events
+- `cache_revalidated`: Cache revalidation events
 
 ## Best Practices
 

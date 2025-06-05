@@ -60,10 +60,10 @@ await track({
 
 CommandKit automatically tracks the following anonymous events in Umami:
 
-- Command execution counts and success rates
-- Guild count changes
-- Feature flag usage statistics
-- Cache performance metrics
+- `command_execution`: Command execution events
+- `cache_hit`: Cache hit events
+- `cache_miss`: Cache miss events
+- `cache_revalidated`: Cache revalidation events
 - Anonymous interaction patterns
 
 ## Best Practices
