@@ -1,4 +1,4 @@
-const { getCommandKit } = require('./dist/CommandKit-CykDrHnK.js');
+const { getCommandKit } = require('./dist/context/async-context.js');
 const { AnalyticsEngine } = require('./dist/analytics/analytics-engine.js');
 const { noAnalytics } = require('./dist/analytics/utils.js');
 

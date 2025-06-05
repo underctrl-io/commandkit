@@ -1,4 +1,4 @@
-import type { AnalyticsEngine } from './dist/CommandKit-CykDrHnK';
+import type { AnalyticsEngine } from './dist/analytics/analytics-engine';
 
 export * from './dist/analytics/analytics-engine';
 export * from './dist/analytics/analytics-provider';
