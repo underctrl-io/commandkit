@@ -20,6 +20,7 @@ import { generateTypesPackage } from './utils/types-package';
 import { Logger } from './logger/Logger';
 import { AsyncFunction, GenericFunction } from './context/async-context';
 import { FlagStore } from './flags/store';
+import { AnalyticsEngine } from './analytics/analytics-engine';
 
 export interface CommandKitConfiguration {
   defaultLocale: Locale;
@@ -92,6 +93,7 @@ export class CommandKit extends EventEmitter {
   public eventHandler!: AppEventsHandler;
   public plugins!: CommandKitPluginRuntime;
   public events!: CommandKitEventsChannel;
+  public analytics!: AnalyticsEngine;
 
   static instance: CommandKit | undefined = undefined;
 
@@ -122,6 +124,7 @@ export class CommandKit extends EventEmitter {
     }
 
     this.plugins = new CommandKitPluginRuntime(this);
+    this.analytics = new AnalyticsEngine(this);
 
     this.#bootstrapHooks();
   }

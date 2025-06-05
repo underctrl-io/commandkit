@@ -162,6 +162,7 @@ export class AppEventsHandler {
             data: data.event,
             commandkit: this.commandkit,
             arguments: args,
+            variables: new Map(),
           },
           async () => {
             for (const listener of onListeners) {
@@ -225,6 +226,7 @@ export class AppEventsHandler {
               data: data.event,
               commandkit: this.commandkit,
               arguments: args,
+              variables: new Map(),
             },
             async () => {
               try {

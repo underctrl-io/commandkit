@@ -8,6 +8,7 @@ export interface EventWorkerContext {
   data: ParsedEvent;
   commandkit: CommandKit;
   arguments: any[];
+  variables: Map<string, any>;
 }
 
 const kEventWorker = Symbol('commandkitEventWorker');

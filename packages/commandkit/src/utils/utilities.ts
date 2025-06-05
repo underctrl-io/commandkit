@@ -97,6 +97,30 @@ export function debounce<R, F extends (...args: any[]) => R>(
 }
 
 /**
+ * Defers the execution of a function.
+ * @param fn The function to defer.
+ */
+export function defer<T>(fn: () => T, timeout = 0): void {
+  setTimeout(() => {
+    return fn();
+  }, timeout).unref();
+}
+
+/**
+ * Serializes a value to JSON.
+ * @param value The value to serialize.
+ * @param defaultValue The default value to return if the value is not serializable.
+ * @returns The serialized value.
+ */
+export function JsonSerialize<R = any>(value: any, defaultValue = {} as R): R {
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch {
+    return defaultValue;
+  }
+}
+
+/**
  * Creates a function from the given function that runs only in development mode.
  * @param fn The function to run in development mode.
  * @returns The function that runs only in development mode.

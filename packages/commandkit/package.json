@@ -30,7 +30,9 @@
     "./logger.cjs",
     "./logger.d.ts",
     "./events.cjs",
-    "./events.d.ts"
+    "./events.d.ts",
+    "./analytics.cjs",
+    "./analytics.d.ts"
   ],
   "exports": {
     ".": {
@@ -87,6 +89,11 @@
       "require": "./events.cjs",
       "import": "./events.cjs",
       "types": "./events.d.ts"
+    },
+    "./analytics": {
+      "require": "./analytics.cjs",
+      "import": "./analytics.cjs",
+      "types": "./analytics.d.ts"
     }
   },
   "scripts": {

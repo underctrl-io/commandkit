@@ -13,6 +13,7 @@ import {
   TextBasedChannel,
 } from 'discord.js';
 import { LoadedCommand } from '../app';
+import { defer, JsonSerialize } from '../utils/utilities';
 
 export type MaybePromise<T> = T | Promise<T>;
 
@@ -72,8 +73,10 @@ export interface FlagRunner<E, R> {
 }
 
 export class FeatureFlag<R, T> {
+  private commandkit: CommandKit;
   public constructor(public readonly options: FeatureFlagDefinition<R, T>) {
-    const FlagStore = getCommandKit(true).flags;
+    this.commandkit = getCommandKit(true);
+    const FlagStore = this.commandkit.flags;
 
     if (FlagStore.has(options.key)) {
       throw new Error(`Feature flag with key "${options.key}" already exists.`);
@@ -140,15 +143,47 @@ export class FeatureFlag<R, T> {
   public async execute(res?: T): Promise<R> {
     const { decide, identify } = this.options;
 
+    const identificationStart = performance.now();
     const entities =
       res ??
       (await (async () => {
         const ctx = this.getContext();
         return (await identify?.(ctx)) ?? ({} as T);
       })());
+    const identificationTime = performance.now() - identificationStart;
 
+    const decisionStart = performance.now();
     const decisionResult = await decide({
       entities,
+    });
+    const decisionTime = performance.now() - decisionStart;
+
+    defer(async () => {
+      await this.commandkit.analytics.track({
+        name: 'feature_flag_metrics',
+        data: {
+          flag: this.options.key,
+          identificationTime: identificationTime.toFixed(2),
+          decisionTime: decisionTime.toFixed(2),
+        },
+      });
+    });
+
+    defer(async () => {
+      await this.commandkit.analytics.track({
+        name: 'feature_flag_decision',
+        id:
+          entities &&
+          typeof entities === 'object' &&
+          'id' in entities &&
+          typeof entities.id === 'string'
+            ? entities.id
+            : undefined,
+        data: {
+          flag: this.options.key,
+          decision: JsonSerialize(decisionResult, 'unknown'),
+        },
+      });
     });
 
     return decisionResult as R;
