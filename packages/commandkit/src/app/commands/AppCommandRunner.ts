@@ -113,15 +113,18 @@ export class AppCommandRunner {
                     `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
                   );
 
+                  const commandName =
+                    prepared.command?.data?.command?.name ??
+                    prepared.command.command.name;
+
                   await analytics.track({
                     name: AnalyticsEvents.COMMAND_EXECUTION,
-                    id:
-                      prepared.command?.data?.command?.name ??
-                      prepared.command.command.name,
+                    id: commandName,
                     data: {
                       error: true,
                       executionTime: env.getExecutionTime().toFixed(2),
                       type: executionMode,
+                      command: commandName,
                     },
                   });
 
@@ -132,15 +135,18 @@ export class AppCommandRunner {
                   `[${marker} - ${time}] Command executed successfully`,
                 );
 
+                const commandName =
+                  prepared.command?.data?.command?.name ??
+                  prepared.command.command.name;
+
                 await analytics.track({
                   name: AnalyticsEvents.COMMAND_EXECUTION,
-                  id:
-                    prepared.command?.data?.command?.name ??
-                    prepared.command.command.name,
+                  id: commandName,
                   data: {
                     error: false,
                     executionTime: env.getExecutionTime().toFixed(2),
                     type: executionMode,
+                    command: commandName,
                   },
                 });
               });
