@@ -74,7 +74,7 @@ export class CommandKitEventsChannel {
           event,
           namespace,
         },
-        listener,
+        () => listener(...args),
       );
     }) as L;
   }
