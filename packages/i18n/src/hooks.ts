@@ -31,9 +31,7 @@ export function locale(locale?: Locale): CommandLocalizationContext {
     const detectedLocale: Locale = locale || commandkit.config.defaultLocale;
 
     return {
-      t: i18n.getFixedT(
-        `event_${context.namespace ? `${context.namespace}_` : ''}${context.event}`,
-      ),
+      t: i18n.getFixedT(detectedLocale, `${context.event}.event`),
       locale: detectedLocale,
       i18n,
       isEventWorker: true,
