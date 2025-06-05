@@ -1,5 +1,11 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { AsyncFunction, GenericFunction } from 'commandkit';
+import {
+  AsyncFunction,
+  defer,
+  GenericFunction,
+  getCommandKit,
+} from 'commandkit';
+import { AnalyticsEvents } from 'commandkit/analytics';
 import { randomUUID } from 'node:crypto';
 import ms, { type StringValue } from 'ms';
 import { getCacheProvider } from './cache-plugin';
@@ -90,6 +96,7 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
   }
 
   const memo = (async (...args) => {
+    const analytics = getCommandKit()?.analytics;
     const keyHash = await stableHash({
       fnId: metadata.id,
       buildId: metadata.buildId,
@@ -126,12 +133,28 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
           storedFn.lastAccess = Date.now();
         }
 
+        const start = performance.now();
         const cached = await provider.get(effectiveKey);
+        const end = performance.now() - start;
+
         if (cached && cached.value != null) {
+          defer(() =>
+            analytics?.track({
+              name: AnalyticsEvents.CACHE_HIT,
+              id: 'commandkit',
+              data: {
+                time: end.toFixed(2),
+                tags: Array.from(storedFn?.tags ?? []),
+              },
+            }),
+          );
+
           return cached.value;
         }
 
+        const rawStart = performance.now();
         const result = await fn(...args);
+        const rawEnd = performance.now() - rawStart;
 
         if (result != null) {
           const ttl = context.params.ttl;
@@ -147,6 +170,21 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
             lastAccess: Date.now(),
           });
         }
+
+        defer(() =>
+          analytics?.track({
+            name: AnalyticsEvents.CACHE_MISS,
+            id: 'commandkit',
+            data: {
+              time: rawEnd.toFixed(2),
+              tags: Array.from(
+                context.params.tags.size
+                  ? context.params.tags
+                  : (storedFn?.tags ?? []),
+              ),
+            },
+          }),
+        );
 
         return result;
       },
@@ -232,6 +270,14 @@ export async function revalidateTag(tag: string): Promise<void> {
 
   // Batch delete operations for better performance
   await Promise.all(entries.map((entry) => provider.delete(entry.key)));
+
+  defer(() =>
+    getCommandKit()?.analytics?.track({
+      name: AnalyticsEvents.CACHE_REVALIDATED,
+      id: 'commandkit',
+      data: { tag },
+    }),
+  );
 }
 
 /**

@@ -23,6 +23,7 @@ export {
   debounce,
   stopEvents,
   StopEventPropagationError,
+  defer,
 } from './utils/utilities';
 export type { CommandKitHMREvent } from './utils/dev-hooks';
 export * from './utils/constants';

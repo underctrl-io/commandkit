@@ -16,6 +16,7 @@ import {
   useEnvironment,
 } from '../../context/async-context';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
+import { AnalyticsEvents } from '../../analytics/constants';
 
 export class AppCommandRunner {
   public constructor(private handler: AppCommandHandler) {}
@@ -94,12 +95,14 @@ export class AppCommandRunner {
         );
       }
 
+      const analytics = commandkit.analytics;
+
       if (fn) {
         try {
           const _executeCommand = makeContextAwareFunction(
             env,
             async () => {
-              env.registerDeferredFunction((env) => {
+              env.registerDeferredFunction(async (env) => {
                 env.markEnd();
                 const error = env.getExecutionError();
                 const marker = env.getMarker();
@@ -110,12 +113,36 @@ export class AppCommandRunner {
                     `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
                   );
 
+                  await analytics.track({
+                    name: AnalyticsEvents.COMMAND_EXECUTION,
+                    id:
+                      prepared.command?.data?.command?.name ??
+                      prepared.command.command.name,
+                    data: {
+                      error: true,
+                      executionTime: env.getExecutionTime().toFixed(2),
+                      type: executionMode,
+                    },
+                  });
+
                   return;
                 }
 
                 Logger.info(
                   `[${marker} - ${time}] Command executed successfully`,
                 );
+
+                await analytics.track({
+                  name: AnalyticsEvents.COMMAND_EXECUTION,
+                  id:
+                    prepared.command?.data?.command?.name ??
+                    prepared.command.command.name,
+                  data: {
+                    error: false,
+                    executionTime: env.getExecutionTime().toFixed(2),
+                    type: executionMode,
+                  },
+                });
               });
 
               return fn(ctx.clone());
