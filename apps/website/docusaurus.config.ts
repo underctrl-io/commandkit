@@ -70,6 +70,12 @@ const config: Config = {
     ],
   ],
   themeConfig: {
+    docs: {
+      sidebar: {
+        hideable: true,
+        autoCollapseCategories: true,
+      },
+    },
     algolia: {
       appId: 'S9ZEIJ6SBS',
       apiKey: '6f7582f462a448cf1f47a56901595e6e',
