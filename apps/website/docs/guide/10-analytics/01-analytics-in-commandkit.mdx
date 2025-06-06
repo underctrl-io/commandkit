@@ -69,15 +69,15 @@ const analytics = useAnalytics();
 analytics.setFilter((engine, event) => {
   // Skip events from development environments
   if (process.env.NODE_ENV === 'development') {
-    return true; // true means skip this event
+    return false; // false means skip this event
   }
 
   // Skip specific event types
   if (event.name === 'debug_event') {
-    return true;
+    return false;
   }
 
-  return false; // false means track this event
+  return true; // true means track this event
 });
 ```
 

@@ -70,7 +70,7 @@ export class AnalyticsEngine {
     if (dnt) return true;
 
     if (this.#filter) {
-      return this.#filter(this, event);
+      return !this.#filter(this, event);
     }
 
     return false;
