@@ -16,10 +16,16 @@ new CompilerPlugin(options)
 
 
 ## Properties
+### public id: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L16)
+### public loadedAt: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L17)
 ### public name: any
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L9)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L18)
 ### public options: any
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L10)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L19)
+### public type: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/CompilerPlugin.ts#L23)
 
 ## Methods
 ### public activate(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
@@ -32,7 +38,7 @@ Called when this plugin is activated
 | ctx | CompilerPluginRuntime | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L15)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L24)
 ### public deactivate(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called when this plugin is deactivated
 
@@ -43,30 +49,7 @@ Called when this plugin is deactivated
 | ctx | CompilerPluginRuntime | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L20)
-### public onBuildEnd(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
-Called when a build is ended
-
-
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/CompilerPlugin.ts#L61)
-### public onBuildStart(): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
-Called when a build is started
-
-
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/CompilerPlugin.ts#L56)
-### public resolve(args): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<MaybeFalsey\<ResolveResult>>
-Called when a resolve is requested to this plugin
-
-
-
-| Parameter | Type | Optional | Description |
-| ----------- | ----------- | ----------- | ----------- |
-| args | OnResolveArgs | ❌ | The arguments for the resolve |
-
-
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/CompilerPlugin.ts#L47)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L29)
 ### public transform(params): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<MaybeFalsey\<TransformedResult>>
 Called when transformation is requested to this plugin
 
@@ -77,4 +60,4 @@ Called when transformation is requested to this plugin
 | params | PluginTransformParameters | ❌ | The parameters for the transformation |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/CompilerPlugin.ts#L36)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/CompilerPlugin.ts#L30)

@@ -16,10 +16,16 @@ new RuntimePlugin(options)
 
 
 ## Properties
+### public id: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L16)
+### public loadedAt: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L17)
 ### public name: any
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L9)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L18)
 ### public options: any
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L10)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L19)
+### public type: any
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L18)
 
 ## Methods
 ### public activate(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
@@ -32,7 +38,7 @@ Called when this plugin is activated
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L15)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L24)
 ### public deactivate(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called when this plugin is deactivated
 
@@ -43,7 +49,7 @@ Called when this plugin is deactivated
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/PluginCommon.ts#L20)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/PluginCommon.ts#L29)
 ### public executeCommand(ctx, env, source, command, execute): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>
 Called before command is executed. This method can execute the command itself.
 
@@ -58,7 +64,7 @@ Called before command is executed. This method can execute the command itself.
 | execute | (   ...args | unknown\[ | ] ) => [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<any> | ❌ | The function that executes the command |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L76)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L83)
 ### public onAfterClientLogin(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called after the client logs in
 
@@ -69,7 +75,7 @@ Called after the client logs in
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L48)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L55)
 ### public onAfterCommand(ctx, env): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called after command and all of its deferred functions are executed.
 
@@ -81,7 +87,7 @@ Called after command and all of its deferred functions are executed.
 | env | [CommandKitEnvironment](/docs/api-reference/classes/CommandKitEnvironment) | ❌ | The environment of the command. This environment contains the command execution data such as command context and more. |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L172)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L179)
 ### public onAfterCommandsLoad(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called after commands are loaded
 
@@ -92,7 +98,7 @@ Called after commands are loaded
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L22)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L29)
 ### public onAfterEventsLoad(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called after events are loaded
 
@@ -103,7 +109,7 @@ Called after events are loaded
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L36)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L43)
 ### public onBeforeClientLogin(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called before the client logs in
 
@@ -114,7 +120,7 @@ Called before the client logs in
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L41)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L48)
 ### public onBeforeCommandsLoad(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called before commands are loaded
 
@@ -125,7 +131,7 @@ Called before commands are loaded
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L15)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L22)
 ### public onBeforeEventsLoad(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called before events are loaded
 
@@ -136,7 +142,7 @@ Called before events are loaded
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L29)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L36)
 ### public onBeforeInteraction(ctx, interaction): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called before interaction is handled
 
@@ -148,7 +154,7 @@ Called before interaction is handled
 | interaction | [Interaction](https://discord.js.org/docs/packages/discord.js/main/Interaction:Class) | ❌ | The interaction |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L56)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L63)
 ### public onBeforeMessageCommand(ctx, message): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called before message command is processed
 
@@ -160,7 +166,7 @@ Called before message command is processed
 | message | Message | ❌ | The message |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L65)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L72)
 ### public onBeforePrepareGuildCommandsRegistration(ctx, event): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called before guild commands registration. This method can cancel the registration of the command and handle it manually.
 This method is called before guilds of the command are resolved. It is called after `onBeforeRegisterCommands` if that stage was not handled.
@@ -173,7 +179,7 @@ This method is called before guilds of the command are resolved. It is called af
 | event | PreRegisterCommandsEvent | ❌ | The command registration data |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L151)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L158)
 ### public onBeforeRegisterCommands(ctx, event): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called before command is registered to discord. This method can cancel the registration of the command and handle it manually.
 
@@ -185,7 +191,7 @@ Called before command is registered to discord. This method can cancel the regis
 | event | PreRegisterCommandsEvent | ❌ | N/A |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L129)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L136)
 ### public onBeforeRegisterGlobalCommands(ctx, event): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called before global commands registration. This method can cancel the registration of the command and handle it manually.
 This method is called after `onBeforeRegisterCommands` if that stage was not handled.
@@ -198,7 +204,7 @@ This method is called after `onBeforeRegisterCommands` if that stage was not han
 | event | PreRegisterCommandsEvent | ❌ | The command registration data |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L140)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L147)
 ### public onBeforeRegisterGuildCommands(ctx, event): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called before guild commands registration. This method can cancel the registration of the command and handle it manually.
 This method is called after guilds of the command are resolved. It is called after `onBeforePrepareGuildCommandsRegistration` if that stage was not handled.
@@ -211,7 +217,7 @@ This method is called after guilds of the command are resolved. It is called aft
 | event | PreRegisterCommandsEvent | ❌ | The command registration data |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L162)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L169)
 ### public onCommandsRouterInit(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called after commands router is initialized
 
@@ -222,7 +228,7 @@ Called after commands router is initialized
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ | The context |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L98)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L105)
 ### public onEventsRouterInit(ctx): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called after events router is initialized
 
@@ -233,7 +239,7 @@ Called after events router is initialized
 | ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ | The context |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L90)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L97)
 ### public performHMR(ctx, event): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
 Called when HMR event is received
 
@@ -245,7 +251,7 @@ Called when HMR event is received
 | event | CommandKitHMREvent | ❌ | The event |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L107)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L114)
 ### public prepareCommand(ctx, commands): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<null | CommandBuilderLike>
 Called before command is loaded for registration. This method can be used to modify the command data before it is loaded.
 
@@ -257,4 +263,16 @@ Called before command is loaded for registration. This method can be used to mod
 | commands | CommandBuilderLike | ❌ | The command that is being loaded. This is a CommandBuilderLike object which represents Discord's command |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/e7997746676c2b18be64230c918cb998973d18b5/packages/commandkit/src/plugins/RuntimePlugin.ts#L117)
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L124)
+### public willEmitEvent(ctx, event): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>
+Called before emitting an event
+
+
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| ctx | [CommandKitPluginRuntime](/docs/api-reference/classes/CommandKitPluginRuntime) | ❌ | The context |
+| event | CommandKitEventDispatch | ❌ | The event that is being emitted |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/141d1404ab18a8e659209a0fab65466bf3b6dd85/packages/commandkit/src/plugins/RuntimePlugin.ts#L189)
