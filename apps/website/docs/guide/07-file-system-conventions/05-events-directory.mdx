@@ -18,6 +18,8 @@ CommandKit provides a special directory called `events` inside the `src/app` dir
                 └── initialize.ts
 ```
 
+## Custom events
+
 CommandKit also supports using custom events in the `events` directory. Custom events must be defined in a namespaced directory, which are handled by the active plugins. For example, if you have a custom event called `guildMemberBoost`, you can create a file called `src/app/events/(custom)/guildMemberBoost/handler.ts` which will be handled by the appropriate active plugins.
 
 :::info
