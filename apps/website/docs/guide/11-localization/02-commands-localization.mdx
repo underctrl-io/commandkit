@@ -1,0 +1,239 @@
+---
+title: Commands Localization
+description: Learn how to localize your commands using the i18n plugin in CommandKit.
+---
+
+# Commands Localization
+
+CommandKit's i18n plugin provides powerful localization features for slash commands, allowing you to translate command metadata (names, descriptions, options) and responses to match your users' preferred languages.
+
+## Translation File Structure
+
+Translation files should be placed in your `locales` directory and named after the command they translate. For example, translations for a `ping` command should be in `ping.json`.
+
+### Basic Translation File
+
+```json title="src/app/locales/en-US/ping.json"
+{
+  "response": "🏓 Pong! Latency: **{{latency}}ms**",
+  "error": "❌ Failed to ping the server",
+  "database_response": "📊 Database latency: **{{dbLatency}}ms**"
+}
+```
+
+### Command Metadata Localization
+
+Use the special `$command` key to localize command metadata that appears in Discord's interface:
+
+```json title="src/app/locales/en-US/ping.json"
+{
+  "$command": {
+    "name": "ping",
+    "description": "Check the bot's latency and response time",
+    "options": [
+      {
+        "name": "database",
+        "description": "Also check database connection latency"
+      },
+      {
+        "name": "target",
+        "description": "Specify a target server to ping",
+        "choices": [
+          {
+            "name": "Main Server",
+            "value": "main"
+          },
+          {
+            "name": "Backup Server",
+            "value": "backup"
+          }
+        ]
+      }
+    ]
+  },
+  "response": "🏓 Pong! Latency: **{{latency}}ms**",
+  "database_response": "📊 Database latency: **{{dbLatency}}ms**"
+}
+```
+
+The `$command` object structure mirrors Discord's application command structure:
+
+- `name`: Command name (shown in Discord's command picker)
+- `description`: Command description (shown in Discord's command picker)
+- `options`: Array of option localizations
+  - `name`: Option name
+  - `description`: Option description
+  - `choices`: Array of choice localizations (for string options with predefined choices)
+
+## Using Translations in Commands
+
+The `locale()` function in your command context provides access to translations and i18next features:
+
+```ts title="src/app/commands/ping.ts"
+import type { ChatInputCommand } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  // Get translation function and i18next instance for the current guild's locale
+  const { t, i18n } = ctx.locale();
+
+  const latency = ctx.client.ws.ping;
+
+  // Use the translation function with interpolation
+  await ctx.interaction.reply({
+    content: t('response', { latency }),
+    ephemeral: true,
+  });
+};
+```
+
+### Manual Locale Override
+
+You can specify a particular locale instead of using the guild's preferred locale:
+
+```ts
+export const chatInput: ChatInputCommand = async (ctx) => {
+  // Force French locale
+  const { t } = ctx.locale('fr');
+
+  await ctx.interaction.reply({
+    content: t('response', { latency: ctx.client.ws.ping }),
+  });
+};
+```
+
+### Advanced Translation Features
+
+#### Pluralization
+
+i18next supports automatic pluralization:
+
+```json title="locales/en-US/user.json"
+{
+  "member_count": "{{count}} member",
+  "member_count_plural": "{{count}} members"
+}
+```
+
+```ts
+const { t } = ctx.locale();
+const memberCount = guild.memberCount;
+
+// Automatically chooses singular or plural form
+const message = t('member_count', { count: memberCount });
+```
+
+#### Nested Translations
+
+Organize translations using nested objects:
+
+```json title="locales/en-US/errors.json"
+{
+  "validation": {
+    "required": "This field is required",
+    "invalid_format": "Invalid format provided",
+    "too_long": "Input is too long (max {{max}} characters)"
+  },
+  "permissions": {
+    "insufficient": "You don't have permission to use this command",
+    "missing_role": "You need the {{role}} role to use this command"
+  }
+}
+```
+
+```ts
+const { t } = ctx.locale();
+
+// Access nested translations with dot notation
+await ctx.interaction.reply({
+  content: t('errors.permissions.insufficient'),
+  ephemeral: true,
+});
+```
+
+#### Context and Namespaces
+
+Use different translation contexts for better organization:
+
+```ts
+const { t } = ctx.locale();
+
+// Default namespace (command file name)
+t('response');
+
+// Specific namespace
+t('common:greeting', { name: user.displayName });
+
+// Multiple namespaces
+t(['errors:validation.required', 'common:error']);
+```
+
+## Complete Example
+
+Here's a comprehensive example showing various localization features:
+
+```json title="src/app/locales/en-US/moderation.json"
+{
+  "$command": {
+    "name": "ban",
+    "description": "Ban a user from the server",
+    "options": [
+      {
+        "name": "user",
+        "description": "The user to ban"
+      },
+      {
+        "name": "reason",
+        "description": "Reason for the ban"
+      },
+      {
+        "name": "duration",
+        "description": "Ban duration",
+        "choices": [
+          { "name": "Permanent", "value": "permanent" },
+          { "name": "1 Day", "value": "1d" },
+          { "name": "1 Week", "value": "1w" }
+        ]
+      }
+    ]
+  },
+  "success": "✅ **{{user}}** has been banned",
+  "success_with_reason": "✅ **{{user}}** has been banned\n**Reason:** {{reason}}",
+  "errors": {
+    "user_not_found": "❌ User not found",
+    "insufficient_permissions": "❌ I don't have permission to ban this user",
+    "cannot_ban_self": "❌ You cannot ban yourself"
+  }
+}
+```
+
+```ts title="src/app/commands/moderation.ts"
+import type { ChatInputCommand } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const { t } = ctx.locale();
+  const user = ctx.interaction.options.getUser('user', true);
+  const reason = ctx.interaction.options.getString('reason');
+
+  try {
+    // Attempt to ban the user
+    await ctx.interaction.guild?.members.ban(user, {
+      reason: reason || undefined,
+    });
+
+    // Send localized success message
+    const successKey = reason ? 'success_with_reason' : 'success';
+    await ctx.interaction.reply({
+      content: t(successKey, {
+        user: user.displayName,
+        reason,
+      }),
+    });
+  } catch (error) {
+    // Send localized error message
+    await ctx.interaction.reply({
+      content: t('errors.insufficient_permissions'),
+      ephemeral: true,
+    });
+  }
+};
+```

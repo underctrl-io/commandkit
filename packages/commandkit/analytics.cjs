@@ -4,18 +4,18 @@ const { noAnalytics } = require('./dist/analytics/utils.js');
 const { AnalyticsEvents } = require('./dist/analytics/constants.js');
 
 function useAnalytics() {
-    const commandkit = getCommandKit(true);
-    return commandkit.analytics;
+  const commandkit = getCommandKit(true);
+  return commandkit.analytics;
 }
 
 function track(event) {
-    return useAnalytics().track(event);
+  return useAnalytics().track(event);
 }
 
 module.exports = {
-    AnalyticsEvents,
-    AnalyticsEngine,
-    useAnalytics,
-    noAnalytics,
-    track,
+  AnalyticsEvents,
+  AnalyticsEngine,
+  useAnalytics,
+  noAnalytics,
+  track,
 };

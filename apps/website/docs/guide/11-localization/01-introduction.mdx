@@ -1,0 +1,164 @@
+---
+title: i18n Plugin
+description: The i18n plugin for CommandKit enables internationalization (i18n) for CommandKit using i18next. It allows you to translate your application into different languages.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# i18n Plugin
+
+The i18n plugin integrates [i18next](https://www.i18next.com/) into CommandKit, enabling you to create multilingual Discord bots that can automatically adapt to your users' preferred languages. This plugin provides seamless internationalization support for commands, events, and all bot interactions.
+
+## Features
+
+- 🌍 **Automatic locale detection** - Automatically uses Discord's guild preferred locale
+- 🔧 **Easy setup** - Simple configuration with sensible defaults
+- 📁 **File-based translations** - Organize translations in JSON files
+- 🎯 **Context-aware** - Access translations in commands, events, and legacy handlers
+- 🔌 **i18next ecosystem** - Full compatibility with i18next plugins and features
+- 📝 **Command metadata localization** - Localize command names, descriptions, and options
+
+## Installation
+
+<Tabs>
+<TabItem value="npm" label="npm">
+
+```bash
+npm install @commandkit/i18n
+```
+
+</TabItem>
+<TabItem value="yarn" label="yarn">
+
+```bash
+yarn add @commandkit/i18n
+```
+
+</TabItem>
+<TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm add @commandkit/i18n
+```
+
+</TabItem>
+</Tabs>
+
+## Basic Setup
+
+Add the i18n plugin to your CommandKit configuration:
+
+```ts
+import { defineConfig } from 'commandkit';
+import { i18n } from '@commandkit/i18n';
+
+export default defineConfig({
+  plugins: [i18n()],
+});
+```
+
+## Advanced Configuration
+
+You can customize the i18n plugin by passing options to it:
+
+```ts
+import { defineConfig } from 'commandkit';
+import { i18n } from '@commandkit/i18n';
+// Import any i18next plugins you want to use
+import Backend from 'i18next-fs-backend';
+import { initReactI18next } from 'react-i18next';
+
+export default defineConfig({
+  plugins: [
+    i18n({
+      plugins: [someI18nextPlugin],
+      // Add other i18next configuration options as needed
+    }),
+  ],
+});
+```
+
+## Translation Files Structure
+
+Create a `locales` directory inside your `src/app` folder with subdirectories for each language. Each language directory should contain JSON files for your translations.
+
+```
+src
+└── app
+    ├── locales
+    │   ├── en-US
+    │   │   └── ping.json
+    │   │   └── messageCreate.event.json
+    │   └── fr
+    │       └── ping.json
+    │       └── messageCreate.event.json
+    ├── commands
+    │   ├── ping.ts
+    │   └── help.ts
+    └── events
+        └── messageCreate
+            └── handler.ts
+```
+
+### Supported Locales
+
+CommandKit uses Discord's locale identifiers. Please refer to [Discord's Locales documentation](https://discord.com/developers/docs/reference#locales) for a complete list.
+
+## Quick Start Example
+
+Here's a complete example to get you started:
+
+1. **Configure the plugin**:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { i18n } from '@commandkit/i18n';
+
+export default defineConfig({
+  plugins: [i18n()],
+});
+```
+
+2. **Create translation files**:
+
+```json title="src/app/locales/en-US/ping.json"
+{
+  "$command": {
+    "name": "ping",
+    "description": "Check the bot's latency"
+  },
+  "response": "🏓 Pong! Latency: **{{latency}}ms**"
+}
+```
+
+```json title="src/app/locales/fr/ping.json"
+{
+  "$command": {
+    "name": "ping",
+    "description": "Vérifier la latence du bot"
+  },
+  "response": "🏓 Pong! Latence: **{{latency}}ms**"
+}
+```
+
+3. **Use translations in your command**:
+
+```ts title="src/app/commands/ping.ts"
+import type { ChatInputCommand, CommandData } from 'commandkit';
+
+export const command: CommandData = {
+  name: 'ping',
+  description: "Check the bot's latency",
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const { t } = ctx.locale();
+
+  await ctx.interaction.reply({
+    content: t('response', { latency: ctx.client.ws.ping }),
+  });
+};
+```
+
+That's it! Your bot will now automatically respond in the user's guild preferred language.
