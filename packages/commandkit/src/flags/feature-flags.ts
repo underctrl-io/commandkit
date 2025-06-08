@@ -328,18 +328,25 @@ export class FeatureFlag<R, T> {
     // Get provider configuration if global provider is available
     let providerConfig: FlagConfiguration | null = null;
     if (flagProvider) {
-      providerConfig = await flagProvider.getFlag(this.options.key, entities);
+      try {
+        providerConfig = await flagProvider.getFlag(this.options.key, entities);
 
-      // If provider says flag is disabled, return early with default behavior
-      if (providerConfig && !providerConfig.enabled) {
-        // For boolean flags, return false; for others, let decide function handle it
-        if (typeof decide === 'function') {
-          const decisionResult = await decide({
-            entities,
-            provider: providerConfig,
-          });
-          return decisionResult as R;
+        // If provider says flag is disabled, return early with default behavior
+        if (providerConfig && !providerConfig.enabled) {
+          // For boolean flags, return false; for others, let decide function handle it
+          if (typeof decide === 'function') {
+            const decisionResult = await decide({
+              entities,
+              provider: providerConfig,
+            });
+            return decisionResult as R;
+          }
         }
+      } catch (error) {
+        Logger.error(
+          `Error fetching flag provider configuration for "${this.options.key}": ${error}`,
+        );
+        // continue with local decision if provider fails
       }
     }
 
