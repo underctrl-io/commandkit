@@ -4,6 +4,19 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const UPPERCASE = new Set(['jsx', 'cli', 'api']);
 
+const maybeUpperCase = (str: string) => {
+  const chunks = str.split(' ');
+  return chunks
+    .map((chunk) => {
+      if (UPPERCASE.has(chunk.toLowerCase())) {
+        return chunk.toUpperCase();
+      }
+
+      return chunk;
+    })
+    .join(' ');
+};
+
 const config: Config = {
   title: 'CommandKit',
   tagline: 'A Discord.js handler',
@@ -38,9 +51,11 @@ const config: Config = {
                   ...item,
                   label: UPPERCASE.has(item.label?.toLowerCase())
                     ? item.label.toUpperCase()
-                    : item.label
-                        .replace(/-/g, ' ')
-                        .replace(/\b\w/g, (char) => char.toUpperCase()),
+                    : maybeUpperCase(
+                        item.label
+                          .replace(/-/g, ' ')
+                          .replace(/\b\w/g, (char) => char.toUpperCase()),
+                      ),
                   items: item?.items?.map?.(transform),
                 };
               }
