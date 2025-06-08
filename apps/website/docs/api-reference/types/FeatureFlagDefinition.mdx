@@ -1,16 +1,23 @@
 ---
 title: FeatureFlagDefinition
-description: No description provided
+description: Definition for a feature flag, including its key, description, identify function, and decide function. The identify function is used to determine the entities that will be evaluated against the feature flag, while the decide function contains the logic for determining the outcome of the flag based on those entities.
 ---
 
 ## FeatureFlagDefinition
 
-| Property | Type | Value |
-| ----------- | ----------- | ----------- |
-| decide | DecideFunction\<Entity, R> | N/A |
-| description | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | N/A |
-| identify | IdentifyFunction\<Entity> | N/A |
-| key | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | N/A |
+Definition for a feature flag, including its key, description, identify function,
+and decide function.
+The identify function is used to determine the entities that will be evaluated
+against the feature flag, while the decide function contains the logic for
+determining the outcome of the flag based on those entities.
+
+| Property | Type | Value | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| decide | DecideFunction\<Entity, R> | N/A | Function to decide the outcome of the feature flag. This function receives the identified entities and should return the result of the decision. |
+| description | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | N/A | Optional description of the feature flag. This can be used for documentation or debugging purposes. |
+| disableAnalytics | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | N/A | Whether to disable analytics tracking for this flag. Default: false |
+| identify | IdentifyFunction\<Entity> | N/A | Optional flag to enable integration with an external flag provider. If true, the flag will use the global flag provider to determine its state. Default: false |
+| key | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | N/A | Unique key for the feature flag. Should be a string that identifies the flag. |
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/83ef44f10b86e30835e8636786e5222cac412af9/packages/commandkit/src/flags/feature-flags.ts#L27)
+- [Source](https://github.com/underctrl-io/commandkit/blob/98b939d6fdf8beaae597b4dc0351a139da52ee8d/packages/commandkit/src/flags/feature-flags.ts#L61)

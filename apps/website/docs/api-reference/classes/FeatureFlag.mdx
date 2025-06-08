@@ -1,29 +1,37 @@
 ---
 title: FeatureFlag
-description: No description provided
+description: Class representing a feature flag in CommandKit.
 ---
 
 
 ## FeatureFlag
+Class representing a feature flag in CommandKit.
+
 
 
 ```typescript
 new FeatureFlag(options)
 ```
-| Parameter | Type | Optional |
-| ----------- | ----------- | ----------- |
-| options | FeatureFlagDefinition\<R, T> | ❌ |
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| options | FeatureFlagDefinition\<R, T> | ❌ | The options for the feature flag. |
 
 
 ## Properties
 ### public options: any
-- [Source](https://github.com/underctrl-io/commandkit/blob/83ef44f10b86e30835e8636786e5222cac412af9/packages/commandkit/src/flags/feature-flags.ts#L78)
+The options for the feature flag.
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/98b939d6fdf8beaae597b4dc0351a139da52ee8d/packages/commandkit/src/flags/feature-flags.ts#L245)
 
 ## Methods
 ### public execute(res?): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<R>
-| Parameter | Type | Optional |
-| ----------- | ----------- | ----------- |
-| res | T | ✅ |
+Execute the feature flag evaluation.
 
 
-- [Source](https://github.com/underctrl-io/commandkit/blob/83ef44f10b86e30835e8636786e5222cac412af9/packages/commandkit/src/flags/feature-flags.ts#L144)
+
+| Parameter | Type | Optional | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| res | T | ✅ | Optional entities to use for evaluation. If not provided, it will call the identify function. |
+
+
+- [Source](https://github.com/underctrl-io/commandkit/blob/98b939d6fdf8beaae597b4dc0351a139da52ee8d/packages/commandkit/src/flags/feature-flags.ts#L316)
