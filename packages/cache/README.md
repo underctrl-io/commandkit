@@ -16,9 +16,7 @@ To use the `@commandkit/cache` plugin, you need to add it to your CommandKit app
 import { cache } from '@commandkit/cache';
 
 export default defineConfig({
-  plugins: [
-    cache(),
-  ],
+  plugins: [cache()],
 })
 ```
 
@@ -50,14 +48,10 @@ async function fetchDogs() {
 Now the `fetchDogs` function will be cached for 1 hour. You can perform on-demand cache invalidation or revalidation using the `invalidate` and `revalidate` methods:
 
 ```ts
-import { invalidate, revalidate } from '@commandkit/cache';
+import { revalidateTag } from '@commandkit/cache';
 
 async function refreshCache() {
-  // invalidate the cache for the "dogs" tag. This will remove the cached data.
-  // calling the function again will fetch fresh data.
-  await invalidate('dogs');
-
   // revalidate the cache for the "dogs" tag. This will fetch fresh data and update the cache.
-  await revalidate('dogs');
+  await revalidateTag('dogs');
 }
 ```
