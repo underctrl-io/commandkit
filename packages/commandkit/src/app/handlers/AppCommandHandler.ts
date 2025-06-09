@@ -25,7 +25,7 @@ import colors from '../../utils/colors';
 
 export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
 
-interface AppCommand {
+interface AppCommandNative {
   command: SlashCommandBuilder | Record<string, any>;
   chatInput?: (ctx: Context) => Awaitable<unknown>;
   autocomplete?: (ctx: Context) => Awaitable<unknown>;
@@ -33,6 +33,8 @@ interface AppCommand {
   messageContextMenu?: (ctx: Context) => Awaitable<unknown>;
   userContextMenu?: (ctx: Context) => Awaitable<unknown>;
 }
+
+type AppCommand = AppCommandNative & Record<string, any>;
 
 interface AppCommandMiddleware {
   beforeExecute: (ctx: Context) => Awaitable<unknown>;
