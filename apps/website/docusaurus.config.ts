@@ -2,7 +2,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
-const UPPERCASE = new Set(['jsx', 'cli', 'api']);
+const UPPERCASE = new Set(['jsx', 'cli', 'api', 'ai']);
 
 const maybeUpperCase = (str: string) => {
   const chunks = str.split(' ');

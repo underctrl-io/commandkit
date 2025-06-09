@@ -17,6 +17,14 @@ This is an experimental feature and is subject to change.
 npm install @commandkit/ai
 ```
 
+You also need to install the AI SDK for the model you want to use. For example, if you want to use Google Gemini, you can install the `@ai-sdk/google` package:
+
+```bash
+npm install @ai-sdk/google
+```
+
+Refer to the [AI SDKs documentation](https://ai-sdk.dev) for more information on how to set up the AI SDK for your model.
+
 ## Usage
 
 ```typescript title="commandkit.config.ts"
@@ -53,6 +61,21 @@ configureAI({
     return (
       message.inGuild() && message.mentions.users.has(message.client.user.id)
     );
+  },
+  // OPTIONAL: set your own system prompt
+  systemPrompt: async (message) => {
+    return `You are a helpful AI discord bot. Your name is ${message.client.user.username} and your id is ${message.client.user.id}.
+      You are designed to assist users with their questions and tasks. You also have access to various tools that can help you perform tasks.
+      Tools are basically like commands that you can execute to perform specific actions based on user input.
+      Keep the response short and concise, and only use tools when necessary. Keep the response length under 2000 characters.
+      Do not include your own text in the response unless necessary. For text formatting, you can use discord's markdown syntax.
+      ${
+        // If the message is in a guild, include the guild name and id
+        // Otherwise, mention that the message is in a direct message
+        message.inGuild()
+          ? `\nYou are currently in a guild named ${message.guild.name} whose id is ${message.guildId}. While in guild, you can fetch member information if needed.`
+          : '\nYou are currently in a direct message with the user.'
+      }`;
   },
 });
 ```
