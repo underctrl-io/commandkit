@@ -82,7 +82,7 @@ configureAI({
 
 Now you can simply import this file in your `app.ts`,
 
-```ts title="app.ts"
+```ts title="src/app.ts"
 import { Client } from 'discord.js';
 // simply import the ai file
 import './ai';
@@ -96,7 +96,7 @@ export default client;
 
 AI commands can be created by exporting a function called `ai` from your command file. You can also export `aiConfig` object along with the `ai` function to specify the parameters for the command.
 
-```typescript title="src/commands/balance.ts"
+```typescript title="src/app/commands/balance.ts"
 import { ApplicationCommandOptionType } from 'discord.js';
 import { CommandData, ChatInputCommand } from 'commandkit';
 import { AiCommand } from '@commandkit/ai';
