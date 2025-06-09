@@ -1,5 +1,6 @@
 import type { Client } from 'discord.js';
+import { Logger } from 'commandkit/logger';
 
 export default function log(client: Client<true>) {
-  console.log(`Logged in as ${client.user.username}!`);
+  Logger.success(`Logged in as ${client.user.username}!`);
 }

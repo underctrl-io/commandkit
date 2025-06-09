@@ -1,6 +1,8 @@
+import { Logger } from 'commandkit/logger'
+
 /**
  * @param {import('discord.js').Client<true>} client
  */
 export default function log(client) {
-  console.log(`Logged in as ${client.user.username}!`);
+  Logger.success(`Logged in as ${client.user.username}!`);
 }
