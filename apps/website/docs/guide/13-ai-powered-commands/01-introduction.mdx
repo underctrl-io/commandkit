@@ -54,7 +54,14 @@ configureAI({
   // commandkit will call this function
   // to determine which AI model to use
   selectAiModel: async () => {
-    return { model };
+    return {
+      model,
+      // OPTIONAL: provider specific options
+      options,
+      // OPTIONAL: whether to use the object mode. Default is false.
+      // If set to true, the AI will be able to generate object responses, such as creating polls or sending embeds.
+      objectMode: false,
+    };
   },
   messageFilter: async (message) => {
     // only respond to messages in guilds that mention the bot
@@ -156,3 +163,17 @@ AI can also call multiple commands in a single message. Eg:
 ```
 
 The above prompt will call the built-in `getUserInfo` tool and the `balance` command.
+
+## Object Mode Example
+
+Simply set the `objectMode` to `true` in the `configureAI` function to enable object mode. This allows the AI to generate object responses, such as creating polls or sending embeds.
+
+```text
+@bot create a poll titled "What's your favorite game?" and answers should be
+- minecraft
+- fortnite
+- pubg
+- clash of clans
+```
+
+![object mode example](/img/ai-object-mode.png)

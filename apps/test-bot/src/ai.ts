@@ -9,7 +9,10 @@ const model = google.languageModel('gemini-2.0-flash');
 
 configureAI({
   selectAiModel: async () => {
-    return { model };
+    return {
+      model,
+      objectMode: true,
+    };
   },
   messageFilter: async (message) => {
     return (

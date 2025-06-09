@@ -3,9 +3,10 @@ import { AiPluginOptions, MessageFilter, SelectAiModel } from './types';
 import { LoadedCommand, Logger } from 'commandkit';
 import { AiContext } from './context';
 import { Collection, Events, Message, TextChannel } from 'discord.js';
-import { tool, Tool, generateText } from 'ai';
+import { tool, Tool, generateText, Output } from 'ai';
 import { z } from 'zod';
 import { getAiWorkerContext, runInAiWorkerContext } from './ai-context-worker';
+import { AiResponseSchema } from './schema';
 
 type WithAI<T extends LoadedCommand> = T & {
   data: {
@@ -201,7 +202,10 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
       Tools are basically like commands that you can execute to perform specific actions based on user input.
       Keep the response short and concise, and only use tools when necessary. Keep the response length under 2000 characters.
       Do not include your own text in the response unless necessary. For text formatting, you can use discord's markdown syntax.
-      ${message.inGuild() ? `\nYou are currently in a guild named ${message.guild.name} whose id is ${message.guildId}. While in guild, you can fetch member information if needed.` : '\nYou are currently in a direct message with the user.'}`;
+      ${message.inGuild() ? `\nYou are currently in a guild named ${message.guild.name} whose id is ${message.guildId}. While in guild, you can fetch member information if needed.` : '\nYou are currently in a direct message with the user.'}
+      If the user asks you to create a poll or embeds, create a text containing the poll or embed information. If structured response is possible, use the structured response format.
+      If the user asks you to perform a task that requires a tool, use the tool to perform the task and return the result.
+      `;
 
     const userInfo = `<user>
     <id>${message.author.id}</id>
@@ -215,22 +219,116 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
       const stopTyping = await this.startTyping(channel);
 
       try {
-        const { model, options } = await aiModelSelector(message);
-        const result = await generateText({
-          abortSignal: AbortSignal.timeout(60_000),
+        const {
           model,
-          tools: { ...this.toolsRecord, ...this.defaultTools },
-          prompt: `${userInfo}\nUser: ${message.content}\nAI:`,
-          system: systemPrompt,
-          maxSteps: 5,
-          providerOptions: options,
-        });
+          options,
+          objectMode = false,
+        } = await aiModelSelector(message);
+
+        const originalPrompt = `${userInfo}\nUser: ${message.content}\nAI:`;
+
+        const call = ({
+          prompt = originalPrompt,
+          includeTools = true,
+          disableObjectMode = false,
+        }) =>
+          generateText({
+            abortSignal: AbortSignal.timeout(60_000),
+            model,
+            ...(includeTools && {
+              tools: { ...this.toolsRecord, ...this.defaultTools },
+            }),
+            prompt,
+            system: systemPrompt,
+            maxSteps: 5,
+            providerOptions: options,
+            ...(objectMode && !disableObjectMode
+              ? {
+                  experimental_output: Output.object({
+                    schema: AiResponseSchema,
+                  }),
+                }
+              : {}),
+          });
+
+        let result: any;
+
+        try {
+          result = await call({});
+        } catch {
+          if (objectMode) {
+            const r1 = await call({
+              includeTools: true,
+              disableObjectMode: true,
+            });
+
+            if (!r1.text) throw new Error('No text response from AI');
+
+            const r2 = await call({
+              includeTools: false,
+              disableObjectMode: false,
+              prompt: `Original context: ${r1.text} ${r1.text}\n\nGenerate a structured response based on the previous response`,
+            });
+
+            result = r2;
+          }
+        }
 
         stopTyping();
 
-        if (!!result.text) {
+        let structuredResult: z.infer<typeof AiResponseSchema> | null = null;
+
+        try {
+          const val =
+            'experimental_output' in result && result.experimental_output;
+
+          if (val) {
+            structuredResult = val;
+          }
+        } catch {}
+
+        if (structuredResult) {
+          const { poll, content, embeds } = structuredResult;
+
+          if (!poll && !content && !embeds) {
+            Logger.warn(
+              'AI response did not include any content, embeds, or poll.',
+            );
+            return;
+          }
+
           await message.reply({
-            content: result.text,
+            content: content?.substring(0, 2000),
+            embeds: embeds?.map((embed) => ({
+              title: embed.title,
+              description: embed.description,
+              url: embed.url,
+              color: embed.color,
+              image: embed.image?.url ? { url: embed.image.url } : undefined,
+              thumbnail: embed.thumbnail?.url
+                ? { url: embed.thumbnail.url }
+                : undefined,
+              fields: embed.fields?.map((field) => ({
+                name: field.name,
+                value: field.value,
+                inline: field.inline,
+              })),
+            })),
+            poll: poll
+              ? {
+                  allowMultiselect: poll.allow_multiselect,
+                  answers: poll.answers.map((answer) => ({
+                    text: answer.text,
+                    emoji: answer.emoji,
+                  })),
+                  duration: poll.duration,
+                  question: { text: poll.question.text },
+                }
+              : undefined,
+          });
+        } else if (!!result.text) {
+          await message.reply({
+            content: result.text.substring(0, 2000),
             allowedMentions: { parse: [] },
           });
         }
