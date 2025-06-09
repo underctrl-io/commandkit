@@ -1,5 +1,6 @@
 import { Client } from 'discord.js';
 import { Logger, commandkit } from 'commandkit';
+import './ai';
 
 const client = new Client({
   intents: [

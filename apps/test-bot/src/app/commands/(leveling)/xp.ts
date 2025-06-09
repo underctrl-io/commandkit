@@ -1,10 +1,20 @@
 import { ChatInputCommandContext, CommandData } from 'commandkit';
-import { database } from '../../../database/store.ts';
+import { database } from '@/database/store.ts';
 import { cacheTag } from '@commandkit/cache';
+import { AiConfig, AiContext } from '@commandkit/ai';
+import { z } from 'zod';
 
 export const command: CommandData = {
   name: 'xp',
   description: 'This is an xp command.',
+};
+
+export const aiConfig: AiConfig = {
+  description: 'Get the XP of a user in a guild.',
+  parameters: z.object({
+    guildId: z.string().describe('The ID of the guild.'),
+    userId: z.string().describe('The ID of the user.'),
+  }),
 };
 
 async function getUserXP(guildId: string, userId: string) {
@@ -38,4 +48,27 @@ export async function chatInput({ interaction }: ChatInputCommandContext) {
       },
     ],
   });
+}
+
+export async function ai(ctx: AiContext) {
+  const message = ctx.message;
+
+  if (!message.inGuild()) {
+    return {
+      error: 'This tool can only be used in a guild.',
+    };
+  }
+
+  const { guildId, userId } = ctx.params as {
+    guildId: string;
+    userId: string;
+  };
+
+  const xp = await getUserXP(guildId, userId);
+
+  return {
+    userId,
+    guildId,
+    xp,
+  };
 }

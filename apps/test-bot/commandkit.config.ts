@@ -3,6 +3,7 @@ import { legacy } from '@commandkit/legacy';
 import { i18n } from '@commandkit/i18n';
 import { devtools } from '@commandkit/devtools';
 import { cache } from '@commandkit/cache';
+import { ai } from '@commandkit/ai';
 
 export default defineConfig({
   plugins: [
@@ -10,5 +11,6 @@ export default defineConfig({
     legacy({ skipBuiltInValidations: true }),
     devtools(),
     cache(),
+    ai(),
   ],
 });

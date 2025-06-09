@@ -1,0 +1,38 @@
+{
+  "name": "@commandkit/ai",
+  "version": "0.1.0",
+  "description": "Supercharge your CommandKit bot with AI capabilities",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underctrl-io/commandkit.git"
+  },
+  "keywords": [
+    "commandkit",
+    "ai"
+  ],
+  "author": "twilight <hello@twlite.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/underctrl-io/commandkit/issues"
+  },
+  "homepage": "https://github.com/underctrl-io/commandkit#readme",
+  "devDependencies": {
+    "commandkit": "workspace:*",
+    "discord.js": "^14.19.3",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "ai": "^4.3.16",
+    "zod": "^3.25.48"
+  }
+}
