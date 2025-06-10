@@ -1,9 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 
-const DOCS_BASE_URL =
-  process.env.DOCS_BASE_URL || 'https://commandkit.dev/docs';
-
 module.exports = function (context) {
   return {
     name: 'llms-txt-plugin',
