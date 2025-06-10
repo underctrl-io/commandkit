@@ -1,34 +1,223 @@
+/* some of these styles were borrowed from https://github.com/vendure-ecommerce/vendure/blob/cfc0dd7c34fd070a15455508f32d37e94589e656/docs/src/css/custom.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
-
 /* You can override the default Infima variables here. */
 :root {
+  /* Colors - Enhanced Purple Theme */
   --ifm-color-primary: #a46ef8;
   --ifm-color-primary-dark: #9a60f7;
   --ifm-color-primary-darker: #7e33f6;
   --ifm-color-primary-darkest: #5e0ce2;
-  --ifm-color-primary-light: #7e33f6;
-  --ifm-color-primary-lighter: #9a60f7;
-  --ifm-color-primary-lightest: #a46ef8;
+  --ifm-color-primary-light: #b87cf9;
+  --ifm-color-primary-lighter: #cc8afa;
+  --ifm-color-primary-lightest: #e098fb;
+  --ifm-navbar-background-color: rgba(255, 255, 255, 0.07);
+  --navbar-background-color-mobile: rgba(255, 255, 255, 0.93);
+  --ifm-heading-color: #000212;
+  --ifm-color-content: var(--ifm-color-emphasis-800);
   --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(164, 110, 248, 0.1);
+  --color-members-border: var(--ifm-color-secondary);
+  --body-background: linear-gradient(135deg, #ffffff 0%, #f8f5ff 100%);
+  --ifm-footer-background-color: #f5f0ff;
+  --color-docsearch-border: #b7b7c3;
+
+  /* Enhanced menu icon with better contrast */
+  --ifm-menu-link-sublist-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="%23a46ef8" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>');
+
+  /* Fonts */
+  --ifm-font-family-base:
+    'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+  --ifm-heading-font-family: 'Geist', var(--ifm-font-family-base);
+  --ifm-heading-font-weight: 700;
+  --ifm-font-family-monospace:
+    'JetBrains Mono', 'SF Mono', Monaco, 'Inconsolata', 'Roboto Mono',
+    'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
+html[data-theme='dark'] {
+  --ifm-background-color: #000212;
+  --ifm-heading-color: #ffffff;
+  --ifm-navbar-background-color: transparent;
+  --navbar-background-color-mobile: transparent;
+  --ifm-card-background-color: rgba(164, 110, 248, 0.05);
+  --ifm-color-content: hsla(0, 0%, 100%, 0.7);
+
+  /* Enhanced Purple Theme for Dark Mode */
   --ifm-color-primary: #a46ef8;
   --ifm-color-primary-dark: #9a60f7;
   --ifm-color-primary-darker: #7e33f6;
   --ifm-color-primary-darkest: #5e0ce2;
-  --ifm-color-primary-light: #7e33f6;
-  --ifm-color-primary-lighter: #9a60f7;
-  --ifm-color-primary-lightest: #a46ef8;
-  --docusaurus-highlighted-code-line-bg: rgba(137, 137, 137, 0.3);
+  --ifm-color-primary-light: #b87cf9;
+  --ifm-color-primary-lighter: #cc8afa;
+  --ifm-color-primary-lightest: #e098fb;
+
+  --docusaurus-highlighted-code-line-bg: rgba(164, 110, 248, 0.2);
+  --color-members-border: #333;
+  --body-background: radial-gradient(
+    ellipse 80% 50% at 50% -20%,
+    rgba(164, 110, 248, 0.3),
+    transparent
+  );
+  --ifm-footer-background-color: var(--ifm-background-color);
+  --color-docsearch-border: #4c2889;
+  --ifm-footer-title-color: #ffffff;
+}
+
+html[data-theme='light'] {
+  --ifm-background-color: #ffffff;
+}
+
+/* Enhanced Typography with Tailwind-inspired utilities */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: -0.025em; /* Tailwind's tracking-tight */
+  @apply font-bold;
+}
+
+/* Responsive typography scaling */
+h1 {
+  @apply text-4xl md:text-5xl lg:text-6xl;
+}
+
+h2 {
+  @apply text-3xl md:text-4xl lg:text-5xl;
+}
+
+h3 {
+  @apply text-2xl md:text-3xl lg:text-4xl;
+}
+
+.markdown h2:not(:first-of-type) {
+  --ifm-h2-vertical-rhythm-top: 5;
+}
+
+.markdown img {
+  @apply rounded-lg shadow-md transition-transform duration-300 hover:scale-105;
+}
+
+/* Enhanced members wrapper with better visual hierarchy */
+.members-wrapper {
+  @apply border-l-4 border-purple-200 dark:border-purple-800 pl-8 ml-4;
+  background: linear-gradient(
+    90deg,
+    rgba(164, 110, 248, 0.05) 0%,
+    transparent 100%
+  );
+}
+
+.members-wrapper > h3 {
+  @apply mt-12 text-purple-700 dark:text-purple-300;
+}
+
+/* Enhanced sidebar styling with Tailwind utilities */
+.sidebar-section-header {
+  @apply uppercase font-bold text-xs opacity-80 text-gray-500 dark:text-gray-400;
+  @apply px-3 py-2 tracking-wider;
+}
+
+.sidebar-section-divider {
+  @apply border-b border-gray-200 dark:border-gray-700 opacity-50 mx-3 my-2;
+}
+
+/* Enhanced code block styling */
+.limited-height-code-block pre.prism-code {
+  @apply max-h-96 rounded-lg shadow-lg;
+  background: linear-gradient(
+    135deg,
+    rgba(164, 110, 248, 0.1) 0%,
+    rgba(126, 51, 246, 0.05) 100%
+  );
+}
+
+/* Additional utility classes for enhanced UX */
+.glass-effect {
+  @apply backdrop-blur-sm bg-white/10 dark:bg-black/10;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent;
+}
+
+/* Enhanced button and interactive elements */
+.btn-primary {
+  @apply bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600;
+  @apply text-white font-semibold px-6 py-3 rounded-lg shadow-lg;
+  @apply transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+}
+
+/* Enhanced card styling */
+.card-enhanced {
+  @apply bg-gradient-to-br from-white to-purple-50 dark:from-gray-900 dark:to-purple-900/20;
+  @apply border border-purple-200/50 dark:border-purple-800/50;
+  @apply rounded-xl shadow-lg hover:shadow-xl transition-all duration-300;
+}
+
+/* Terminal/console styling */
+.terminal-output {
+  @apply bg-gray-900 text-green-400 p-4 rounded-lg;
+  font-family: var(--ifm-font-family-monospace);
+  font-optical-sizing: auto;
+  font-weight: 400;
+}
+
+/* Custom animations for homepage */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Floating animation for particles */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 6s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+/* Pulse glow effect */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(164, 110, 248, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(164, 110, 248, 0.6);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
 }

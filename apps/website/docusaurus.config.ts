@@ -67,7 +67,11 @@ const config: Config = {
           },
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: [
+            './src/css/custom.css',
+            './src/css/layout.css',
+            './src/css/overrides.css',
+          ],
         },
         sitemap: {
           lastmod: 'date',
@@ -87,7 +91,7 @@ const config: Config = {
   themeConfig: {
     docs: {
       sidebar: {
-        hideable: true,
+        hideable: false,
         autoCollapseCategories: true,
       },
     },
@@ -155,7 +159,7 @@ const config: Config = {
       MIT © ${new Date().getFullYear()} CommandKit`,
     },
     prism: {
-      theme: prismThemes.github,
+      theme: prismThemes.vsLight,
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
@@ -173,6 +177,7 @@ const config: Config = {
         },
       };
     },
+    require('./src/plugins/llms-txt.js'),
   ],
 };
 
