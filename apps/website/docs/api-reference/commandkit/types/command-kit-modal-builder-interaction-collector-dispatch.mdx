@@ -1,0 +1,26 @@
+---
+title: "CommandKitModalBuilderInteractionCollectorDispatch"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKitModalBuilderInteractionCollectorDispatch
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/modal/ModalKit.ts" sourceLine="38" packageName="commandkit" />
+
+The handler to run when a modal is submitted. This handler is called with the interaction as the first argument.
+If the first argument is null, it means that the interaction collector has been destroyed.
+
+```ts title="Signature"
+type CommandKitModalBuilderInteractionCollectorDispatch = (
+  interaction: ModalSubmitInteraction,
+  context: ModalKit,
+) => Awaitable<void>
+```

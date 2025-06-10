@@ -1,0 +1,24 @@
+---
+title: "CustomEvaluationFunction"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CustomEvaluationFunction
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/feature-flags.ts" sourceLine="203" packageName="commandkit" />
+
+Function type for custom evaluation of feature flags.
+This function can be used to provide a custom evaluation context for the flag.
+It should return an object representing the entities to be evaluated.
+
+```ts title="Signature"
+type CustomEvaluationFunction<E> = () => MaybePromise<E>
+```

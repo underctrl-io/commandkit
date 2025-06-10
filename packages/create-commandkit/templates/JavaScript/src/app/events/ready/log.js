@@ -1,4 +1,4 @@
-import { Logger } from 'commandkit/logger'
+import { Logger } from 'commandkit/logger';
 
 /**
  * @param {import('discord.js').Client<true>} client

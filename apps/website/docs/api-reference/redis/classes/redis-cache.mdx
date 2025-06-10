@@ -1,0 +1,124 @@
+---
+title: "RedisCache"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## RedisCache
+
+<GenerationInfo sourceFile="packages/redis/src/index.ts" sourceLine="17" packageName="@commandkit/redis" />
+
+A cache provider that uses Redis as the cache store.
+
+
+
+*Example*
+
+```ts
+const redisCache = new RedisCache();
+new CommandKit({
+...
+cacheProvider: redisCache,
+});
+```
+
+```ts title="Signature"
+class RedisCache extends CacheProvider {
+    public redis: Redis;
+    public serialize: SerializeFunction;
+    public deserialize: DeserializeFunction;
+    constructor()
+    constructor(redis: Redis)
+    constructor(redis: RedisOptions)
+    constructor(redis?: Redis | RedisOptions)
+    get(key: string) => Promise<CacheEntry<T> | undefined>;
+    set(key: string, value: T, ttl?: number) => Promise<void>;
+    clear() => Promise<void>;
+    delete(key: string) => Promise<void>;
+    exists(key: string) => Promise<boolean>;
+    expire(key: string, ttl: number) => Promise<void>;
+}
+```
+* Extends: <code><a href='/docs/next/api-reference/cache/classes/cache-provider#cacheprovider'>CacheProvider</a></code>
+
+
+
+<div className="members-wrapper">
+
+### redis
+
+<MemberInfo kind="property" type={`Redis`}   />
+
+
+### serialize
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/redis/types/serialize-function#serializefunction'>SerializeFunction</a>`}   />
+
+Serialize function used to serialize values before storing them in the cache.
+By default, it uses `JSON.stringify`.
+### deserialize
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/redis/types/deserialize-function#deserializefunction'>DeserializeFunction</a>`}   />
+
+Deserialize function used to deserialize values before returning them from the cache.
+By default, it uses `JSON.parse`.
+### constructor
+
+<MemberInfo kind="method" type={`() => RedisCache`}   />
+
+Create a new RedisCache instance.
+### constructor
+
+<MemberInfo kind="method" type={`(redis: Redis) => RedisCache`}   />
+
+Create a new RedisCache instance with the provided Redis client.
+### constructor
+
+<MemberInfo kind="method" type={`(redis: RedisOptions) => RedisCache`}   />
+
+Create a new RedisCache instance with the provided Redis options.
+### constructor
+
+<MemberInfo kind="method" type={`(redis?: Redis | RedisOptions) => RedisCache`}   />
+
+
+### get
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;<a href='/docs/next/api-reference/cache/interfaces/cache-entry#cacheentry'>CacheEntry</a>&#60;T&#62; | undefined&#62;`}   />
+
+Retrieve a value from the cache.
+### set
+
+<MemberInfo kind="method" type={`(key: string, value: T, ttl?: number) => Promise&#60;void&#62;`}   />
+
+Store a value in the cache.
+### clear
+
+<MemberInfo kind="method" type={`() => Promise&#60;void&#62;`}   />
+
+Clear all entries from the cache.
+### delete
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+Delete a value from the cache.
+### exists
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;boolean&#62;`}   />
+
+Check if a value exists in the cache.
+### expire
+
+<MemberInfo kind="method" type={`(key: string, ttl: number) => Promise&#60;void&#62;`}   />
+
+Set the time-to-live for a cache entry.
+
+
+</div>

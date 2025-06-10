@@ -1,0 +1,155 @@
+---
+title: "RuntimePlugin"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## RuntimePlugin
+
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/RuntimePlugin.ts" sourceLine="15" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class RuntimePlugin<T extends PluginOptions = PluginOptions> extends PluginCommon<T, CommandKitPluginRuntime> {
+    public readonly type = PluginType.Runtime;
+    onBeforeCommandsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onAfterCommandsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onBeforeEventsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onAfterEventsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onBeforeClientLogin(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onAfterClientLogin(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onBeforeInteraction(ctx: CommandKitPluginRuntime, interaction: Interaction) => Promise<void>;
+    onBeforeMessageCommand(ctx: CommandKitPluginRuntime, message: Message) => Promise<void>;
+    executeCommand(ctx: CommandKitPluginRuntime, env: CommandKitEnvironment, source: Interaction | Message, command: PreparedAppCommandExecution, execute: () => Promise<any>) => Promise<boolean>;
+    onEventsRouterInit(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onCommandsRouterInit(ctx: CommandKitPluginRuntime) => Promise<void>;
+    performHMR(ctx: CommandKitPluginRuntime, event: CommandKitHMREvent) => Promise<void>;
+    prepareCommand(ctx: CommandKitPluginRuntime, commands: CommandBuilderLike) => Promise<CommandBuilderLike | null>;
+    onBeforeRegisterCommands(ctx: CommandKitPluginRuntime, event: PreRegisterCommandsEvent) => Promise<void>;
+    onBeforeRegisterGlobalCommands(ctx: CommandKitPluginRuntime, event: PreRegisterCommandsEvent) => Promise<void>;
+    onBeforePrepareGuildCommandsRegistration(ctx: CommandKitPluginRuntime, event: PreRegisterCommandsEvent) => Promise<void>;
+    onBeforeRegisterGuildCommands(ctx: CommandKitPluginRuntime, event: PreRegisterCommandsEvent) => Promise<void>;
+    onAfterCommand(ctx: CommandKitPluginRuntime, env: CommandKitEnvironment) => ;
+    willEmitEvent(ctx: CommandKitPluginRuntime, event: CommandKitEventDispatch) => ;
+}
+```
+* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/plugin-common#plugincommon'>PluginCommon</a>&#60;T, <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>&#62;</code>
+
+
+
+<div className="members-wrapper">
+
+### type
+
+<MemberInfo kind="property" type={``}   />
+
+
+### onBeforeCommandsLoad
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Called before commands are loaded
+### onAfterCommandsLoad
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Called after commands are loaded
+### onBeforeEventsLoad
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Called before events are loaded
+### onAfterEventsLoad
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Called after events are loaded
+### onBeforeClientLogin
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Called before the client logs in
+### onAfterClientLogin
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Called after the client logs in
+### onBeforeInteraction
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, interaction: Interaction) => Promise&#60;void&#62;`}   />
+
+Called before interaction is handled
+### onBeforeMessageCommand
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, message: Message) => Promise&#60;void&#62;`}   />
+
+Called before message command is processed
+### executeCommand
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, env: <a href='/docs/next/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>, source: Interaction | Message, command: <a href='/docs/next/api-reference/commandkit/interfaces/prepared-app-command-execution#preparedappcommandexecution'>PreparedAppCommandExecution</a>, execute: () =&#62; Promise&#60;any&#62;) => Promise&#60;boolean&#62;`}   />
+
+Called before command is executed. This method can execute the command itself.
+### onEventsRouterInit
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Called after events router is initialized
+### onCommandsRouterInit
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Called after commands router is initialized
+### performHMR
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/command-kit-hmrevent#commandkithmrevent'>CommandKitHMREvent</a>) => Promise&#60;void&#62;`}   />
+
+Called when HMR event is received
+### prepareCommand
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, commands: <a href='/docs/next/api-reference/commandkit/types/command-builder-like#commandbuilderlike'>CommandBuilderLike</a>) => Promise&#60;<a href='/docs/next/api-reference/commandkit/types/command-builder-like#commandbuilderlike'>CommandBuilderLike</a> | null&#62;`}   />
+
+Called before command is loaded for registration. This method can be used to modify the command data before it is loaded.
+### onBeforeRegisterCommands
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/pre-register-commands-event#preregistercommandsevent'>PreRegisterCommandsEvent</a>) => Promise&#60;void&#62;`}   />
+
+Called before command is registered to discord. This method can cancel the registration of the command and handle it manually.
+### onBeforeRegisterGlobalCommands
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/pre-register-commands-event#preregistercommandsevent'>PreRegisterCommandsEvent</a>) => Promise&#60;void&#62;`}   />
+
+Called before global commands registration. This method can cancel the registration of the command and handle it manually.
+This method is called after `onBeforeRegisterCommands` if that stage was not handled.
+### onBeforePrepareGuildCommandsRegistration
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/pre-register-commands-event#preregistercommandsevent'>PreRegisterCommandsEvent</a>) => Promise&#60;void&#62;`}   />
+
+Called before guild commands registration. This method can cancel the registration of the command and handle it manually.
+This method is called before guilds of the command are resolved. It is called after `onBeforeRegisterCommands` if that stage was not handled.
+### onBeforeRegisterGuildCommands
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/pre-register-commands-event#preregistercommandsevent'>PreRegisterCommandsEvent</a>) => Promise&#60;void&#62;`}   />
+
+Called before guild commands registration. This method can cancel the registration of the command and handle it manually.
+This method is called after guilds of the command are resolved. It is called after `onBeforePrepareGuildCommandsRegistration` if that stage was not handled.
+### onAfterCommand
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, env: <a href='/docs/next/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>) => `}   />
+
+Called after command and all of its deferred functions are executed.
+### willEmitEvent
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/command-kit-event-dispatch#commandkiteventdispatch'>CommandKitEventDispatch</a>) => `}   />
+
+Called before emitting an event
+
+
+</div>

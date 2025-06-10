@@ -1,0 +1,53 @@
+---
+title: "CommandKitEnvironment"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKitEnvironment
+
+<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="17" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class CommandKitEnvironment {
+    constructor(commandkit: CommandKit)
+    setContext(context: Context) => void;
+    getType() => CommandKitEnvironmentType;
+    variables: Map<string, any>
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => CommandKitEnvironment`}   />
+
+Creates the commandkit execution environment.
+### setContext
+
+<MemberInfo kind="method" type={`(context: <a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a>) => void`}   />
+
+Set the context.
+### getType
+
+<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/enums/command-kit-environment-type#commandkitenvironmenttype'>CommandKitEnvironmentType</a>`}   />
+
+Get the environment type.
+### variables
+
+<MemberInfo kind="property" type={`Map&#60;string, any&#62;`}   />
+
+The variables store for this environment.
+
+
+</div>

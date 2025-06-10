@@ -1,0 +1,50 @@
+---
+title: "CommandTranslationMetadata"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandTranslationMetadata
+
+<GenerationInfo sourceFile="packages/i18n/src/types.ts" sourceLine="3" packageName="@commandkit/i18n" />
+
+
+
+```ts title="Signature"
+interface CommandTranslationMetadata {
+    name?: string;
+    description?: string;
+    options?: (
+    | Record<'name' | 'description', string>
+    | Record<string, Record<'name' | 'description', string>>
+  )[];
+}
+```
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={`string`}   />
+
+
+### description
+
+<MemberInfo kind="property" type={`string`}   />
+
+
+### options
+
+<MemberInfo kind="property" type={`(     | Record&#60;'name' | 'description', string&#62;     | Record&#60;string, Record&#60;'name' | 'description', string&#62;&#62;   )[]`}   />
+
+
+
+
+</div>

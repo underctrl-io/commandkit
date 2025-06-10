@@ -1,0 +1,68 @@
+---
+title: "AiPlugin"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## AiPlugin
+
+<GenerationInfo sourceFile="packages/ai/src/plugin.ts" sourceLine="48" packageName="@commandkit/ai" />
+
+
+
+```ts title="Signature"
+class AiPlugin extends RuntimePlugin<AiPluginOptions> {
+    public readonly name = 'AiPlugin';
+    constructor(options: AiPluginOptions)
+    activate(ctx: CommandKitPluginRuntime) => Promise<void>;
+    deactivate(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onBeforeCommandsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onAfterCommandsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
+}
+```
+* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>&#60;AiPluginOptions&#62;</code>
+
+
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={``}   />
+
+
+### constructor
+
+<MemberInfo kind="method" type={`(options: AiPluginOptions) => AiPlugin`}   />
+
+
+### activate
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+
+### deactivate
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+
+### onBeforeCommandsLoad
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+
+### onAfterCommandsLoad
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+
+
+
+</div>

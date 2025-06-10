@@ -1,0 +1,27 @@
+---
+title: "IdentifyFunction"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## IdentifyFunction
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/feature-flags.ts" sourceLine="39" packageName="commandkit" />
+
+Function type for identifying entities in the context of feature flags.
+This function should return an object representing the entity that will be used
+to evaluate the feature flag.
+It can be synchronous or asynchronous.
+
+```ts title="Signature"
+type IdentifyFunction<R> = (
+  context: EvaluationContext,
+) => MaybePromise<R>
+```

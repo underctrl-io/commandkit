@@ -1,0 +1,62 @@
+---
+title: "MiddlewareContext"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## MiddlewareContext
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="455" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class MiddlewareContext<T extends CommandExecutionMode = CommandExecutionMode> extends Context<T, MiddlewareContextArgs> {
+    cancelled: boolean
+    cancel() => void;
+    setCommandRunner(fn: RunCommand) => void;
+}
+```
+* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a>&#60;T, <a href='/docs/next/api-reference/commandkit/interfaces/middleware-context-args#middlewarecontextargs'>MiddlewareContextArgs</a>&#62;</code>
+
+
+
+<div className="members-wrapper">
+
+### cancelled
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether the command execution was cancelled.
+### cancel
+
+<MemberInfo kind="method" type={`() => void`}   />
+
+Cancels the command execution.
+### setCommandRunner
+
+<MemberInfo kind="method" type={`(fn: <a href='/docs/next/api-reference/commandkit/types/run-command#runcommand'>RunCommand</a>) => void`}   />
+
+Sets command runner function to wrap the command execution.
+
+
+
+*Example*
+
+```ts
+ctx.setCommandRunner(async (execute) => {
+// do something before command execution
+await execute();
+// do something after command execution
+})
+```
+
+
+</div>

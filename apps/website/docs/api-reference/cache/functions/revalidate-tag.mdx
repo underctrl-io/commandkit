@@ -1,0 +1,36 @@
+---
+title: "RevalidateTag"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## revalidateTag
+
+<GenerationInfo sourceFile="packages/cache/src/use-cache.ts" sourceLine="267" packageName="@commandkit/cache" />
+
+Marks cache entries for invalidation by their tag. The invalidation only happens when the path is next visited.
+
+
+
+*Example*
+
+```ts
+await revalidateTag('user:123');
+```
+
+```ts title="Signature"
+function revalidateTag(tag: string): Promise<void>
+```
+Parameters
+
+### tag
+
+<MemberInfo kind="parameter" type={`string`} />
+

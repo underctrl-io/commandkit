@@ -1,0 +1,69 @@
+---
+title: "FeatureFlagDefinition"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## FeatureFlagDefinition
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/feature-flags.ts" sourceLine="61" packageName="commandkit" />
+
+Definition for a feature flag, including its key, description, identify function,
+and decide function.
+The identify function is used to determine the entities that will be evaluated
+against the feature flag, while the decide function contains the logic for
+determining the outcome of the flag based on those entities.
+
+```ts title="Signature"
+interface FeatureFlagDefinition<R, Entity> {
+    key: string;
+    description?: string;
+    identify?: IdentifyFunction<Entity>;
+    decide: DecideFunction<Entity, R>;
+    disableAnalytics?: boolean;
+}
+```
+
+<div className="members-wrapper">
+
+### key
+
+<MemberInfo kind="property" type={`string`}   />
+
+Unique key for the feature flag.
+Should be a string that identifies the flag.
+### description
+
+<MemberInfo kind="property" type={`string`}   />
+
+Optional description of the feature flag.
+This can be used for documentation or debugging purposes.
+### identify
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/identify-function#identifyfunction'>IdentifyFunction</a>&#60;Entity&#62;`}   />
+
+Optional flag to enable integration with an external flag provider.
+If true, the flag will use the global flag provider to determine its state.
+Default: false
+### decide
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/decide-function#decidefunction'>DecideFunction</a>&#60;Entity, R&#62;`}   />
+
+Function to decide the outcome of the feature flag.
+This function receives the identified entities and should return the result of the decision.
+### disableAnalytics
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether to disable analytics tracking for this flag.
+Default: false
+
+
+</div>

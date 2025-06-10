@@ -1,0 +1,77 @@
+---
+title: "CommandFileData"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandFileData
+
+<GenerationInfo sourceFile="packages/legacy/src/loadLegacyCommands.ts" sourceLine="39" packageName="@commandkit/legacy" />
+
+
+
+```ts title="Signature"
+interface CommandFileData {
+    data: CommandData;
+    options?: CommandOptions;
+    chatInput: CommandRunner<ChatInputCommandInteraction>;
+    messageContextMenu?: CommandRunner<MessageContextMenuCommandInteraction>;
+    userContextMenu?: CommandRunner<UserContextMenuCommandInteraction>;
+    autocomplete?: CommandRunner<AutocompleteInteraction>;
+    category: string | null;
+    path: string;
+}
+```
+
+<div className="members-wrapper">
+
+### data
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/legacy/types/command-data#commanddata'>CommandData</a>`}   />
+
+
+### options
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/legacy/interfaces/command-options#commandoptions'>CommandOptions</a>`}   />
+
+
+### chatInput
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/legacy/types/command-runner#commandrunner'>CommandRunner</a>&#60;ChatInputCommandInteraction&#62;`}   />
+
+
+### messageContextMenu
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/legacy/types/command-runner#commandrunner'>CommandRunner</a>&#60;MessageContextMenuCommandInteraction&#62;`}   />
+
+
+### userContextMenu
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/legacy/types/command-runner#commandrunner'>CommandRunner</a>&#60;UserContextMenuCommandInteraction&#62;`}   />
+
+
+### autocomplete
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/legacy/types/command-runner#commandrunner'>CommandRunner</a>&#60;AutocompleteInteraction&#62;`}   />
+
+
+### category
+
+<MemberInfo kind="property" type={`string | null`}   />
+
+
+### path
+
+<MemberInfo kind="property" type={`string`}   />
+
+
+
+
+</div>

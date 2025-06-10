@@ -1,0 +1,251 @@
+---
+title: "MessageCommandOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## MessageCommandOptions
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/MessageCommandParser.ts" sourceLine="183" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class MessageCommandOptions {
+    constructor(parser: MessageCommandParser)
+    getMember(name: string) => GuildMember | null;
+    getMember(name: string, required: true) => GuildMember;
+    getMember(name: string, required:  = false) => ;
+    getAttachment(name: string) => Attachment | null;
+    getAttachment(name: string, required: true) => Attachment;
+    getAttachment(name: string, required:  = false) => ;
+    getBoolean(name: string) => boolean | null;
+    getBoolean(name: string, required: true) => boolean;
+    getBoolean(name: string, required:  = false) => ;
+    getNumber(name: string) => number | null;
+    getNumber(name: string, required: true) => number;
+    getNumber(name: string, required:  = false) => ;
+    getString(name: string) => string | null;
+    getString(name: string, required: true) => string;
+    getString(name: string, required:  = false) => ;
+    getInteger(name: string) => number | null;
+    getInteger(name: string, required: true) => number;
+    getInteger(name: string, required:  = false) => ;
+    getUser(name: string) => User | null;
+    getUser(name: string, required: true) => User;
+    getUser(name: string, required:  = false) => ;
+    getChannel(name: string) => Channel | null;
+    getChannel(name: string, required: true) => Channel;
+    getChannel(name: string, required:  = false) => ;
+    getRole(name: string) => Role | null;
+    getRole(name: string, required: true) => Role;
+    getRole(name: string, required:  = false) => ;
+    getMentionable(name: string) => NonNullable<CommandInteractionOption['member' | 'role' | 'user']> | null;
+    getMentionable(name: string, required: true) => NonNullable<CommandInteractionOption['member' | 'role' | 'user']>;
+    getMentionable(name: string, required:  = false) => NonNullable<CommandInteractionOption['member' | 'role' | 'user']> | null;
+    getSubcommand() => string | null;
+    getSubcommand(required: true) => string;
+    getSubcommand(required:  = false) => ;
+    getSubcommandGroup() => string | null;
+    getSubcommandGroup(required: true) => string;
+    getSubcommandGroup(required:  = false) => ;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(parser: <a href='/docs/next/api-reference/commandkit/classes/message-command-parser#messagecommandparser'>MessageCommandParser</a>) => MessageCommandOptions`}   />
+
+
+### getMember
+
+<MemberInfo kind="method" type={`(name: string) => GuildMember | null`}   />
+
+
+### getMember
+
+<MemberInfo kind="method" type={`(name: string, required: true) => GuildMember`}   />
+
+
+### getMember
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => `}   />
+
+
+### getAttachment
+
+<MemberInfo kind="method" type={`(name: string) => Attachment | null`}   />
+
+
+### getAttachment
+
+<MemberInfo kind="method" type={`(name: string, required: true) => Attachment`}   />
+
+
+### getAttachment
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => `}   />
+
+
+### getBoolean
+
+<MemberInfo kind="method" type={`(name: string) => boolean | null`}   />
+
+
+### getBoolean
+
+<MemberInfo kind="method" type={`(name: string, required: true) => boolean`}   />
+
+
+### getBoolean
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => `}   />
+
+
+### getNumber
+
+<MemberInfo kind="method" type={`(name: string) => number | null`}   />
+
+
+### getNumber
+
+<MemberInfo kind="method" type={`(name: string, required: true) => number`}   />
+
+
+### getNumber
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => `}   />
+
+
+### getString
+
+<MemberInfo kind="method" type={`(name: string) => string | null`}   />
+
+
+### getString
+
+<MemberInfo kind="method" type={`(name: string, required: true) => string`}   />
+
+
+### getString
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => `}   />
+
+
+### getInteger
+
+<MemberInfo kind="method" type={`(name: string) => number | null`}   />
+
+
+### getInteger
+
+<MemberInfo kind="method" type={`(name: string, required: true) => number`}   />
+
+
+### getInteger
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => `}   />
+
+
+### getUser
+
+<MemberInfo kind="method" type={`(name: string) => User | null`}   />
+
+
+### getUser
+
+<MemberInfo kind="method" type={`(name: string, required: true) => User`}   />
+
+
+### getUser
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => `}   />
+
+
+### getChannel
+
+<MemberInfo kind="method" type={`(name: string) => Channel | null`}   />
+
+
+### getChannel
+
+<MemberInfo kind="method" type={`(name: string, required: true) => Channel`}   />
+
+
+### getChannel
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => `}   />
+
+
+### getRole
+
+<MemberInfo kind="method" type={`(name: string) => Role | null`}   />
+
+
+### getRole
+
+<MemberInfo kind="method" type={`(name: string, required: true) => Role`}   />
+
+
+### getRole
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => `}   />
+
+
+### getMentionable
+
+<MemberInfo kind="method" type={`(name: string) => NonNullable&#60;CommandInteractionOption['member' | 'role' | 'user']&#62; | null`}   />
+
+
+### getMentionable
+
+<MemberInfo kind="method" type={`(name: string, required: true) => NonNullable&#60;CommandInteractionOption['member' | 'role' | 'user']&#62;`}   />
+
+
+### getMentionable
+
+<MemberInfo kind="method" type={`(name: string, required:  = false) => NonNullable&#60;CommandInteractionOption['member' | 'role' | 'user']&#62; | null`}   />
+
+
+### getSubcommand
+
+<MemberInfo kind="method" type={`() => string | null`}   />
+
+
+### getSubcommand
+
+<MemberInfo kind="method" type={`(required: true) => string`}   />
+
+
+### getSubcommand
+
+<MemberInfo kind="method" type={`(required:  = false) => `}   />
+
+
+### getSubcommandGroup
+
+<MemberInfo kind="method" type={`() => string | null`}   />
+
+
+### getSubcommandGroup
+
+<MemberInfo kind="method" type={`(required: true) => string`}   />
+
+
+### getSubcommandGroup
+
+<MemberInfo kind="method" type={`(required:  = false) => `}   />
+
+
+
+
+</div>

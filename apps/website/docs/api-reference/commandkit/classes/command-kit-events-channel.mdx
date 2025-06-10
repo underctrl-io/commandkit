@@ -1,0 +1,83 @@
+---
+title: "CommandKitEventsChannel"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKitEventsChannel
+
+<GenerationInfo sourceFile="packages/commandkit/src/events/CommandKitEventsChannel.ts" sourceLine="7" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class CommandKitEventsChannel {
+    constructor(commandkit: CommandKit)
+    to(namespace: string) => ;
+    on(namespace: string, event: string, listener: ListenerFunction) => ;
+    off(namespace: string, event: string, listener: ListenerFunction) => ;
+    once(namespace: string, event: string, listener: ListenerFunction) => ;
+    emit(namespace: string, event: string, args: any[]) => ;
+    removeAllListeners(namespace: string) => void;
+    removeAllListeners(namespace: string, event: string) => void;
+    removeAllListeners(namespace: string, event?: string) => void;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => CommandKitEventsChannel`}   />
+
+
+### to
+
+<MemberInfo kind="method" type={`(namespace: string) => `}   />
+
+
+### on
+
+<MemberInfo kind="method" type={`(namespace: string, event: string, listener: <a href='/docs/next/api-reference/commandkit/types/listener-function#listenerfunction'>ListenerFunction</a>) => `}   />
+
+
+### off
+
+<MemberInfo kind="method" type={`(namespace: string, event: string, listener: <a href='/docs/next/api-reference/commandkit/types/listener-function#listenerfunction'>ListenerFunction</a>) => `}   />
+
+
+### once
+
+<MemberInfo kind="method" type={`(namespace: string, event: string, listener: <a href='/docs/next/api-reference/commandkit/types/listener-function#listenerfunction'>ListenerFunction</a>) => `}   />
+
+
+### emit
+
+<MemberInfo kind="method" type={`(namespace: string, event: string, args: any[]) => `}   />
+
+
+### removeAllListeners
+
+<MemberInfo kind="method" type={`(namespace: string) => void`}   />
+
+
+### removeAllListeners
+
+<MemberInfo kind="method" type={`(namespace: string, event: string) => void`}   />
+
+
+### removeAllListeners
+
+<MemberInfo kind="method" type={`(namespace: string, event?: string) => void`}   />
+
+
+
+
+</div>

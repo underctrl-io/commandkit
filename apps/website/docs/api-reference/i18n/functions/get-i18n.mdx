@@ -1,0 +1,42 @@
+---
+title: "GetI18n"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## getI18n
+
+<GenerationInfo sourceFile="packages/i18n/src/i18n.ts" sourceLine="119" packageName="@commandkit/i18n" />
+
+Retrieves the i18n instance from the commandkit store.
+
+
+
+*Example*
+
+```ts
+import { getI18n } from '@commandkit/i18n';
+import { commandkit } from 'commandkit';
+
+const i18n = getI18n(commandkit);
+
+// Use the i18n instance
+i18n.t('key');
+```
+
+```ts title="Signature"
+function getI18n(commandkit: CommandKit): i18n
+```
+Parameters
+
+### commandkit
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`} />
+

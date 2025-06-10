@@ -1,0 +1,74 @@
+---
+title: "LegacyHandlerPlugin"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## LegacyHandlerPlugin
+
+<GenerationInfo sourceFile="packages/legacy/src/plugin.ts" sourceLine="32" packageName="@commandkit/legacy" />
+
+
+
+```ts title="Signature"
+class LegacyHandlerPlugin extends RuntimePlugin<LegacyHandlerPluginOptions> {
+    public readonly name = 'LegacyHandlerPlugin';
+    activate(ctx: CommandKitPluginRuntime) => Promise<void>;
+    deactivate(ctx: CommandKitPluginRuntime) => Promise<void>;
+    performHMR(ctx: CommandKitPluginRuntime, event: CommandKitHMREvent) => Promise<void>;
+    onEventsRouterInit(ctx: CommandKitPluginRuntime) => Promise<void>;
+    onBeforeCommandsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
+    willEmitEvent(ctx: CommandKitPluginRuntime, event: CommandKitEventDispatch) => Promise<void>;
+}
+```
+* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>&#60;<a href='/docs/next/api-reference/legacy/interfaces/legacy-handler-plugin-options#legacyhandlerpluginoptions'>LegacyHandlerPluginOptions</a>&#62;</code>
+
+
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={``}   />
+
+
+### activate
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+
+### deactivate
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+
+### performHMR
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/command-kit-hmrevent#commandkithmrevent'>CommandKitHMREvent</a>) => Promise&#60;void&#62;`}   />
+
+
+### onEventsRouterInit
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+
+### onBeforeCommandsLoad
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+
+### willEmitEvent
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/command-kit-event-dispatch#commandkiteventdispatch'>CommandKitEventDispatch</a>) => Promise&#60;void&#62;`}   />
+
+
+
+
+</div>

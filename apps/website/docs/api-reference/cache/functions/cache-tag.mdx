@@ -1,0 +1,39 @@
+---
+title: "CacheTag"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## cacheTag
+
+<GenerationInfo sourceFile="packages/cache/src/use-cache.ts" sourceLine="219" packageName="@commandkit/cache" />
+
+Sets a custom identifier for the current cache operation
+
+
+
+*Example*
+
+```ts
+const fetchUser = cache(async (id: string) => {
+  cacheTag(`user:${id}`);
+  return await db.users.findOne(id);
+});
+```
+
+```ts title="Signature"
+function cacheTag(tag: string): void
+```
+Parameters
+
+### tag
+
+<MemberInfo kind="parameter" type={`string`} />
+

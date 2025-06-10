@@ -1,0 +1,68 @@
+---
+title: "MemoryCache"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## MemoryCache
+
+<GenerationInfo sourceFile="packages/cache/src/memory-cache.ts" sourceLine="3" packageName="@commandkit/cache" />
+
+
+
+```ts title="Signature"
+class MemoryCache extends CacheProvider {
+    get(key: string) => Promise<CacheEntry<T> | undefined>;
+    set(key: string, value: T, ttl?: number) => Promise<void>;
+    exists(key: string) => Promise<boolean>;
+    delete(key: string) => Promise<void>;
+    clear() => Promise<void>;
+    expire(key: string, ttl: number) => Promise<void>;
+}
+```
+* Extends: <code><a href='/docs/next/api-reference/cache/classes/cache-provider#cacheprovider'>CacheProvider</a></code>
+
+
+
+<div className="members-wrapper">
+
+### get
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;<a href='/docs/next/api-reference/cache/interfaces/cache-entry#cacheentry'>CacheEntry</a>&#60;T&#62; | undefined&#62;`}   />
+
+
+### set
+
+<MemberInfo kind="method" type={`(key: string, value: T, ttl?: number) => Promise&#60;void&#62;`}   />
+
+
+### exists
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;boolean&#62;`}   />
+
+
+### delete
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+
+### clear
+
+<MemberInfo kind="method" type={`() => Promise&#60;void&#62;`}   />
+
+
+### expire
+
+<MemberInfo kind="method" type={`(key: string, ttl: number) => Promise&#60;void&#62;`}   />
+
+
+
+
+</div>

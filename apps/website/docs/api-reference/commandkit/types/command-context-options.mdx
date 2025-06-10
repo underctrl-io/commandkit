@@ -1,0 +1,32 @@
+---
+title: "CommandContextOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandContextOptions
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="82" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+type CommandContextOptions<T extends CommandExecutionMode> = T extends 'message'
+    ? MessageCommandOptions
+    : T extends 'chatInput'
+      ? ChatInputCommandInteraction['options']
+      : T extends 'autocomplete'
+        ? AutocompleteInteraction['options']
+        : T extends 'messageContextMenu'
+          ? MessageContextMenuCommandInteraction['options']
+          : T extends 'userContextMenu'
+            ? UserContextMenuCommandInteraction['options']
+            : never
+```

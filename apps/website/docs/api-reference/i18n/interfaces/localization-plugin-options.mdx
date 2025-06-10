@@ -1,0 +1,42 @@
+---
+title: "LocalizationPluginOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## LocalizationPluginOptions
+
+<GenerationInfo sourceFile="packages/i18n/src/i18n.ts" sourceLine="41" packageName="@commandkit/i18n" />
+
+
+
+```ts title="Signature"
+interface LocalizationPluginOptions {
+    plugins?: Array<LocalizationModule | DynamicLocalizationModule>;
+    i18nOptions?: InitOptions;
+}
+```
+
+<div className="members-wrapper">
+
+### plugins
+
+<MemberInfo kind="property" type={`Array&#60;<a href='/docs/next/api-reference/i18n/types/localization-module#localizationmodule'>LocalizationModule</a> | <a href='/docs/next/api-reference/i18n/types/dynamic-localization-module#dynamiclocalizationmodule'>DynamicLocalizationModule</a>&#62;`}   />
+
+The i18next plugins to use. The plugins are loaded in the order they are
+specified.
+### i18nOptions
+
+<MemberInfo kind="property" type={`InitOptions`}   />
+
+The i18next initialization options.
+
+
+</div>

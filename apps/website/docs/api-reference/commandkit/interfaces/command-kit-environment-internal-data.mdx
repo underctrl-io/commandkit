@@ -1,0 +1,77 @@
+---
+title: "CommandKitEnvironmentInternalData"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKitEnvironmentInternalData
+
+<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="6" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+interface CommandKitEnvironmentInternalData {
+    executionError: Error | null;
+    type: CommandKitEnvironmentType | null;
+    variables: Map<string, any>;
+    deferredFunctions: Map<string, GenericFunction<[CommandKitEnvironment]>>;
+    marker: string;
+    markStart: number;
+    markEnd: number;
+    context: Context | null;
+}
+```
+
+<div className="members-wrapper">
+
+### executionError
+
+<MemberInfo kind="property" type={`Error | null`}   />
+
+
+### type
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/enums/command-kit-environment-type#commandkitenvironmenttype'>CommandKitEnvironmentType</a> | null`}   />
+
+
+### variables
+
+<MemberInfo kind="property" type={`Map&#60;string, any&#62;`}   />
+
+
+### deferredFunctions
+
+<MemberInfo kind="property" type={`Map&#60;string, <a href='/docs/next/api-reference/commandkit/types/generic-function#genericfunction'>GenericFunction</a>&#60;[<a href='/docs/next/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>]&#62;&#62;`}   />
+
+
+### marker
+
+<MemberInfo kind="property" type={`string`}   />
+
+
+### markStart
+
+<MemberInfo kind="property" type={`number`}   />
+
+
+### markEnd
+
+<MemberInfo kind="property" type={`number`}   />
+
+
+### context
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a> | null`}   />
+
+
+
+
+</div>

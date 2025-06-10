@@ -1,0 +1,109 @@
+---
+title: "CommandKitConfig"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKitConfig
+
+<GenerationInfo sourceFile="packages/commandkit/src/config/types.ts" sourceLine="4" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+interface CommandKitConfig {
+    plugins?: MaybeArray<CommandKitPlugin>[] | Array<CommandKitPlugin>;
+    rolldownPlugins?: any[];
+    compilerOptions?: {
+    /**
+     * Macro compiler configuration.
+     */
+    macro?: {
+      /**
+       * Whether to enable macro function compilation in development mode.
+       * @default false
+       */
+      development?: boolean;
+    };
+  };
+    typescript?: {
+    /**
+     * Whether to ignore type checking during builds.
+     */
+    ignoreBuildErrors?: boolean;
+  };
+    static?: boolean;
+    env?: Record<string, string>;
+    distDir?: string;
+    sourceMap?: {
+    /**
+     * Whether to enable source map generation in development mode.
+     */
+    development?: boolean;
+    /**
+     * Whether to enable source map generation in production mode.
+     */
+    production?: boolean;
+  };
+    typedCommands?: boolean;
+}
+```
+
+<div className="members-wrapper">
+
+### plugins
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/maybe-array#maybearray'>MaybeArray</a>&#60;<a href='/docs/next/api-reference/commandkit/types/command-kit-plugin#commandkitplugin'>CommandKitPlugin</a>&#62;[] | Array&#60;<a href='/docs/next/api-reference/commandkit/types/command-kit-plugin#commandkitplugin'>CommandKitPlugin</a>&#62;`}   />
+
+The plugins to use with CommandKit.
+Can be a single plugin, an array of plugins, or a nested array of plugins.
+### rolldownPlugins
+
+<MemberInfo kind="property" type={`any[]`}   />
+
+The rolldown plugins to use with CommandKit.
+### compilerOptions
+
+<MemberInfo kind="property" type={`{     /**      * Macro compiler configuration.      */     macro?: {       /**        * Whether to enable macro function compilation in development mode.        * @default false        */       development?: boolean;     };   }`}   />
+
+The compiler options to use with CommandKit.
+### typescript
+
+<MemberInfo kind="property" type={`{     /**      * Whether to ignore type checking during builds.      */     ignoreBuildErrors?: boolean;   }`}   />
+
+The typescript configuration to use with CommandKit.
+### static
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether to generate static command handler data in production builds.
+### env
+
+<MemberInfo kind="property" type={`Record&#60;string, string&#62;`}   />
+
+Statically define the environment variables to use.
+### distDir
+
+<MemberInfo kind="property" type={`string`} default={`\`dist\``}   />
+
+The custom build directory name to use.
+### sourceMap
+
+<MemberInfo kind="property" type={`{     /**      * Whether to enable source map generation in development mode.      */     development?: boolean;     /**      * Whether to enable source map generation in production mode.      */     production?: boolean;   }`}   />
+
+Whether or not to enable the source map generation.
+### typedCommands
+
+<MemberInfo kind="property" type={`boolean`} default={`true`}   />
+
+Whether or not to enable the typed commands.
+
+
+</div>

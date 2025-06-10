@@ -1,0 +1,56 @@
+---
+title: "JsonFlagProvider"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## JsonFlagProvider
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/FlagProvider.ts" sourceLine="68" packageName="commandkit" />
+
+Example implementation for a simple JSON-based flag provider
+
+```ts title="Signature"
+class JsonFlagProvider implements FlagProvider {
+    constructor(config: Record<string, FlagConfiguration>)
+    getFlag(key: string) => Promise<FlagConfiguration | null>;
+    hasFlag(key: string) => Promise<boolean>;
+    destroy() => Promise<void>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/commandkit/interfaces/flag-provider#flagprovider'>FlagProvider</a></code>
+
+
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(config: Record&#60;string, <a href='/docs/next/api-reference/commandkit/interfaces/flag-configuration#flagconfiguration'>FlagConfiguration</a>&#62;) => JsonFlagProvider`}   />
+
+
+### getFlag
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;<a href='/docs/next/api-reference/commandkit/interfaces/flag-configuration#flagconfiguration'>FlagConfiguration</a> | null&#62;`}   />
+
+
+### hasFlag
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;boolean&#62;`}   />
+
+
+### destroy
+
+<MemberInfo kind="method" type={`() => Promise&#60;void&#62;`}   />
+
+
+
+
+</div>

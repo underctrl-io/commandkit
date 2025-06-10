@@ -1,0 +1,53 @@
+---
+title: "CommandLocalizationContext"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandLocalizationContext
+
+<GenerationInfo sourceFile="packages/i18n/src/i18n.ts" sourceLine="54" packageName="@commandkit/i18n" />
+
+
+
+```ts title="Signature"
+interface CommandLocalizationContext {
+    i18n: i18n;
+    t: (key: string, options?: Record<string, unknown>) => string;
+    locale: Locale;
+    isEventWorker?: boolean;
+}
+```
+
+<div className="members-wrapper">
+
+### i18n
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/i18n/functions/i18n#i18n'>i18n</a>`}   />
+
+The i18next instance.
+### t
+
+<MemberInfo kind="property" type={`(key: string, options?: Record&#60;string, unknown&#62;) =&#62; string`}   />
+
+The localization function bound to the current command.
+### locale
+
+<MemberInfo kind="property" type={`Locale`}   />
+
+The locale to use for the command.
+### isEventWorker
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether the localization context is from event worker context.
+
+
+</div>

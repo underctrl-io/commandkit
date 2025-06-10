@@ -1,0 +1,84 @@
+---
+title: "EventsRouter"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## EventsRouter
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/router/EventsRouter.ts" sourceLine="37" packageName="commandkit" />
+
+Router for discovering and managing event handler files in a directory structure.
+Events are represented by directories, and handlers are files within those directories.
+
+```ts title="Signature"
+class EventsRouter {
+    constructor(options: EventsRouterOptions)
+    addEntrypoints(entrypoints: string[]) => ;
+    match(event: string) => ParsedEvent | null;
+    entrypoints: string[]
+    isValidPath() => ;
+    clear() => ;
+    reload() => ;
+    scan() => Promise<EventsTree>;
+    toJSON() => EventsTree;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/commandkit/interfaces/events-router-options#eventsrouteroptions'>EventsRouterOptions</a>) => EventsRouter`}   />
+
+Creates a new EventsRouter instance
+### addEntrypoints
+
+<MemberInfo kind="method" type={`(entrypoints: string[]) => `}   />
+
+Adds new entrypoints to the router
+### match
+
+<MemberInfo kind="method" type={`(event: string) => <a href='/docs/next/api-reference/commandkit/interfaces/parsed-event#parsedevent'>ParsedEvent</a> | null`}   />
+
+Find a parsed event by its name
+### entrypoints
+
+<MemberInfo kind="property" type={`string[]`}   />
+
+Get the entrypoint directory path
+### isValidPath
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Checks if the entrypoint path is valid
+### clear
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Clear all parsed events
+### reload
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Reload and re-scan the entrypoint directory for events
+### scan
+
+<MemberInfo kind="method" type={`() => Promise&#60;<a href='/docs/next/api-reference/commandkit/types/events-tree#eventstree'>EventsTree</a>&#62;`}   />
+
+Scan the entrypoint directory for events and their handlers
+### toJSON
+
+<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/types/events-tree#eventstree'>EventsTree</a>`}   />
+
+Convert the internal events Collection to a plain object
+
+
+</div>

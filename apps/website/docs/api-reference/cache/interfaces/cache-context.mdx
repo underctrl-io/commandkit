@@ -1,0 +1,41 @@
+---
+title: "CacheContext"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CacheContext
+
+<GenerationInfo sourceFile="packages/cache/src/use-cache.ts" sourceLine="42" packageName="@commandkit/cache" />
+
+Context for managing cache operations within an async scope
+
+```ts title="Signature"
+interface CacheContext {
+    params: {
+    /** Custom name for the cache entry */
+    name?: string;
+    /** Time-to-live in milliseconds */
+    ttl?: number | null;
+    tags: Set<string>;
+  };
+}
+```
+
+<div className="members-wrapper">
+
+### params
+
+<MemberInfo kind="property" type={`{     /** Custom name for the <a href='/docs/next/api-reference/cache/functions/cache#cache'>cache</a> entry */     name?: string;     /** Time-to-live in milliseconds */     ttl?: number | null;     tags: Set&#60;string&#62;;   }`}   />
+
+
+
+
+</div>

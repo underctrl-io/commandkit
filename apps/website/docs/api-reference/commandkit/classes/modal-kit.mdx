@@ -1,0 +1,77 @@
+---
+title: "ModalKit"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## ModalKit
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/modal/ModalKit.ts" sourceLine="48" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class ModalKit extends ModalBuilder {
+    onSubmit(handler: CommandKitModalBuilderInteractionCollectorDispatch, data?: CommandKitModalBuilderInteractionCollectorDispatchContextData) => this;
+    onEnd(handler: CommandKitModalBuilderOnEnd) => this;
+    onError(handler: EventInterceptorErrorHandler) => this;
+    filter(predicate: ModalKitPredicate) => this;
+    dispose() => ;
+}
+```
+* Extends: <code>ModalBuilder</code>
+
+
+
+<div className="members-wrapper">
+
+### onSubmit
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/types/command-kit-modal-builder-interaction-collector-dispatch#commandkitmodalbuilderinteractioncollectordispatch'>CommandKitModalBuilderInteractionCollectorDispatch</a>, data?: <a href='/docs/next/api-reference/commandkit/types/command-kit-modal-builder-interaction-collector-dispatch-context-data#commandkitmodalbuilderinteractioncollectordispatchcontextdata'>CommandKitModalBuilderInteractionCollectorDispatchContextData</a>) => this`}   />
+
+Sets the handler to run when the modal is submitted.
+
+
+
+*Example*
+
+```ts
+const modal = new ModalKit()
+ .setTitle('My Modal')
+ .setCustomId('my-modal')
+ .filter((interaction) => interaction.user.id === '1234567890')
+ .onSubmit(async (interaction) => {
+    await interaction.reply('You submitted the modal!');
+  })
+  .addComponents(actionRow1, actionRow2);
+```
+### onEnd
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/types/command-kit-modal-builder-on-end#commandkitmodalbuilderonend'>CommandKitModalBuilderOnEnd</a>) => this`}   />
+
+Sets the handler to run when the interaction collector ends.
+### onError
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/types/event-interceptor-error-handler#eventinterceptorerrorhandler'>EventInterceptorErrorHandler</a>) => this`}   />
+
+Sets the handler to run when the interaction collector ends.
+### filter
+
+<MemberInfo kind="method" type={`(predicate: <a href='/docs/next/api-reference/commandkit/types/modal-kit-predicate#modalkitpredicate'>ModalKitPredicate</a>) => this`}   />
+
+Sets a filter for the interaction collector.
+### dispose
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+
+
+</div>

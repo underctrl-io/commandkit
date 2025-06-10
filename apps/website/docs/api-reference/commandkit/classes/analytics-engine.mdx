@@ -1,0 +1,71 @@
+---
+title: "AnalyticsEngine"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## AnalyticsEngine
+
+<GenerationInfo sourceFile="packages/commandkit/src/analytics/analytics-engine.ts" sourceLine="16" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class AnalyticsEngine {
+    constructor(commandkit: CommandKit)
+    setFilter(filter: FilterFunction | null) => ;
+    registerProvider(provider: AnalyticsProvider) => ;
+    removeProvider(provider: AnalyticsProvider) => ;
+    getProvider() => AnalyticsProvider | null;
+    identify(event: IdentifyEvent) => ;
+    track(event: AnalyticsEvent) => ;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => AnalyticsEngine`}   />
+
+
+### setFilter
+
+<MemberInfo kind="method" type={`(filter: <a href='/docs/next/api-reference/commandkit/types/filter-function#filterfunction'>FilterFunction</a> | null) => `}   />
+
+
+### registerProvider
+
+<MemberInfo kind="method" type={`(provider: <a href='/docs/next/api-reference/commandkit/interfaces/analytics-provider#analyticsprovider'>AnalyticsProvider</a>) => `}   />
+
+
+### removeProvider
+
+<MemberInfo kind="method" type={`(provider: <a href='/docs/next/api-reference/commandkit/interfaces/analytics-provider#analyticsprovider'>AnalyticsProvider</a>) => `}   />
+
+
+### getProvider
+
+<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/analytics-provider#analyticsprovider'>AnalyticsProvider</a> | null`}   />
+
+
+### identify
+
+<MemberInfo kind="method" type={`(event: <a href='/docs/next/api-reference/commandkit/types/identify-event#identifyevent'>IdentifyEvent</a>) => `}   />
+
+
+### track
+
+<MemberInfo kind="method" type={`(event: <a href='/docs/next/api-reference/commandkit/types/analytics-event#analyticsevent'>AnalyticsEvent</a>) => `}   />
+
+
+
+
+</div>

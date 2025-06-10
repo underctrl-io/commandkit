@@ -1,0 +1,41 @@
+---
+title: "FeatureFlag"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## FeatureFlag
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/feature-flags.ts" sourceLine="238" packageName="commandkit" />
+
+Class representing a feature flag in CommandKit.
+
+```ts title="Signature"
+class FeatureFlag<R, T> {
+    constructor(options: FeatureFlagDefinition<R, T>)
+    execute(res?: T) => Promise<R>;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/commandkit/interfaces/feature-flag-definition#featureflagdefinition'>FeatureFlagDefinition</a>&#60;R, T&#62;) => FeatureFlag`}   />
+
+Create a new feature flag.
+### execute
+
+<MemberInfo kind="method" type={`(res?: T) => Promise&#60;R&#62;`}   />
+
+Execute the feature flag evaluation.
+
+
+</div>

@@ -1,0 +1,56 @@
+---
+title: "ValidationProps"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## ValidationProps
+
+<GenerationInfo sourceFile="packages/legacy/src/loadLegacyValidations.ts" sourceLine="17" packageName="@commandkit/legacy" />
+
+
+
+```ts title="Signature"
+interface ValidationProps {
+    client: Client<true>;
+    interaction:
+    | ChatInputCommandInteraction
+    | AutocompleteInteraction
+    | ContextMenuCommandInteraction;
+    commandObj: CommandObject;
+    handler: CommandKit;
+}
+```
+
+<div className="members-wrapper">
+
+### client
+
+<MemberInfo kind="property" type={`Client&#60;true&#62;`}   />
+
+
+### interaction
+
+<MemberInfo kind="property" type={`| ChatInputCommandInteraction     | AutocompleteInteraction     | ContextMenuCommandInteraction`}   />
+
+
+### commandObj
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/legacy/interfaces/command-object#commandobject'>CommandObject</a>`}   />
+
+
+### handler
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
+
+
+
+
+</div>

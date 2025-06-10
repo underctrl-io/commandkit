@@ -1,0 +1,47 @@
+---
+title: "AppCommandRunner"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## AppCommandRunner
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/AppCommandRunner.ts" sourceLine="21" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class AppCommandRunner {
+    constructor(handler: AppCommandHandler)
+    runCommand(prepared: PreparedAppCommandExecution, source: Interaction | Message) => ;
+    getExecutionMode(source: Interaction | Message) => CommandExecutionMode;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/classes/app-command-handler#appcommandhandler'>AppCommandHandler</a>) => AppCommandRunner`}   />
+
+
+### runCommand
+
+<MemberInfo kind="method" type={`(prepared: <a href='/docs/next/api-reference/commandkit/interfaces/prepared-app-command-execution#preparedappcommandexecution'>PreparedAppCommandExecution</a>, source: Interaction | Message) => `}   />
+
+
+### getExecutionMode
+
+<MemberInfo kind="method" type={`(source: Interaction | Message) => <a href='/docs/next/api-reference/commandkit/types/command-execution-mode#commandexecutionmode'>CommandExecutionMode</a>`}   />
+
+
+
+
+</div>

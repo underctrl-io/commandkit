@@ -1,0 +1,44 @@
+---
+title: "CompilerPlugin"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CompilerPlugin
+
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/CompilerPlugin.ts" sourceLine="20" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class CompilerPlugin<T extends PluginOptions = PluginOptions> extends PluginCommon<T, CompilerPluginRuntime> {
+    public readonly type = PluginType.Compiler;
+    transform(params: PluginTransformParameters) => Promise<MaybeFalsey<TransformedResult>>;
+}
+```
+* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/plugin-common#plugincommon'>PluginCommon</a>&#60;T, <a href='/docs/next/api-reference/commandkit/classes/compiler-plugin-runtime#compilerpluginruntime'>CompilerPluginRuntime</a>&#62;</code>
+
+
+
+<div className="members-wrapper">
+
+### type
+
+<MemberInfo kind="property" type={``}   />
+
+
+### transform
+
+<MemberInfo kind="method" type={`(params: <a href='/docs/next/api-reference/commandkit/interfaces/plugin-transform-parameters#plugintransformparameters'>PluginTransformParameters</a>) => Promise&#60;<a href='/docs/next/api-reference/commandkit/types/maybe-falsey#maybefalsey'>MaybeFalsey</a>&#60;<a href='/docs/next/api-reference/commandkit/interfaces/transformed-result#transformedresult'>TransformedResult</a>&#62;&#62;`}   />
+
+Called when transformation is requested to this plugin
+
+
+</div>

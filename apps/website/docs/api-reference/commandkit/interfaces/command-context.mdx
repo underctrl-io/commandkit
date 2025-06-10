@@ -1,0 +1,47 @@
+---
+title: "CommandContext"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandContext
+
+<GenerationInfo sourceFile="packages/commandkit/src/types.ts" sourceLine="22" packageName="commandkit" />
+
+Represents a command context.
+
+```ts title="Signature"
+interface CommandContext<T extends Interaction, Cached extends CacheType> {
+    interaction: Interaction<CacheType>;
+    client: Client;
+    handler: CommandKit;
+}
+```
+
+<div className="members-wrapper">
+
+### interaction
+
+<MemberInfo kind="property" type={`Interaction&#60;CacheType&#62;`}   />
+
+The interaction that triggered this command.
+### client
+
+<MemberInfo kind="property" type={`Client`}   />
+
+The client that instantiated this command.
+### handler
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
+
+The command data.
+
+
+</div>

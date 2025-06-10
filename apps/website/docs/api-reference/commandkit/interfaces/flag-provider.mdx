@@ -1,0 +1,55 @@
+---
+title: "FlagProvider"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## FlagProvider
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/FlagProvider.ts" sourceLine="8" packageName="commandkit" />
+
+Interface for external feature flag providers.
+Implement this interface to integrate with external flag management systems
+like LaunchDarkly, Split, Unleash, etc.
+
+```ts title="Signature"
+interface FlagProvider {
+    initialize?(): MaybePromise<void>;
+    getFlag(key: string, context?: any): MaybePromise<FlagConfiguration | null>;
+    hasFlag(key: string): MaybePromise<boolean>;
+    destroy?(): MaybePromise<void>;
+}
+```
+
+<div className="members-wrapper">
+
+### initialize
+
+<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/types/maybe-promise#maybepromise'>MaybePromise</a>&#60;void&#62;`}   />
+
+Initialize the provider (e.g., establish connections, load initial config)
+### getFlag
+
+<MemberInfo kind="method" type={`(key: string, context?: any) => <a href='/docs/next/api-reference/commandkit/types/maybe-promise#maybepromise'>MaybePromise</a>&#60;<a href='/docs/next/api-reference/commandkit/interfaces/flag-configuration#flagconfiguration'>FlagConfiguration</a> | null&#62;`}   />
+
+Get the current value/configuration for a feature flag
+### hasFlag
+
+<MemberInfo kind="method" type={`(key: string) => <a href='/docs/next/api-reference/commandkit/types/maybe-promise#maybepromise'>MaybePromise</a>&#60;boolean&#62;`}   />
+
+Check if a flag exists in the external system
+### destroy
+
+<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/types/maybe-promise#maybepromise'>MaybePromise</a>&#60;void&#62;`}   />
+
+Cleanup resources when the provider is no longer needed
+
+
+</div>

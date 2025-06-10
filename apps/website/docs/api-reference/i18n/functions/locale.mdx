@@ -1,0 +1,28 @@
+---
+title: "Locale"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## locale
+
+<GenerationInfo sourceFile="packages/i18n/src/hooks.ts" sourceLine="14" packageName="@commandkit/i18n" />
+
+Gets the localization context. If the context originates from the event worker context, the returned t function is not bound to the command.
+
+```ts title="Signature"
+function locale(locale?: Locale): CommandLocalizationContext
+```
+Parameters
+
+### locale
+
+<MemberInfo kind="parameter" type={`Locale`} />
+

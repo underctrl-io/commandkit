@@ -1,0 +1,83 @@
+---
+title: "CommandKitPluginRuntime"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKitPluginRuntime
+
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts" sourceLine="12" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class CommandKitPluginRuntime {
+    constructor(commandkit: CommandKit)
+    getPlugins() => ;
+    getPlugin(pluginName: string) => RuntimePlugin | null;
+    softRegisterPlugin(plugin: RuntimePlugin) => ;
+    registerPlugin(plugin: RuntimePlugin) => ;
+    unregisterPlugin(plugin: RuntimePlugin) => ;
+    unregisterAllPlugins() => ;
+    capture() => ;
+    execute(f: AsyncFunction<[CommandKitPluginRuntime, RuntimePlugin], R | undefined>) => ;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => CommandKitPluginRuntime`}   />
+
+
+### getPlugins
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### getPlugin
+
+<MemberInfo kind="method" type={`(pluginName: string) => <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a> | null`}   />
+
+
+### softRegisterPlugin
+
+<MemberInfo kind="method" type={`(plugin: <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>) => `}   />
+
+
+### registerPlugin
+
+<MemberInfo kind="method" type={`(plugin: <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>) => `}   />
+
+
+### unregisterPlugin
+
+<MemberInfo kind="method" type={`(plugin: <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>) => `}   />
+
+
+### unregisterAllPlugins
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### capture
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### execute
+
+<MemberInfo kind="method" type={`(f: <a href='/docs/next/api-reference/commandkit/types/async-function#asyncfunction'>AsyncFunction</a>&#60;[<a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>], R | undefined&#62;) => `}   />
+
+
+
+
+</div>

@@ -1,0 +1,53 @@
+---
+title: "ParsedEvent"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## ParsedEvent
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/router/EventsRouter.ts" sourceLine="19" packageName="commandkit" />
+
+Represents a parsed event with its handlers
+
+```ts title="Signature"
+interface ParsedEvent {
+    event: string;
+    path: string;
+    listeners: string[];
+    namespace: string | null;
+}
+```
+
+<div className="members-wrapper">
+
+### event
+
+<MemberInfo kind="property" type={`string`}   />
+
+Name of the event derived from directory name
+### path
+
+<MemberInfo kind="property" type={`string`}   />
+
+Absolute path to the event directory
+### listeners
+
+<MemberInfo kind="property" type={`string[]`}   />
+
+Array of file paths to event listener handlers
+### namespace
+
+<MemberInfo kind="property" type={`string | null`}   />
+
+Namespace of the event
+
+
+</div>

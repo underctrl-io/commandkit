@@ -1,0 +1,65 @@
+---
+title: "EventInterceptorContextData"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## EventInterceptorContextData
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/common/EventInterceptor.ts" sourceLine="3" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+interface EventInterceptorContextData<E extends keyof ClientEvents> {
+    filter?: (...args: ClientEvents[E]) => Awaitable<boolean>;
+    time?: number;
+    autoReset?: boolean;
+    once?: boolean;
+    onEnd?: (reason: string) => Awaitable<void>;
+    onError?: EventInterceptorErrorHandler;
+}
+```
+
+<div className="members-wrapper">
+
+### filter
+
+<MemberInfo kind="property" type={`(...args: ClientEvents[E]) =&#62; Awaitable&#60;boolean&#62;`}   />
+
+The filter to use for the collector.
+### time
+
+<MemberInfo kind="property" type={`number`}   />
+
+The duration (in ms) that the collector should run for.
+### autoReset
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+If the collector should automatically reset the timer when a button is clicked.
+### once
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether the collector should run only once.
+### onEnd
+
+<MemberInfo kind="property" type={`(reason: string) =&#62; Awaitable&#60;void&#62;`}   />
+
+The handler to run when the collector ends.
+### onError
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/event-interceptor-error-handler#eventinterceptorerrorhandler'>EventInterceptorErrorHandler</a>`}   />
+
+The handler to run upon an error.
+
+
+</div>

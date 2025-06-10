@@ -1,0 +1,38 @@
+---
+title: "CustomEvaluationContext"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CustomEvaluationContext
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/feature-flags.ts" sourceLine="210" packageName="commandkit" />
+
+Context for custom evaluation of feature flags.
+This allows for more flexible evaluation based on custom logic or external data.
+The identify function can be a direct object or a function that returns the entities.
+
+```ts title="Signature"
+type CustomEvaluationContext<E> = {
+    identify: E | CustomEvaluationFunction<E>;
+}
+```
+
+<div className="members-wrapper">
+
+### identify
+
+<MemberInfo kind="property" type={`E | <a href='/docs/next/api-reference/commandkit/types/custom-evaluation-function#customevaluationfunction'>CustomEvaluationFunction</a>&#60;E&#62;`}   />
+
+Optional function to identify the entities for evaluation.
+This can be a function that returns the entities based on the current context.
+
+
+</div>

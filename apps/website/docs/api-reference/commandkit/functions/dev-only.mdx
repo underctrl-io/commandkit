@@ -1,0 +1,39 @@
+---
+title: "DevOnly"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## devOnly
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/utilities.ts" sourceLine="135" packageName="commandkit" />
+
+Creates a function from the given function that runs only in development mode.
+
+
+
+*Example*
+
+```ts
+const devOnlyFn = devOnly(() => {
+  console.log('This function runs only in development mode');
+});
+devOnlyFn(); // This will log the message only in development mode
+```
+
+```ts title="Signature"
+function devOnly<T extends (...args: any[]) => any>(fn: T): T
+```
+Parameters
+
+### fn
+
+<MemberInfo kind="parameter" type={`T`} />
+

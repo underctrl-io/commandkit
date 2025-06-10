@@ -1,0 +1,36 @@
+---
+title: "FlagRunner"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## FlagRunner
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/feature-flags.ts" sourceLine="218" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+interface FlagRunner<E, R> {
+    run(context: CustomEvaluationContext<E>): Promise<R>;
+}
+```
+
+<div className="members-wrapper">
+
+### run
+
+<MemberInfo kind="method" type={`(context: <a href='/docs/next/api-reference/commandkit/types/custom-evaluation-context#customevaluationcontext'>CustomEvaluationContext</a>&#60;E&#62;) => Promise&#60;R&#62;`}   />
+
+Run the feature flag evaluation with a custom context.
+This allows for more flexible evaluation based on custom logic or external data.
+
+
+</div>

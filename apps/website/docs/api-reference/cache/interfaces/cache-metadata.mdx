@@ -1,0 +1,47 @@
+---
+title: "CacheMetadata"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CacheMetadata
+
+<GenerationInfo sourceFile="packages/cache/src/use-cache.ts" sourceLine="55" packageName="@commandkit/cache" />
+
+Configuration options for cache behavior
+
+```ts title="Signature"
+interface CacheMetadata {
+    ttl?: number | string;
+    name?: string;
+    tags?: string[];
+}
+```
+
+<div className="members-wrapper">
+
+### ttl
+
+<MemberInfo kind="property" type={`number | string`}   />
+
+Time-to-live duration in milliseconds or as a string (e.g., '1h', '5m')
+### name
+
+<MemberInfo kind="property" type={`string`}   />
+
+Custom name for the cache entry
+### tags
+
+<MemberInfo kind="property" type={`string[]`}   />
+
+
+
+
+</div>

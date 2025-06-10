@@ -1,0 +1,213 @@
+---
+title: "Context"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## Context
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="111" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class Context<ExecutionMode extends CommandExecutionMode = CommandExecutionMode, Args extends Record<string, any> = Record<string, any>> {
+    public readonly interaction: ContextParameters<ExecutionMode>['interaction'];
+    public readonly message: ContextParameters<ExecutionMode>['message'];
+    public readonly guild!: Guild | null;
+    public readonly guildId!: string | null;
+    public readonly channel!: TextBasedChannel | null;
+    public readonly channelId!: string | null;
+    public readonly client: Client;
+    public readonly command: LoadedCommand;
+    constructor(commandkit: CommandKit, config: ContextParameters<ExecutionMode, Args>)
+    store: void
+    commandName: string
+    options: CommandContextOptions<ExecutionMode>
+    forwarded: boolean
+    forwardCommand(command: C) => Promise<never>;
+    executionMode: ExecutionMode
+    isInteraction() => this is InteractionCommandContext;
+    isChatInputCommand() => this is ChatInputCommandContext;
+    isAutocomplete() => this is AutocompleteCommandContext;
+    isMessageContextMenu() => this is MessageContextMenuCommandContext;
+    isUserContextMenu() => this is UserContextMenuCommandContext;
+    isMessage() => this is Context<'message'>;
+    getCommandIdentifier() => string;
+    getGuildLocale() => Locale | null;
+    getUserLocale() => Locale | null;
+    getLocale(preferUser:  = false) => Locale;
+    setLocale(locale: Locale | null) => void;
+    clone(config?: Partial<ContextParameters<ExecutionMode>>) => Context<ExecutionMode>;
+    isMiddleware() => this is MiddlewareContext<ExecutionMode>;
+    args() => string[];
+    exit() => never;
+}
+```
+
+<div className="members-wrapper">
+
+### interaction
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode&#62;['interaction']`}   />
+
+The interaction that triggered the command.
+### message
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode&#62;['message']`}   />
+
+The message that triggered the command.
+### guild
+
+<MemberInfo kind="property" type={`Guild | null`}   />
+
+The guild where the command was triggered.
+### guildId
+
+<MemberInfo kind="property" type={`string | null`}   />
+
+The guild ID where the command was triggered.
+### channel
+
+<MemberInfo kind="property" type={`TextBasedChannel | null`}   />
+
+The channel where the command was triggered.
+### channelId
+
+<MemberInfo kind="property" type={`string | null`}   />
+
+The channel id where the command was triggered.
+### client
+
+<MemberInfo kind="property" type={`Client`}   />
+
+The client instance.
+### command
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>`}   />
+
+The command that this context belongs to.
+### constructor
+
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>, config: <a href='/docs/next/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode, Args&#62;) => Context`}   />
+
+Creates a new command context.
+### store
+
+<MemberInfo kind="property" type={``}   />
+
+The shared key-value store for this context. This can be used to store data that needs to be shared between middlewares or commands.
+This store is shared across all contexts in the same command execution, including the cloned contexts and middleware contexts.
+### commandName
+
+<MemberInfo kind="property" type={`string`}   />
+
+
+### options
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/command-context-options#commandcontextoptions'>CommandContextOptions</a>&#60;ExecutionMode&#62;`}   />
+
+
+### forwarded
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether this context was forwarded from another context. This happens when a command forwards its context to another command.
+### forwardCommand
+
+<MemberInfo kind="method" type={`(command: C) => Promise&#60;never&#62;`}   />
+
+Forwards the context to another command. The target handler will be the same as current handler.
+### executionMode
+
+<MemberInfo kind="property" type={`ExecutionMode`}   />
+
+The execution mode of the command.
+### isInteraction
+
+<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/interaction-command-context#interactioncommandcontext'>InteractionCommandContext</a>`}   />
+
+Whether the command was triggered by an interaction.
+### isChatInputCommand
+
+<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/chat-input-command-context#chatinputcommandcontext'>ChatInputCommandContext</a>`}   />
+
+Whether the command was triggered by a slash command interaction.
+### isAutocomplete
+
+<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/autocomplete-command-context#autocompletecommandcontext'>AutocompleteCommandContext</a>`}   />
+
+Whether the command was triggered by an autocomplete interaction.
+### isMessageContextMenu
+
+<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/message-context-menu-command-context#messagecontextmenucommandcontext'>MessageContextMenuCommandContext</a>`}   />
+
+Whether the command was triggered by a message context menu interaction.
+### isUserContextMenu
+
+<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/user-context-menu-command-context#usercontextmenucommandcontext'>UserContextMenuCommandContext</a>`}   />
+
+Whether the command was triggered by a user context menu interaction.
+### isMessage
+
+<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a>&#60;'message'&#62;`}   />
+
+Whether the command was triggered by a message.
+### getCommandIdentifier
+
+<MemberInfo kind="method" type={`() => string`}   />
+
+Returns the command identifier.
+### getGuildLocale
+
+<MemberInfo kind="method" type={`() => Locale | null`}   />
+
+Returns the locale of the guild where this command was triggered.
+### getUserLocale
+
+<MemberInfo kind="method" type={`() => Locale | null`}   />
+
+Returns the locale of the user who triggered this command.
+### getLocale
+
+<MemberInfo kind="method" type={`(preferUser:  = false) => Locale`}   />
+
+Returns the locale for this command.
+### setLocale
+
+<MemberInfo kind="method" type={`(locale: Locale | null) => void`}   />
+
+Sets the locale for this command.
+### clone
+
+<MemberInfo kind="method" type={`(config?: Partial&#60;<a href='/docs/next/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode&#62;&#62;) => <a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a>&#60;ExecutionMode&#62;`}   />
+
+Creates a clone of this context
+### isMiddleware
+
+<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/classes/middleware-context#middlewarecontext'>MiddlewareContext</a>&#60;ExecutionMode&#62;`}   />
+
+
+### args
+
+<MemberInfo kind="method" type={`() => string[]`}   />
+
+
+### exit
+
+<MemberInfo kind="method" type={`() => never`}   />
+
+Stops upcoming middleware or current command execution.
+If this is called inside pre-stage middleware, the next run will be the actual command, skipping all other pre-stage middlewares.
+If this is called inside a command itself, it will skip all post-stage middlewares.
+If this is called inside post-stage middleware, it will skip all other post-stage middlewares.
+
+
+</div>

@@ -1,0 +1,68 @@
+---
+title: "I18nPlugin"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## I18nPlugin
+
+<GenerationInfo sourceFile="packages/i18n/src/i18n.ts" sourceLine="129" packageName="@commandkit/i18n" />
+
+
+
+```ts title="Signature"
+class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
+    public readonly name = 'I18nPlugin';
+    activate(ctx: CommandKitPluginRuntime) => Promise<void>;
+    getLoadPath(cwd:  = getCurrentDirectory(), lng:  = '{{lng}}', ns:  = '{{ns}}') => ;
+    performHMR(ctx: CommandKitPluginRuntime, event: CommandKitHMREvent) => Promise<void>;
+    executeCommand(ctx: CommandKitPluginRuntime, env: CommandKitEnvironment, source: CommandSource, command: PreparedAppCommandExecution) => Promise<boolean>;
+    prepareCommand(ctx: CommandKitPluginRuntime, command: CommandBuilderLike) => Promise<CommandBuilderLike | null>;
+}
+```
+* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>&#60;<a href='/docs/next/api-reference/i18n/interfaces/localization-plugin-options#localizationpluginoptions'>LocalizationPluginOptions</a>&#62;</code>
+
+
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={``}   />
+
+
+### activate
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+
+### getLoadPath
+
+<MemberInfo kind="method" type={`(cwd:  = getCurrentDirectory(), lng:  = '{{lng}}', ns:  = '{{ns}}') => `}   />
+
+
+### performHMR
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/command-kit-hmrevent#commandkithmrevent'>CommandKitHMREvent</a>) => Promise&#60;void&#62;`}   />
+
+
+### executeCommand
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, env: <a href='/docs/next/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>, source: <a href='/docs/next/api-reference/commandkit/types/command-source#commandsource'>CommandSource</a>, command: <a href='/docs/next/api-reference/commandkit/interfaces/prepared-app-command-execution#preparedappcommandexecution'>PreparedAppCommandExecution</a>) => Promise&#60;boolean&#62;`}   />
+
+
+### prepareCommand
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, command: <a href='/docs/next/api-reference/commandkit/types/command-builder-like#commandbuilderlike'>CommandBuilderLike</a>) => Promise&#60;<a href='/docs/next/api-reference/commandkit/types/command-builder-like#commandbuilderlike'>CommandBuilderLike</a> | null&#62;`}   />
+
+
+
+
+</div>

@@ -111,11 +111,6 @@ h3 {
 /* Enhanced members wrapper with better visual hierarchy */
 .members-wrapper {
   @apply border-l-4 border-purple-200 dark:border-purple-800 pl-8 ml-4;
-  background: linear-gradient(
-    90deg,
-    rgba(164, 110, 248, 0.05) 0%,
-    transparent 100%
-  );
 }
 
 .members-wrapper > h3 {

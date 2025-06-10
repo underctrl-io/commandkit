@@ -1,0 +1,65 @@
+---
+title: "LoadedEvent"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## LoadedEvent
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppEventsHandler.ts" sourceLine="16" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+interface LoadedEvent {
+    name: string;
+    namespace: string | null;
+    event: ParsedEvent;
+    listeners: EventListener[];
+    mainListener?: EventListener;
+    executedOnceListeners?: Set<ListenerFunction>;
+}
+```
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={`string`}   />
+
+
+### namespace
+
+<MemberInfo kind="property" type={`string | null`}   />
+
+
+### event
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/parsed-event#parsedevent'>ParsedEvent</a>`}   />
+
+
+### listeners
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/event-listener#eventlistener'>EventListener</a>[]`}   />
+
+
+### mainListener
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/event-listener#eventlistener'>EventListener</a>`}   />
+
+
+### executedOnceListeners
+
+<MemberInfo kind="property" type={`Set&#60;<a href='/docs/next/api-reference/commandkit/types/listener-function#listenerfunction'>ListenerFunction</a>&#62;`}   />
+
+
+
+
+</div>

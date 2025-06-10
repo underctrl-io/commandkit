@@ -1,0 +1,43 @@
+---
+title: "OnBootstrap"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## onBootstrap
+
+<GenerationInfo sourceFile="packages/commandkit/src/CommandKit.ts" sourceLine="51" packageName="commandkit" />
+
+Registers a bootstrap hook that will be called when the CommandKit instance is created.
+This is useful for plugins that need to run some code after the CommandKit instance is fully initialized.
+Note that not all commandkit dependiencs are available at this point. It is recommended to use the `onApplicationBootstrap` hook instead,
+if you need access to the commandkit dependencies.
+
+
+
+*Example*
+
+```ts
+import { onBootstrap } from 'commandkit';
+
+onBootstrap(async (commandkit) => {
+// Do something with the commandkit instance
+})
+```
+
+```ts title="Signature"
+function onBootstrap<F extends BootstrapFunction>(fn: F): void
+```
+Parameters
+
+### fn
+
+<MemberInfo kind="parameter" type={`F`} />
+

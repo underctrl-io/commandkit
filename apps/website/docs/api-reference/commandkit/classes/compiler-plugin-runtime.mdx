@@ -1,0 +1,101 @@
+---
+title: "CompilerPluginRuntime"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CompilerPluginRuntime
+
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/CompilerPluginRuntime.ts" sourceLine="24" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class CompilerPluginRuntime {
+    public readonly name = 'CompilerPluginRuntime';
+    constructor(plugins: CompilerPlugin[])
+    getPlugins() => ;
+    isEmpty() => ;
+    registerTemplate(name: string, handler: TemplateHandler) => ;
+    unregisterTemplate(name: string) => ;
+    getTemplate(name: string) => TemplateHandler | undefined;
+    getTemplates() => Map<string, TemplateHandler>;
+    transform(code: string, id: string) => Promise<{ code: string; map: string | null }>;
+    init() => ;
+    destroy() => ;
+    toJSON() => ;
+}
+```
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={``}   />
+
+
+### constructor
+
+<MemberInfo kind="method" type={`(plugins: <a href='/docs/next/api-reference/commandkit/classes/compiler-plugin#compilerplugin'>CompilerPlugin</a>[]) => CompilerPluginRuntime`}   />
+
+
+### getPlugins
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### isEmpty
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### registerTemplate
+
+<MemberInfo kind="method" type={`(name: string, handler: <a href='/docs/next/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a>) => `}   />
+
+
+### unregisterTemplate
+
+<MemberInfo kind="method" type={`(name: string) => `}   />
+
+
+### getTemplate
+
+<MemberInfo kind="method" type={`(name: string) => <a href='/docs/next/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a> | undefined`}   />
+
+
+### getTemplates
+
+<MemberInfo kind="method" type={`() => Map&#60;string, <a href='/docs/next/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a>&#62;`}   />
+
+
+### transform
+
+<MemberInfo kind="method" type={`(code: string, id: string) => Promise&#60;{ code: string; map: string | null }&#62;`}   />
+
+
+### init
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### destroy
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### toJSON
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+
+
+</div>

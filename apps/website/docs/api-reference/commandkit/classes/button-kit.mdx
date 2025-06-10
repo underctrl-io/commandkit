@@ -1,0 +1,85 @@
+---
+title: "ButtonKit"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## ButtonKit
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/button/ButtonKit.ts" sourceLine="49" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class ButtonKit extends ButtonBuilder {
+    onClick(handler: CommandKitButtonBuilderInteractionCollectorDispatch, data?: CommandKitButtonBuilderInteractionCollectorDispatchContextData) => this;
+    onEnd(handler: CommandKitButtonBuilderOnEnd) => this;
+    onError(handler: EventInterceptorErrorHandler) => this;
+    filter(predicate: ButtonKitPredicate) => this;
+    dispose() => ;
+}
+```
+* Extends: <code>ButtonBuilder</code>
+
+
+
+<div className="members-wrapper">
+
+### onClick
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/types/command-kit-button-builder-interaction-collector-dispatch#commandkitbuttonbuilderinteractioncollectordispatch'>CommandKitButtonBuilderInteractionCollectorDispatch</a>, data?: <a href='/docs/next/api-reference/commandkit/types/command-kit-button-builder-interaction-collector-dispatch-context-data#commandkitbuttonbuilderinteractioncollectordispatchcontextdata'>CommandKitButtonBuilderInteractionCollectorDispatchContextData</a>) => this`}   />
+
+Sets up an inline interaction collector for this button. This collector by default allows as many interactions as possible if it is actively used.
+If unused, this expires after 24 hours or custom time if specified.
+
+
+
+*Example*
+
+```ts
+const button = new ButtonKit()
+  .setLabel('Click me')
+  .setStyle(ButtonStyle.Primary)
+  .setCustomId('click_me')
+  .filter((interaction) => interaction.user.id === '1234567890')
+  .onClick(async (interaction) => {
+    await interaction.reply('You clicked me!');
+  });
+
+const row = new ActionRowBuilder().addComponents(button);
+
+const message = await channel.send({ content: 'Click the button', components: [row] });
+
+// Remove onClick handler and destroy the interaction collector
+button.onClick(null);
+```
+### onEnd
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/types/command-kit-button-builder-on-end#commandkitbuttonbuilderonend'>CommandKitButtonBuilderOnEnd</a>) => this`}   />
+
+
+### onError
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/types/event-interceptor-error-handler#eventinterceptorerrorhandler'>EventInterceptorErrorHandler</a>) => this`}   />
+
+Sets the handler to run when the interaction collector ends.
+### filter
+
+<MemberInfo kind="method" type={`(predicate: <a href='/docs/next/api-reference/commandkit/types/button-kit-predicate#buttonkitpredicate'>ButtonKitPredicate</a>) => this`}   />
+
+Sets a filter for the interaction collector.
+### dispose
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+
+
+</div>

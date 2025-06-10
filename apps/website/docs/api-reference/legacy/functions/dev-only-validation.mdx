@@ -1,0 +1,42 @@
+---
+title: "DevOnlyValidation"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## devOnlyValidation
+
+<GenerationInfo sourceFile="packages/legacy/src/validations/devOnly.ts" sourceLine="3" packageName="@commandkit/legacy" />
+
+
+
+```ts title="Signature"
+function devOnlyValidation({
+  interaction,
+  commandObj,
+  handlerData,
+}: ValidationProps & {
+  handlerData: {
+    devGuildIds: string[];
+    devRoleIds: string[];
+    devUserIds: string[];
+  };
+}): void
+```
+Parameters
+
+### \{
+  interaction,
+  commandObj,
+  handlerData,
+}
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/legacy/interfaces/validation-props#validationprops'>ValidationProps</a> &#38; {   handlerData: {     devGuildIds: string[];     devRoleIds: string[];     devUserIds: string[];   }; }`} />
+

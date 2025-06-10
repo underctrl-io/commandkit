@@ -1,0 +1,65 @@
+---
+title: "AiContext"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## AiContext
+
+<GenerationInfo sourceFile="packages/ai/src/context.ts" sourceLine="12" packageName="@commandkit/ai" />
+
+
+
+```ts title="Signature"
+class AiContext<T extends Record<string, unknown> = Record<string, unknown>> {
+    public params!: T;
+    public message!: Message;
+    public client!: Client;
+    public commandkit!: CommandKit;
+    constructor(options: AiContextOptions<T>)
+    setParams(params: T) => void;
+}
+```
+
+<div className="members-wrapper">
+
+### params
+
+<MemberInfo kind="property" type={`T`}   />
+
+
+### message
+
+<MemberInfo kind="property" type={`Message`}   />
+
+
+### client
+
+<MemberInfo kind="property" type={`Client`}   />
+
+
+### commandkit
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
+
+
+### constructor
+
+<MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/ai/interfaces/ai-context-options#aicontextoptions'>AiContextOptions</a>&#60;T&#62;) => AiContext`}   />
+
+
+### setParams
+
+<MemberInfo kind="method" type={`(params: T) => void`}   />
+
+
+
+
+</div>

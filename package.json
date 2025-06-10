@@ -12,12 +12,11 @@
     "build": "turbo run --filter=\"./packages/*\" build",
     "publish-package": "pnpm publish-package",
     "build-docs": "pnpm run --filter=\"./apps/website\" build",
-    "docgen": "tsx ./scripts/docgen.ts && pnpm format",
+    "docgen": "tsx ./scripts/docs/generate-typescript-docs.ts && pnpm format",
     "format": "prettier --write ./ --ignore-path=.prettierignore"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
-    "micro-docgen": "^0.3.5",
     "prettier": "^3.0.3",
     "tsx": "^4.7.0",
     "turbo": "^2.5.3"
@@ -68,5 +67,10 @@
       "core-js",
       "core-js-pure"
     ]
+  },
+  "dependencies": {
+    "fs-extra": "^11.3.0",
+    "klaw-sync": "^7.0.0",
+    "typescript": "^5.8.3"
   }
 }

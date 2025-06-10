@@ -1,0 +1,91 @@
+---
+title: "ContextParameters"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## ContextParameters
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="39" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+interface ContextParameters<T extends CommandExecutionMode, Args = Record<string, any>> {
+    command: LoadedCommand;
+    environment?: CommandKitEnvironment;
+    executionMode: T;
+    interaction: T extends 'chatInput'
+    ? ChatInputCommandInteraction
+    : T extends 'messageContextMenu'
+      ? MessageContextMenuCommandInteraction
+      : T extends 'userContextMenu'
+        ? UserContextMenuCommandInteraction
+        : T extends 'autocomplete'
+          ? AutocompleteInteraction
+          : never;
+    message: T extends 'message' ? Message : never;
+    forwarded?: boolean;
+    messageCommandParser?: T extends 'message' ? MessageCommandParser : never;
+    store?: Map<string, any>;
+    customArgs?: Args;
+}
+```
+
+<div className="members-wrapper">
+
+### command
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>`}   />
+
+
+### environment
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>`}   />
+
+
+### executionMode
+
+<MemberInfo kind="property" type={`T`}   />
+
+
+### interaction
+
+<MemberInfo kind="property" type={`T extends 'chatInput'     ? ChatInputCommandInteraction     : T extends 'messageContextMenu'       ? MessageContextMenuCommandInteraction       : T extends 'userContextMenu'         ? UserContextMenuCommandInteraction         : T extends 'autocomplete'           ? AutocompleteInteraction           : never`}   />
+
+
+### message
+
+<MemberInfo kind="property" type={`T extends 'message' ? Message : never`}   />
+
+
+### forwarded
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+
+### messageCommandParser
+
+<MemberInfo kind="property" type={`T extends 'message' ? <a href='/docs/next/api-reference/commandkit/classes/message-command-parser#messagecommandparser'>MessageCommandParser</a> : never`}   />
+
+
+### store
+
+<MemberInfo kind="property" type={`Map&#60;string, any&#62;`}   />
+
+
+### customArgs
+
+<MemberInfo kind="property" type={`Args`}   />
+
+
+
+
+</div>

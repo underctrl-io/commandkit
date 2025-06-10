@@ -1,0 +1,71 @@
+---
+title: "PluginCommon"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## PluginCommon
+
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/PluginCommon.ts" sourceLine="11" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class PluginCommon<T extends PluginOptions = PluginOptions, C extends CommonPluginRuntime = CommonPluginRuntime> {
+    public abstract readonly type: PluginType;
+    public readonly id = randomUUID();
+    public readonly loadedAt = Date.now();
+    public abstract readonly name: string;
+    constructor(options: T)
+    activate(ctx: C) => Promise<void>;
+    deactivate(ctx: C) => Promise<void>;
+}
+```
+
+<div className="members-wrapper">
+
+### type
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/enums/plugin-type#plugintype'>PluginType</a>`}   />
+
+
+### id
+
+<MemberInfo kind="property" type={``}   />
+
+
+### loadedAt
+
+<MemberInfo kind="property" type={``}   />
+
+
+### name
+
+<MemberInfo kind="property" type={`string`}   />
+
+
+### constructor
+
+<MemberInfo kind="method" type={`(options: T) => PluginCommon`}   />
+
+
+### activate
+
+<MemberInfo kind="method" type={`(ctx: C) => Promise&#60;void&#62;`}   />
+
+Called when this plugin is activated
+### deactivate
+
+<MemberInfo kind="method" type={`(ctx: C) => Promise&#60;void&#62;`}   />
+
+Called when this plugin is deactivated
+
+
+</div>

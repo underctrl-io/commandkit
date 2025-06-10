@@ -1,0 +1,28 @@
+---
+title: "DecideFunction"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## DecideFunction
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/feature-flags.ts" sourceLine="49" packageName="commandkit" />
+
+Function type for deciding the outcome of a feature flag based on the provided entities.
+This function receives an object containing the entities and optionally the provider configuration,
+and should return the result of the decision.
+It can be synchronous or asynchronous.
+
+```ts title="Signature"
+type DecideFunction<E, R> = (data: {
+  entities: E;
+  provider?: FlagConfiguration | null;
+}) => MaybePromise<R>
+```

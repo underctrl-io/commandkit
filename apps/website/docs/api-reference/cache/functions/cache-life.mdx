@@ -1,0 +1,39 @@
+---
+title: "CacheLife"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## cacheLife
+
+<GenerationInfo sourceFile="packages/cache/src/use-cache.ts" sourceLine="245" packageName="@commandkit/cache" />
+
+Sets the TTL for the current cache operation
+
+
+
+*Example*
+
+```ts
+const fetchData = cache(async () => {
+  cacheLife('30m');
+  return await expensiveOperation();
+});
+```
+
+```ts title="Signature"
+function cacheLife(ttl: number | string): void
+```
+Parameters
+
+### ttl
+
+<MemberInfo kind="parameter" type={`number | string`} />
+

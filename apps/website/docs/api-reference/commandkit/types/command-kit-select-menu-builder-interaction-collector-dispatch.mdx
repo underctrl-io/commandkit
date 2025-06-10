@@ -1,0 +1,26 @@
+---
+title: "CommandKitSelectMenuBuilderInteractionCollectorDispatch"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKitSelectMenuBuilderInteractionCollectorDispatch
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/select-menu/common.ts" sourceLine="23" packageName="commandkit" />
+
+The handler to run when a modal is submitted. This handler is called with the interaction as the first argument.
+If the first argument is null, it means that the interaction collector has been destroyed.
+
+```ts title="Signature"
+type CommandKitSelectMenuBuilderInteractionCollectorDispatch<T, C> = (
+  interaction: T,
+  context: C,
+) => Awaitable<void>
+```

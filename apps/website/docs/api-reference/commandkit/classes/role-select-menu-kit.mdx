@@ -1,0 +1,80 @@
+---
+title: "RoleSelectMenuKit"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## RoleSelectMenuKit
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/select-menu/RoleSelectMenuKit.ts" sourceLine="28" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class RoleSelectMenuKit extends RoleSelectMenuBuilder {
+    onSelect(handler: CommandKitSelectMenuBuilderInteractionCollectorDispatch<
+      RoleSelectMenuInteraction,
+      RoleSelectMenuKit
+    >, data?: CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData) => this;
+    onEnd(handler: CommandKitSelectMenuBuilderOnEnd) => this;
+    onError(handler: EventInterceptorErrorHandler) => this;
+    filter(predicate: SelectMenuKitPredicate<RoleSelectMenuInteraction>) => this;
+    dispose() => ;
+}
+```
+* Extends: <code>RoleSelectMenuBuilder</code>
+
+
+
+<div className="members-wrapper">
+
+### onSelect
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/types/command-kit-select-menu-builder-interaction-collector-dispatch#commandkitselectmenubuilderinteractioncollectordispatch'>CommandKitSelectMenuBuilderInteractionCollectorDispatch</a>&#60;       RoleSelectMenuInteraction,       <a href='/docs/next/api-reference/commandkit/classes/role-select-menu-kit#roleselectmenukit'>RoleSelectMenuKit</a>     &#62;, data?: <a href='/docs/next/api-reference/commandkit/types/command-kit-select-menu-builder-interaction-collector-dispatch-context-data#commandkitselectmenubuilderinteractioncollectordispatchcontextdata'>CommandKitSelectMenuBuilderInteractionCollectorDispatchContextData</a>) => this`}   />
+
+Sets the handler to run when the modal is submitted.
+
+
+
+*Example*
+
+```ts
+const modal = new RoleSelectMenuKit()
+ .setTitle('My Modal')
+ .setCustomId('my-modal')
+ .filter((interaction) => interaction.Role.id === '1234567890')
+ .onSelect(async (interaction) => {
+    await interaction.reply('You submitted the modal!');
+  })
+  .addComponents(actionRow1, actionRow2);
+```
+### onEnd
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/types/command-kit-select-menu-builder-on-end#commandkitselectmenubuilderonend'>CommandKitSelectMenuBuilderOnEnd</a>) => this`}   />
+
+Sets the handler to run when the interaction collector ends.
+### onError
+
+<MemberInfo kind="method" type={`(handler: <a href='/docs/next/api-reference/commandkit/types/event-interceptor-error-handler#eventinterceptorerrorhandler'>EventInterceptorErrorHandler</a>) => this`}   />
+
+Sets the handler to run when the interaction collector ends.
+### filter
+
+<MemberInfo kind="method" type={`(predicate: <a href='/docs/next/api-reference/commandkit/types/select-menu-kit-predicate#selectmenukitpredicate'>SelectMenuKitPredicate</a>&#60;RoleSelectMenuInteraction&#62;) => this`}   />
+
+Sets a filter for the interaction collector.
+### dispose
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+
+
+</div>

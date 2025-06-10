@@ -1,0 +1,41 @@
+---
+title: "AppCommandMiddleware"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## AppCommandMiddleware
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="39" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+interface AppCommandMiddleware {
+    beforeExecute: (ctx: Context) => Awaitable<unknown>;
+    afterExecute: (ctx: Context) => Awaitable<unknown>;
+}
+```
+
+<div className="members-wrapper">
+
+### beforeExecute
+
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a>) =&#62; Awaitable&#60;unknown&#62;`}   />
+
+
+### afterExecute
+
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a>) =&#62; Awaitable&#60;unknown&#62;`}   />
+
+
+
+
+</div>

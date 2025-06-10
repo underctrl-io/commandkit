@@ -1,0 +1,206 @@
+---
+title: "CommandKit"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKit
+
+<GenerationInfo sourceFile="packages/commandkit/src/CommandKit.ts" sourceLine="73" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class CommandKit extends EventEmitter {
+    public eventInterceptor!: EventInterceptor;
+    public static readonly createElement = createElement;
+    public static readonly Fragment = Fragment;
+    public readonly config: CommandKitConfiguration = {
+    defaultLocale: Locale.EnglishUS,
+    getMessageCommandPrefix: () => '!',
+  };
+    public readonly store = new Map<string, any>();
+    public readonly flags = new FlagStore();
+    public commandsRouter!: CommandsRouter;
+    public eventsRouter!: EventsRouter;
+    public commandHandler!: AppCommandHandler;
+    public eventHandler!: AppEventsHandler;
+    public plugins!: CommandKitPluginRuntime;
+    public events!: CommandKitEventsChannel;
+    public analytics!: AnalyticsEngine;
+    static instance: CommandKit | undefined = undefined;
+    constructor(options: CommandKitOptions = {})
+    start(token?: string | false) => ;
+    loadPlugins() => ;
+    started: void
+    setPrefixResolver(resolver: (message: Message) => Awaitable<string | string[]>) => ;
+    setDefaultLocale(locale: Locale) => ;
+    client: Client
+    setClient(client: Client) => ;
+    reloadCommands() => ;
+    reloadEvents() => ;
+    incrementClientListenersCount() => ;
+    decrementClientListenersCount() => ;
+    getAppDirectory() => ;
+    getPath(to: 'commands' | 'events') => ;
+}
+```
+* Extends: <code>EventEmitter</code>
+
+
+
+<div className="members-wrapper">
+
+### eventInterceptor
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/event-interceptor#eventinterceptor'>EventInterceptor</a>`}   />
+
+
+### createElement
+
+<MemberInfo kind="property" type={``}   />
+
+
+### Fragment
+
+<MemberInfo kind="property" type={``}   />
+
+
+### config
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/command-kit-configuration#commandkitconfiguration'>CommandKitConfiguration</a>`}   />
+
+
+### store
+
+<MemberInfo kind="property" type={``}   />
+
+
+### flags
+
+<MemberInfo kind="property" type={``}   />
+
+
+### commandsRouter
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/commands-router#commandsrouter'>CommandsRouter</a>`}   />
+
+
+### eventsRouter
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/events-router#eventsrouter'>EventsRouter</a>`}   />
+
+
+### commandHandler
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/app-command-handler#appcommandhandler'>AppCommandHandler</a>`}   />
+
+
+### eventHandler
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/app-events-handler#appeventshandler'>AppEventsHandler</a>`}   />
+
+
+### plugins
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>`}   />
+
+
+### events
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit-events-channel#commandkiteventschannel'>CommandKitEventsChannel</a>`}   />
+
+
+### analytics
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/analytics-engine#analyticsengine'>AnalyticsEngine</a>`}   />
+
+
+### instance
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a> | undefined`}   />
+
+
+### constructor
+
+<MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/commandkit/interfaces/command-kit-options#commandkitoptions'>CommandKitOptions</a> = {}) => CommandKit`}   />
+
+Create a new command and event handler with CommandKit.
+### start
+
+<MemberInfo kind="method" type={`(token?: string | false) => `}   />
+
+Starts the commandkit application.
+### loadPlugins
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Loads all the plugins.
+### started
+
+<MemberInfo kind="property" type={``}   />
+
+Whether or not the commandkit application has started.
+### setPrefixResolver
+
+<MemberInfo kind="method" type={`(resolver: (message: Message) =&#62; Awaitable&#60;string | string[]&#62;) => `}   />
+
+Sets the prefix resolver for the command handler.
+### setDefaultLocale
+
+<MemberInfo kind="method" type={`(locale: Locale) => `}   />
+
+Sets the default locale for the command handler.
+### client
+
+<MemberInfo kind="property" type={`Client`}   />
+
+Get the client attached to this CommandKit instance.
+### setClient
+
+<MemberInfo kind="method" type={`(client: Client) => `}   />
+
+Sets the client attached to this CommandKit instance.
+### reloadCommands
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Updates application commands with the latest from "commandsPath".
+### reloadEvents
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Updates application events with the latest from "eventsPath".
+### incrementClientListenersCount
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Increment the client listeners count.
+### decrementClientListenersCount
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Decrement the client listeners count.
+### getAppDirectory
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Path to the app directory. Returns `null` if not found.
+The lookup order is:
+- `./app`
+- `./src/app`
+### getPath
+
+<MemberInfo kind="method" type={`(to: 'commands' | 'events') => `}   />
+
+
+
+
+</div>

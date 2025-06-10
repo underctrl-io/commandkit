@@ -1,0 +1,89 @@
+---
+title: "MessageCommandParser"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## MessageCommandParser
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/MessageCommandParser.ts" sourceLine="28" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class MessageCommandParser {
+    constructor(message: Message, prefix: string[], schema: (command: string) => MessageCommandOptionsSchema)
+    getArgs() => ;
+    options: void
+    getOption(name: string) => T | undefined;
+    getCommand() => string;
+    getSubcommand() => string | undefined;
+    getSubcommandGroup() => string | undefined;
+    getPrefix() => ;
+    getFullCommand() => ;
+    parse() => ParsedMessageCommand;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(message: Message, prefix: string[], schema: (command: string) =&#62; <a href='/docs/next/api-reference/commandkit/types/message-command-options-schema#messagecommandoptionsschema'>MessageCommandOptionsSchema</a>) => MessageCommandParser`}   />
+
+
+### getArgs
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### options
+
+<MemberInfo kind="property" type={``}   />
+
+
+### getOption
+
+<MemberInfo kind="method" type={`(name: string) => T | undefined`}   />
+
+
+### getCommand
+
+<MemberInfo kind="method" type={`() => string`}   />
+
+
+### getSubcommand
+
+<MemberInfo kind="method" type={`() => string | undefined`}   />
+
+
+### getSubcommandGroup
+
+<MemberInfo kind="method" type={`() => string | undefined`}   />
+
+
+### getPrefix
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### getFullCommand
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### parse
+
+<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/parsed-message-command#parsedmessagecommand'>ParsedMessageCommand</a>`}   />
+
+
+
+
+</div>

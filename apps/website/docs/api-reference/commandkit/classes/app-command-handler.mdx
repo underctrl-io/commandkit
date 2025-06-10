@@ -1,0 +1,119 @@
+---
+title: "AppCommandHandler"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## AppCommandHandler
+
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="87" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class AppCommandHandler {
+    public readonly registrar: CommandRegistrar;
+    public readonly commandRunner = new AppCommandRunner(this);
+    public readonly externalCommandData = new Collection<string, Command>();
+    public readonly externalMiddlewareData = new Collection<string, Middleware>();
+    constructor(commandkit: CommandKit)
+    printBanner() => ;
+    getCommandsArray() => ;
+    registerCommandHandler() => ;
+    prepareCommandRun(source: Interaction | Message, cmdName?: string) => Promise<PreparedAppCommandExecution | null>;
+    reloadCommands() => ;
+    addExternalMiddleware(data: Middleware[]) => ;
+    addExternalCommands(data: Command[]) => ;
+    registerExternalLoadedMiddleware(data: LoadedMiddleware[]) => ;
+    registerExternalLoadedCommands(data: LoadedCommand[]) => ;
+    loadCommands() => ;
+}
+```
+
+<div className="members-wrapper">
+
+### registrar
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-registrar#commandregistrar'>CommandRegistrar</a>`}   />
+
+
+### commandRunner
+
+<MemberInfo kind="property" type={``}   />
+
+
+### externalCommandData
+
+<MemberInfo kind="property" type={``}   />
+
+
+### externalMiddlewareData
+
+<MemberInfo kind="property" type={``}   />
+
+
+### constructor
+
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => AppCommandHandler`}   />
+
+
+### printBanner
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### getCommandsArray
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### registerCommandHandler
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### prepareCommandRun
+
+<MemberInfo kind="method" type={`(source: Interaction | Message, cmdName?: string) => Promise&#60;<a href='/docs/next/api-reference/commandkit/interfaces/prepared-app-command-execution#preparedappcommandexecution'>PreparedAppCommandExecution</a> | null&#62;`}   />
+
+
+### reloadCommands
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+### addExternalMiddleware
+
+<MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/commandkit/interfaces/middleware#middleware'>Middleware</a>[]) => `}   />
+
+
+### addExternalCommands
+
+<MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/commandkit/interfaces/command#command'>Command</a>[]) => `}   />
+
+
+### registerExternalLoadedMiddleware
+
+<MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/commandkit/interfaces/loaded-middleware#loadedmiddleware'>LoadedMiddleware</a>[]) => `}   />
+
+
+### registerExternalLoadedCommands
+
+<MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>[]) => `}   />
+
+
+### loadCommands
+
+<MemberInfo kind="method" type={`() => `}   />
+
+
+
+
+</div>

@@ -1,0 +1,47 @@
+---
+title: "ConfigureAI"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## ConfigureAI
+
+<GenerationInfo sourceFile="packages/ai/src/plugin.ts" sourceLine="28" packageName="@commandkit/ai" />
+
+
+
+```ts title="Signature"
+interface ConfigureAI {
+    messageFilter?: MessageFilter;
+    selectAiModel?: SelectAiModel;
+    systemPrompt?: (message: Message) => Promise<string>;
+}
+```
+
+<div className="members-wrapper">
+
+### messageFilter
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/ai/types/message-filter#messagefilter'>MessageFilter</a>`}   />
+
+
+### selectAiModel
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/ai/types/select-ai-model#selectaimodel'>SelectAiModel</a>`}   />
+
+
+### systemPrompt
+
+<MemberInfo kind="property" type={`(message: Message) =&#62; Promise&#60;string&#62;`}   />
+
+
+
+
+</div>

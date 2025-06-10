@@ -1,0 +1,59 @@
+---
+title: "FlagConfiguration"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## FlagConfiguration
+
+<GenerationInfo sourceFile="packages/commandkit/src/flags/FlagProvider.ts" sourceLine="37" packageName="commandkit" />
+
+Configuration returned by external flag providers
+
+```ts title="Signature"
+interface FlagConfiguration {
+    enabled: boolean;
+    config?: Record<string, any>;
+    percentage?: number;
+    targeting?: {
+    segments?: string[];
+    rules?: Array<{
+      condition: string;
+      value: any;
+    }>;
+  };
+}
+```
+
+<div className="members-wrapper">
+
+### enabled
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether the flag is enabled/disabled at the provider level
+### config
+
+<MemberInfo kind="property" type={`Record&#60;string, any&#62;`}   />
+
+Optional configuration data that can be used in the decide function
+### percentage
+
+<MemberInfo kind="property" type={`number`}   />
+
+Optional percentage for gradual rollouts (0-100)
+### targeting
+
+<MemberInfo kind="property" type={`{     segments?: string[];     rules?: Array&#60;{       condition: string;       value: any;     }&#62;;   }`}   />
+
+Optional targeting rules or segments
+
+
+</div>

@@ -1,0 +1,26 @@
+---
+title: "CommandKitButtonBuilderInteractionCollectorDispatch"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKitButtonBuilderInteractionCollectorDispatch
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/button/ButtonKit.ts" sourceLine="39" packageName="commandkit" />
+
+The handler to run when a button is clicked. This handler is called with the interaction as the first argument.
+If the first argument is null, it means that the interaction collector has been destroyed.
+
+```ts title="Signature"
+type CommandKitButtonBuilderInteractionCollectorDispatch = (
+  interaction: ButtonInteraction,
+  context: ButtonKit,
+) => Awaitable<void>
+```
