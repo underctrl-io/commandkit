@@ -130,6 +130,11 @@ export class TypescriptDocsParser {
       return;
     }
 
+    // Check if this declaration is exported
+    if (!this.isExported(statement)) {
+      return;
+    }
+
     const category = this.getDocsCategory(statement) || fallbackCategory;
     if (category === undefined) {
       return;
@@ -581,6 +586,77 @@ export class TypescriptDocsParser {
     }
 
     return false;
+  }
+
+  /**
+   * Determines if a declaration is exported and should be included in documentation
+   */
+  private isExported(statement: ValidDeclaration): boolean {
+    // Check for export modifier
+    if (ts.canHaveModifiers(statement)) {
+      const modifiers = ts.getModifiers(statement);
+      if (modifiers?.some((mod) => mod.kind === ts.SyntaxKind.ExportKeyword)) {
+        return true;
+      }
+    }
+
+    // Check if it's a default export
+    if (ts.isExportAssignment(statement)) {
+      return true;
+    }
+
+    // For variable statements, check if any of the declarations are exported
+    if (ts.isVariableStatement(statement)) {
+      // Check if the variable statement itself has export modifier
+      if (ts.canHaveModifiers(statement)) {
+        const modifiers = ts.getModifiers(statement);
+        if (
+          modifiers?.some((mod) => mod.kind === ts.SyntaxKind.ExportKeyword)
+        ) {
+          return true;
+        }
+      }
+    }
+
+    // Check if the declaration is in an export declaration or export assignment
+    const parent = statement.parent;
+    if (ts.isSourceFile(parent)) {
+      // Look for export statements in the same source file that reference this declaration
+      const sourceFile = parent;
+      const declarationName = this.getDeclarationName(statement);
+
+      if (declarationName) {
+        // Check for named exports like: export { SomeName }
+        for (const stmt of sourceFile.statements) {
+          if (
+            ts.isExportDeclaration(stmt) &&
+            stmt.exportClause &&
+            ts.isNamedExports(stmt.exportClause)
+          ) {
+            for (const exportElement of stmt.exportClause.elements) {
+              const exportedName = exportElement.name.getText();
+              if (exportedName === declarationName) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Gets the name of a declaration for export checking
+   */
+  private getDeclarationName(statement: ValidDeclaration): string | undefined {
+    if (ts.isVariableStatement(statement)) {
+      return statement.declarationList.declarations[0]?.name?.getText();
+    } else if (statement.name) {
+      return statement.name.getText();
+    }
+    return undefined;
   }
 
   /**
