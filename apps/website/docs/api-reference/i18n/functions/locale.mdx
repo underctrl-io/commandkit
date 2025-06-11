@@ -13,9 +13,18 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## locale
 
-<GenerationInfo sourceFile="packages/i18n/src/hooks.ts" sourceLine="14" packageName="@commandkit/i18n" />
+<GenerationInfo sourceFile="packages/i18n/src/hooks.ts" sourceLine="16" packageName="@commandkit/i18n" />
 
 Gets the localization context. If the context originates from the event worker context, the returned t function is not bound to the command.
+
+
+
+*Example*
+
+```ts
+const { t, locale, i18n } = locale('en-US');
+const translated = t('hello'); // Translates 'hello' in the 'en-US' locale
+```
 
 ```ts title="Signature"
 function locale(locale?: Locale): CommandLocalizationContext

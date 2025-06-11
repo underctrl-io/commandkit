@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## PluginCommon
 
-<GenerationInfo sourceFile="packages/commandkit/src/plugins/PluginCommon.ts" sourceLine="11" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/PluginCommon.ts" sourceLine="22" packageName="commandkit" />
 
-
+Base class for CommandKit plugins.
 
 ```ts title="Signature"
 class PluginCommon<T extends PluginOptions = PluginOptions, C extends CommonPluginRuntime = CommonPluginRuntime> {
@@ -35,27 +35,27 @@ class PluginCommon<T extends PluginOptions = PluginOptions, C extends CommonPlug
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/enums/plugin-type#plugintype'>PluginType</a>`}   />
 
-
+The type of the plugin, either Compiler or Runtime.
 ### id
 
 <MemberInfo kind="property" type={``}   />
 
-
+Unique identifier for the plugin instance.
 ### loadedAt
 
 <MemberInfo kind="property" type={``}   />
 
-
+The time when the plugin was loaded, in milliseconds since the Unix epoch.
 ### name
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+The name of the plugin.
 ### constructor
 
 <MemberInfo kind="method" type={`(options: T) => PluginCommon`}   />
 
-
+Creates a new instance of the plugin.
 ### activate
 
 <MemberInfo kind="method" type={`(ctx: C) => Promise&#60;void&#62;`}   />

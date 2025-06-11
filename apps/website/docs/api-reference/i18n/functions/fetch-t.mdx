@@ -13,9 +13,18 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## fetchT
 
-<GenerationInfo sourceFile="packages/i18n/src/hooks.ts" sourceLine="57" packageName="@commandkit/i18n" />
+<GenerationInfo sourceFile="packages/i18n/src/hooks.ts" sourceLine="62" packageName="@commandkit/i18n" />
 
 Fetches the translation function for the given locale and namespace.
+
+
+
+*Example*
+
+```ts
+const t = fetchT('en-US', 'common');
+const translated = t('hello'); // Translates 'hello' in the 'en-US' locale
+```
 
 ```ts title="Signature"
 function fetchT(lng: string | string[], ns?: string | null, keyPrefix?: string): TFunction

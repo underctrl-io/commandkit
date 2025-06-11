@@ -13,14 +13,20 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## PostHogPluginOptions
 
-<GenerationInfo sourceFile="packages/analytics/src/posthog/plugin.ts" sourceLine="5" packageName="@commandkit/analytics" />
+<GenerationInfo sourceFile="packages/analytics/src/posthog/plugin.ts" sourceLine="8" packageName="@commandkit/analytics" />
 
-
+Options for the PostHog plugin.
 
 ```ts title="Signature"
 interface PostHogPluginOptions {
     posthogOptions: {
+    /**
+     * The PostHog API key.
+     */
     apiKey: string;
+    /**
+     * Additional options for the PostHog client.
+     */
     options?: PostHogOptions;
   };
 }
@@ -30,9 +36,9 @@ interface PostHogPluginOptions {
 
 ### posthogOptions
 
-<MemberInfo kind="property" type={`{     apiKey: string;     options?: PostHogOptions;   }`}   />
+<MemberInfo kind="property" type={`{     /**      * The PostHog API key.      */     apiKey: string;     /**      * Additional options for the PostHog client.      */     options?: PostHogOptions;   }`}   />
 
-
+The PostHog API key and options.
 
 
 </div>

@@ -13,9 +13,24 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## MediaGallery
 
-<GenerationInfo sourceFile="packages/commandkit/src/components/v2/media-gallery.ts" sourceLine="9" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/components/v2/media-gallery.ts" sourceLine="27" packageName="commandkit" />
+
+The media gallery component
 
 
+
+*Example*
+
+```tsx
+import { MediaGallery } from 'commandkit';
+
+const gallery = (
+<MediaGallery>
+<MediaGalleryItem url="https://example.com/image1.png" description="Image 1" />
+<MediaGalleryItem url="https://example.com/image2.png" description="Image 2" />
+</MediaGallery>
+);
+```
 
 ```ts title="Signature"
 function MediaGallery(props: MediaGalleryProps): void

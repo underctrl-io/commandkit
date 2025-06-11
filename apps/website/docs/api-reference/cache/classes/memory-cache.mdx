@@ -13,9 +13,10 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## MemoryCache
 
-<GenerationInfo sourceFile="packages/cache/src/memory-cache.ts" sourceLine="3" packageName="@commandkit/cache" />
+<GenerationInfo sourceFile="packages/cache/src/memory-cache.ts" sourceLine="7" packageName="@commandkit/cache" />
 
-
+MemoryCache is an in-memory cache provider that implements the CacheProvider interface.
+It stores cache entries in a Map and supports basic operations like get, set, exists, delete, clear, and expire.
 
 ```ts title="Signature"
 class MemoryCache extends CacheProvider {
@@ -37,32 +38,32 @@ class MemoryCache extends CacheProvider {
 
 <MemberInfo kind="method" type={`(key: string) => Promise&#60;<a href='/docs/next/api-reference/cache/interfaces/cache-entry#cacheentry'>CacheEntry</a>&#60;T&#62; | undefined&#62;`}   />
 
-
+Retrieves a value from the cache by its key.
 ### set
 
 <MemberInfo kind="method" type={`(key: string, value: T, ttl?: number) => Promise&#60;void&#62;`}   />
 
-
+Sets a value in the cache with an optional time-to-live (TTL).
 ### exists
 
 <MemberInfo kind="method" type={`(key: string) => Promise&#60;boolean&#62;`}   />
 
-
+Checks if a cache entry exists by its key.
 ### delete
 
 <MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
 
-
+Deletes a cache entry by its key.
 ### clear
 
 <MemberInfo kind="method" type={`() => Promise&#60;void&#62;`}   />
 
-
+Clears all entries in the cache.
 ### expire
 
 <MemberInfo kind="method" type={`(key: string, ttl: number) => Promise&#60;void&#62;`}   />
 
-
+Expires a cache entry by its key after a specified time-to-live (TTL).
 
 
 </div>

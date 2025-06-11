@@ -13,9 +13,25 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## LegacyCommandsCLIPlugin
 
-<GenerationInfo sourceFile="packages/legacy/src/cli.ts" sourceLine="7" packageName="@commandkit/legacy" />
+<GenerationInfo sourceFile="packages/legacy/src/cli.ts" sourceLine="22" packageName="@commandkit/legacy" />
+
+LegacyCommandsCLIPlugin is a CommandKit compiler plugin that provides a CLI
+interface for creating legacy commands and events.
+
+It allows users to create new command and event files with a simple command
+line interface, generating the appropriate boilerplate code based on whether
+the project is using TypeScript or JavaScript.
 
 
+
+*Example*
+
+```sh
+# To create a new command:
+$ commandkit create legacy command myCommand
+# to create a new event:
+$ commandkit create legacy event myEvent
+```
 
 ```ts title="Signature"
 class LegacyCommandsCLIPlugin extends CompilerPlugin<LegacyHandlerPluginOptions> {

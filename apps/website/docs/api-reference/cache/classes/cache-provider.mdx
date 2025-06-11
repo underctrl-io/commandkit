@@ -13,9 +13,10 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CacheProvider
 
-<GenerationInfo sourceFile="packages/cache/src/cache-provider.ts" sourceLine="6" packageName="@commandkit/cache" />
+<GenerationInfo sourceFile="packages/cache/src/cache-provider.ts" sourceLine="19" packageName="@commandkit/cache" />
 
-
+Abstract class for cache providers.
+This class defines the methods that any cache provider must implement.
 
 ```ts title="Signature"
 class CacheProvider {
@@ -34,32 +35,32 @@ class CacheProvider {
 
 <MemberInfo kind="method" type={`(key: string) => Promise&#60;<a href='/docs/next/api-reference/cache/interfaces/cache-entry#cacheentry'>CacheEntry</a>&#60;T&#62; | undefined&#62;`}   />
 
-
+Retrieves a value from the cache by its key.
 ### set
 
 <MemberInfo kind="method" type={`(key: string, value: T, ttl?: number) => Promise&#60;void&#62;`}   />
 
-
+Sets a value in the cache with an optional time-to-live (TTL).
 ### exists
 
 <MemberInfo kind="method" type={`(key: string) => Promise&#60;boolean&#62;`}   />
 
-
+Checks if a cache entry exists by its key.
 ### delete
 
 <MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
 
-
+Deletes a cache entry by its key.
 ### clear
 
 <MemberInfo kind="method" type={`() => Promise&#60;void&#62;`}   />
 
-
+Clears all entries in the cache.
 ### expire
 
 <MemberInfo kind="method" type={`(key: string, ttl: number) => Promise&#60;void&#62;`}   />
 
-
+Expires a cache entry by its key after a specified time-to-live (TTL).
 
 
 </div>

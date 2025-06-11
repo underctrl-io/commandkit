@@ -13,9 +13,22 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## noAnalytics
 
-<GenerationInfo sourceFile="packages/commandkit/src/analytics/utils.ts" sourceLine="25" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/analytics/utils.ts" sourceLine="42" packageName="commandkit" />
+
+Signals commandkit to not track further analytics events within current context.
+This is useful for scenarios where you want to disable analytics tracking
+for a specific command or operation, such as during testing or when the user opts out.
 
 
+
+*Example*
+
+```ts
+import { noAnalytics } from 'commandkit/analytics';
+
+// inside commandkit context
+noAnalytics();
+```
 
 ```ts title="Signature"
 function noAnalytics(): void

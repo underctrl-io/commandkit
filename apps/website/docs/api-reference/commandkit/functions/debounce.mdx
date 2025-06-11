@@ -13,9 +13,23 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## debounce
 
-<GenerationInfo sourceFile="packages/commandkit/src/utils/utilities.ts" sourceLine="72" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/utils/utilities.ts" sourceLine="89" packageName="commandkit" />
 
 Debounces a function.
+
+
+
+*Example*
+
+```ts
+const debouncedFn = debounce(() => {
+  console.log('Debounced function called');
+}, 300);
+
+debouncedFn(); // Will only execute after 300ms of inactivity
+debouncedFn(); // Will reset the timer
+debouncedFn(); // Will reset the timer again
+```
 
 ```ts title="Signature"
 function debounce<R, F extends (...args: any[]) => R>(fn: F, ms: number): F

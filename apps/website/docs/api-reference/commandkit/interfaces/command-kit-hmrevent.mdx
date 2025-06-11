@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKitHMREvent
 
-<GenerationInfo sourceFile="packages/commandkit/src/utils/dev-hooks.ts" sourceLine="11" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/utils/dev-hooks.ts" sourceLine="26" packageName="commandkit" />
 
-
+Represents an HMR event in CommandKit.
 
 ```ts title="Signature"
 interface CommandKitHMREvent {
@@ -32,22 +32,24 @@ interface CommandKitHMREvent {
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/hmrevent-type#hmreventtype'>HMREventType</a>`}   />
 
-
+The type of HMR event.
 ### path
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+The path associated with the HMR event.
 ### accept
 
 <MemberInfo kind="property" type={`() =&#62; void`}   />
 
-
+Accepts the HMR event, indicating that it has been handled.
+This prevents further processing of the event.
 ### preventDefault
 
 <MemberInfo kind="property" type={`() =&#62; void`}   />
 
-
+Prevents the default action for the HMR event.
+This can be used to stop further processing of the event.
 
 
 </div>

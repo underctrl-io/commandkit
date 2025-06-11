@@ -13,9 +13,11 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## UserSelectMenuKit
 
-<GenerationInfo sourceFile="packages/commandkit/src/components/v1/select-menu/UserSelectMenuKit.ts" sourceLine="28" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/select-menu/UserSelectMenuKit.ts" sourceLine="40" packageName="commandkit" />
 
-
+A builder for creating user select menus with additional features like interaction collectors and event handling.
+This class extends the UserSelectMenuBuilder from discord.js and adds methods for handling interactions.
+It allows you to set a handler for when the user select menu is submitted, filter interactions, and handle the end of the interaction collector.
 
 ```ts title="Signature"
 class UserSelectMenuKit extends UserSelectMenuBuilder {
@@ -74,7 +76,7 @@ Sets a filter for the interaction collector.
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Disposes of the user select menu kit, cleaning up any collectors and handlers.
 
 
 </div>

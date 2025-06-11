@@ -1,5 +1,5 @@
 ---
-title: "LoadTypeScript"
+title: "SeparatorProps"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,18 +11,17 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## loadTypeScript
+## SeparatorProps
 
-<GenerationInfo sourceFile="packages/commandkit/src/cli/common.ts" sourceLine="82" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/components/v2/separator.ts" sourceLine="6" packageName="commandkit" />
 
-
+Represents the properties for a separator component.
 
 ```ts title="Signature"
-function loadTypeScript(e?: string): void
+interface SeparatorProps extends Omit<SeparatorComponentData, 'type'> {
+
+}
 ```
-Parameters
+* Extends: <code>Omit&#60;SeparatorComponentData, 'type'&#62;</code>
 
-### e
-
-<MemberInfo kind="parameter" type={`string`} />
 

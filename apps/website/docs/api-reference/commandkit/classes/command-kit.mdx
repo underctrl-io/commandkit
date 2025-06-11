@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKit
 
-<GenerationInfo sourceFile="packages/commandkit/src/CommandKit.ts" sourceLine="73" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/CommandKit.ts" sourceLine="92" packageName="commandkit" />
 
-
+The commandkit class that serves as the main entry point for the CommandKit framework.
 
 ```ts title="Signature"
 class CommandKit extends EventEmitter {
@@ -62,72 +62,75 @@ class CommandKit extends EventEmitter {
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/event-interceptor#eventinterceptor'>EventInterceptor</a>`}   />
 
-
+The event interceptor to quickly register temporary event listeners
 ### createElement
 
 <MemberInfo kind="property" type={``}   />
 
-
+The static createElement function to create jsx elements
 ### Fragment
 
 <MemberInfo kind="property" type={``}   />
 
-
+The static Fragment component to create jsx fragments
 ### config
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/command-kit-configuration#commandkitconfiguration'>CommandKitConfiguration</a>`}   />
 
-
+The configuration for the CommandKit instance.
 ### store
 
 <MemberInfo kind="property" type={``}   />
 
-
+A key-value store for storing arbitrary data.
 ### flags
 
 <MemberInfo kind="property" type={``}   />
 
-
+A flag store for storing flags that can be used to enable or disable features.
 ### commandsRouter
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/commands-router#commandsrouter'>CommandsRouter</a>`}   />
 
-
+The command router for the CommandKit instance.
 ### eventsRouter
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/events-router#eventsrouter'>EventsRouter</a>`}   />
 
-
+The events router for the CommandKit instance.
 ### commandHandler
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/app-command-handler#appcommandhandler'>AppCommandHandler</a>`}   />
 
-
+The command handler for the CommandKit instance.
+This is responsible for handling commands and their execution.
 ### eventHandler
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/app-events-handler#appeventshandler'>AppEventsHandler</a>`}   />
 
-
+The event handler for the CommandKit instance.
+This is responsible for handling events and their execution.
 ### plugins
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>`}   />
 
-
+The plugins runtime for the CommandKit instance.
 ### events
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit-events-channel#commandkiteventschannel'>CommandKitEventsChannel</a>`}   />
 
-
+The events channel for the CommandKit instance. This can be used to emit custom events.
 ### analytics
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/analytics-engine#analyticsengine'>AnalyticsEngine</a>`}   />
 
-
+The analytics engine for the CommandKit instance.
+This is responsible for tracking events and user interactions.
 ### instance
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a> | undefined`}   />
 
-
+The static instance of CommandKit.
 ### constructor
 
 <MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/commandkit/interfaces/command-kit-options#commandkitoptions'>CommandKitOptions</a> = {}) => CommandKit`}   />
@@ -200,7 +203,7 @@ The lookup order is:
 
 <MemberInfo kind="method" type={`(to: 'commands' | 'events') => `}   />
 
-
+Get the path to the commands or events directory.
 
 
 </div>

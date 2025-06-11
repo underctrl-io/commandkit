@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKitEnvironmentInternalData
 
-<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="6" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="9" packageName="commandkit" />
 
-
+Represents the internal data structure for the CommandKit environment.
 
 ```ts title="Signature"
 interface CommandKitEnvironmentInternalData {
@@ -36,42 +36,48 @@ interface CommandKitEnvironmentInternalData {
 
 <MemberInfo kind="property" type={`Error | null`}   />
 
-
+The error that occurred during command execution, if any.
+This is set when an error occurs during the execution of a command.
 ### type
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/enums/command-kit-environment-type#commandkitenvironmenttype'>CommandKitEnvironmentType</a> | null`}   />
 
-
+The type of the environment, which can be used to differentiate between
+different execution contexts (e.g., command handler, event handler, etc.).
 ### variables
 
 <MemberInfo kind="property" type={`Map&#60;string, any&#62;`}   />
 
-
+A map of variables that can be used to store and retrieve data during command execution.
+This allows for sharing data between different parts of the command execution process.
 ### deferredFunctions
 
 <MemberInfo kind="property" type={`Map&#60;string, <a href='/docs/next/api-reference/commandkit/types/generic-function#genericfunction'>GenericFunction</a>&#60;[<a href='/docs/next/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>]&#62;&#62;`}   />
 
-
+A map of deferred functions that will be executed after the command has finished executing.
+This is useful for running cleanup tasks or additional processing after the main command logic.
 ### marker
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+A marker string that can be used to identify the command execution.
+This is useful for logging and debugging purposes.
 ### markStart
 
 <MemberInfo kind="property" type={`number`}   />
 
-
+The start time of the command execution.
 ### markEnd
 
 <MemberInfo kind="property" type={`number`}   />
 
-
+The end time of the command execution.
 ### context
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a> | null`}   />
 
-
+The context associated with the command execution.
+This can be used to access request-specific data or application state.
 
 
 </div>

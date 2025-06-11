@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CompilerPlugin
 
-<GenerationInfo sourceFile="packages/commandkit/src/plugins/CompilerPlugin.ts" sourceLine="20" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/CompilerPlugin.ts" sourceLine="38" packageName="commandkit" />
 
-
+CommandKit plugin that runs at compile time.
 
 ```ts title="Signature"
 class CompilerPlugin<T extends PluginOptions = PluginOptions> extends PluginCommon<T, CompilerPluginRuntime> {
@@ -33,10 +33,10 @@ class CompilerPlugin<T extends PluginOptions = PluginOptions> extends PluginComm
 
 <MemberInfo kind="property" type={``}   />
 
-
+The type of the plugin, which is Compiler.
 ### transform
 
-<MemberInfo kind="method" type={`(params: <a href='/docs/next/api-reference/commandkit/interfaces/plugin-transform-parameters#plugintransformparameters'>PluginTransformParameters</a>) => Promise&#60;<a href='/docs/next/api-reference/commandkit/types/maybe-falsey#maybefalsey'>MaybeFalsey</a>&#60;<a href='/docs/next/api-reference/commandkit/interfaces/transformed-result#transformedresult'>TransformedResult</a>&#62;&#62;`}   />
+<MemberInfo kind="method" type={`(params: <a href='/docs/next/api-reference/commandkit/interfaces/plugin-transform-parameters#plugintransformparameters'>PluginTransformParameters</a>) => Promise&#60;MaybeFalsey&#60;<a href='/docs/next/api-reference/commandkit/interfaces/transformed-result#transformedresult'>TransformedResult</a>&#62;&#62;`}   />
 
 Called when transformation is requested to this plugin
 

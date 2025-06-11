@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AiPlugin
 
-<GenerationInfo sourceFile="packages/ai/src/plugin.ts" sourceLine="48" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/plugin.ts" sourceLine="78" packageName="@commandkit/ai" />
 
 
 
@@ -27,7 +27,7 @@ class AiPlugin extends RuntimePlugin<AiPluginOptions> {
     onAfterCommandsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
 }
 ```
-* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>&#60;AiPluginOptions&#62;</code>
+* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>&#60;<a href='/docs/next/api-reference/ai/interfaces/ai-plugin-options#aipluginoptions'>AiPluginOptions</a>&#62;</code>
 
 
 
@@ -40,7 +40,7 @@ class AiPlugin extends RuntimePlugin<AiPluginOptions> {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(options: AiPluginOptions) => AiPlugin`}   />
+<MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/ai/interfaces/ai-plugin-options#aipluginoptions'>AiPluginOptions</a>) => AiPlugin`}   />
 
 
 ### activate

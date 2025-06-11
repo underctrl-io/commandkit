@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandOptions
 
-<GenerationInfo sourceFile="packages/legacy/src/loadLegacyCommands.ts" sourceLine="27" packageName="@commandkit/legacy" />
+<GenerationInfo sourceFile="packages/legacy/src/loadLegacyCommands.ts" sourceLine="48" packageName="@commandkit/legacy" />
 
-
+Represents the options for a command, including permissions and execution conditions.
 
 ```ts title="Signature"
 interface CommandOptions {
@@ -33,27 +33,27 @@ interface CommandOptions {
 
 <MemberInfo kind="property" type={`PermissionsString[]`}   />
 
-
+The name of the command.
 ### deleted
 
 <MemberInfo kind="property" type={`boolean`}   />
 
-
+The description of the command.
 ### devOnly
 
 <MemberInfo kind="property" type={`boolean`}   />
 
-
+Whether the command is only available to developers.
 ### guildOnly
 
 <MemberInfo kind="property" type={`boolean`}   />
 
-
+Whether the command can only be used in a guild.
 ### userPermissions
 
 <MemberInfo kind="property" type={`PermissionsString[]`}   />
 
-
+The permissions required for the user to execute the command.
 
 
 </div>

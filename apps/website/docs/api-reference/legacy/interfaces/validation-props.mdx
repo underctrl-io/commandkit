@@ -13,9 +13,10 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ValidationProps
 
-<GenerationInfo sourceFile="packages/legacy/src/loadLegacyValidations.ts" sourceLine="17" packageName="@commandkit/legacy" />
+<GenerationInfo sourceFile="packages/legacy/src/loadLegacyValidations.ts" sourceLine="21" packageName="@commandkit/legacy" />
 
-
+Represents the properties required for validation functions.
+It includes the client, interaction, command object, and handler.
 
 ```ts title="Signature"
 interface ValidationProps {
@@ -35,22 +36,22 @@ interface ValidationProps {
 
 <MemberInfo kind="property" type={`Client&#60;true&#62;`}   />
 
-
+The Discord client instance.
 ### interaction
 
 <MemberInfo kind="property" type={`| ChatInputCommandInteraction     | AutocompleteInteraction     | ContextMenuCommandInteraction`}   />
 
-
+The interaction that triggered the command.
 ### commandObj
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/legacy/interfaces/command-object#commandobject'>CommandObject</a>`}   />
 
-
+The command object associated with the interaction.
 ### handler
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
 
-
+The CommandKit handler instance.
 
 
 </div>

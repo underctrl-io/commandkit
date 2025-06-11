@@ -13,9 +13,26 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## cancelAfter
 
-<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="208" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="264" packageName="commandkit" />
 
 Cancels a deferred function registered with `after`.
+
+
+
+*Example*
+
+```ts
+import { cancelAfter } from 'commandkit';
+// inside a command
+export const chatInput: ChatInputCommand = async (ctx) => {
+const id = after(() => {
+console.log('This will run after the command has finished executing.');
+});
+
+// cancel the deferred function if needed
+if (something) cancelAfter(id);
+}
+```
 
 ```ts title="Signature"
 function cancelAfter(id: string): void

@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKitEventDispatch
 
-<GenerationInfo sourceFile="packages/commandkit/src/plugins/types.ts" sourceLine="8" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/types.ts" sourceLine="17" packageName="commandkit" />
 
-
+Represents an event dispatched to the plugins.
 
 ```ts title="Signature"
 interface CommandKitEventDispatch {
@@ -34,32 +34,32 @@ interface CommandKitEventDispatch {
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+The name of the event.
 ### args
 
 <MemberInfo kind="property" type={`unknown[]`}   />
 
-
+The arguments passed to the event.
 ### namespace
 
 <MemberInfo kind="property" type={`string | null`}   />
 
-
+The namespace of the event, if any.
 ### once
 
 <MemberInfo kind="property" type={`boolean`}   />
 
-
+If this event runs only once, it will be set to true.
 ### metadata
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/parsed-event#parsedevent'>ParsedEvent</a>`}   />
 
-
+The additional metadata associated with the event.
 ### accept
 
 <MemberInfo kind="method" type={`() => void`}   />
 
-
+Captures the owner of the event, preventing other plugins from handling it.
 
 
 </div>

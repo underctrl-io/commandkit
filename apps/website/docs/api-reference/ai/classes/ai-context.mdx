@@ -13,9 +13,11 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AiContext
 
-<GenerationInfo sourceFile="packages/ai/src/context.ts" sourceLine="12" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/context.ts" sourceLine="17" packageName="@commandkit/ai" />
 
-
+Represents the context in which an AI command is executed.
+This includes the parameters passed to the command, the message that triggered it,
+and the CommandKit instance associated with the command.
 
 ```ts title="Signature"
 class AiContext<T extends Record<string, unknown> = Record<string, unknown>> {
@@ -34,32 +36,32 @@ class AiContext<T extends Record<string, unknown> = Record<string, unknown>> {
 
 <MemberInfo kind="property" type={`T`}   />
 
-
+The parameters passed to the AI command.
 ### message
 
 <MemberInfo kind="property" type={`Message`}   />
 
-
+The message that triggered the AI command.
 ### client
 
 <MemberInfo kind="property" type={`Client`}   />
 
-
+The client instance associated with the AI command.
 ### commandkit
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
 
-
+The CommandKit instance associated with the AI command.
 ### constructor
 
 <MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/ai/interfaces/ai-context-options#aicontextoptions'>AiContextOptions</a>&#60;T&#62;) => AiContext`}   />
 
-
+Creates a new instance of AiContext.
 ### setParams
 
 <MemberInfo kind="method" type={`(params: T) => void`}   />
 
-
+Sets the parameters for the AI context.
 
 
 </div>

@@ -13,9 +13,10 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## DefaultLogger
 
-<GenerationInfo sourceFile="packages/commandkit/src/logger/DefaultLogger.ts" sourceLine="45" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/logger/DefaultLogger.ts" sourceLine="52" packageName="commandkit" />
 
-
+Default logger implementation that logs messages to the console.
+It formats the log messages with timestamps, log levels, and context information.
 
 ```ts title="Signature"
 class DefaultLogger implements ILogger {
@@ -37,32 +38,32 @@ class DefaultLogger implements ILogger {
 
 <MemberInfo kind="method" type={`(stdout:  = process.stdout, stderr:  = process.stderr) => DefaultLogger`}   />
 
-
+Creates a new instance of DefaultLogger.
 ### debug
 
 <MemberInfo kind="method" type={`(args: any[]) => void`}   />
 
-
+Logs a debug message.
 ### error
 
 <MemberInfo kind="method" type={`(args: any[]) => void`}   />
 
-
+Logs an error message.
 ### log
 
 <MemberInfo kind="method" type={`(args: any[]) => void`}   />
 
-
+Logs a default message.
 ### info
 
 <MemberInfo kind="method" type={`(args: any[]) => void`}   />
 
-
+Logs an info message.
 ### warn
 
 <MemberInfo kind="method" type={`(args: any[]) => void`}   />
 
-
+Logs a warning message.
 
 
 </div>

@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## MessageCommandOptions
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/commands/MessageCommandParser.ts" sourceLine="183" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/MessageCommandParser.ts" sourceLine="251" packageName="commandkit" />
 
-
+Provides typed access to message command options with methods similar to Discord.js interaction options.
 
 ```ts title="Signature"
 class MessageCommandOptions {
@@ -65,12 +65,12 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(parser: <a href='/docs/next/api-reference/commandkit/classes/message-command-parser#messagecommandparser'>MessageCommandParser</a>) => MessageCommandOptions`}   />
 
-
+Creates a new message command options instance.
 ### getMember
 
 <MemberInfo kind="method" type={`(name: string) => GuildMember | null`}   />
 
-
+Gets a guild member from the command options.
 ### getMember
 
 <MemberInfo kind="method" type={`(name: string, required: true) => GuildMember`}   />
@@ -85,7 +85,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(name: string) => Attachment | null`}   />
 
-
+Gets an attachment from the command options.
 ### getAttachment
 
 <MemberInfo kind="method" type={`(name: string, required: true) => Attachment`}   />
@@ -100,7 +100,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(name: string) => boolean | null`}   />
 
-
+Gets a boolean value from the command options.
 ### getBoolean
 
 <MemberInfo kind="method" type={`(name: string, required: true) => boolean`}   />
@@ -115,7 +115,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(name: string) => number | null`}   />
 
-
+Gets a number value from the command options.
 ### getNumber
 
 <MemberInfo kind="method" type={`(name: string, required: true) => number`}   />
@@ -130,7 +130,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(name: string) => string | null`}   />
 
-
+Gets a string value from the command options.
 ### getString
 
 <MemberInfo kind="method" type={`(name: string, required: true) => string`}   />
@@ -145,7 +145,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(name: string) => number | null`}   />
 
-
+Gets an integer value from the command options.
 ### getInteger
 
 <MemberInfo kind="method" type={`(name: string, required: true) => number`}   />
@@ -160,7 +160,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(name: string) => User | null`}   />
 
-
+Gets a user from the command options.
 ### getUser
 
 <MemberInfo kind="method" type={`(name: string, required: true) => User`}   />
@@ -175,7 +175,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(name: string) => Channel | null`}   />
 
-
+Gets a channel from the command options.
 ### getChannel
 
 <MemberInfo kind="method" type={`(name: string, required: true) => Channel`}   />
@@ -190,7 +190,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(name: string) => Role | null`}   />
 
-
+Gets a role from the command options.
 ### getRole
 
 <MemberInfo kind="method" type={`(name: string, required: true) => Role`}   />
@@ -205,7 +205,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`(name: string) => NonNullable&#60;CommandInteractionOption['member' | 'role' | 'user']&#62; | null`}   />
 
-
+Gets a mentionable (user, member, or role) from the command options.
 ### getMentionable
 
 <MemberInfo kind="method" type={`(name: string, required: true) => NonNullable&#60;CommandInteractionOption['member' | 'role' | 'user']&#62;`}   />
@@ -220,7 +220,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`() => string | null`}   />
 
-
+Gets the subcommand name from the command.
 ### getSubcommand
 
 <MemberInfo kind="method" type={`(required: true) => string`}   />
@@ -235,7 +235,7 @@ class MessageCommandOptions {
 
 <MemberInfo kind="method" type={`() => string | null`}   />
 
-
+Gets the subcommand group name from the command.
 ### getSubcommandGroup
 
 <MemberInfo kind="method" type={`(required: true) => string`}   />

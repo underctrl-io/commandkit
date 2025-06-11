@@ -13,9 +13,10 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKitModalBuilderOnEnd
 
-<GenerationInfo sourceFile="packages/commandkit/src/components/v1/modal/ModalKit.ts" sourceLine="43" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/modal/ModalKit.ts" sourceLine="51" packageName="commandkit" />
 
-
+The handler to run when the interaction collector ends. This handler is called with the reason as the first argument.
+If the first argument is null, it means that the interaction collector has been destroyed.
 
 ```ts title="Signature"
 type CommandKitModalBuilderOnEnd = (reason: string) => Awaitable<void>

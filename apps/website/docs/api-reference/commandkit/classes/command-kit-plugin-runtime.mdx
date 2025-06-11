@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKitPluginRuntime
 
-<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts" sourceLine="12" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts" sourceLine="15" packageName="commandkit" />
 
-
+Represents the runtime environment for CommandKit plugins.
 
 ```ts title="Signature"
 class CommandKitPluginRuntime {
@@ -37,47 +37,47 @@ class CommandKitPluginRuntime {
 
 <MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => CommandKitPluginRuntime`}   />
 
-
+Creates a new instance of CommandKitPluginRuntime.
 ### getPlugins
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Returns the plugins registered in this runtime.
 ### getPlugin
 
 <MemberInfo kind="method" type={`(pluginName: string) => <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a> | null`}   />
 
-
+Checks if there are no plugins registered in this runtime.
 ### softRegisterPlugin
 
 <MemberInfo kind="method" type={`(plugin: <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>) => `}   />
 
-
+Soft registers a plugin in the runtime.
 ### registerPlugin
 
 <MemberInfo kind="method" type={`(plugin: <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>) => `}   />
 
-
+Registers a plugin in the runtime.
 ### unregisterPlugin
 
 <MemberInfo kind="method" type={`(plugin: <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>) => `}   />
 
-
+Unregisters a plugin from the runtime.
 ### unregisterAllPlugins
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Unregisters all plugins from the runtime.
 ### capture
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Signals the runtime to allow the current plugin take ownership of the execution context.
 ### execute
 
 <MemberInfo kind="method" type={`(f: <a href='/docs/next/api-reference/commandkit/types/async-function#asyncfunction'>AsyncFunction</a>&#60;[<a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>], R | undefined&#62;) => `}   />
 
-
+Executes a function for each plugin in the runtime.
 
 
 </div>

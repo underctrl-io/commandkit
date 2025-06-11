@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AiConfig
 
-<GenerationInfo sourceFile="packages/ai/src/plugin.ts" sourceLine="19" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/plugin.ts" sourceLine="22" packageName="@commandkit/ai" />
 
-
+Represents the configuration options for the AI plugin scoped to a specific command.
 
 ```ts title="Signature"
 interface AiConfig {
@@ -30,12 +30,12 @@ interface AiConfig {
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+A description of the AI functionality provided by this command. If not given, the command's description will be used.
 ### parameters
 
 <MemberInfo kind="property" type={`any`}   />
 
-
+A zod schema defining the parameters that the AI command accepts.
 
 
 </div>

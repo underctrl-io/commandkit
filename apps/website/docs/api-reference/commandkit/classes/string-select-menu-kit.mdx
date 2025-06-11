@@ -13,9 +13,11 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## StringSelectMenuKit
 
-<GenerationInfo sourceFile="packages/commandkit/src/components/v1/select-menu/StringSelectMenuKit.ts" sourceLine="28" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/select-menu/StringSelectMenuKit.ts" sourceLine="40" packageName="commandkit" />
 
-
+A builder for creating string select menus with additional features like interaction collectors and event handling.
+This class extends the StringSelectMenuBuilder from discord.js and adds methods for handling interactions.
+It allows you to set a handler for when the string select menu is submitted, filter interactions, and handle the end of the interaction collector.
 
 ```ts title="Signature"
 class StringSelectMenuKit extends StringSelectMenuBuilder {
@@ -74,7 +76,7 @@ Sets a filter for the interaction collector.
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Disposes of the interaction collector and cleans up resources.
 
 
 </div>

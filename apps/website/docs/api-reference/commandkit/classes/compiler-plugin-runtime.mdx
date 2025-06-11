@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CompilerPluginRuntime
 
-<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/CompilerPluginRuntime.ts" sourceLine="24" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/CompilerPluginRuntime.ts" sourceLine="42" packageName="commandkit" />
 
-
+CompilerPluginRuntime is a runtime for managing compiler plugins in CommandKit.
 
 ```ts title="Signature"
 class CompilerPluginRuntime {
@@ -45,57 +45,64 @@ class CompilerPluginRuntime {
 
 <MemberInfo kind="method" type={`(plugins: <a href='/docs/next/api-reference/commandkit/classes/compiler-plugin#compilerplugin'>CompilerPlugin</a>[]) => CompilerPluginRuntime`}   />
 
-
+Creates a new instance of CompilerPluginRuntime.
 ### getPlugins
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Returns the plugins managed by this runtime.
 ### isEmpty
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Checks if there are no plugins registered in this runtime.
 ### registerTemplate
 
 <MemberInfo kind="method" type={`(name: string, handler: <a href='/docs/next/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a>) => `}   />
 
-
+Registers a template handler for a given name.
+This method must be called inside the activate() method of a plugin.
 ### unregisterTemplate
 
 <MemberInfo kind="method" type={`(name: string) => `}   />
 
-
+Unregisters a template handler for a given name.
+This method must be called inside the deactivate() method of a plugin.
 ### getTemplate
 
 <MemberInfo kind="method" type={`(name: string) => <a href='/docs/next/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a> | undefined`}   />
 
-
+Retrieves a template handler by its name.
 ### getTemplates
 
 <MemberInfo kind="method" type={`() => Map&#60;string, <a href='/docs/next/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a>&#62;`}   />
 
-
+Returns a map of all registered templates with their handlers.
+The keys are the template names and the values are the template handlers.
 ### transform
 
 <MemberInfo kind="method" type={`(code: string, id: string) => Promise&#60;{ code: string; map: string | null }&#62;`}   />
 
-
+Transforms the given code using all registered plugins.
+Each plugin's transform method is called in sequence, allowing them to modify the code.
 ### init
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Initializes the plugin runtime by activating all registered plugins.
+This method should be called once to set up the plugins.
 ### destroy
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Destroys the plugin runtime by deactivating all registered plugins.
+This method should be called when the runtime is no longer needed.
 ### toJSON
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Converts the plugin runtime to a JSON representation.
+This is useful for serialization or debugging purposes.
 
 
 </div>

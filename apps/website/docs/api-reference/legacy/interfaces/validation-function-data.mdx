@@ -13,9 +13,10 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ValidationFunctionData
 
-<GenerationInfo sourceFile="packages/legacy/src/loadLegacyValidations.ts" sourceLine="31" packageName="@commandkit/legacy" />
+<GenerationInfo sourceFile="packages/legacy/src/loadLegacyValidations.ts" sourceLine="56" packageName="@commandkit/legacy" />
 
-
+Represents a validation function that can be loaded from a file.
+It includes the name of the validation, the path to the file, and the validation function itself.
 
 ```ts title="Signature"
 interface ValidationFunctionData {
@@ -31,17 +32,17 @@ interface ValidationFunctionData {
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+The name of the validation function.
 ### path
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+The path to the file where the validation function is defined.
 ### validate
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/legacy/types/validation-function#validationfunction'>ValidationFunction</a>`}   />
 
-
+The validation function.
 
 
 </div>

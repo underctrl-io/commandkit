@@ -13,9 +13,21 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## defer
 
-<GenerationInfo sourceFile="packages/commandkit/src/utils/utilities.ts" sourceLine="103" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/utils/utilities.ts" sourceLine="127" packageName="commandkit" />
 
 Defers the execution of a function.
+
+
+
+*Example*
+
+```ts
+defer(() => {
+  console.log('This will run after a delay');
+});
+
+console.log('This will run immediately');
+```
 
 ```ts title="Signature"
 function defer<T>(fn: () => T, timeout:  = 0): void

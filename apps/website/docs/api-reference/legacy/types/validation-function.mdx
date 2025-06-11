@@ -13,9 +13,11 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ValidationFunction
 
-<GenerationInfo sourceFile="packages/legacy/src/loadLegacyValidations.ts" sourceLine="27" packageName="@commandkit/legacy" />
+<GenerationInfo sourceFile="packages/legacy/src/loadLegacyValidations.ts" sourceLine="48" packageName="@commandkit/legacy" />
 
-
+Represents a validation function that can be used to validate interactions.
+It takes a context object containing the client, interaction, command object, and handler.
+The function should return a boolean indicating whether the validation passed or void if no validation is needed.
 
 ```ts title="Signature"
 type ValidationFunction = (

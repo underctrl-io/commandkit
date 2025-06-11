@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## MessageCommandParser
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/commands/MessageCommandParser.ts" sourceLine="28" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/MessageCommandParser.ts" sourceLine="37" packageName="commandkit" />
 
-
+Parses message content into structured command data with options and subcommands.
 
 ```ts title="Signature"
 class MessageCommandParser {
@@ -38,52 +38,52 @@ class MessageCommandParser {
 
 <MemberInfo kind="method" type={`(message: Message, prefix: string[], schema: (command: string) =&#62; <a href='/docs/next/api-reference/commandkit/types/message-command-options-schema#messagecommandoptionsschema'>MessageCommandOptionsSchema</a>) => MessageCommandParser`}   />
 
-
+Creates a new message command parser.
 ### getArgs
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Gets the parsed command arguments.
 ### options
 
 <MemberInfo kind="property" type={``}   />
 
-
+Gets the message command options object for easy access to typed option values.
 ### getOption
 
 <MemberInfo kind="method" type={`(name: string) => T | undefined`}   />
 
-
+Gets a specific option value by name.
 ### getCommand
 
 <MemberInfo kind="method" type={`() => string`}   />
 
-
+Gets the main command name.
 ### getSubcommand
 
 <MemberInfo kind="method" type={`() => string | undefined`}   />
 
-
+Gets the subcommand name if present.
 ### getSubcommandGroup
 
 <MemberInfo kind="method" type={`() => string | undefined`}   />
 
-
+Gets the subcommand group name if present.
 ### getPrefix
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Gets the prefix used in the message.
 ### getFullCommand
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Gets the full command including subcommand group and subcommand.
 ### parse
 
 <MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/parsed-message-command#parsedmessagecommand'>ParsedMessageCommand</a>`}   />
 
-
+Parses the message content into structured command data.
 
 
 </div>

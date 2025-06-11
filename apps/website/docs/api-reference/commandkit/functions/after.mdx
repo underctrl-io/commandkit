@@ -13,9 +13,26 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## after
 
-<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="194" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="240" packageName="commandkit" />
 
-Runs the given function after the current command has finished executing.
+Schedules the given function to run after the current command has finished executing.
+
+
+
+*Example*
+
+```ts
+import { after } from 'commandkit';
+
+// inside a command
+export const chatInput: ChatInputCommand = async (ctx) => {
+after(() => {
+console.log('This will run after the command has finished executing.');
+});
+
+// ... command logic
+}
+```
 
 ```ts title="Signature"
 function after(fn: GenericFunction<[CommandKitEnvironment]>): string

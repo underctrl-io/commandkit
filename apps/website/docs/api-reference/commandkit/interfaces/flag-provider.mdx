@@ -32,22 +32,22 @@ interface FlagProvider {
 
 ### initialize
 
-<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/types/maybe-promise#maybepromise'>MaybePromise</a>&#60;void&#62;`}   />
+<MemberInfo kind="method" type={`() => MaybePromise&#60;void&#62;`}   />
 
 Initialize the provider (e.g., establish connections, load initial config)
 ### getFlag
 
-<MemberInfo kind="method" type={`(key: string, context?: any) => <a href='/docs/next/api-reference/commandkit/types/maybe-promise#maybepromise'>MaybePromise</a>&#60;<a href='/docs/next/api-reference/commandkit/interfaces/flag-configuration#flagconfiguration'>FlagConfiguration</a> | null&#62;`}   />
+<MemberInfo kind="method" type={`(key: string, context?: any) => MaybePromise&#60;<a href='/docs/next/api-reference/commandkit/interfaces/flag-configuration#flagconfiguration'>FlagConfiguration</a> | null&#62;`}   />
 
 Get the current value/configuration for a feature flag
 ### hasFlag
 
-<MemberInfo kind="method" type={`(key: string) => <a href='/docs/next/api-reference/commandkit/types/maybe-promise#maybepromise'>MaybePromise</a>&#60;boolean&#62;`}   />
+<MemberInfo kind="method" type={`(key: string) => MaybePromise&#60;boolean&#62;`}   />
 
 Check if a flag exists in the external system
 ### destroy
 
-<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/types/maybe-promise#maybepromise'>MaybePromise</a>&#60;void&#62;`}   />
+<MemberInfo kind="method" type={`() => MaybePromise&#60;void&#62;`}   />
 
 Cleanup resources when the provider is no longer needed
 

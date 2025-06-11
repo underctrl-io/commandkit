@@ -13,9 +13,19 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## I18nCliTemplatePlugin
 
-<GenerationInfo sourceFile="packages/i18n/src/cli.ts" sourceLine="8" packageName="@commandkit/i18n" />
+<GenerationInfo sourceFile="packages/i18n/src/cli.ts" sourceLine="16" packageName="@commandkit/i18n" />
+
+Compiler plugin for the CommandKit CLI to create locale files.
+This plugin allows users to create locale files for commands in the CLI.
+It registers a template named "locale" that can be used to generate locale files.
 
 
+
+*Example*
+
+```sh
+commandkit create locale <locale> <commandName>
+```
 
 ```ts title="Signature"
 class I18nCliTemplatePlugin extends CompilerPlugin {

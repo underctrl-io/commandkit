@@ -13,9 +13,10 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## Context
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="111" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="199" packageName="commandkit" />
 
-
+Represents the execution context for a command, providing access to Discord.js objects,
+command metadata, and various utility methods for command execution.
 
 ```ts title="Signature"
 class Context<ExecutionMode extends CommandExecutionMode = CommandExecutionMode, Args extends Record<string, any> = Record<string, any>> {
@@ -109,12 +110,12 @@ This store is shared across all contexts in the same command execution, includin
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+Gets the name of the current command.
 ### options
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/command-context-options#commandcontextoptions'>CommandContextOptions</a>&#60;ExecutionMode&#62;`}   />
 
-
+Gets the command options based on the execution mode.
 ### forwarded
 
 <MemberInfo kind="property" type={`boolean`}   />
@@ -194,12 +195,12 @@ Creates a clone of this context
 
 <MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/classes/middleware-context#middlewarecontext'>MiddlewareContext</a>&#60;ExecutionMode&#62;`}   />
 
-
+Checks if this context is a middleware context.
 ### args
 
 <MemberInfo kind="method" type={`() => string[]`}   />
 
-
+Gets the command arguments (only available for message commands).
 ### exit
 
 <MemberInfo kind="method" type={`() => never`}   />

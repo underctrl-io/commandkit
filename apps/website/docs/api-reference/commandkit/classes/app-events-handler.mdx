@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AppEventsHandler
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppEventsHandler.ts" sourceLine="33" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppEventsHandler.ts" sourceLine="45" packageName="commandkit" />
 
-
+Handles Discord.js events and CommandKit custom events with support for namespacing and middleware.
 
 ```ts title="Signature"
 class AppEventsHandler {
@@ -35,37 +35,37 @@ class AppEventsHandler {
 
 <MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => AppEventsHandler`}   />
 
-
+Creates a new AppEventsHandler instance.
 ### getEvents
 
 <MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/app-events-handler-loaded-data#appeventshandlerloadeddata'>AppEventsHandlerLoadedData</a>[]`}   />
 
-
+Gets information about all loaded events.
 ### reloadEvents
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Reloads all events by unregistering existing ones and loading them again.
 ### loadEvents
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Loads all events from the events router and registers them with Discord.js client.
 ### unregisterAll
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Unregisters all event listeners and clears loaded events.
 ### registerAllClientEvents
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Registers all loaded events with the Discord.js client and CommandKit event system.
 ### unregisterAllClientListeners
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Unregisters all client event listeners and cleans up loaded events.
 
 
 </div>

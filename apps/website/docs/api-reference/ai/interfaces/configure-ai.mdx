@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ConfigureAI
 
-<GenerationInfo sourceFile="packages/ai/src/plugin.ts" sourceLine="28" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/plugin.ts" sourceLine="40" packageName="@commandkit/ai" />
 
-
+Represents the configuration options for the AI model.
 
 ```ts title="Signature"
 interface ConfigureAI {
@@ -31,17 +31,21 @@ interface ConfigureAI {
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/ai/types/message-filter#messagefilter'>MessageFilter</a>`}   />
 
-
+A filter function that determines whether a message should be processed by the AI.
+CommandKit invokes this function before processing the message.
 ### selectAiModel
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/ai/types/select-ai-model#selectaimodel'>SelectAiModel</a>`}   />
 
-
+A function that selects the AI model to use based on the message.
+This function should return a promise that resolves to an object containing the model and options.
 ### systemPrompt
 
 <MemberInfo kind="property" type={`(message: Message) =&#62; Promise&#60;string&#62;`}   />
 
-
+A function that generates a system prompt based on the message.
+This function should return a promise that resolves to a string containing the system prompt.
+If not provided, a default system prompt will be used.
 
 
 </div>

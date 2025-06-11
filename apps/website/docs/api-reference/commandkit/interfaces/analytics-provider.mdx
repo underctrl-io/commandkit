@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AnalyticsProvider
 
-<GenerationInfo sourceFile="packages/commandkit/src/analytics/analytics-provider.ts" sourceLine="11" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/analytics/analytics-provider.ts" sourceLine="21" packageName="commandkit" />
 
-
+AnalyticsProvider interface defines the contract for analytics providers.
 
 ```ts title="Signature"
 interface AnalyticsProvider {
@@ -31,17 +31,20 @@ interface AnalyticsProvider {
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+The name of the analytics provider.
+This is used for logging and identification purposes.
 ### track
 
 <MemberInfo kind="method" type={`(engine: <a href='/docs/next/api-reference/commandkit/classes/analytics-engine#analyticsengine'>AnalyticsEngine</a>, event: <a href='/docs/next/api-reference/commandkit/types/analytics-event#analyticsevent'>AnalyticsEvent</a>) => Promise&#60;void&#62;`}   />
 
-
+Initializes the analytics provider.
+This method is called when the provider is registered.
 ### identify
 
 <MemberInfo kind="method" type={`(engine: <a href='/docs/next/api-reference/commandkit/classes/analytics-engine#analyticsengine'>AnalyticsEngine</a>, event: <a href='/docs/next/api-reference/commandkit/types/identify-event#identifyevent'>IdentifyEvent</a>) => Promise&#60;void&#62;`}   />
 
-
+Identifies a user or entity with the analytics provider.
+This method is called to associate user data with events.
 
 
 </div>

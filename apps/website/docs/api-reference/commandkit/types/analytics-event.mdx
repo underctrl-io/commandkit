@@ -13,9 +13,11 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AnalyticsEvent
 
-<GenerationInfo sourceFile="packages/commandkit/src/analytics/constants.ts" sourceLine="17" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/analytics/constants.ts" sourceLine="30" packageName="commandkit" />
 
-
+The type of analytics events that can be tracked in CommandKit.
+This type is derived from the keys of the `AnalyticsEvents` object.
+It ensures that only valid analytics events can be used in the tracking functions.
 
 ```ts title="Signature"
 type AnalyticsEvent = (typeof AnalyticsEvents)[keyof typeof AnalyticsEvents]

@@ -13,9 +13,11 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ModalKit
 
-<GenerationInfo sourceFile="packages/commandkit/src/components/v1/modal/ModalKit.ts" sourceLine="48" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/components/v1/modal/ModalKit.ts" sourceLine="65" packageName="commandkit" />
 
-
+A builder for creating modals with additional features like interaction collectors and event handling.
+This class extends the ModalBuilder from discord.js and adds methods for handling interactions.
+It allows you to set a handler for when the modal is submitted, filter interactions, and handle the end of the interaction collector.
 
 ```ts title="Signature"
 class ModalKit extends ModalBuilder {
@@ -71,7 +73,7 @@ Sets a filter for the interaction collector.
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Disposes of the modal collector and cleans up resources.
 
 
 </div>

@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandsRouter
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/router/CommandsRouter.ts" sourceLine="42" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/router/CommandsRouter.ts" sourceLine="81" packageName="commandkit" />
 
-
+Handles discovery and parsing of command and middleware files in the filesystem.
 
 ```ts title="Signature"
 class CommandsRouter {
@@ -35,37 +35,37 @@ class CommandsRouter {
 
 <MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/commandkit/interfaces/commands-router-options#commandsrouteroptions'>CommandsRouterOptions</a>) => CommandsRouter`}   />
 
-
+Creates a new CommandsRouter instance.
 ### populate
 
 <MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/commandkit/interfaces/parsed-command-data#parsedcommanddata'>ParsedCommandData</a>) => `}   />
 
-
+Populates the router with existing command and middleware data.
 ### isValidPath
 
 <MemberInfo kind="method" type={`() => boolean`}   />
 
-
+Checks if the configured entrypoint path exists.
 ### clear
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Clears all loaded commands and middleware.
 ### scan
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Scans the filesystem for commands and middleware files.
 ### getData
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Gets the raw command and middleware collections.
 ### toJSON
 
 <MemberInfo kind="method" type={`() => `}   />
 
-
+Converts the loaded data to a JSON-serializable format.
 
 
 </div>

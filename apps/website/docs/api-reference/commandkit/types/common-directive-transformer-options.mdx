@@ -13,12 +13,16 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommonDirectiveTransformerOptions
 
-<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/builtin/CommonDirectiveTransformer.ts" sourceLine="10" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/builtin/CommonDirectiveTransformer.ts" sourceLine="13" packageName="commandkit" />
 
-
+Directive transformer plugin options
 
 ```ts title="Signature"
 type CommonDirectiveTransformerOptions = DirectiveTransformerOptions & {
+  /**
+   * Whether the directive transformer is enabled.
+   * Defaults to true.
+   */
   enabled?: boolean;
 }
 ```

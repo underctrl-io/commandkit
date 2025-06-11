@@ -1,0 +1,47 @@
+---
+title: "IpcMessageCommand"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## IpcMessageCommand
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/dev-hooks.ts" sourceLine="8" packageName="commandkit" />
+
+Represents HMR inter-process communication messages.
+
+```ts title="Signature"
+interface IpcMessageCommand {
+    event: HMREventType;
+    path: string;
+    id?: string;
+}
+```
+
+<div className="members-wrapper">
+
+### event
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/hmrevent-type#hmreventtype'>HMREventType</a>`}   />
+
+The type of HMR event being communicated.
+### path
+
+<MemberInfo kind="property" type={`string`}   />
+
+The path associated with the HMR event.
+### id
+
+<MemberInfo kind="property" type={`string`}   />
+
+An optional identifier for the HMR event, used for acknowledgment.
+
+
+</div>

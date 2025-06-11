@@ -13,9 +13,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## LegacyHandlerPluginOptions
 
-<GenerationInfo sourceFile="packages/legacy/src/plugin.ts" sourceLine="22" packageName="@commandkit/legacy" />
+<GenerationInfo sourceFile="packages/legacy/src/plugin.ts" sourceLine="25" packageName="@commandkit/legacy" />
 
-
+Options for the LegacyHandlerPlugin.
 
 ```ts title="Signature"
 interface LegacyHandlerPluginOptions {
@@ -35,37 +35,44 @@ interface LegacyHandlerPluginOptions {
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+The path to the commands directory.
+Relative to the current working directory.
 ### eventsPath
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+The path to the events directory.
+Relative to the current working directory.
 ### validationsPath
 
 <MemberInfo kind="property" type={`string`}   />
 
-
+The path to the validations directory.
+Relative to the current working directory.
 ### skipBuiltInValidations
 
 <MemberInfo kind="property" type={`boolean`}   />
 
-
+Whether to skip built-in validations.
+Defaults to false.
 ### devUserIds
 
 <MemberInfo kind="property" type={`string[]`}   />
 
-
+List of user IDs that are considered developers.
+Used for dev-only commands and validations.
 ### devGuildIds
 
 <MemberInfo kind="property" type={`string[]`}   />
 
-
+List of guild IDs that are considered development guilds.
+Used for dev-only commands and validations.
 ### devRoleIds
 
 <MemberInfo kind="property" type={`string[]`}   />
 
-
+List of role IDs that are considered developer roles.
+Used for dev-only commands and validations.
 
 
 </div>

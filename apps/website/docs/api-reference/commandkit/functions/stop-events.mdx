@@ -13,9 +13,25 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## stopEvents
 
-<GenerationInfo sourceFile="packages/commandkit/src/utils/utilities.ts" sourceLine="159" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/utils/utilities.ts" sourceLine="192" packageName="commandkit" />
 
-Stops event propagation.
+Stops event propagation. This function should be called inside an event handler
+to prevent further event handling.
+
+
+
+*Example*
+
+```ts
+// src/app/events/messageCreate/handler.ts
+import { stopEvents } from 'commandkit';
+
+export default async function messageCreateHandler() {
+console.log('Message created');
+// Stop further event propagation
+stopEvents();
+}
+```
 
 ```ts title="Signature"
 function stopEvents(): never
