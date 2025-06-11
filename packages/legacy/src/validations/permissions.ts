@@ -1,6 +1,11 @@
 import { EmbedBuilder } from 'discord.js';
 import { ValidationProps } from '../loadLegacyValidations.js';
 
+/**
+ * Represents the legacy permission validation function.
+ * @param param0 - The parameters for the validation function.
+ * @returns A boolean indicating whether the validation failed.
+ */
 export default function permissionValidation({
   interaction,
   commandObj,

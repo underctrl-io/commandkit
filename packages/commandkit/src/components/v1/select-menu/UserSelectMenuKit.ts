@@ -17,14 +17,26 @@ import {
   SelectMenuKitPredicate,
 } from './common';
 
+/**
+ * Type for the handler function that is called when the user select menu is submitted.
+ */
 export type OnUserSelectMenuKitSubmit = OnSelectMenuKitSubmit<
   UserSelectMenuInteraction,
   UserSelectMenuKit
 >;
 
+/**
+ * Type for the predicate function that filters user select menu interactions.
+ * It receives a UserSelectMenuInteraction and returns a boolean or a Promise that resolves to a boolean.
+ */
 export type UserSelectMenuKitPredicate =
   SelectMenuKitPredicate<UserSelectMenuInteraction>;
 
+/**
+ * A builder for creating user select menus with additional features like interaction collectors and event handling.
+ * This class extends the UserSelectMenuBuilder from discord.js and adds methods for handling interactions.
+ * It allows you to set a handler for when the user select menu is submitted, filter interactions, and handle the end of the interaction collector.
+ */
 export class UserSelectMenuKit extends UserSelectMenuBuilder {
   #onSelectHandler: CommandKitSelectMenuBuilderInteractionCollectorDispatch<
     UserSelectMenuInteraction,
@@ -190,6 +202,9 @@ export class UserSelectMenuKit extends UserSelectMenuBuilder {
     );
   }
 
+  /**
+   * Disposes of the user select menu kit, cleaning up any collectors and handlers.
+   */
   public dispose() {
     this.#destroyCollector();
     return this;

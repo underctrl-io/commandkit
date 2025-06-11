@@ -9,6 +9,10 @@ import { performTypeCheck } from './type-checker';
 import { copyLocaleFiles } from './common';
 import { MaybeArray } from '../components';
 
+/**
+ * @private
+ * @internal
+ */
 export interface ApplicationBuildOptions {
   plugins?: MaybeArray<CompilerPlugin>[] | Array<CompilerPlugin>;
   rolldownPlugins?: any[];
@@ -17,6 +21,10 @@ export interface ApplicationBuildOptions {
 }
 
 // emit public env variables and given env variables
+/**
+ * @private
+ * @internal
+ */
 function mergeDefinitionsIfNeeded(env: Record<string, string>) {
   const values = Object.fromEntries(
     Object.entries(process.env).filter(
@@ -30,6 +38,10 @@ function mergeDefinitionsIfNeeded(env: Record<string, string>) {
   };
 }
 
+/**
+ * @private
+ * @internal
+ */
 export async function buildApplication({
   plugins,
   rolldownPlugins,

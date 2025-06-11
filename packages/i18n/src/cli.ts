@@ -5,6 +5,14 @@ import { I18nPlugin } from './i18n';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
+/**
+ * Compiler plugin for the CommandKit CLI to create locale files.
+ * This plugin allows users to create locale files for commands in the CLI.
+ * It registers a template named "locale" that can be used to generate locale files.
+ * @example ```sh
+ * commandkit create locale <locale> <commandName>
+ * ```
+ */
 export class I18nCliTemplatePlugin extends CompilerPlugin {
   public readonly name = 'I18nCliTemplatePlugin';
 

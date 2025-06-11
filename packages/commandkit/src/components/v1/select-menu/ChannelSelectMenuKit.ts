@@ -17,14 +17,26 @@ import {
   SelectMenuKitPredicate,
 } from './common';
 
+/**
+ * Type for the handler function that is called when the channel select menu is submitted.
+ */
 export type OnChannelSelectMenuKitSubmit = OnSelectMenuKitSubmit<
   ChannelSelectMenuInteraction,
   ChannelSelectMenuKit
 >;
 
+/**
+ * Type for the predicate function that filters channel select menu interactions.
+ * It receives a ChannelSelectMenuInteraction and returns a boolean or a Promise that resolves to a boolean.
+ */
 export type ChannelSelectMenuKitPredicate =
   SelectMenuKitPredicate<ChannelSelectMenuInteraction>;
 
+/**
+ * A builder for creating channel select menus with additional features like interaction collectors and event handling.
+ * This class extends the ChannelSelectMenuBuilder from discord.js and adds methods for handling interactions.
+ * It allows you to set a handler for when the channel select menu is submitted, filter interactions, and handle the end of the interaction collector.
+ */
 export class ChannelSelectMenuKit extends ChannelSelectMenuBuilder {
   #onSelectHandler: CommandKitSelectMenuBuilderInteractionCollectorDispatch<
     ChannelSelectMenuInteraction,
@@ -190,6 +202,9 @@ export class ChannelSelectMenuKit extends ChannelSelectMenuBuilder {
     );
   }
 
+  /**
+   * Cleans up the interaction collector and removes the handler.
+   */
   public dispose() {
     this.#destroyCollector();
     return this;

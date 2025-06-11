@@ -7,6 +7,8 @@ const TS_NOT_FOUND_ERR = `TypeScript must be installed in order to use the type 
 
 /**
  * Formats a TypeScript diagnostic message in a pretty, readable format
+ * @private
+ * @internal
  */
 function formatDiagnostic(
   ts: typeof import('typescript'),
@@ -40,6 +42,8 @@ function formatDiagnostic(
 /**
  * Performs a type check on the project using TypeScript.
  * @param path The project root or cwd
+ * @private
+ * @internal
  */
 export async function performTypeCheck(path: string) {
   const tsconfigPath = join(path, 'tsconfig.json');

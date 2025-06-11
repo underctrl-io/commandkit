@@ -1,6 +1,11 @@
 import { LegacyCommandsCLIPlugin } from './cli.js';
 import { LegacyHandlerPlugin, LegacyHandlerPluginOptions } from './plugin.js';
 
+/**
+ * Creates a legacy command and event handler plugin along with a CLI plugin for managing legacy commands.
+ * @param options - The options for the legacy handler.
+ * @returns An array containing the legacy handler and CLI plugin.
+ */
 export function legacy(
   options?: Partial<LegacyHandlerPluginOptions>,
 ): [LegacyHandlerPlugin, LegacyCommandsCLIPlugin] {

@@ -1,13 +1,22 @@
 import { readdir } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
 
+/**
+ * @private
+ */
 export const FILE_EXTENSIONS = /\.(c|m)?(j|t)sx?$/;
 
+/**
+ * @private
+ */
 export interface FileData {
   name: string;
   path: string;
 }
 
+/**
+ * @private
+ */
 export async function recursivelyFindFiles(
   dir: string,
   accumulator: FileData[] = [],

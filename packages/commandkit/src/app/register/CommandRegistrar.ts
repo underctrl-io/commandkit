@@ -3,12 +3,22 @@ import { CommandKit } from '../../CommandKit';
 import { CommandData } from '../../types';
 import { Logger } from '../../logger/Logger';
 
+/**
+ * Event object passed to plugins before command registration.
+ */
 export interface PreRegisterCommandsEvent {
   preventDefault(): void;
   commands: CommandData[];
 }
 
+/**
+ * Handles registration of Discord application commands (slash commands, context menus).
+ */
 export class CommandRegistrar {
+  /**
+   * @private
+   * @internal
+   */
   private api = new REST();
 
   /**

@@ -1,13 +1,22 @@
 import { CommandKitConfig } from './types';
 
+/**
+ * @private
+ */
 export type DeepRequired<T> = {
   [P in keyof T]-?: DeepRequired<T[P]>;
 };
 
+/**
+ * @private
+ */
 export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>;
 };
 
+/**
+ * @private
+ */
 export const mergeDeep = <T extends Record<string, any>>(
   target: T,
   source: T,

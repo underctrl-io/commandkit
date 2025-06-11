@@ -14,26 +14,63 @@ import { pathToFileURL } from 'node:url';
 
 type Awaitable<T> = Promise<T> | T;
 
+/**
+ * Represents the properties required for validation functions.
+ * It includes the client, interaction, command object, and handler.
+ */
 export interface ValidationProps {
+  /**
+   * The Discord client instance.
+   */
   client: Client<true>;
+  /**
+   * The interaction that triggered the command.
+   */
   interaction:
     | ChatInputCommandInteraction
     | AutocompleteInteraction
     | ContextMenuCommandInteraction;
+  /**
+   * The command object associated with the interaction.
+   */
   commandObj: CommandObject;
+  /**
+   * The CommandKit handler instance.
+   */
   handler: CommandKit;
 }
 
+/**
+ * Represents a validation function that can be used to validate interactions.
+ * It takes a context object containing the client, interaction, command object, and handler.
+ * The function should return a boolean indicating whether the validation passed or void if no validation is needed.
+ */
 export type ValidationFunction = (
   context: ValidationProps,
 ) => Awaitable<boolean | void>;
 
+/**
+ * Represents a validation function that can be loaded from a file.
+ * It includes the name of the validation, the path to the file, and the validation function itself.
+ */
 export interface ValidationFunctionData {
+  /**
+   * The name of the validation function.
+   */
   name: string;
+  /**
+   * The path to the file where the validation function is defined.
+   */
   path: string;
+  /**
+   * The validation function.
+   */
   validate: ValidationFunction;
 }
 
+/**
+ * @private
+ */
 export async function loadLegacyValidations(
   path: string,
   options: LegacyHandlerPluginOptions,

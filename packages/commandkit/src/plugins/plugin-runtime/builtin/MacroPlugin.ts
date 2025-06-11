@@ -5,6 +5,18 @@ import {
   TransformedResult,
 } from '../..';
 
+/**
+ * Macro plugin enables the use of `"use macro"` directive in the code.
+ * Functions with this directive will be transformed at compile time
+ * and only the result will be included in the final bundle.
+ * @example function myMacro() {
+ *   "use macro";
+ *   return Math.random();
+ * }
+ *
+ * // This will be transformed to a constant value at compile time.
+ * const result = myMacro();
+ */
 export class MacroPlugin extends CompilerPlugin {
   public readonly name = 'MacroPlugin';
 

@@ -27,8 +27,15 @@ export interface EventInterceptorContextData<E extends keyof ClientEvents> {
   onError?: EventInterceptorErrorHandler;
 }
 
+/**
+ * The error handler for the event interceptor.
+ */
 export type EventInterceptorErrorHandler = (error: Error) => Awaitable<void>;
 
+/**
+ * The event interceptor class that allows subscribing to events and handling them with custom logic.
+ * It also supports automatic cleanup of expired subscriptions.
+ */
 export class EventInterceptor {
   private subscribers = new Map<
     keyof ClientEvents,

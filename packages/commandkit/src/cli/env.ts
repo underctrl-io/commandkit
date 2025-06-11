@@ -1,3 +1,7 @@
+/**
+ * @private
+ * @internal
+ */
 export function DevEnv(_static = false) {
   const common = {
     NODE_ENV: 'development',
@@ -9,6 +13,10 @@ export function DevEnv(_static = false) {
   return Object.assign({}, process.env, common);
 }
 
+/**
+ * @private
+ * @internal
+ */
 export function ProdEnv(_static = false) {
   const common = {
     NODE_ENV: 'production',
@@ -20,14 +28,35 @@ export function ProdEnv(_static = false) {
   return Object.assign({}, process.env, common);
 }
 
+/**
+ * @private
+ * @internal
+ */
 export const CommonEnvFiles = ['.env', '.env.local'];
+/**
+ * @private
+ * @internal
+ */
 export const DevEnvFiles = ['.env.development', '.env.development.local'];
+/**
+ * @private
+ * @internal
+ */
 export const ProdEnvFiles = ['.env.production', '.env.production.local'];
-
+/**
+ * @private
+ * @internal
+ */
 export const devEnvFileArgs = [...CommonEnvFiles, ...DevEnvFiles];
-
+/**
+ * @private
+ * @internal
+ */
 export const prodEnvFileArgs = [...CommonEnvFiles, ...ProdEnvFiles];
-
+/**
+ * @private
+ * @internal
+ */
 export function setCLIEnv() {
   process.env.COMMANDKIT_IS_CLI = 'true';
 }

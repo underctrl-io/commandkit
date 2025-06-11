@@ -1,5 +1,10 @@
 import { ValidationProps } from '../loadLegacyValidations.js';
 
+/**
+ * Represents the legacy dev-only validation function.
+ * @param param0 - The parameters for the validation function.
+ * @returns A boolean indicating whether the validation failed.
+ */
 export default function devOnlyValidation({
   interaction,
   commandObj,

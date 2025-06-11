@@ -4,6 +4,10 @@ import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { panic } from './common';
 
+/**
+ * @private
+ * @internal
+ */
 function getStdio(supportsCommands: boolean) {
   if (supportsCommands) {
     return ['pipe', 'pipe', 'pipe', 'ipc'];
@@ -12,6 +16,10 @@ function getStdio(supportsCommands: boolean) {
   return ['pipe', 'pipe', 'pipe'];
 }
 
+/**
+ * @private
+ * @internal
+ */
 export function createAppProcess(
   fileName: string,
   cwd: string,

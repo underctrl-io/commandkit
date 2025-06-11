@@ -6,6 +6,10 @@ import {
   IdentifyEvent,
 } from 'commandkit/analytics';
 
+/**
+ * PostHog analytics provider for CommandKit.
+ * This provider allows you to track events and identify users using PostHog.
+ */
 export class PostHogProvider implements AnalyticsProvider {
   public readonly name = 'PostHog';
   public constructor(public readonly posthog: PostHog) {}

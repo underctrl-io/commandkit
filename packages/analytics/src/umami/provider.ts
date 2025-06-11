@@ -6,6 +6,10 @@ import {
   IdentifyEvent,
 } from 'commandkit/analytics';
 
+/**
+ * Umami analytics provider for CommandKit.
+ * This provider allows you to track events and identify users using Umami.
+ */
 export class UmamiProvider implements AnalyticsProvider {
   public readonly name = 'Umami';
   public constructor(public readonly umami: Umami) {}

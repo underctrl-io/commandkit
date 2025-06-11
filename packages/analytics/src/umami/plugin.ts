@@ -2,7 +2,13 @@ import { UmamiOptions, Umami } from '@umami/node';
 import { CommandKitPluginRuntime, RuntimePlugin } from 'commandkit/plugin';
 import { UmamiProvider } from './provider';
 
+/**
+ * Options for the Umami plugin.
+ */
 export interface UmamiPluginOptions {
+  /**
+   * The Umami API options.
+   */
   umamiOptions: UmamiOptions;
 }
 

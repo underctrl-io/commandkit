@@ -4,6 +4,21 @@ import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
 
+/**
+ * LegacyCommandsCLIPlugin is a CommandKit compiler plugin that provides a CLI
+ * interface for creating legacy commands and events.
+ *
+ * It allows users to create new command and event files with a simple command
+ * line interface, generating the appropriate boilerplate code based on whether
+ * the project is using TypeScript or JavaScript.
+ *
+ * @example ```sh
+ * # To create a new command:
+ * $ commandkit create legacy command myCommand
+ * # to create a new event:
+ * $ commandkit create legacy event myEvent
+ * ```
+ */
 export class LegacyCommandsCLIPlugin extends CompilerPlugin<LegacyHandlerPluginOptions> {
   public readonly name = 'LegacyCommandsCLIPlugin';
 

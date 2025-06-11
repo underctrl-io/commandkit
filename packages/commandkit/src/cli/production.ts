@@ -7,6 +7,10 @@ import { buildApplication } from './build';
 import { CompilerPlugin, isCompilerPlugin } from '../plugins';
 import { createSpinner } from './utils';
 
+/**
+ * @private
+ * @internal
+ */
 export async function bootstrapProductionServer(configPath?: string) {
   process.env.COMMANDKIT_BOOTSTRAP_MODE = 'production';
   const cwd = configPath || process.cwd();
@@ -22,6 +26,10 @@ export async function bootstrapProductionServer(configPath?: string) {
   return createAppProcess(mainFile, cwd, false);
 }
 
+/**
+ * @private
+ * @internal
+ */
 export async function createProductionBuild(configPath?: string) {
   process.env.COMMANDKIT_BOOTSTRAP_MODE = 'production';
   const cwd = configPath || process.cwd();

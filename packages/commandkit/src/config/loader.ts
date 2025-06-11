@@ -10,6 +10,12 @@ const CONFIG_FILE_NAMES = [
   'commandkit.config.ts',
 ];
 
+/**
+ * Returns an array of possible configuration file paths based on the provided root directory.
+ * @param root The root directory to search for configuration files.
+ * @returns The array of possible configuration file paths.
+ * @private
+ */
 export function getPossibleConfigPaths(root: string) {
   return CONFIG_FILE_NAMES.map((name) => join(root, name));
 }

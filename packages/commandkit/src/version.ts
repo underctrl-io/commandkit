@@ -1,3 +1,6 @@
+/**
+ * @private
+ */
 function $version(): string {
   'use macro';
   return require('../package.json').version;

@@ -19,13 +19,44 @@ import { loadLegacyValidations } from './loadLegacyValidations.js';
 import { CommandData, loadLegacyCommands } from './loadLegacyCommands.js';
 import { existsSync } from 'node:fs';
 
+/**
+ * Options for the LegacyHandlerPlugin.
+ */
 export interface LegacyHandlerPluginOptions {
+  /**
+   * The path to the commands directory.
+   * Relative to the current working directory.
+   */
   commandsPath: string;
+  /**
+   * The path to the events directory.
+   * Relative to the current working directory.
+   */
   eventsPath: string;
+  /**
+   * The path to the validations directory.
+   * Relative to the current working directory.
+   */
   validationsPath: string;
+  /**
+   * Whether to skip built-in validations.
+   * Defaults to false.
+   */
   skipBuiltInValidations: boolean;
+  /**
+   * List of user IDs that are considered developers.
+   * Used for dev-only commands and validations.
+   */
   devUserIds: string[];
+  /**
+   * List of guild IDs that are considered development guilds.
+   * Used for dev-only commands and validations.
+   */
   devGuildIds: string[];
+  /**
+   * List of role IDs that are considered developer roles.
+   * Used for dev-only commands and validations.
+   */
   devRoleIds: string[];
 }
 

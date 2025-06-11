@@ -37,6 +37,9 @@ export interface CommandContext<
   handler: CommandKit;
 }
 
+/**
+ * Represents a command that can be executed by CommandKit.
+ */
 export type CommandData = RESTPostAPIApplicationCommandsJSONBody & {
   guilds?: string[];
 };

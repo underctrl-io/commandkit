@@ -8,13 +8,25 @@ const BASE_PATH = process.cwd();
 const COMMANDS_DIR = join(BASE_PATH, 'src/app/commands');
 const EVENTS_DIR = join(BASE_PATH, 'src/app/events');
 
+/**
+ * @private
+ * @internal
+ */
 const formatPath = (path: string) =>
   path.replace(process.cwd(), '.').replace(/\\/g, '/');
 
+/**
+ * @private
+ * @internal
+ */
 function determineExtension() {
   return existsSync(join(BASE_PATH, 'tsconfig.json')) ? 'ts' : 'js';
 }
 
+/**
+ * @private
+ * @internal
+ */
 function TS_COMMAND_SOURCE(name: string) {
   return `import type { CommandData, ChatInputCommand, MessageCommand } from 'commandkit';
 
@@ -33,6 +45,10 @@ export const message: MessageCommand = async (ctx) => {
 `;
 }
 
+/**
+ * @private
+ * @internal
+ */
 function JS_COMMAND_SOURCE(name: string) {
   return `/**
  * @type {import('commandkit').CommandData}
@@ -58,6 +74,10 @@ export const message = async (ctx) => {
 `;
 }
 
+/**
+ * @private
+ * @internal
+ */
 export async function generateCommand(name: string, customPath?: string) {
   const cmdPath = join(customPath || COMMANDS_DIR);
   if (!existsSync(cmdPath)) await mkdir(cmdPath, { recursive: true });
@@ -84,6 +104,10 @@ export async function generateCommand(name: string, customPath?: string) {
   );
 }
 
+/**
+ * @private
+ * @internal
+ */
 export async function generateEvent(name: string, customPath?: string) {
   const eventPath = join(customPath || EVENTS_DIR, name);
   if (!existsSync(eventPath)) await mkdir(eventPath, { recursive: true });

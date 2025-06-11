@@ -9,8 +9,14 @@ import { CommandKitElement } from '../../common/element';
 import { MaybeArray } from '../../common/types';
 import { EventInterceptorErrorHandler } from '../../common/EventInterceptor';
 
+/**
+ * The button children type.
+ */
 export type ButtonChildrenLike = string | number | boolean;
 
+/**
+ * The button props
+ */
 export interface ButtonProps {
   label?: string;
   style?: ButtonStyle;

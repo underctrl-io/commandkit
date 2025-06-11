@@ -16,8 +16,17 @@ type WithAI<T extends LoadedCommand> = T & {
   tool: Tool;
 };
 
+/**
+ * Represents the configuration options for the AI plugin scoped to a specific command.
+ */
 export interface AiConfig {
+  /**
+   * A description of the AI functionality provided by this command. If not given, the command's description will be used.
+   */
   description?: string;
+  /**
+   * A zod schema defining the parameters that the AI command accepts.
+   */
   parameters: any;
 }
 
@@ -25,12 +34,33 @@ let messageFilter: MessageFilter | null = null;
 let selectAiModel: SelectAiModel | null = null;
 let generateSystemPrompt: ((message: Message) => Promise<string>) | undefined;
 
+/**
+ * Represents the configuration options for the AI model.
+ */
 export interface ConfigureAI {
+  /**
+   * A filter function that determines whether a message should be processed by the AI.
+   * CommandKit invokes this function before processing the message.
+   */
   messageFilter?: MessageFilter;
+  /**
+   * A function that selects the AI model to use based on the message.
+   * This function should return a promise that resolves to an object containing the model and options.
+   */
   selectAiModel?: SelectAiModel;
+  /**
+   * A function that generates a system prompt based on the message.
+   * This function should return a promise that resolves to a string containing the system prompt.
+   * If not provided, a default system prompt will be used.
+   */
   systemPrompt?: (message: Message) => Promise<string>;
 }
 
+/**
+ * Configures the AI plugin with the provided options.
+ * This function allows you to set a message filter, select an AI model, and generate a system prompt.
+ * @param config The configuration options for the AI plugin.
+ */
 export function configureAI(config: ConfigureAI): void {
   if (config.messageFilter) {
     messageFilter = config.messageFilter;

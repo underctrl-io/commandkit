@@ -3,6 +3,9 @@ import { Dirent, existsSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { basename, extname, join, normalize } from 'node:path';
 
+/**
+ * Represents a command with its metadata and middleware associations.
+ */
 export interface Command {
   id: string;
   name: string;
@@ -13,6 +16,9 @@ export interface Command {
   category: string | null;
 }
 
+/**
+ * Represents a middleware with its metadata and scope.
+ */
 export interface Middleware {
   id: string;
   name: string;
@@ -23,28 +29,78 @@ export interface Middleware {
   command: string | null;
 }
 
+/**
+ * Data structure containing parsed commands and middleware.
+ */
 export interface ParsedCommandData {
   commands: Record<string, Command>;
   middlewares: Record<string, Middleware>;
 }
 
+/**
+ * Configuration options for the commands router.
+ */
 export interface CommandsRouterOptions {
   entrypoint: string;
 }
 
+/**
+ * @private
+ * @internal
+ */
 const MIDDLEWARE_PATTERN = /^\+middleware\.(m|c)?(j|t)sx?$/;
+
+/**
+ * @private
+ * @internal
+ */
 const COMMAND_MIDDLEWARE_PATTERN =
   /^\+([^+().][^().]*)\.middleware\.(m|c)?(j|t)sx?$/;
+
+/**
+ * @private
+ * @internal
+ */
 const GLOBAL_MIDDLEWARE_PATTERN = /^\+global-middleware\.(m|c)?(j|t)sx?$/;
+
+/**
+ * @private
+ * @internal
+ */
 const COMMAND_PATTERN = /^([^+().][^().]*)\.(m|c)?(j|t)sx?$/;
+
+/**
+ * @private
+ * @internal
+ */
 const CATEGORY_PATTERN = /^\(.+\)$/;
 
+/**
+ * Handles discovery and parsing of command and middleware files in the filesystem.
+ */
 export class CommandsRouter {
+  /**
+   * @private
+   * @internal
+   */
   private commands = new Collection<string, Command>();
+
+  /**
+   * @private
+   * @internal
+   */
   private middlewares = new Collection<string, Middleware>();
 
+  /**
+   * Creates a new CommandsRouter instance.
+   * @param options - Configuration options for the router
+   */
   public constructor(private readonly options: CommandsRouterOptions) {}
 
+  /**
+   * Populates the router with existing command and middleware data.
+   * @param data - Parsed command data to populate with
+   */
   public populate(data: ParsedCommandData) {
     for (const [id, command] of Object.entries(data.commands)) {
       this.commands.set(id, command);
@@ -55,14 +111,26 @@ export class CommandsRouter {
     }
   }
 
+  /**
+   * Checks if the configured entrypoint path exists.
+   * @returns True if the path exists
+   */
   public isValidPath(): boolean {
     return existsSync(this.options.entrypoint);
   }
 
+  /**
+   * @private
+   * @internal
+   */
   private isCommand(name: string): boolean {
     return COMMAND_PATTERN.test(name);
   }
 
+  /**
+   * @private
+   * @internal
+   */
   private isMiddleware(name: string): boolean {
     return (
       MIDDLEWARE_PATTERN.test(name) ||
@@ -71,15 +139,26 @@ export class CommandsRouter {
     );
   }
 
+  /**
+   * @private
+   * @internal
+   */
   private isCategory(name: string): boolean {
     return CATEGORY_PATTERN.test(name);
   }
 
+  /**
+   * Clears all loaded commands and middleware.
+   */
   public clear() {
     this.commands.clear();
     this.middlewares.clear();
   }
 
+  /**
+   * Scans the filesystem for commands and middleware files.
+   * @returns Parsed command data
+   */
   public async scan() {
     const entries = await readdir(this.options.entrypoint, {
       withFileTypes: true,
@@ -107,6 +186,10 @@ export class CommandsRouter {
     return this.toJSON();
   }
 
+  /**
+   * Gets the raw command and middleware collections.
+   * @returns Object containing commands and middlewares collections
+   */
   public getData() {
     return {
       commands: this.commands,
@@ -114,6 +197,10 @@ export class CommandsRouter {
     };
   }
 
+  /**
+   * Converts the loaded data to a JSON-serializable format.
+   * @returns Plain object with commands and middlewares
+   */
   public toJSON() {
     return {
       commands: Object.fromEntries(this.commands.entries()),
@@ -121,6 +208,10 @@ export class CommandsRouter {
     };
   }
 
+  /**
+   * @private
+   * @internal
+   */
   private async traverse(path: string, category: string | null) {
     const entries = await readdir(path, {
       withFileTypes: true,
@@ -150,6 +241,10 @@ export class CommandsRouter {
     }
   }
 
+  /**
+   * @private
+   * @internal
+   */
   private async handle(entry: Dirent, category: string | null = null) {
     const name = entry.name;
     const path = join(entry.parentPath, entry.name);
@@ -183,6 +278,10 @@ export class CommandsRouter {
     }
   }
 
+  /**
+   * @private
+   * @internal
+   */
   private applyMiddlewares() {
     this.commands.forEach((command) => {
       const commandPath = command.parentPath;
@@ -200,6 +299,10 @@ export class CommandsRouter {
     });
   }
 
+  /**
+   * @private
+   * @internal
+   */
   private replaceEntrypoint(path: string) {
     const normalized = normalize(path);
     return normalized.replace(this.options.entrypoint, '');

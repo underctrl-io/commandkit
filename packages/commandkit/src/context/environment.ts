@@ -3,17 +3,53 @@ import { CommandKit } from '../CommandKit';
 import { GenericFunction, getContext } from './async-context';
 import type { Context } from '../app';
 
+/**
+ * Represents the internal data structure for the CommandKit environment.
+ */
 export interface CommandKitEnvironmentInternalData {
+  /**
+   * The error that occurred during command execution, if any.
+   * This is set when an error occurs during the execution of a command.
+   */
   executionError: Error | null;
+  /**
+   * The type of the environment, which can be used to differentiate between
+   * different execution contexts (e.g., command handler, event handler, etc.).
+   */
   type: CommandKitEnvironmentType | null;
+  /**
+   * A map of variables that can be used to store and retrieve data during command execution.
+   * This allows for sharing data between different parts of the command execution process.
+   */
   variables: Map<string, any>;
+  /**
+   * A map of deferred functions that will be executed after the command has finished executing.
+   * This is useful for running cleanup tasks or additional processing after the main command logic.
+   */
   deferredFunctions: Map<string, GenericFunction<[CommandKitEnvironment]>>;
+  /**
+   * A marker string that can be used to identify the command execution.
+   * This is useful for logging and debugging purposes.
+   */
   marker: string;
+  /**
+   * The start time of the command execution.
+   */
   markStart: number;
+  /**
+   * The end time of the command execution.
+   */
   markEnd: number;
+  /**
+   * The context associated with the command execution.
+   * This can be used to access request-specific data or application state.
+   */
   context: Context | null;
 }
 
+/**
+ * Represents the execution environment for CommandKit commands.
+ */
 export class CommandKitEnvironment {
   #data: CommandKitEnvironmentInternalData = {
     executionError: null,
@@ -187,9 +223,19 @@ export enum CommandKitEnvironmentType {
 }
 
 /**
- * Runs the given function after the current command has finished executing.
+ * Schedules the given function to run after the current command has finished executing.
  * @param fn The function to run after the current command.
  * @returns The deferred function id. This can be used to cancel the deferred function.
+ * @example import { after } from 'commandkit';
+ *
+ * // inside a command
+ * export const chatInput: ChatInputCommand = async (ctx) => {
+ *   after(() => {
+ *     console.log('This will run after the command has finished executing.');
+ *   });
+ *
+ *   // ... command logic
+ * }
  */
 export function after(fn: GenericFunction<[CommandKitEnvironment]>): string {
   const env = getContext();
@@ -204,6 +250,16 @@ export function after(fn: GenericFunction<[CommandKitEnvironment]>): string {
 /**
  * Cancels a deferred function registered with `after`.
  * @param id The deferred function id to cancel.
+ * @example import { cancelAfter } from 'commandkit';
+ * // inside a command
+ * export const chatInput: ChatInputCommand = async (ctx) => {
+ *   const id = after(() => {
+ *     console.log('This will run after the command has finished executing.');
+ *   });
+ *
+ *  // cancel the deferred function if needed
+ *  if (something) cancelAfter(id);
+ * }
  */
 export function cancelAfter(id: string): void {
   const env = getContext();

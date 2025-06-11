@@ -17,11 +17,18 @@ import {
   SelectMenuKitPredicate,
 } from './common';
 
+/**
+ * Type for the handler function that is called when the mentionable select menu is submitted.
+ */
 export type OnMentionableSelectMenuKitSubmit = OnSelectMenuKitSubmit<
   MentionableSelectMenuInteraction,
   MentionableSelectMenuKit
 >;
 
+/**
+ * Type for the predicate function that filters mentionable select menu interactions.
+ * It receives a MentionableSelectMenuInteraction and returns a boolean or a Promise that resolves to a boolean.
+ */
 export type MentionableSelectMenuKitPredicate =
   SelectMenuKitPredicate<MentionableSelectMenuInteraction>;
 
@@ -190,6 +197,9 @@ export class MentionableSelectMenuKit extends MentionableSelectMenuBuilder {
     );
   }
 
+  /**
+   * Disposes of the mentionable select menu kit, cleaning up any resources used by the interaction collector.
+   */
   public dispose() {
     this.#destroyCollector();
     return this;

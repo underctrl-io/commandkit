@@ -3,6 +3,9 @@ import { join } from 'node:path';
 import { COMMANDKIT_IS_DEV } from './constants';
 import { existsSync } from 'node:fs';
 
+/**
+ * @private
+ */
 export async function generateTypesPackage(force = false) {
   const location = join(process.cwd(), 'node_modules', 'commandkit-types');
   if (!COMMANDKIT_IS_DEV && !force) return location;
@@ -44,6 +47,9 @@ declare module 'commandkit' {
   return location;
 }
 
+/**
+ * @private
+ */
 export async function rewriteCommandDeclaration(data: string) {
   const commandTypesContent = `// Auto-generated command types
   declare module 'commandkit' {

@@ -6,8 +6,16 @@ import { isCommandKitError } from '../utils/error-codes';
 const kCommandWorker = Symbol('commandkitCommandWorker');
 const context = new AsyncLocalStorage<CommandKitEnvironment>();
 
+/**
+ * Represents a generic function type that can accept any number of arguments.
+ */
 export type GenericFunction<A extends any[] = any[]> = (...args: A) => any;
 
+/**
+ * Checks if the given worker is a CommandKit worker context.
+ * @param worker The worker to check.
+ * @returns True if the worker is a CommandKit worker context, false otherwise.
+ */
 export function isCommandWorkerContext(
   worker: any,
 ): worker is CommandKitEnvironment {
@@ -27,6 +35,12 @@ export function exitContext<T>(fn: () => T): T {
   return context.exit(fn);
 }
 
+/**
+ * Executes the provided function within a CommandKit context.
+ * @param value The CommandKit environment to use for the context.
+ * @param receiver The function to execute within the context.
+ * @returns The result of the receiver function.
+ */
 export function provideContext<R>(
   value: CommandKitEnvironment,
   receiver: () => R,

@@ -18,9 +18,23 @@ import {
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 import { AnalyticsEvents } from '../../analytics/constants';
 
+/**
+ * Handles the execution of application commands for CommandKit.
+ * Manages middleware execution, environment setup, and command invocation.
+ */
 export class AppCommandRunner {
+  /**
+   * Creates a new AppCommandRunner instance.
+   * @param handler - The app command handler instance to use for command execution
+   */
   public constructor(private handler: AppCommandHandler) {}
 
+  /**
+   * Executes a prepared command with middleware support and environment setup.
+   * Handles the complete command lifecycle including before/after middleware execution.
+   * @param prepared - The prepared command execution data
+   * @param source - The source interaction or message that triggered the command
+   */
   public async runCommand(
     prepared: PreparedAppCommandExecution,
     source: Interaction | Message,
@@ -212,6 +226,11 @@ export class AppCommandRunner {
     }
   }
 
+  /**
+   * @private
+   * @internal
+   * Finalizes command execution by running deferred functions and plugin cleanup.
+   */
   async #finalizer() {
     const env = useEnvironment();
 
@@ -225,6 +244,11 @@ export class AppCommandRunner {
     });
   }
 
+  /**
+   * Determines the execution mode based on the source of the command.
+   * @param source - The interaction or message that triggered the command
+   * @returns The appropriate command execution mode
+   */
   public getExecutionMode(source: Interaction | Message): CommandExecutionMode {
     if (source instanceof Message) return CommandExecutionMode.Message;
     if (source.isChatInputCommand())

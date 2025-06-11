@@ -2,19 +2,52 @@ import type { CommandKit } from '../CommandKit';
 import { Logger } from '../logger/Logger';
 import { COMMANDKIT_IS_DEV, HMREventType } from './constants';
 
-interface IpcMessageCommand {
+/**
+ * Represents HMR inter-process communication messages.
+ */
+export interface IpcMessageCommand {
+  /**
+   * The type of HMR event being communicated.
+   */
   event: HMREventType;
+  /**
+   * The path associated with the HMR event.
+   */
   path: string;
+  /**
+   * An optional identifier for the HMR event, used for acknowledgment.
+   */
   id?: string;
 }
 
+/**
+ * Represents an HMR event in CommandKit.
+ */
 export interface CommandKitHMREvent {
+  /**
+   * The type of HMR event.
+   */
   event: HMREventType;
+  /**
+   * The path associated with the HMR event.
+   */
   path: string;
+  /**
+   * Accepts the HMR event, indicating that it has been handled.
+   * This prevents further processing of the event.
+   */
   accept: () => void;
+  /**
+   * Prevents the default action for the HMR event.
+   * This can be used to stop further processing of the event.
+   */
   preventDefault: () => void;
 }
 
+/**
+ * Registers development hooks for CommandKit to handle HMR (Hot Module Replacement) events.
+ * @param commandkit - The CommandKit instance to register hooks for.
+ */
 export function registerDevHooks(commandkit: CommandKit) {
   if (!COMMANDKIT_IS_DEV) return;
 

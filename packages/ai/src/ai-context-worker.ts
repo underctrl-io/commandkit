@@ -4,6 +4,9 @@ import { AiContext } from './context';
 
 const worker = new AsyncLocalStorage<{ message: Message; ctx: AiContext }>();
 
+/**
+ * @private
+ */
 export function getAiWorkerContext(): { message: Message; ctx: AiContext } {
   const ctx = worker.getStore();
 
@@ -16,6 +19,9 @@ export function getAiWorkerContext(): { message: Message; ctx: AiContext } {
   return ctx;
 }
 
+/**
+ * @private
+ */
 export function runInAiWorkerContext<R, F extends (...args: any[]) => R>(
   ctx: AiContext,
   message: Message,

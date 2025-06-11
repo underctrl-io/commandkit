@@ -23,8 +23,15 @@ import { COMMANDKIT_IS_DEV } from '../../utils/constants';
 import { rewriteCommandDeclaration } from '../../utils/types-package';
 import colors from '../../utils/colors';
 
+/**
+ * Function type for wrapping command execution with custom logic.
+ */
 export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
 
+/**
+ * @private
+ * @internal
+ */
 interface AppCommandNative {
   command: SlashCommandBuilder | Record<string, any>;
   chatInput?: (ctx: Context) => Awaitable<unknown>;
@@ -34,39 +41,70 @@ interface AppCommandNative {
   userContextMenu?: (ctx: Context) => Awaitable<unknown>;
 }
 
+/**
+ * @private
+ * @internal
+ */
 type AppCommand = AppCommandNative & Record<string, any>;
 
+/**
+ * @private
+ * @internal
+ */
 interface AppCommandMiddleware {
   beforeExecute: (ctx: Context) => Awaitable<unknown>;
   afterExecute: (ctx: Context) => Awaitable<unknown>;
 }
 
+/**
+ * Represents a loaded command with its metadata and configuration.
+ */
 export interface LoadedCommand {
   command: Command;
   data: AppCommand;
   guilds?: string[];
 }
 
+/**
+ * Type representing command data identifier.
+ */
 export type CommandTypeData = string;
 
+/**
+ * Type for commands that can be resolved by the handler.
+ */
 export type ResolvableCommand = CommandTypeData | (string & {});
 
+/**
+ * @private
+ * @internal
+ */
 interface LoadedMiddleware {
   middleware: Middleware;
   data: AppCommandMiddleware;
 }
 
+/**
+ * Represents a prepared command execution with all necessary data and middleware.
+ */
 export interface PreparedAppCommandExecution {
   command: LoadedCommand;
   middlewares: LoadedMiddleware[];
   messageCommandParser?: MessageCommandParser;
 }
 
+/**
+ * Type representing command builder objects supported by CommandKit.
+ */
 export type CommandBuilderLike =
   | SlashCommandBuilder
   | ContextMenuCommandBuilder
   | Record<string, any>;
 
+/**
+ * @private
+ * @internal
+ */
 const commandDataSchema = {
   command: (c: unknown) =>
     c instanceof SlashCommandBuilder ||
@@ -79,31 +117,88 @@ const commandDataSchema = {
   userContextMenu: (c: unknown) => typeof c === 'function',
 };
 
+/**
+ * @private
+ * @internal
+ */
 const middlewareDataSchema = {
   beforeExecute: (c: unknown) => typeof c === 'function',
   afterExecute: (c: unknown) => typeof c === 'function',
 };
 
+/**
+ * Handles application commands for CommandKit, including loading, registration, and execution.
+ * Manages both slash commands and message commands with middleware support.
+ */
 export class AppCommandHandler {
+  /**
+   * @private
+   * @internal
+   */
   private loadedCommands = new Collection<string, LoadedCommand>();
+
+  /**
+   * @private
+   * @internal
+   */
   private loadedMiddlewares = new Collection<string, LoadedMiddleware>();
 
   // Name-to-ID mapping for easier lookup
+  /**
+   * @private
+   * @internal
+   */
   private commandNameToId = new Map<string, string>();
+
+  /**
+   * @private
+   * @internal
+   */
   private subcommandPathToId = new Map<string, string>();
 
+  /**
+   * Command registrar for handling Discord API registration.
+   */
   public readonly registrar: CommandRegistrar;
+
+  /**
+   * @private
+   * @internal
+   */
   private onInteraction: GenericFunction<[Interaction]> | null = null;
+
+  /**
+   * @private
+   * @internal
+   */
   private onMessageCreate: GenericFunction<[Message]> | null = null;
+
+  /**
+   * Command runner instance for executing commands.
+   */
   public readonly commandRunner = new AppCommandRunner(this);
 
+  /**
+   * External command data storage.
+   */
   public readonly externalCommandData = new Collection<string, Command>();
+
+  /**
+   * External middleware data storage.
+   */
   public readonly externalMiddlewareData = new Collection<string, Middleware>();
 
+  /**
+   * Creates a new AppCommandHandler instance.
+   * @param commandkit - The CommandKit instance
+   */
   public constructor(public readonly commandkit: CommandKit) {
     this.registrar = new CommandRegistrar(this.commandkit);
   }
 
+  /**
+   * Prints a formatted banner showing all loaded commands organized by category.
+   */
   public printBanner() {
     const uncategorized = crypto.randomUUID();
 
@@ -239,10 +334,17 @@ export class AppCommandHandler {
     });
   }
 
+  /**
+   * Gets an array of all loaded commands.
+   * @returns Array of loaded commands
+   */
   public getCommandsArray() {
     return Array.from(this.loadedCommands.values());
   }
 
+  /**
+   * Registers event handlers for Discord interactions and messages.
+   */
   public registerCommandHandler() {
     this.onInteraction ??= async (interaction: Interaction) => {
       const success = await this.commandkit.plugins.execute(
@@ -291,6 +393,12 @@ export class AppCommandHandler {
     this.commandkit.client.on(Events.MessageCreate, this.onMessageCreate);
   }
 
+  /**
+   * Prepares a command for execution by resolving the command and its middleware.
+   * @param source - The interaction or message that triggered the command
+   * @param cmdName - Optional command name override
+   * @returns Prepared command execution data or null if command not found
+   */
   public async prepareCommandRun(
     source: Interaction | Message,
     cmdName?: string,
@@ -401,6 +509,9 @@ export class AppCommandHandler {
     };
   }
 
+  /**
+   * Reloads all commands and middleware from scratch.
+   */
   public async reloadCommands() {
     this.loadedCommands.clear();
     this.loadedMiddlewares.clear();
@@ -412,6 +523,10 @@ export class AppCommandHandler {
     await this.loadCommands();
   }
 
+  /**
+   * Adds external middleware data to be loaded.
+   * @param data - Array of middleware data to add
+   */
   public async addExternalMiddleware(data: Middleware[]) {
     for (const middleware of data) {
       if (!middleware.id) continue;
@@ -420,6 +535,10 @@ export class AppCommandHandler {
     }
   }
 
+  /**
+   * Adds external command data to be loaded.
+   * @param data - Array of command data to add
+   */
   public async addExternalCommands(data: Command[]) {
     for (const command of data) {
       if (!command.id) continue;
@@ -428,12 +547,20 @@ export class AppCommandHandler {
     }
   }
 
+  /**
+   * Registers externally loaded middleware.
+   * @param data - Array of loaded middleware to register
+   */
   public async registerExternalLoadedMiddleware(data: LoadedMiddleware[]) {
     for (const middleware of data) {
       this.loadedMiddlewares.set(middleware.middleware.id, middleware);
     }
   }
 
+  /**
+   * Registers externally loaded commands.
+   * @param data - Array of loaded commands to register
+   */
   public async registerExternalLoadedCommands(data: LoadedCommand[]) {
     for (const command of data) {
       this.loadedCommands.set(command.command.id, command);
@@ -441,6 +568,9 @@ export class AppCommandHandler {
     }
   }
 
+  /**
+   * Loads all commands and middleware from the router.
+   */
   public async loadCommands() {
     await this.commandkit.plugins.execute((ctx, plugin) => {
       return plugin.onBeforeCommandsLoad(ctx);
@@ -488,6 +618,10 @@ export class AppCommandHandler {
     });
   }
 
+  /**
+   * @private
+   * @internal
+   */
   private async loadMiddleware(id: string, middleware: Middleware) {
     try {
       const data = await import(
@@ -517,6 +651,10 @@ export class AppCommandHandler {
     }
   }
 
+  /**
+   * @private
+   * @internal
+   */
   private async loadCommand(id: string, command: Command) {
     try {
       // Skip if path is null (directory-only command group)

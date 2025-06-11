@@ -2,9 +2,21 @@ import { CommandKitPluginRuntime, RuntimePlugin } from 'commandkit/plugin';
 import { PostHog, PostHogOptions } from 'posthog-node';
 import { PostHogProvider } from './provider';
 
+/**
+ * Options for the PostHog plugin.
+ */
 export interface PostHogPluginOptions {
+  /**
+   * The PostHog API key and options.
+   */
   posthogOptions: {
+    /**
+     * The PostHog API key.
+     */
     apiKey: string;
+    /**
+     * Additional options for the PostHog client.
+     */
     options?: PostHogOptions;
   };
 }

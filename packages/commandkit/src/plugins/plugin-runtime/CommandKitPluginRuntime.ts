@@ -9,19 +9,38 @@ import {
 import { Logger } from '../../logger/Logger';
 import { AsyncFunction } from '../../context/async-context';
 
+/**
+ * Represents the runtime environment for CommandKit plugins.
+ */
 export class CommandKitPluginRuntime {
   private plugins = new Collection<string, RuntimePlugin>();
 
+  /**
+   * Creates a new instance of CommandKitPluginRuntime.
+   * @param commandkit The CommandKit instance associated with this runtime.
+   */
   public constructor(public readonly commandkit: CommandKit) {}
 
+  /**
+   * Returns the plugins registered in this runtime.
+   * @returns A collection of plugins.
+   */
   public getPlugins() {
     return this.plugins;
   }
 
+  /**
+   * Checks if there are no plugins registered in this runtime.
+   * @returns Boolean indicating whether the runtime is empty.
+   */
   public getPlugin(pluginName: string): RuntimePlugin | null {
     return this.plugins.get(pluginName) ?? null;
   }
 
+  /**
+   * Soft registers a plugin in the runtime.
+   * @param plugin The plugin to be registered.
+   */
   public async softRegisterPlugin(plugin: RuntimePlugin) {
     const pluginName = plugin.name;
 
@@ -37,6 +56,11 @@ export class CommandKitPluginRuntime {
     }
   }
 
+  /**
+   * Registers a plugin in the runtime.
+   * @param plugin The plugin to be registered.
+   * @throws If a plugin with the same name already exists.
+   */
   public async registerPlugin(plugin: RuntimePlugin) {
     const pluginName = plugin.name;
 
@@ -54,6 +78,11 @@ export class CommandKitPluginRuntime {
     }
   }
 
+  /**
+   * Unregisters a plugin from the runtime.
+   * @param plugin The plugin to be unregistered.
+   * @throws If the plugin does not exist.
+   */
   public async unregisterPlugin(plugin: RuntimePlugin) {
     const pluginName = plugin.name;
 
@@ -72,16 +101,27 @@ export class CommandKitPluginRuntime {
     }
   }
 
+  /**
+   * Unregisters all plugins from the runtime.
+   */
   public async unregisterAllPlugins() {
     for (const plugin of this.plugins.values()) {
       await this.unregisterPlugin(plugin);
     }
   }
 
+  /**
+   * Signals the runtime to allow the current plugin take ownership of the execution context.
+   */
   public capture() {
     throw createCommandKitError(CommandKitErrorCodes.PluginCaptureHandle);
   }
 
+  /**
+   * Executes a function for each plugin in the runtime.
+   * @param f The function to execute for each plugin.
+   * @returns The result of the last executed function, or undefined if no plugins were executed.
+   */
   public async execute<R = any>(
     f: AsyncFunction<[CommandKitPluginRuntime, RuntimePlugin], R | undefined>,
   ) {

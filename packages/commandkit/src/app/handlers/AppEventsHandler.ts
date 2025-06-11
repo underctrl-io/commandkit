@@ -8,11 +8,17 @@ import { runInEventWorkerContext } from '../events/EventWorkerContext';
 import { ParsedEvent } from '../router';
 import { CommandKitEventDispatch } from '../../plugins';
 
+/**
+ * Represents an event listener with its configuration.
+ */
 export type EventListener = {
   handler: ListenerFunction;
   once: boolean;
 };
 
+/**
+ * Represents a loaded event with all its listeners.
+ */
 export interface LoadedEvent {
   name: string;
   namespace: string | null;
@@ -22,6 +28,9 @@ export interface LoadedEvent {
   executedOnceListeners?: Set<ListenerFunction>; // Track executed once listeners
 }
 
+/**
+ * Data structure representing loaded event information for external consumption.
+ */
 export interface AppEventsHandlerLoadedData {
   name: string;
   namespace: string | null;
@@ -30,10 +39,26 @@ export interface AppEventsHandlerLoadedData {
   metadata: ParsedEvent;
 }
 
+/**
+ * Handles Discord.js events and CommandKit custom events with support for namespacing and middleware.
+ */
 export class AppEventsHandler {
+  /**
+   * @private
+   * @internal
+   */
   private loadedEvents = new Collection<string, LoadedEvent>();
+
+  /**
+   * Creates a new AppEventsHandler instance.
+   * @param commandkit - The CommandKit instance
+   */
   public constructor(public readonly commandkit: CommandKit) {}
 
+  /**
+   * Gets information about all loaded events.
+   * @returns Array of loaded event data
+   */
   public getEvents(): AppEventsHandlerLoadedData[] {
     if (this.loadedEvents.size === 0) return [];
 
@@ -53,11 +78,17 @@ export class AppEventsHandler {
     );
   }
 
+  /**
+   * Reloads all events by unregistering existing ones and loading them again.
+   */
   public async reloadEvents() {
     this.unregisterAll();
     await this.loadEvents();
   }
 
+  /**
+   * Loads all events from the events router and registers them with Discord.js client.
+   */
   public async loadEvents() {
     await this.commandkit.plugins.execute((ctx, plugin) => {
       return plugin.onBeforeEventsLoad(ctx);
@@ -114,11 +145,17 @@ export class AppEventsHandler {
     });
   }
 
+  /**
+   * Unregisters all event listeners and clears loaded events.
+   */
   public unregisterAll() {
     this.unregisterAllClientListeners();
     this.loadedEvents.clear();
   }
 
+  /**
+   * Registers all loaded events with the Discord.js client and CommandKit event system.
+   */
   public registerAllClientEvents() {
     const client = this.commandkit.client;
 
@@ -308,6 +345,9 @@ export class AppEventsHandler {
     }
   }
 
+  /**
+   * Unregisters all client event listeners and cleans up loaded events.
+   */
   public unregisterAllClientListeners() {
     const client = this.commandkit.client;
 

@@ -11,11 +11,24 @@ import {
 } from 'discord.js';
 import { applyId } from './common';
 
+/**
+ * Represents the properties for a container component.
+ */
 export interface ContainerProps
   extends Omit<ContainerComponentData, 'type' | 'components'> {
   children?: ComponentBuilder[];
 }
 
+/**
+ * The components v2 container component
+ * @param props - The properties for the container component.
+ * @returns the container builder instance.
+ * @example ```tsx
+ * import { Container } from 'commandkit';
+ *
+ * const container = <Container>...</Container>;
+ * ```
+ */
 export function Container(props: ContainerProps): ContainerBuilder {
   const container = new ContainerBuilder();
 

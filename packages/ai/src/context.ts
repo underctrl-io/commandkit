@@ -9,14 +9,35 @@ export interface AiContextOptions<
   commandkit: CommandKit;
 }
 
+/**
+ * Represents the context in which an AI command is executed.
+ * This includes the parameters passed to the command, the message that triggered it,
+ * and the CommandKit instance associated with the command.
+ */
 export class AiContext<
   T extends Record<string, unknown> = Record<string, unknown>,
 > {
+  /**
+   * The parameters passed to the AI command.
+   */
   public params!: T;
+  /**
+   * The message that triggered the AI command.
+   */
   public message!: Message;
+  /**
+   * The client instance associated with the AI command.
+   */
   public client!: Client;
+  /**
+   * The CommandKit instance associated with the AI command.
+   */
   public commandkit!: CommandKit;
 
+  /**
+   * Creates a new instance of AiContext.
+   * @param options - The options for the AI context, including the message, parameters, and CommandKit instance.
+   */
   public constructor(options: AiContextOptions<T>) {
     this.params = options.params;
     this.message = options.message;
@@ -24,6 +45,10 @@ export class AiContext<
     this.client = options.commandkit.client;
   }
 
+  /**
+   * Sets the parameters for the AI context.
+   * @param params - The parameters to set.
+   */
   public setParams(params: T): void {
     this.params = params;
   }

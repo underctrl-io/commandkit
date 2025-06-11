@@ -142,6 +142,11 @@ export class RedisPlugin extends RuntimePlugin<RedisOptions> {
   }
 }
 
+/**
+ * Create a new Redis plugin instance.
+ * @param options The options to configure the Redis client.
+ * @returns The created Redis plugin instance.
+ */
 export function redis(options?: RedisOptions) {
   return new RedisPlugin(options ?? {});
 }

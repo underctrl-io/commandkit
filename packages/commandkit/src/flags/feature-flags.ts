@@ -28,6 +28,9 @@ export function setFlagProvider(provider: FlagProvider): void {
   flagProvider = provider;
 }
 
+/**
+ * @private
+ */
 export type MaybePromise<T> = T | Promise<T>;
 
 /**
@@ -87,6 +90,9 @@ export interface FeatureFlagDefinition<R, Entity> {
   disableAnalytics?: boolean;
 }
 
+/**
+ * Context for evaluating command flags in CommandKit.
+ */
 export interface CommandFlagContext {
   /**
    * The Discord client instance.
@@ -138,6 +144,9 @@ export interface CommandFlagContext {
   event: null;
 }
 
+/**
+ * Context for evaluating event flags in CommandKit.
+ */
 export interface EventFlagContext {
   /**
    * The Discord client instance.

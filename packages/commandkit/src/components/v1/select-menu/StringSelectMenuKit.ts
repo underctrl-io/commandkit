@@ -17,14 +17,26 @@ import {
   SelectMenuKitPredicate,
 } from './common';
 
+/**
+ * Type for the handler function that is called when the string select menu is submitted.
+ */
 export type OnStringSelectMenuKitSubmit = OnSelectMenuKitSubmit<
   StringSelectMenuInteraction,
   StringSelectMenuKit
 >;
 
+/**
+ * Type for the predicate function that filters string select menu interactions.
+ * It receives a StringSelectMenuInteraction and returns a boolean or a Promise that resolves to a boolean.
+ */
 export type StringSelectMenuKitPredicate =
   SelectMenuKitPredicate<StringSelectMenuInteraction>;
 
+/**
+ * A builder for creating string select menus with additional features like interaction collectors and event handling.
+ * This class extends the StringSelectMenuBuilder from discord.js and adds methods for handling interactions.
+ * It allows you to set a handler for when the string select menu is submitted, filter interactions, and handle the end of the interaction collector.
+ */
 export class StringSelectMenuKit extends StringSelectMenuBuilder {
   #onSelectHandler: CommandKitSelectMenuBuilderInteractionCollectorDispatch<
     StringSelectMenuInteraction,
@@ -190,6 +202,9 @@ export class StringSelectMenuKit extends StringSelectMenuBuilder {
     );
   }
 
+  /**
+   * Disposes of the interaction collector and cleans up resources.
+   */
   public dispose() {
     this.#destroyCollector();
     return this;

@@ -1,6 +1,10 @@
 import { Awaitable, Events } from 'discord.js';
 import { EventInterceptorContextData } from '../../common/EventInterceptor';
 
+/**
+ * The predicate function that filters select menu interactions.
+ * It receives an interaction and returns a boolean or a Promise that resolves to a boolean.
+ */
 export type SelectMenuKitPredicate<T> = (interaction: T) => Awaitable<boolean>;
 
 /**

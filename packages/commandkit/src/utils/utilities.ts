@@ -19,6 +19,10 @@ function getSrcDir() {
   return getConfig().distDir;
 }
 
+/**
+ * Returns the current working directory of the CommandKit application.
+ * This is typically the directory where the source code is located.
+ */
 export function getCurrentDirectory(): string {
   if (currentDir) return currentDir;
   const src = getSrcDir();
@@ -31,6 +35,11 @@ export function getCurrentDirectory(): string {
   return root;
 }
 
+/**
+ * Returns the possible source directories for the CommandKit application.
+ * This includes the `src`, `.commandkit`, and the distribution directory.
+ * @returns An array of possible source directories.
+ */
 export function getSourceDirectories(): string[] {
   const dist = getConfig().distDir;
   const locations = ['src', '.commandkit', dist].map((dir) =>
@@ -68,6 +77,14 @@ export function findAppDirectory(): string | null {
  * @param fn The function to debounce.
  * @param ms The debounce time in milliseconds.
  * @returns The debounced function.
+ * @example
+ * const debouncedFn = debounce(() => {
+ *   console.log('Debounced function called');
+ * }, 300);
+ *
+ * debouncedFn(); // Will only execute after 300ms of inactivity
+ * debouncedFn(); // Will reset the timer
+ * debouncedFn(); // Will reset the timer again
  */
 export function debounce<R, F extends (...args: any[]) => R>(
   fn: F,
@@ -99,6 +116,13 @@ export function debounce<R, F extends (...args: any[]) => R>(
 /**
  * Defers the execution of a function.
  * @param fn The function to defer.
+ * @param timeout The time in milliseconds to wait before executing the function. Defaults to 0.
+ * @example
+ * defer(() => {
+ *   console.log('This will run after a delay');
+ * });
+ *
+ * console.log('This will run immediately');
  */
 export function defer<T>(fn: () => T, timeout = 0): void {
   setTimeout(() => {
@@ -153,8 +177,17 @@ export class StopEventPropagationError extends Error {
 }
 
 /**
- * Stops event propagation.
+ * Stops event propagation. This function should be called inside an event handler
+ * to prevent further event handling.
  * @throws {StopEventPropagationError}
+ * @example // src/app/events/messageCreate/handler.ts
+ * import { stopEvents } from 'commandkit';
+ *
+ * export default async function messageCreateHandler() {
+ *   console.log('Message created');
+ *   // Stop further event propagation
+ *   stopEvents();
+ * }
  */
 export function stopEvents(): never {
   if (!eventWorkerContext.getStore()) {
@@ -164,8 +197,18 @@ export function stopEvents(): never {
   throw new StopEventPropagationError();
 }
 
+/**
+ * Represents a simple proxy object that mirrors a target object.
+ */
 export interface SimpleProxy<T extends object> {
+  /**
+   * The proxied object that mirrors the target.
+   */
   proxy: T;
+  /**
+   * Sets a new target object for the proxy.
+   * @param newTarget The new target object to set.
+   */
   setTarget(newTarget: T): void;
 }
 

@@ -295,7 +295,10 @@ export function isCachedFunction(fn: GenericFunction): boolean {
   return Object.prototype.hasOwnProperty.call(fn, CACHED_FN_SYMBOL);
 }
 
-// Cleanup function to remove stale entries
+/**
+ * Cleans up stale cache entries.
+ * @param maxAge The maximum age of cache entries to keep (in milliseconds).
+ */
 export async function cleanup(
   maxAge: number = 24 * 60 * 60 * 1000,
 ): Promise<void> {

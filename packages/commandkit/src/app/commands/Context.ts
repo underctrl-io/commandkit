@@ -25,6 +25,9 @@ import {
   RunCommand,
 } from '../handlers/AppCommandHandler';
 
+/**
+ * Enumeration of different command execution modes supported by CommandKit.
+ */
 export const CommandExecutionMode = {
   ChatInputCommand: 'chatInput',
   MessageContextMenu: 'messageContextMenu',
@@ -33,9 +36,15 @@ export const CommandExecutionMode = {
   Message: 'message',
 } as const;
 
+/**
+ * Type representing the possible command execution modes.
+ */
 export type CommandExecutionMode =
   (typeof CommandExecutionMode)[keyof typeof CommandExecutionMode];
 
+/**
+ * Parameters required to create a command context.
+ */
 export interface ContextParameters<
   T extends CommandExecutionMode,
   Args = Record<string, any>,
@@ -59,26 +68,76 @@ export interface ContextParameters<
   customArgs?: Args;
 }
 
+/**
+ * Context for message-based commands.
+ */
 export type MessageCommandContext = Context<'message'>;
+
+/**
+ * Context for interaction-based commands.
+ */
 export type InteractionCommandContext = Context<
   'autocomplete' | 'chatInput' | 'messageContextMenu' | 'userContextMenu'
 >;
+
+/**
+ * Middleware context for message-based commands.
+ */
 export type MessageCommandMiddlewareContext = MiddlewareContext<'message'>;
+
+/**
+ * Middleware context for interaction-based commands.
+ */
 export type InteractionCommandMiddlewareContext = MiddlewareContext<
   'autocomplete' | 'chatInput' | 'messageContextMenu' | 'userContextMenu'
 >;
+
+/**
+ * Context for chat input (slash) commands.
+ */
 export type ChatInputCommandContext = Context<'chatInput'>;
+
+/**
+ * Middleware context for slash commands.
+ */
 export type SlashCommandMiddlewareContext = MiddlewareContext<'chatInput'>;
+
+/**
+ * Context for autocomplete interactions.
+ */
 export type AutocompleteCommandContext = Context<'autocomplete'>;
+
+/**
+ * Middleware context for autocomplete interactions.
+ */
 export type AutocompleteCommandMiddlewareContext =
   MiddlewareContext<'autocomplete'>;
+
+/**
+ * Context for message context menu commands.
+ */
 export type MessageContextMenuCommandContext = Context<'messageContextMenu'>;
+
+/**
+ * Middleware context for message context menu commands.
+ */
 export type MessageContextMenuCommandMiddlewareContext =
   MiddlewareContext<'messageContextMenu'>;
+
+/**
+ * Context for user context menu commands.
+ */
 export type UserContextMenuCommandContext = Context<'userContextMenu'>;
+
+/**
+ * Middleware context for user context menu commands.
+ */
 export type UserContextMenuCommandMiddlewareContext =
   MiddlewareContext<'userContextMenu'>;
 
+/**
+ * Type representing command context options based on execution mode.
+ */
 export type CommandContextOptions<T extends CommandExecutionMode> =
   T extends 'message'
     ? MessageCommandOptions
@@ -92,22 +151,51 @@ export type CommandContextOptions<T extends CommandExecutionMode> =
             ? UserContextMenuCommandInteraction['options']
             : never;
 
+/**
+ * Generic type for command execution functions.
+ */
 export type AnyCommandExecute<ContextType extends Context = Context> = (
   ctx: ContextType,
 ) => Awaitable<unknown>;
 
+/**
+ * Type for chat input command execution functions.
+ */
 export type ChatInputCommand = AnyCommandExecute<ChatInputCommandContext>;
+
+/**
+ * Type for autocomplete command execution functions.
+ */
 export type AutocompleteCommand = AnyCommandExecute<AutocompleteCommandContext>;
+
+/**
+ * Type for message context menu command execution functions.
+ */
 export type MessageContextMenuCommand =
   AnyCommandExecute<MessageContextMenuCommandContext>;
+
+/**
+ * Type for user context menu command execution functions.
+ */
 export type UserContextMenuCommand =
   AnyCommandExecute<UserContextMenuCommandContext>;
+
+/**
+ * Type for message command execution functions.
+ */
 export type MessageCommand = AnyCommandExecute<MessageCommandContext>;
 
+/**
+ * Arguments for middleware context.
+ */
 export interface MiddlewareContextArgs {
   setCommandRunner?: GenericFunction<[RunCommand]>;
 }
 
+/**
+ * Represents the execution context for a command, providing access to Discord.js objects,
+ * command metadata, and various utility methods for command execution.
+ */
 export class Context<
   ExecutionMode extends CommandExecutionMode = CommandExecutionMode,
   Args extends Record<string, any> = Record<string, any>,
@@ -152,8 +240,16 @@ export class Context<
    */
   public readonly command: LoadedCommand;
 
+  /**
+   * @private
+   * @internal
+   */
   #store: Map<string, any>;
 
+  /**
+   * @private
+   * @internal
+   */
   private _locale: Locale | null = null;
 
   /**
@@ -199,6 +295,9 @@ export class Context<
     return this.#store;
   }
 
+  /**
+   * Gets the name of the current command.
+   */
   public get commandName(): string {
     if (this.isInteraction()) {
       return this.interaction.commandName;
@@ -207,6 +306,9 @@ export class Context<
     }
   }
 
+  /**
+   * Gets the command options based on the execution mode.
+   */
   public get options(): CommandContextOptions<ExecutionMode> {
     if (this.isMessage()) {
       const parser = this.config.messageCommandParser!;
@@ -414,6 +516,7 @@ export class Context<
 
   /**
    * Creates a clone of this context
+   * @param config - Optional partial config to override in the clone
    */
   public clone(
     config?: Partial<ContextParameters<ExecutionMode>>,
@@ -429,10 +532,17 @@ export class Context<
     return ctx;
   }
 
+  /**
+   * Checks if this context is a middleware context.
+   */
   public isMiddleware(): this is MiddlewareContext<ExecutionMode> {
     return this instanceof MiddlewareContext;
   }
 
+  /**
+   * Gets the command arguments (only available for message commands).
+   * @returns Array of command arguments
+   */
   public args(): string[] {
     if (this.isMessage()) {
       return this.config.messageCommandParser!.getArgs();
@@ -452,9 +562,16 @@ export class Context<
   }
 }
 
+/**
+ * Extended context class for middleware execution with additional control methods.
+ */
 export class MiddlewareContext<
   T extends CommandExecutionMode = CommandExecutionMode,
 > extends Context<T, MiddlewareContextArgs> {
+  /**
+   * @private
+   * @internal
+   */
   #cancel = false;
 
   /**

@@ -12,6 +12,9 @@ import { CommandKitHMREvent } from '../utils/dev-hooks';
 import { PreRegisterCommandsEvent } from '../app/register/CommandRegistrar';
 import { CommandKitEventDispatch } from './types';
 
+/**
+ * CommandKit plugin that runs at the runtime.
+ */
 export abstract class RuntimePlugin<
   T extends PluginOptions = PluginOptions,
 > extends PluginCommon<T, CommandKitPluginRuntime> {

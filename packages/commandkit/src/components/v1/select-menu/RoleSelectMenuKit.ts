@@ -17,14 +17,26 @@ import {
   SelectMenuKitPredicate,
 } from './common';
 
+/**
+ * Type for the handler function that is called when the role select menu is submitted.
+ */
 export type OnRoleSelectMenuKitSubmit = OnSelectMenuKitSubmit<
   RoleSelectMenuInteraction,
   RoleSelectMenuKit
 >;
 
+/**
+ * Type for the predicate function that filters role select menu interactions.
+ * It receives a RoleSelectMenuInteraction and returns a boolean or a Promise that resolves to a boolean.
+ */
 export type RoleSelectMenuKitPredicate =
   SelectMenuKitPredicate<RoleSelectMenuInteraction>;
 
+/**
+ * A builder for creating role select menus with additional features like interaction collectors and event handling.
+ * This class extends the RoleSelectMenuBuilder from discord.js and adds methods for handling interactions.
+ * It allows you to set a handler for when the role select menu is submitted, filter interactions, and handle the end of the interaction collector.
+ */
 export class RoleSelectMenuKit extends RoleSelectMenuBuilder {
   #onSelectHandler: CommandKitSelectMenuBuilderInteractionCollectorDispatch<
     RoleSelectMenuInteraction,
@@ -190,6 +202,9 @@ export class RoleSelectMenuKit extends RoleSelectMenuBuilder {
     );
   }
 
+  /**
+   * Disposes of the role select menu kit, cleaning up any resources and event listeners.
+   */
   public dispose() {
     this.#destroyCollector();
     return this;

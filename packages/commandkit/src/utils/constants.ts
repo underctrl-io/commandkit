@@ -1,9 +1,22 @@
-export const COMMANDKIT_CACHE_TAG = Symbol('kCommandKitCacheTag');
-
+/**
+ * Indicates whether CommandKit is running in development mode.
+ */
 export const COMMANDKIT_IS_DEV = process.env.COMMANDKIT_IS_DEV === 'true';
+
+/**
+ * Indicates whether CommandKit is running in CLI thread.
+ */
 export const COMMANDKIT_IS_CLI = process.env.COMMANDKIT_IS_CLI === 'true';
+
+/**
+ * Indicates whether CommandKit is running in test mode.
+ */
 export const COMMANDKIT_IS_TEST = process.env.COMMANDKIT_IS_TEST === 'true';
 
+/**
+ * The current bootstrap mode of CommandKit.
+ * This can be 'development' or 'production'.
+ */
 export const COMMANDKIT_BOOTSTRAP_MODE = (process.env
   .COMMANDKIT_BOOTSTRAP_MODE || 'development') as 'development' | 'production';
 
@@ -11,9 +24,21 @@ export const COMMANDKIT_BOOTSTRAP_MODE = (process.env
  * Types of Hot Module Replacement events
  */
 export const HMREventType = {
+  /**
+   * HMR event for reloading commands.
+   */
   ReloadCommands: 'reload-commands',
+  /**
+   * HMR event for reloading events.
+   */
   ReloadEvents: 'reload-events',
+  /**
+   * HMR event for reloading unknown path, typically used by the plugins.
+   */
   Unknown: 'unknown',
 } as const;
 
+/**
+ * The type for HMR events.
+ */
 export type HMREventType = (typeof HMREventType)[keyof typeof HMREventType];

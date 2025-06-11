@@ -29,15 +29,29 @@ import { COMMAND_METADATA_KEY, DISCORD_LOCALES } from './constants';
 import { applyTranslations } from './utils';
 import { readdir, readFile } from 'fs/promises';
 
+/**
+ * @private
+ */
 export type Awaitable<T> = Promise<T> | T;
 
+/**
+ * Represents a localization module that can be used with the i18next plugin.
+ */
 export type LocalizationModule =
   | NewableModule<Module>
   | Module
   | Newable<Module>;
 
+/**
+ * Represents a dynamic localization module that can be used with the i18next plugin.
+ */
 export type DynamicLocalizationModule = () => Awaitable<LocalizationModule>;
 
+/**
+ * Options for the localization plugin.
+ * This interface defines the options that can be passed to the localization plugin.
+ * It includes the i18next plugins to use and the i18next initialization options.
+ */
 export interface LocalizationPluginOptions {
   /**
    * The i18next plugins to use. The plugins are loaded in the order they are
@@ -73,6 +87,9 @@ export interface CommandLocalizationContext {
 }
 
 declare module 'commandkit' {
+  /**
+   * Represents the localization context for a command.
+   */
   export interface LocalizationContext extends CommandLocalizationContext {}
 
   interface Context {

@@ -2,6 +2,9 @@ import { getContext } from '../context/async-context';
 import colors from '../utils/colors';
 import { ILogger } from './ILogger';
 
+/**
+ * Log levels for the logger.
+ */
 enum LogLevel {
   DEBUG,
   INFO,
@@ -42,9 +45,18 @@ const BoxChars = {
   corner: '└',
 };
 
+/**
+ * Default logger implementation that logs messages to the console.
+ * It formats the log messages with timestamps, log levels, and context information.
+ */
 export class DefaultLogger implements ILogger {
   private logger: Console;
 
+  /**
+   * Creates a new instance of DefaultLogger.
+   * @param stdout The output stream for standard messages (default: process.stdout).
+   * @param stderr The output stream for error messages (default: process.stderr).
+   */
   public constructor(
     public stdout = process.stdout,
     public stderr = process.stderr,
@@ -138,22 +150,42 @@ export class DefaultLogger implements ILogger {
     }
   }
 
+  /**
+   * Logs a debug message.
+   * @param args The message arguments to log.
+   */
   public debug(...args: any[]): void {
     this._log(LogLevel.DEBUG, ...args);
   }
 
+  /**
+   * Logs an error message.
+   * @param args The message arguments to log.
+   */
   public error(...args: any[]): void {
     this._log(LogLevel.ERROR, ...args);
   }
 
+  /**
+   * Logs a default message.
+   * @param args The message arguments to log.
+   */
   public log(...args: any[]): void {
     this._log(LogLevel.DEFAULT, ...args);
   }
 
+  /**
+   * Logs an info message.
+   * @param args The message arguments to log.
+   */
   public info(...args: any[]): void {
     this._log(LogLevel.INFO, ...args);
   }
 
+  /**
+   * Logs a warning message.
+   * @param args The message arguments to log.
+   */
   public warn(...args: any[]): void {
     this._log(LogLevel.WARN, ...args);
   }

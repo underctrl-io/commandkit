@@ -14,6 +14,10 @@ import {
   EventInterceptorErrorHandler,
 } from '../../common/EventInterceptor';
 
+/**
+ * The predicate function that filters modal interactions.
+ * It receives a ModalSubmitInteraction and returns a boolean or a Promise that resolves to a boolean.
+ */
 export type ModalKitPredicate = (
   interaction: ModalSubmitInteraction,
 ) => Awaitable<boolean>;
@@ -40,11 +44,24 @@ export type CommandKitModalBuilderInteractionCollectorDispatch = (
   context: ModalKit,
 ) => Awaitable<void>;
 
+/**
+ * The handler to run when the interaction collector ends. This handler is called with the reason as the first argument.
+ * If the first argument is null, it means that the interaction collector has been destroyed.
+ */
 export type CommandKitModalBuilderOnEnd = (reason: string) => Awaitable<void>;
 
+/**
+ * The context data for the interaction collector.
+ * This includes the autoReset, time, filter, onEnd, and onError properties.
+ */
 export type CommandKitModalBuilderInteractionCollectorDispatchContextData =
   EventInterceptorContextData<Events.InteractionCreate>;
 
+/**
+ * A builder for creating modals with additional features like interaction collectors and event handling.
+ * This class extends the ModalBuilder from discord.js and adds methods for handling interactions.
+ * It allows you to set a handler for when the modal is submitted, filter interactions, and handle the end of the interaction collector.
+ */
 export class ModalKit extends ModalBuilder {
   #onSubmitHandler: CommandKitModalBuilderInteractionCollectorDispatch | null =
     null;
@@ -203,6 +220,9 @@ export class ModalKit extends ModalBuilder {
     );
   }
 
+  /**
+   * Disposes of the modal collector and cleans up resources.
+   */
   public dispose() {
     this.#destroyCollector();
     return this;

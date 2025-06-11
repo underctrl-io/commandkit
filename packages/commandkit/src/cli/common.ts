@@ -8,11 +8,19 @@ import { execSync } from 'node:child_process';
 
 let ts: typeof import('typescript') | undefined;
 
+/**
+ * @private
+ * @internal
+ */
 export function write(message: any) {
   process.stdout.write(message);
   process.stdout.write('\n');
 }
 
+/**
+ * @private
+ * @internal
+ */
 export function findEntrypoint(dir: string) {
   const target = join(dir, 'sharding-manager.js');
 
@@ -24,12 +32,18 @@ export function findEntrypoint(dir: string) {
 
 /**
  * @returns {never}
+ * @internal
+ * @private
  */
 export function panic(message: any): never {
   write(colors.red(`Error: ${message}`));
   process.exit(1);
 }
 
+/**
+ * @private
+ * @internal
+ */
 export function findPackageJSON() {
   const cwd = process.cwd();
   const target = join(cwd, 'package.json');
@@ -41,6 +55,10 @@ export function findPackageJSON() {
   return JSON.parse(fs.readFileSync(target, 'utf8'));
 }
 
+/**
+ * @private
+ * @internal
+ */
 async function ensureTypeScript(target: string) {
   const isTypeScript = /\.(c|m)?tsx?$/.test(target);
 
@@ -54,6 +72,10 @@ async function ensureTypeScript(target: string) {
 
 let packageManager: string;
 
+/**
+ * @private
+ * @internal
+ */
 function detectPackageManager() {
   if (packageManager) return packageManager;
 
@@ -79,6 +101,10 @@ function detectPackageManager() {
   return packageManager;
 }
 
+/**
+ * @private
+ * @internal
+ */
 export async function loadTypeScript(e?: string) {
   if (ts) return ts;
 
@@ -115,6 +141,10 @@ export async function loadTypeScript(e?: string) {
   return ts;
 }
 
+/**
+ * @private
+ * @internal
+ */
 export async function loadConfigFileFromPath(
   target: string,
 ): Promise<ResolvedCommandKitConfig> {
@@ -167,6 +197,10 @@ export async function loadConfigFileFromPath(
   return config;
 }
 
+/**
+ * @private
+ * @internal
+ */
 async function ensureExists(loc: string) {
   const exists = fs.existsSync(loc);
 
@@ -175,10 +209,18 @@ async function ensureExists(loc: string) {
   }
 }
 
+/**
+ * @private
+ * @internal
+ */
 export function erase(dir: string) {
   rimrafSync(dir);
 }
 
+/**
+ * @private
+ * @internal
+ */
 export async function copyLocaleFiles(_from: string, _to: string) {
   const resolvedFrom = join(process.cwd(), _from);
   const resolvedTo = join(process.cwd(), _to);

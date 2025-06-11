@@ -13,6 +13,9 @@ import {
   createCommandKitError,
 } from '../../utils/error-codes';
 
+/**
+ * Represents a parsed message command with its components.
+ */
 export interface ParsedMessageCommand {
   command: string;
   options: { name: string; value: unknown }[];
@@ -20,27 +23,60 @@ export interface ParsedMessageCommand {
   subcommandGroup?: string;
 }
 
+/**
+ * Schema defining the types of options for a message command.
+ */
 export type MessageCommandOptionsSchema = Record<
   string,
   ApplicationCommandOptionType
 >;
 
+/**
+ * Parses message content into structured command data with options and subcommands.
+ */
 export class MessageCommandParser {
+  /**
+   * @private
+   * @internal
+   */
   #parsed: ParsedMessageCommand | null = null;
+
+  /**
+   * @private
+   * @internal
+   */
   #options: MessageCommandOptions | null = null;
+
+  /**
+   * @private
+   * @internal
+   */
   #args: string[] = [];
 
+  /**
+   * Creates a new message command parser.
+   * @param message - The Discord message to parse
+   * @param prefix - Array of valid command prefixes
+   * @param schema - Function that returns the options schema for a command
+   */
   public constructor(
     public message: Message,
     private prefix: string[],
     private schema: (command: string) => MessageCommandOptionsSchema,
   ) {}
 
+  /**
+   * Gets the parsed command arguments.
+   * @returns Array of command arguments
+   */
   public getArgs() {
     void this.parse();
     return this.#args;
   }
 
+  /**
+   * Gets the message command options object for easy access to typed option values.
+   */
   public get options() {
     if (!this.#options) {
       this.#options = new MessageCommandOptions(this);
@@ -49,22 +85,43 @@ export class MessageCommandParser {
     return this.#options;
   }
 
+  /**
+   * Gets a specific option value by name.
+   * @param name - The option name
+   * @returns The option value or undefined if not found
+   */
   public getOption<T>(name: string): T | undefined {
     return this.parse().options.find((o) => o.name === name)?.value as T;
   }
 
+  /**
+   * Gets the main command name.
+   * @returns The command name
+   */
   public getCommand(): string {
     return this.parse().command;
   }
 
+  /**
+   * Gets the subcommand name if present.
+   * @returns The subcommand name or undefined
+   */
   public getSubcommand(): string | undefined {
     return this.parse().subcommand;
   }
 
+  /**
+   * Gets the subcommand group name if present.
+   * @returns The subcommand group name or undefined
+   */
   public getSubcommandGroup(): string | undefined {
     return this.parse().subcommandGroup;
   }
 
+  /**
+   * Gets the prefix used in the message.
+   * @returns The matched prefix or undefined
+   */
   public getPrefix() {
     for (const p of this.prefix) {
       if (this.message.content.startsWith(p)) {
@@ -73,12 +130,20 @@ export class MessageCommandParser {
     }
   }
 
+  /**
+   * Gets the full command including subcommand group and subcommand.
+   * @returns The complete command string
+   */
   public getFullCommand() {
     return [this.getCommand(), this.getSubcommandGroup(), this.getSubcommand()]
       .filter((v) => v)
       .join(' ');
   }
 
+  /**
+   * Parses the message content into structured command data.
+   * @returns The parsed command data
+   */
   public parse(): ParsedMessageCommand {
     if (this.#parsed) {
       return this.#parsed;
@@ -180,9 +245,20 @@ export class MessageCommandParser {
   }
 }
 
+/**
+ * Provides typed access to message command options with methods similar to Discord.js interaction options.
+ */
 export class MessageCommandOptions {
+  /**
+   * Creates a new message command options instance.
+   * @param parser - The message command parser instance
+   */
   public constructor(private parser: MessageCommandParser) {}
 
+  /**
+   * @private
+   * @internal
+   */
   private assertOption<T>(name: string, required = false) {
     const option = this.parser.getOption<T>(name);
 
@@ -193,6 +269,12 @@ export class MessageCommandOptions {
     return option ?? null;
   }
 
+  /**
+   * Gets a guild member from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The guild member or null if not found
+   */
   getMember(name: string): GuildMember | null;
   getMember(name: string, required: true): GuildMember;
   getMember(name: string, required = false) {
@@ -206,54 +288,108 @@ export class MessageCommandOptions {
     return member ?? null;
   }
 
+  /**
+   * Gets an attachment from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The attachment or null if not found
+   */
   getAttachment(name: string): Attachment | null;
   getAttachment(name: string, required: true): Attachment;
   getAttachment(name: string, required = false) {
     return this.assertOption<Attachment>(name, required);
   }
 
+  /**
+   * Gets a boolean value from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The boolean value or null if not found
+   */
   getBoolean(name: string): boolean | null;
   getBoolean(name: string, required: true): boolean;
   getBoolean(name: string, required = false) {
     return this.assertOption<boolean>(name, required);
   }
 
+  /**
+   * Gets a number value from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The number value or null if not found
+   */
   getNumber(name: string): number | null;
   getNumber(name: string, required: true): number;
   getNumber(name: string, required = false) {
     return this.assertOption<number>(name, required);
   }
 
+  /**
+   * Gets a string value from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The string value or null if not found
+   */
   getString(name: string): string | null;
   getString(name: string, required: true): string;
   getString(name: string, required = false) {
     return this.assertOption<string>(name, required);
   }
 
+  /**
+   * Gets an integer value from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The integer value or null if not found
+   */
   getInteger(name: string): number | null;
   getInteger(name: string, required: true): number;
   getInteger(name: string, required = false) {
     return this.assertOption<number>(name, required);
   }
 
+  /**
+   * Gets a user from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The user or null if not found
+   */
   getUser(name: string): User | null;
   getUser(name: string, required: true): User;
   getUser(name: string, required = false) {
     return this.assertOption<User>(name, required);
   }
 
+  /**
+   * Gets a channel from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The channel or null if not found
+   */
   getChannel(name: string): Channel | null;
   getChannel(name: string, required: true): Channel;
   getChannel(name: string, required = false) {
     return this.assertOption<Channel>(name, required);
   }
 
+  /**
+   * Gets a role from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The role or null if not found
+   */
   getRole(name: string): Role | null;
   getRole(name: string, required: true): Role;
   getRole(name: string, required = false) {
     return this.assertOption<Role>(name, required);
   }
 
+  /**
+   * Gets a mentionable (user, member, or role) from the command options.
+   * @param name - The option name
+   * @param required - Whether the option is required
+   * @returns The mentionable or null if not found
+   */
   getMentionable(
     name: string,
   ): NonNullable<CommandInteractionOption['member' | 'role' | 'user']> | null;
@@ -282,6 +418,11 @@ export class MessageCommandOptions {
     return null;
   }
 
+  /**
+   * Gets the subcommand name from the command.
+   * @param required - Whether the subcommand is required
+   * @returns The subcommand name or null if not found
+   */
   getSubcommand(): string | null;
   getSubcommand(required: true): string;
   getSubcommand(required = false) {
@@ -294,6 +435,11 @@ export class MessageCommandOptions {
     return sub ?? null;
   }
 
+  /**
+   * Gets the subcommand group name from the command.
+   * @param required - Whether the subcommand group is required
+   * @returns The subcommand group name or null if not found
+   */
   getSubcommandGroup(): string | null;
   getSubcommandGroup(required: true): string;
   getSubcommandGroup(required = false) {

@@ -22,11 +22,27 @@ import { AsyncFunction, GenericFunction } from './context/async-context';
 import { FlagStore } from './flags/store';
 import { AnalyticsEngine } from './analytics/analytics-engine';
 
+/**
+ * Configurations for the CommandKit instance.
+ */
 export interface CommandKitConfiguration {
+  /**
+   * The default locale for the CommandKit instance. This will be used to infer the locale of the guild or user if it has not been set explicitly.
+   * @default Locale.EnglishUS
+   */
   defaultLocale: Locale;
+  /**
+   * A function that returns the command prefix for a given message.
+   * This is used to determine how to parse commands from messages.
+   * @param message The message to get the command prefix for.
+   * @returns The command prefix or an array of prefixes.
+   */
   getMessageCommandPrefix: (message: Message) => Awaitable<string | string[]>;
 }
 
+/**
+ * Represents the function executed during the bootstrap phase of CommandKit.
+ */
 export type BootstrapFunction =
   | GenericFunction<[CommandKit]>
   | AsyncFunction<[CommandKit]>;
@@ -70,36 +86,83 @@ export function onApplicationBootstrap<F extends BootstrapFunction>(
   onApplicationBootstrapHooks.add(fn);
 }
 
+/**
+ * The commandkit class that serves as the main entry point for the CommandKit framework.
+ */
 export class CommandKit extends EventEmitter {
   #started = false;
   #clientProxy: SimpleProxy<Client> | null = createProxy({} as Client);
   #client!: Client;
+  /**
+   * The event interceptor to quickly register temporary event listeners
+   */
   public eventInterceptor!: EventInterceptor;
 
+  /**
+   * The static createElement function to create jsx elements
+   */
   public static readonly createElement = createElement;
+  /**
+   * The static Fragment component to create jsx fragments
+   */
   public static readonly Fragment = Fragment;
 
+  /**
+   * The configuration for the CommandKit instance.
+   */
   public readonly config: CommandKitConfiguration = {
     defaultLocale: Locale.EnglishUS,
     getMessageCommandPrefix: () => '!',
   };
 
+  /**
+   * A key-value store for storing arbitrary data.
+   */
   public readonly store = new Map<string, any>();
+  /**
+   * A flag store for storing flags that can be used to enable or disable features.
+   */
   public readonly flags = new FlagStore();
 
+  /**
+   * The command router for the CommandKit instance.
+   */
   public commandsRouter!: CommandsRouter;
+  /**
+   * The events router for the CommandKit instance.
+   */
   public eventsRouter!: EventsRouter;
+  /**
+   * The command handler for the CommandKit instance.
+   * This is responsible for handling commands and their execution.
+   */
   public commandHandler!: AppCommandHandler;
+  /**
+   * The event handler for the CommandKit instance.
+   * This is responsible for handling events and their execution.
+   */
   public eventHandler!: AppEventsHandler;
+  /**
+   * The plugins runtime for the CommandKit instance.
+   */
   public plugins!: CommandKitPluginRuntime;
+  /**
+   * The events channel for the CommandKit instance. This can be used to emit custom events.
+   */
   public events!: CommandKitEventsChannel;
+  /**
+   * The analytics engine for the CommandKit instance.
+   * This is responsible for tracking events and user interactions.
+   */
   public analytics!: AnalyticsEngine;
 
+  /**
+   * The static instance of CommandKit.
+   */
   static instance: CommandKit | undefined = undefined;
 
   /**
    * Create a new command and event handler with CommandKit.
-   *
    * @param options - The default CommandKit configuration.
    * @see {@link https://commandkit.js.org/docs/guide/commandkit-setup}
    */
@@ -389,6 +452,11 @@ export class CommandKit extends EventEmitter {
     return findAppDirectory();
   }
 
+  /**
+   * Get the path to the commands or events directory.
+   * @param to The type of path to get, either 'commands' or 'events'.
+   * @returns The path to the commands or events directory
+   */
   getPath(to: 'commands' | 'events') {
     const appDir = this.getAppDirectory();
     if (!appDir) return null;
@@ -404,4 +472,7 @@ export class CommandKit extends EventEmitter {
   }
 }
 
+/**
+ * The singleton instance of CommandKit.
+ */
 export const commandkit = CommandKit.instance || new CommandKit();

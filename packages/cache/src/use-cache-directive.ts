@@ -5,6 +5,11 @@ import {
   Logger,
 } from 'commandkit';
 
+/**
+ * Compiler plugin for the "use cache" directive.
+ * This plugin transforms the "use cache" directive into a runtime cache operation.
+ * It is designed to work with the CommandKit framework.
+ */
 export class UseCacheDirectivePlugin extends CommonDirectiveTransformer {
   public readonly name = 'UseCacheDirectivePlugin';
 

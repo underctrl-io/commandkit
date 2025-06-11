@@ -10,6 +10,8 @@ import { TFunction } from 'i18next';
 /**
  * Gets the localization context. If the context originates from the event worker context, the returned t function is not bound to the command.
  * @param locale The locale to use. Defaults to the detected locale or the default locale.
+ * @example const { t, locale, i18n } = locale('en-US');
+ * const translated = t('hello'); // Translates 'hello' in the 'en-US' locale
  */
 export function locale(locale?: Locale): CommandLocalizationContext {
   let env: CommandKitEnvironment | undefined;
@@ -53,6 +55,9 @@ export function locale(locale?: Locale): CommandLocalizationContext {
  * @param ns The namespace to use.
  * @param keyPrefix The key prefix to use.
  * @returns The translation function.
+ * @example
+ * const t = fetchT('en-US', 'common');
+ * const translated = t('hello'); // Translates 'hello' in the 'en-US' locale
  */
 export function fetchT(
   lng: string | string[],

@@ -1,6 +1,14 @@
 import type { CommandBuilderLike } from 'commandkit';
 import type { CommandTranslationMetadata } from './types';
 
+/**
+ * Applies translations to a command builder-like object.
+ * @param command The command builder-like object to apply translations to.
+ * @param locale The locale to apply the translations for.
+ * @param translation The translation metadata containing the translations.
+ * @returns The command builder-like object with applied translations.
+ * @private
+ */
 export function applyTranslations(
   command: CommandBuilderLike,
   locale: string,

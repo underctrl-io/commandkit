@@ -15,6 +15,10 @@ import {
   EventInterceptorErrorHandler,
 } from '../../common/EventInterceptor';
 
+/**
+ * The predicate function that filters button interactions.
+ * It receives a ButtonInteraction and returns a boolean or a Promise that resolves to a boolean.
+ */
 export type ButtonKitPredicate = (
   interaction: ButtonInteraction,
 ) => Awaitable<boolean>;
@@ -41,11 +45,22 @@ export type CommandKitButtonBuilderInteractionCollectorDispatch = (
   context: ButtonKit,
 ) => Awaitable<void>;
 
+/**
+ * The handler to run when the interaction collector ends. This handler is called with the reason as the first argument.
+ * If the first argument is null, it means that the interaction collector has been destroyed.
+ */
 export type CommandKitButtonBuilderOnEnd = (reason: string) => Awaitable<void>;
 
+/**
+ * The context data for the interaction collector.
+ * This includes the autoReset, time, filter, onEnd, and onError properties.
+ */
 export type CommandKitButtonBuilderInteractionCollectorDispatchContextData =
   EventInterceptorContextData<Events.InteractionCreate>;
 
+/**
+ * A builder for creating buttons with additional features like interaction collectors and event handling.
+ */
 export class ButtonKit extends ButtonBuilder {
   #onClickHandler: CommandKitButtonBuilderInteractionCollectorDispatch | null =
     null;
@@ -219,6 +234,9 @@ export class ButtonKit extends ButtonBuilder {
     );
   }
 
+  /**
+   * Disposes of the button collector and cleans up resources.
+   */
   public dispose() {
     this.#destroyCollector();
     return this;

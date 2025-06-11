@@ -4,6 +4,10 @@ import { version as commandkitVersion } from '../version';
 import fs from 'node:fs';
 import path from 'node:path';
 
+/**
+ * @private
+ * @internal
+ */
 function $getKnownPlugins() {
   'use macro';
 
@@ -49,6 +53,10 @@ function $getKnownPlugins() {
 
 const knownPlugins: string[] = $getKnownPlugins();
 
+/**
+ * @private
+ * @internal
+ */
 function findPackageVersion(packageName: string) {
   try {
     const packageJsonPath = require.resolve(`${packageName}/package.json`);
@@ -117,6 +125,10 @@ function findPackageVersion(packageName: string) {
   }
 }
 
+/**
+ * @private
+ * @internal
+ */
 function getBinaryVersion(binary: string) {
   try {
     const version = execSync(`${binary} --version`).toString().trim();
@@ -126,6 +138,10 @@ function getBinaryVersion(binary: string) {
   }
 }
 
+/**
+ * @private
+ * @internal
+ */
 export async function showInformation() {
   const runtimeName: string = (() => {
     // @ts-ignore

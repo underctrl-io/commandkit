@@ -6,37 +6,71 @@ import {
 } from '..';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
+/**
+ * Interface representing a template entry in the plugin runtime.
+ * It contains a handler function for the template and the plugin that owns it.
+ * @private
+ */
 interface TemplateEntry {
   handler: TemplateHandler;
   plugin: CompilerPlugin;
 }
 
+/**
+ * Enum representing the execution mode of a plugin.
+ * It can be either 'activate' or 'deactivate'.
+ * @private
+ */
 enum PluginExecutionMode {
   Activate = 'activate',
   Deactivate = 'deactivate',
 }
 
+/**
+ * Context for the plugin execution, containing the plugin and its execution mode.
+ * This is used to manage the state of the plugin during activation and deactivation.
+ * @private
+ */
 type PluginContext = {
   plugin: CompilerPlugin;
   mode: PluginExecutionMode;
 };
 
+/**
+ * CompilerPluginRuntime is a runtime for managing compiler plugins in CommandKit.
+ */
 export class CompilerPluginRuntime {
   public readonly name = 'CompilerPluginRuntime';
   private initialized = false;
   private templates = new Map<string, TemplateEntry>();
   #pluginContext = new AsyncLocalStorage<PluginContext>();
 
+  /**
+   * Creates a new instance of CompilerPluginRuntime.
+   * @param plugins An array of compiler plugins to be managed by this runtime.
+   */
   public constructor(private readonly plugins: CompilerPlugin[]) {}
 
+  /**
+   * Returns the plugins managed by this runtime.
+   */
   public getPlugins() {
     return this.plugins;
   }
 
+  /**
+   * Checks if there are no plugins registered in this runtime.
+   */
   public isEmpty() {
     return !this.plugins.length;
   }
 
+  /**
+   * Registers a template handler for a given name.
+   * This method must be called inside the activate() method of a plugin.
+   * @param name - The name of the template to register.
+   * @param handler - The handler function for the template.
+   */
   public registerTemplate(name: string, handler: TemplateHandler) {
     const ctx = this.#pluginContext.getStore();
 
@@ -53,6 +87,11 @@ export class CompilerPluginRuntime {
     this.templates.set(name, { handler, plugin: ctx.plugin });
   }
 
+  /**
+   * Unregisters a template handler for a given name.
+   * This method must be called inside the deactivate() method of a plugin.
+   * @param name - The name of the template to unregister.
+   */
   public unregisterTemplate(name: string) {
     const ctx = this.#pluginContext.getStore();
 
@@ -76,10 +115,19 @@ export class CompilerPluginRuntime {
     this.templates.delete(name);
   }
 
+  /**
+   * Retrieves a template handler by its name.
+   * @param name - The name of the template to retrieve.
+   * @returns The template handler if found, otherwise undefined.
+   */
   public getTemplate(name: string): TemplateHandler | undefined {
     return this.templates.get(name)?.handler;
   }
 
+  /**
+   * Returns a map of all registered templates with their handlers.
+   * The keys are the template names and the values are the template handlers.
+   */
   public getTemplates(): Map<string, TemplateHandler> {
     return new Map(
       Array.from(this.templates.entries()).map(([name, entry]) => [
@@ -89,6 +137,13 @@ export class CompilerPluginRuntime {
     );
   }
 
+  /**
+   * Transforms the given code using all registered plugins.
+   * Each plugin's transform method is called in sequence, allowing them to modify the code.
+   * @param code - The code to be transformed.
+   * @param id - The identifier for the code being transformed (e.g., filename).
+   * @returns An object containing the transformed code and an optional source map.
+   */
   public async transform(
     code: string,
     id: string,
@@ -124,6 +179,10 @@ export class CompilerPluginRuntime {
     };
   }
 
+  /**
+   * Initializes the plugin runtime by activating all registered plugins.
+   * This method should be called once to set up the plugins.
+   */
   public async init() {
     if (this.initialized) return;
 
@@ -148,6 +207,10 @@ export class CompilerPluginRuntime {
     this.initialized = true;
   }
 
+  /**
+   * Destroys the plugin runtime by deactivating all registered plugins.
+   * This method should be called when the runtime is no longer needed.
+   */
   public async destroy() {
     if (!this.initialized) return;
 
@@ -172,6 +235,11 @@ export class CompilerPluginRuntime {
     this.initialized = false;
   }
 
+  /**
+   * Converts the plugin runtime to a JSON representation.
+   * This is useful for serialization or debugging purposes.
+   * @returns An object containing the name of the runtime and the transform method.
+   */
   public toJSON() {
     return {
       name: this.name,

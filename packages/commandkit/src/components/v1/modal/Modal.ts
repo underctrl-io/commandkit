@@ -9,6 +9,9 @@ import {
 } from './ModalKit';
 import { EventInterceptorErrorHandler } from '../../common/EventInterceptor';
 
+/**
+ * The properties for the modal component.
+ */
 export interface ModalProps {
   customId?: string;
   title: string;

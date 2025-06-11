@@ -12,6 +12,10 @@ import { randomUUID } from 'node:crypto';
 import { HMREventType } from '../utils/constants';
 import { findEntrypoint } from './common';
 
+/**
+ * @private
+ * @internal
+ */
 async function buildAndStart(configPath: string, skipStart = false) {
   const config = await loadConfigFile(configPath);
   const mainFile = findEntrypoint('.commandkit');
@@ -30,12 +34,24 @@ async function buildAndStart(configPath: string, skipStart = false) {
   return ps;
 }
 
+/**
+ * @private
+ * @internal
+ */
 const isCommandSource = (p: string) =>
   p.replaceAll('\\', '/').includes('src/app/commands');
 
+/**
+ * @private
+ * @internal
+ */
 const isEventSource = (p: string) =>
   p.replaceAll('\\', '/').includes('src/app/events');
 
+/**
+ * @private
+ * @internal
+ */
 export async function bootstrapDevelopmentServer(configPath?: string) {
   process.env.COMMANDKIT_BOOTSTRAP_MODE = 'development';
   const start = performance.now();
