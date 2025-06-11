@@ -134,6 +134,7 @@ function applyPropsToBuilder<B extends CommonBuilderKit>(
  *   <StringSelectMenuOption label="Option 1" value="option1" />
  *   <StringSelectMenuOption label="Option 2" value="option2" />
  * </StringSelectMenu>
+ * ```
  */
 export function StringSelectMenu(props: StringSelectMenuProps) {
   const builder = new StringSelectMenuKit();
@@ -192,6 +193,7 @@ export interface UserSelectMenuProps
  * import { UserSelectMenu } from 'commandkit';
  *
  * const userSelectMenu = <UserSelectMenu />
+ * ```
  */
 export function UserSelectMenu(props: UserSelectMenuProps) {
   const builder = new UserSelectMenuKit();

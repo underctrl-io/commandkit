@@ -22,6 +22,7 @@ export interface SectionProps {
  * import { Section } from 'commandkit';
  *
  * const section = <Section>...</Section>;
+ * ```
  */
 export function Section(props: SectionProps): SectionBuilder {
   const section = new SectionBuilder();
