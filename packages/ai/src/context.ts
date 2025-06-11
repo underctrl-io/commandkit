@@ -1,11 +1,23 @@
 import type { CommandKit } from 'commandkit';
 import { Client, Message } from 'discord.js';
 
+/**
+ * Options for the AI context.
+ */
 export interface AiContextOptions<
   T extends Record<string, unknown> = Record<string, unknown>,
 > {
+  /**
+   * The message that triggered the AI command.
+   */
   message: Message;
+  /**
+   * The parameters passed to the AI command.
+   */
   params: T;
+  /**
+   * The CommandKit instance associated with the AI command.
+   */
   commandkit: CommandKit;
 }
 
@@ -33,6 +45,10 @@ export class AiContext<
    * The CommandKit instance associated with the AI command.
    */
   public commandkit!: CommandKit;
+  /**
+   * A key-value store to hold additional data.
+   */
+  public store = new Map<string, any>();
 
   /**
    * Creates a new instance of AiContext.

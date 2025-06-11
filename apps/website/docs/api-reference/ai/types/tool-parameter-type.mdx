@@ -1,5 +1,5 @@
 ---
-title: "CommandBuilderLike"
+title: "ToolParameterType"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,14 +11,13 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## CommandBuilderLike
+## ToolParameterType
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="109" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/ai/src/tools/common/index.ts" sourceLine="17" packageName="@commandkit/ai" />
 
-Type representing command builder objects supported by CommandKit.
+Type representing the parameters schema for AI tools.
+Extracted from the first parameter of the `tool` function from the 'ai' library.
 
 ```ts title="Signature"
-type CommandBuilderLike = | SlashCommandBuilder
-  | ContextMenuCommandBuilder
-  | Record<string, any>
+type ToolParameterType = Parameters<typeof tool>[0]['parameters']
 ```

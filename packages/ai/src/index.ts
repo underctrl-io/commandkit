@@ -1,5 +1,14 @@
 import { AiPlugin } from './plugin';
 import { AiPluginOptions } from './types';
+import { getAiWorkerContext } from './ai-context-worker';
+
+/**
+ * Retrieves the AI context.
+ */
+export function useAIContext() {
+  const { ctx } = getAiWorkerContext();
+  return ctx;
+}
 
 /**
  * Defines the AI plugin for the application.

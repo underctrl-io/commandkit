@@ -1,5 +1,5 @@
 ---
-title: "CommandBuilderLike"
+title: "UseAIContext"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,14 +11,12 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## CommandBuilderLike
+## useAIContext
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="109" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/ai/src/index.ts" sourceLine="8" packageName="@commandkit/ai" />
 
-Type representing command builder objects supported by CommandKit.
+Retrieves the AI context.
 
 ```ts title="Signature"
-type CommandBuilderLike = | SlashCommandBuilder
-  | ContextMenuCommandBuilder
-  | Record<string, any>
+function useAIContext(): void
 ```

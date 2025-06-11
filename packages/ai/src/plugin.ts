@@ -1,25 +1,17 @@
 import { CommandKitPluginRuntime, RuntimePlugin } from 'commandkit/plugin';
-import { AiPluginOptions, MessageFilter, SelectAiModel } from './types';
-import { LoadedCommand, Logger } from 'commandkit';
+import { AiPluginOptions, CommandTool } from './types';
+import { Logger } from 'commandkit';
 import { AiContext } from './context';
-import { Collection, Events, Message, TextChannel } from 'discord.js';
-import { tool, Tool, generateText, generateObject } from 'ai';
-import { z } from 'zod';
+import { Collection, Events, Message } from 'discord.js';
+import { tool, Tool, generateText } from 'ai';
 import { getAiWorkerContext, runInAiWorkerContext } from './ai-context-worker';
 import { getAvailableCommands } from './tools/get-available-commands';
 import { getChannelById } from './tools/get-channel-by-id';
 import { getCurrentClientInfo } from './tools/get-current-client-info';
 import { getGuildById } from './tools/get-guild-by-id';
 import { getUserById } from './tools/get-user-by-id';
-import { createSystemPrompt } from './system-prompt';
-
-type WithAI<T extends LoadedCommand> = T & {
-  data: {
-    ai: (ctx: AiContext) => Promise<unknown> | unknown;
-    aiConfig: AiConfig;
-  } & T['data'];
-  tool: Tool;
-};
+import { getAIConfig } from './configure';
+import { augmentCommandKit } from './augmentation';
 
 /**
  * Represents the configuration options for the AI plugin scoped to a specific command.
@@ -56,6 +48,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
   public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
     this.onMessageFunc = (message) => this.handleMessage(ctx, message);
     ctx.commandkit.client.on(Events.MessageCreate, this.onMessageFunc);
+    augmentCommandKit(true);
 
     Logger.info(`Plugin ${this.name} activated`);
   }
@@ -66,6 +59,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
       ctx.commandkit.client.off(Events.MessageCreate, this.onMessageFunc);
       this.onMessageFunc = null;
     }
+    augmentCommandKit(false);
     Logger.info(`Plugin ${this.name} deactivated`);
   }
 
@@ -74,9 +68,19 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
     message: Message,
   ): Promise<void> {
     if (message.author.bot || !Object.keys(this.toolsRecord).length) return;
+    const {
+      messageFilter,
+      selectAiModel,
+      prepareSystemPrompt,
+      preparePrompt,
+      onProcessingFinish,
+      onProcessingStart,
+      onResult,
+      onError,
+      disableBuiltInTools,
+    } = getAIConfig();
 
-    const aiModelSelector = selectAiModel;
-    if (!message.content?.length || !aiModelSelector) return;
+    if (!message.content?.length) return;
 
     if (!message.channel.isTextBased() || !message.channel.isSendable()) return;
 
@@ -89,94 +93,51 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
       commandkit: pluginContext.commandkit,
     });
 
-    const systemPrompt =
-      (await generateSystemPrompt?.(message)) || createSystemPrompt(message);
-
-    const userInfo = `<user>
-    <id>${message.author.id}</id>
-    <name>${message.author.username}</name>
-    <displayName>${message.author.displayName}</displayName>
-    <avatar>${message.author.avatarURL()}</avatar>
-    </user>`;
-
     await runInAiWorkerContext(ctx, message, async () => {
-      const channel = message.channel as TextChannel;
-      const stopTyping = await this.startTyping(channel);
+      const systemPrompt = await prepareSystemPrompt(ctx, message);
+      const prompt = await preparePrompt(ctx, message);
+      const { model, abortSignal, maxSteps, ...modelOptions } =
+        await selectAiModel(ctx, message);
+
+      await onProcessingStart(ctx, message);
+
+      const tools = disableBuiltInTools
+        ? this.toolsRecord
+        : {
+            ...this.defaultTools,
+            ...this.toolsRecord,
+          };
 
       try {
-        const { model, options } = await aiModelSelector(message);
-
-        const originalPrompt = `${userInfo}\nUser: ${message.content}\nAI:`;
-
-        const config = {
-          model,
-          abortSignal: AbortSignal.timeout(60_000),
-          prompt: originalPrompt,
-          system: systemPrompt,
-          providerOptions: options,
-        };
-
         const result = await generateText({
-          ...config,
-          tools: { ...this.toolsRecord, ...this.defaultTools },
-          maxSteps: 5,
+          model,
+          abortSignal: abortSignal ?? AbortSignal.timeout(60_000),
+          prompt,
+          system: systemPrompt,
+          maxSteps: maxSteps ?? 5,
+          ...modelOptions,
+          tools: {
+            ...tools,
+            ...modelOptions.tools,
+          },
         });
 
-        stopTyping();
-
-        if (!!result.text) {
-          await message.reply({
-            content: result.text.substring(0, 2000),
-            allowedMentions: { parse: [] },
-          });
-        }
+        await onResult(ctx, message, result);
       } catch (e) {
-        Logger.error(`Error processing AI message: ${e}`);
-        const channel = message.channel as TextChannel;
-
-        if (channel.isSendable()) {
-          await message
-            .reply({
-              content: 'An error occurred while processing your request.',
-              allowedMentions: { parse: [] },
-            })
-            .catch((e) => Logger.error(`Failed to send error message: ${e}`));
-        }
+        await onError(ctx, message, e as Error);
       } finally {
-        stopTyping();
+        await onProcessingFinish(ctx, message);
       }
     });
   }
 
-  private async startTyping(channel: TextChannel): Promise<() => void> {
-    let stopped = false;
-
-    const runner = async () => {
-      if (stopped) return clearInterval(typingInterval);
-
-      if (channel.isSendable()) {
-        await channel.sendTyping().catch(Object);
-      }
-    };
-
-    const typingInterval = setInterval(runner, 3000).unref();
-
-    await runner();
-
-    return () => {
-      stopped = true;
-      clearInterval(typingInterval);
-    };
-  }
-
-  public async onBeforeCommandsLoad(
-    ctx: CommandKitPluginRuntime,
-  ): Promise<void> {
+  public async onBeforeCommandsLoad(): Promise<void> {
     this.toolsRecord = {};
   }
 
   async onAfterCommandsLoad(ctx: CommandKitPluginRuntime): Promise<void> {
-    const commands = ctx.commandkit.commandHandler
+    const { commandkit } = ctx;
+    const commands = commandkit.commandHandler
       .getCommandsArray()
       .filter(
         (command) =>
@@ -186,16 +147,13 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
       );
 
     if (!commands.length) {
-      Logger.warn(
-        'No commands with AI functionality found. Ensure commands are properly configured.',
-      );
       return;
     }
 
-    const tools = new Collection<string, WithAI<LoadedCommand>>();
+    const tools = new Collection<string, CommandTool>();
 
     for (const command of commands) {
-      const cmd = command as WithAI<LoadedCommand>;
+      const cmd = command as CommandTool;
       if (!cmd.data.ai || !cmd.data.aiConfig) {
         continue;
       }
@@ -205,13 +163,43 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
 
       const cmdTool = tool({
         description,
-        type: 'function',
         parameters: cmd.data.aiConfig.parameters,
         async execute(params) {
+          const config = getAIConfig();
           const ctx = getAiWorkerContext();
           ctx.ctx.setParams(params);
 
-          return cmd.data.ai(ctx.ctx);
+          try {
+            const target = await commandkit.commandHandler.prepareCommandRun(
+              ctx.message,
+              cmd.data.command.name,
+            );
+
+            if (!target) {
+              return {
+                error: true,
+                message: 'This command is not available.',
+              };
+            }
+
+            const res =
+              await commandkit.commandHandler.commandRunner.runCommand(
+                target,
+                ctx.message,
+                {
+                  handler: 'ai',
+                },
+              );
+
+            return res === undefined ? { success: true } : res;
+          } catch (e) {
+            await config.onError?.(ctx.ctx, ctx.message, e as Error);
+
+            return {
+              error: true,
+              message: 'This tool failed with unexpected error.',
+            };
+          }
         },
       });
 

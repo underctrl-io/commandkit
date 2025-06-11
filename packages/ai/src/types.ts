@@ -1,6 +1,12 @@
-import { LanguageModelV1, ProviderMetadata } from 'ai';
+import { LanguageModelV1, ProviderMetadata, Tool, type generateText } from 'ai';
 import { Message } from 'discord.js';
 import { AiContext } from './context';
+import { LoadedCommand } from 'commandkit';
+
+/**
+ * Represents the result of an AI text generation operation.
+ */
+export type AIGenerateResult = Awaited<ReturnType<typeof generateText>>;
 
 /**
  * Function type for filtering commands based on their name.
@@ -21,11 +27,16 @@ export type MessageFilter = (message: Message) => Promise<boolean>;
  * @param message - The message to base the model selection on.
  * @returns A promise that resolves to an object containing the selected model and optional metadata.
  */
-export type SelectAiModel = (message: Message) => Promise<{
-  model: LanguageModelV1;
-  options?: ProviderMetadata;
-}>;
+export type SelectAiModel = (
+  ctx: AiContext,
+  message: Message,
+) => Promise<SelectAiModelResult>;
 
+export type SelectAiModelResult = Parameters<typeof generateText>[0];
+
+export type CommandTool = LoadedCommand & {
+  tool: Tool;
+};
 /**
  * Options for the AI plugin.
  */

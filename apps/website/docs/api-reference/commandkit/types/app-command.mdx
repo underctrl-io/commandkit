@@ -1,5 +1,5 @@
 ---
-title: "CommandBuilderLike"
+title: "AppCommand"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,14 +11,13 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## CommandBuilderLike
+## AppCommand
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="109" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="58" packageName="commandkit" />
 
-Type representing command builder objects supported by CommandKit.
+Represents a command in the CommandKit application, including its metadata and handlers.
+This type extends the native command structure with additional properties.
 
 ```ts title="Signature"
-type CommandBuilderLike = | SlashCommandBuilder
-  | ContextMenuCommandBuilder
-  | Record<string, any>
+type AppCommand = AppCommandNative & CustomAppCommandProps
 ```

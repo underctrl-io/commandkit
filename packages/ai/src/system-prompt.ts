@@ -1,5 +1,9 @@
 import { Message } from 'discord.js';
 
+/**
+ * @internal
+ * @private
+ */
 export function createSystemPrompt(message: Message): string {
   const channelInfo =
     'name' in message.channel

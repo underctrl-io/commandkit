@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AppCommandRunner
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/commands/AppCommandRunner.ts" sourceLine="25" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/AppCommandRunner.ts" sourceLine="29" packageName="commandkit" />
 
 Handles the execution of application commands for CommandKit.
 Manages middleware execution, environment setup, and command invocation.
@@ -21,7 +21,7 @@ Manages middleware execution, environment setup, and command invocation.
 ```ts title="Signature"
 class AppCommandRunner {
     constructor(handler: AppCommandHandler)
-    runCommand(prepared: PreparedAppCommandExecution, source: Interaction | Message) => ;
+    runCommand(prepared: PreparedAppCommandExecution, source: Interaction | Message, options?: RunCommandOptions) => ;
     getExecutionMode(source: Interaction | Message) => CommandExecutionMode;
 }
 ```
@@ -35,7 +35,7 @@ class AppCommandRunner {
 Creates a new AppCommandRunner instance.
 ### runCommand
 
-<MemberInfo kind="method" type={`(prepared: <a href='/docs/next/api-reference/commandkit/interfaces/prepared-app-command-execution#preparedappcommandexecution'>PreparedAppCommandExecution</a>, source: Interaction | Message) => `}   />
+<MemberInfo kind="method" type={`(prepared: <a href='/docs/next/api-reference/commandkit/interfaces/prepared-app-command-execution#preparedappcommandexecution'>PreparedAppCommandExecution</a>, source: Interaction | Message, options?: <a href='/docs/next/api-reference/commandkit/interfaces/run-command-options#runcommandoptions'>RunCommandOptions</a>) => `}   />
 
 Executes a prepared command with middleware support and environment setup.
 Handles the complete command lifecycle including before/after middleware execution.

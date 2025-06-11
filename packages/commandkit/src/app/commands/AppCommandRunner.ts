@@ -18,6 +18,10 @@ import {
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 import { AnalyticsEvents } from '../../analytics/constants';
 
+export interface RunCommandOptions {
+  handler?: string;
+}
+
 /**
  * Handles the execution of application commands for CommandKit.
  * Manages middleware execution, environment setup, and command invocation.
@@ -38,6 +42,7 @@ export class AppCommandRunner {
   public async runCommand(
     prepared: PreparedAppCommandExecution,
     source: Interaction | Message,
+    options?: RunCommandOptions,
   ) {
     const { commandkit } = this.handler;
 
@@ -50,6 +55,7 @@ export class AppCommandRunner {
     env.variables.set('commandHandlerType', 'app');
     env.variables.set('currentCommandName', prepared.command.command.name);
     env.variables.set('execHandlerKind', executionMode);
+    env.variables.set('customHandler', options?.handler ?? null);
 
     const ctx = new MiddlewareContext(commandkit, {
       command: prepared.command,
@@ -98,10 +104,12 @@ export class AppCommandRunner {
       });
     }
 
+    let result: any;
+
     if (!ctx.cancelled) {
       // Determine which function to run based on whether we're executing a command or subcommand
       const targetData = prepared.command.data;
-      const fn = targetData[executionMode];
+      const fn = targetData[options?.handler || executionMode];
 
       if (!fn) {
         Logger.warn(
@@ -188,7 +196,7 @@ export class AppCommandRunner {
           });
 
           if (!res) {
-            await executeCommand();
+            result = await executeCommand();
           }
         } catch (e) {
           if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
@@ -224,6 +232,8 @@ export class AppCommandRunner {
         }
       });
     }
+
+    return result;
   }
 
   /**

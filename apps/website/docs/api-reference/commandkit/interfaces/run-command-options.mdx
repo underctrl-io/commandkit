@@ -1,5 +1,5 @@
 ---
-title: "CommandBuilderLike"
+title: "RunCommandOptions"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,14 +11,25 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## CommandBuilderLike
+## RunCommandOptions
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="109" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/AppCommandRunner.ts" sourceLine="21" packageName="commandkit" />
 
-Type representing command builder objects supported by CommandKit.
+
 
 ```ts title="Signature"
-type CommandBuilderLike = | SlashCommandBuilder
-  | ContextMenuCommandBuilder
-  | Record<string, any>
+interface RunCommandOptions {
+    handler?: string;
+}
 ```
+
+<div className="members-wrapper">
+
+### handler
+
+<MemberInfo kind="property" type={`string`}   />
+
+
+
+
+</div>

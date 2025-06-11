@@ -13,20 +13,35 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ConfigureAI
 
-<GenerationInfo sourceFile="packages/ai/src/plugin.ts" sourceLine="40" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/configure.ts" sourceLine="13" packageName="@commandkit/ai" />
 
 Represents the configuration options for the AI model.
 
 ```ts title="Signature"
 interface ConfigureAI {
+    disableBuiltInTools?: boolean;
     messageFilter?: MessageFilter;
-    selectAiModel?: SelectAiModel;
-    systemPrompt?: (message: Message) => Promise<string>;
+    selectAiModel: SelectAiModel;
+    prepareSystemPrompt?: (ctx: AiContext, message: Message) => Promise<string>;
+    preparePrompt?: (ctx: AiContext, message: Message) => Promise<string>;
+    onProcessingStart?: (ctx: AiContext, message: Message) => Promise<void>;
+    onProcessingFinish?: (ctx: AiContext, message: Message) => Promise<void>;
+    onResult?: (
+    ctx: AiContext,
+    message: Message,
+    result: AIGenerateResult,
+  ) => Promise<void>;
+    onError?: (ctx: AiContext, message: Message, error: Error) => Promise<void>;
 }
 ```
 
 <div className="members-wrapper">
 
+### disableBuiltInTools
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether to disable the built-in tools. Default is false.
 ### messageFilter
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/ai/types/message-filter#messagefilter'>MessageFilter</a>`}   />
@@ -39,13 +54,38 @@ CommandKit invokes this function before processing the message.
 
 A function that selects the AI model to use based on the message.
 This function should return a promise that resolves to an object containing the model and options.
-### systemPrompt
+### prepareSystemPrompt
 
-<MemberInfo kind="property" type={`(message: Message) =&#62; Promise&#60;string&#62;`}   />
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;string&#62;`}   />
 
 A function that generates a system prompt based on the message.
 This function should return a promise that resolves to a string containing the system prompt.
 If not provided, a default system prompt will be used.
+### preparePrompt
+
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;string&#62;`}   />
+
+A function that prepares the prompt for the AI model.
+### onProcessingStart
+
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;void&#62;`}   />
+
+A function that gets called when the AI starts processing a message.
+### onProcessingFinish
+
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;void&#62;`}   />
+
+A function that gets called when the AI finishes processing a message.
+### onResult
+
+<MemberInfo kind="property" type={`(     ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>,     message: Message,     result: <a href='/docs/next/api-reference/ai/types/aigenerate-result#aigenerateresult'>AIGenerateResult</a>,   ) =&#62; Promise&#60;void&#62;`}   />
+
+A function that gets called upon receiving the result from the AI model.
+### onError
+
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message, error: Error) =&#62; Promise&#60;void&#62;`}   />
+
+A function that gets called when error occurs.
 
 
 </div>

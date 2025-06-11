@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AiContext
 
-<GenerationInfo sourceFile="packages/ai/src/context.ts" sourceLine="17" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/context.ts" sourceLine="29" packageName="@commandkit/ai" />
 
 Represents the context in which an AI command is executed.
 This includes the parameters passed to the command, the message that triggered it,
@@ -25,6 +25,7 @@ class AiContext<T extends Record<string, unknown> = Record<string, unknown>> {
     public message!: Message;
     public client!: Client;
     public commandkit!: CommandKit;
+    public store = new Map<string, any>();
     constructor(options: AiContextOptions<T>)
     setParams(params: T) => void;
 }
@@ -52,6 +53,11 @@ The client instance associated with the AI command.
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
 
 The CommandKit instance associated with the AI command.
+### store
+
+<MemberInfo kind="property" type={``}   />
+
+A key-value store to hold additional data.
 ### constructor
 
 <MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/ai/interfaces/ai-context-options#aicontextoptions'>AiContextOptions</a>&#60;T&#62;) => AiContext`}   />

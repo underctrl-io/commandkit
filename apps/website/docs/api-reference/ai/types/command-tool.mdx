@@ -1,5 +1,5 @@
 ---
-title: "CommandBuilderLike"
+title: "CommandTool"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,14 +11,14 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## CommandBuilderLike
+## CommandTool
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="109" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="37" packageName="@commandkit/ai" />
 
-Type representing command builder objects supported by CommandKit.
+
 
 ```ts title="Signature"
-type CommandBuilderLike = | SlashCommandBuilder
-  | ContextMenuCommandBuilder
-  | Record<string, any>
+type CommandTool = LoadedCommand & {
+  tool: Tool;
+}
 ```

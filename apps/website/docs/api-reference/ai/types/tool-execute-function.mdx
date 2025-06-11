@@ -1,5 +1,5 @@
 ---
-title: "CommandBuilderLike"
+title: "ToolExecuteFunction"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,14 +11,15 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## CommandBuilderLike
+## ToolExecuteFunction
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="109" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/ai/src/tools/common/index.ts" sourceLine="55" packageName="@commandkit/ai" />
 
-Type representing command builder objects supported by CommandKit.
+Type definition for a tool's execute function.
 
 ```ts title="Signature"
-type CommandBuilderLike = | SlashCommandBuilder
-  | ContextMenuCommandBuilder
-  | Record<string, any>
+type ToolExecuteFunction<T extends ToolParameterType, R> = (
+  ctx: AiContext,
+  parameters: InferParameters<T>,
+) => Awaitable<R>
 ```
