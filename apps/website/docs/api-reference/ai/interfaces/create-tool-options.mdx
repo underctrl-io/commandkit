@@ -1,0 +1,53 @@
+---
+title: "CreateToolOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CreateToolOptions
+
+<GenerationInfo sourceFile="packages/ai/src/tools/common/index.ts" sourceLine="36" packageName="@commandkit/ai" />
+
+Configuration options for creating an AI tool.
+
+```ts title="Signature"
+interface CreateToolOptions<T extends ToolParameterType, R = unknown> {
+    name: string;
+    description: string;
+    parameters: T;
+    execute: ToolExecuteFunction<T, R>;
+}
+```
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={`string`}   />
+
+The unique name identifier for the tool
+### description
+
+<MemberInfo kind="property" type={`string`}   />
+
+A human-readable description of what the tool does
+### parameters
+
+<MemberInfo kind="property" type={`T`}   />
+
+The parameter schema that defines the tool's input structure
+### execute
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/ai/types/tool-execute-function#toolexecutefunction'>ToolExecuteFunction</a>&#60;T, R&#62;`}   />
+
+The function that executes when the tool is called
+
+
+</div>

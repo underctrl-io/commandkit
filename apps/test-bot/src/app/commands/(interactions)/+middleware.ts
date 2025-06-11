@@ -4,6 +4,8 @@ import { MessageFlags } from 'discord.js';
 export function beforeExecute(ctx: MiddlewareContext) {
   Logger.info('Pre-command middleware');
 
+  console.log({ isAI: ctx.ai });
+
   const user = ctx.isInteraction() ? ctx.interaction.user : ctx.message.author;
 
   if (ctx.commandName === 'prompt' && user.id === '159985870458322944') {

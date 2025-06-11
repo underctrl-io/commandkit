@@ -1,0 +1,27 @@
+---
+title: "InferParameters"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## InferParameters
+
+<GenerationInfo sourceFile="packages/ai/src/tools/common/index.ts" sourceLine="24" packageName="@commandkit/ai" />
+
+Utility type that infers the TypeScript type from a tool parameter schema.
+Supports both Zod schemas and AI library schemas.
+
+```ts title="Signature"
+type InferParameters<T extends ToolParameterType> = T extends Schema<any>
+    ? T['_type']
+    : T extends z.ZodTypeAny
+      ? z.infer<T>
+      : never
+```

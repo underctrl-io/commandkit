@@ -1,20 +1,17 @@
 import { CommandKitPluginRuntime, RuntimePlugin } from 'commandkit/plugin';
-import { AiPluginOptions, MessageFilter, SelectAiModel } from './types';
-import { LoadedCommand, Logger } from 'commandkit';
+import { AiPluginOptions, CommandTool } from './types';
+import CommandKit, { getCommandKit, Logger } from 'commandkit';
 import { AiContext } from './context';
-import { Collection, Events, Message, TextChannel } from 'discord.js';
-import { tool, Tool, generateText, generateObject } from 'ai';
-import { z } from 'zod';
+import { Collection, Events, Message } from 'discord.js';
+import { tool, Tool, generateText } from 'ai';
 import { getAiWorkerContext, runInAiWorkerContext } from './ai-context-worker';
-import { AiResponseSchema, pollSchema } from './schema';
-
-type WithAI<T extends LoadedCommand> = T & {
-  data: {
-    ai: (ctx: AiContext) => Promise<unknown> | unknown;
-    aiConfig: AiConfig;
-  } & T['data'];
-  tool: Tool;
-};
+import { getAvailableCommands } from './tools/get-available-commands';
+import { getChannelById } from './tools/get-channel-by-id';
+import { getCurrentClientInfo } from './tools/get-current-client-info';
+import { getGuildById } from './tools/get-guild-by-id';
+import { getUserById } from './tools/get-user-by-id';
+import { getAIConfig } from './configure';
+import { augmentCommandKit } from './augmentation';
 
 /**
  * Represents the configuration options for the AI plugin scoped to a specific command.
@@ -30,55 +27,18 @@ export interface AiConfig {
   parameters: any;
 }
 
-let messageFilter: MessageFilter | null = null;
-let selectAiModel: SelectAiModel | null = null;
-let generateSystemPrompt: ((message: Message) => Promise<string>) | undefined;
-
-/**
- * Represents the configuration options for the AI model.
- */
-export interface ConfigureAI {
-  /**
-   * A filter function that determines whether a message should be processed by the AI.
-   * CommandKit invokes this function before processing the message.
-   */
-  messageFilter?: MessageFilter;
-  /**
-   * A function that selects the AI model to use based on the message.
-   * This function should return a promise that resolves to an object containing the model and options.
-   */
-  selectAiModel?: SelectAiModel;
-  /**
-   * A function that generates a system prompt based on the message.
-   * This function should return a promise that resolves to a string containing the system prompt.
-   * If not provided, a default system prompt will be used.
-   */
-  systemPrompt?: (message: Message) => Promise<string>;
-}
-
-/**
- * Configures the AI plugin with the provided options.
- * This function allows you to set a message filter, select an AI model, and generate a system prompt.
- * @param config The configuration options for the AI plugin.
- */
-export function configureAI(config: ConfigureAI): void {
-  if (config.messageFilter) {
-    messageFilter = config.messageFilter;
-  }
-
-  if (config.selectAiModel) {
-    selectAiModel = config.selectAiModel;
-  }
-
-  if (config.systemPrompt) {
-    generateSystemPrompt = config.systemPrompt;
-  }
-}
+const defaultTools: Record<string, Tool> = {
+  getAvailableCommands,
+  getChannelById,
+  getCurrentClientInfo,
+  getGuildById,
+  getUserById,
+};
 
 export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
   public readonly name = 'AiPlugin';
   private toolsRecord: Record<string, Tool> = {};
-  private defaultTools: Record<string, Tool> = {};
+  private defaultTools = defaultTools;
   private onMessageFunc: ((message: Message) => Promise<void>) | null = null;
 
   public constructor(options: AiPluginOptions) {
@@ -86,114 +46,12 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
   }
 
   public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
-    this.onMessageFunc = (message) => this.handleMessage(ctx, message);
+    this.onMessageFunc = (message) =>
+      this.handleMessage(ctx.commandkit, message);
     ctx.commandkit.client.on(Events.MessageCreate, this.onMessageFunc);
-
-    this.createDefaultTools(ctx);
+    augmentCommandKit(true);
 
     Logger.info(`Plugin ${this.name} activated`);
-  }
-
-  private createDefaultTools(ctx: CommandKitPluginRuntime): void {
-    const { commandkit } = ctx;
-    const client = commandkit.client;
-
-    this.defaultTools.getUserById = tool({
-      description: 'Get user information by ID',
-      parameters: z.object({
-        userId: z
-          .string()
-          .describe(
-            'The ID of the user to retrieve. This is a Discord snowflake string.',
-          ),
-      }),
-      execute: async (params) => {
-        const user = await client.users.fetch(params.userId, {
-          force: false,
-          cache: true,
-        });
-
-        return user.toJSON();
-      },
-    });
-
-    this.defaultTools.getChannelById = tool({
-      description: 'Get channel information by ID',
-      parameters: z.object({
-        channelId: z
-          .string()
-          .describe(
-            'The ID of the channel to retrieve. This is a Discord snowflake string.',
-          ),
-      }),
-      execute: async (params) => {
-        const channel = await client.channels.fetch(params.channelId, {
-          force: false,
-          cache: true,
-        });
-
-        if (!channel) {
-          throw new Error(`Channel with ID ${params.channelId} not found.`);
-        }
-
-        return channel.toJSON();
-      },
-    });
-
-    this.defaultTools.getGuildById = tool({
-      description: 'Get guild information by ID',
-      parameters: z.object({
-        guildId: z
-          .string()
-          .describe(
-            'The ID of the guild to retrieve. This is a Discord snowflake string.',
-          ),
-      }),
-      execute: async (params) => {
-        const guild = await client.guilds.fetch({
-          guild: params.guildId,
-          force: false,
-          cache: true,
-        });
-
-        if (!guild) {
-          throw new Error(`Guild with ID ${params.guildId} not found.`);
-        }
-
-        return {
-          id: guild.id,
-          name: guild.name,
-          icon: guild.iconURL(),
-          memberCount: guild.memberCount,
-        };
-      },
-    });
-
-    this.defaultTools.getCurrentUser = tool({
-      description: 'Get information about the current discord bot user',
-      parameters: z.object({}),
-      execute: async () => {
-        const user = client.user;
-
-        if (!user) {
-          throw new Error('Bot user is not available.');
-        }
-
-        return user.toJSON();
-      },
-    });
-
-    this.defaultTools.getAvailableCommands = tool({
-      description: 'Get all available commands',
-      parameters: z.object({}),
-      execute: async () => {
-        return ctx.commandkit.commandHandler.getCommandsArray().map((cmd) => ({
-          name: cmd.data.command.name,
-          description: cmd.data.command.description,
-          category: cmd.command.category,
-        }));
-      },
-    });
   }
 
   public async deactivate(ctx: CommandKitPluginRuntime): Promise<void> {
@@ -202,17 +60,28 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
       ctx.commandkit.client.off(Events.MessageCreate, this.onMessageFunc);
       this.onMessageFunc = null;
     }
+    augmentCommandKit(false);
     Logger.info(`Plugin ${this.name} deactivated`);
   }
 
   private async handleMessage(
-    pluginContext: CommandKitPluginRuntime,
+    commandkit: CommandKit,
     message: Message,
   ): Promise<void> {
     if (message.author.bot || !Object.keys(this.toolsRecord).length) return;
+    const {
+      messageFilter,
+      selectAiModel,
+      prepareSystemPrompt,
+      preparePrompt,
+      onProcessingFinish,
+      onProcessingStart,
+      onResult,
+      onError,
+      disableBuiltInTools,
+    } = getAIConfig();
 
-    const aiModelSelector = selectAiModel;
-    if (!message.content?.length || !aiModelSelector) return;
+    if (!message.content?.length) return;
 
     if (!message.channel.isTextBased() || !message.channel.isSendable()) return;
 
@@ -222,179 +91,67 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
     const ctx = new AiContext<any>({
       message,
       params: {},
-      commandkit: pluginContext.commandkit,
+      commandkit: commandkit,
     });
-
-    const systemPrompt =
-      (await generateSystemPrompt?.(message)) ||
-      `You are a helpful AI discord bot. Your name is ${message.client.user.username} and your id is ${message.client.user.id}.
-      You are designed to assist users with their questions and tasks. You also have access to various tools that can help you perform tasks.
-      Tools are basically like commands that you can execute to perform specific actions based on user input.
-      Keep the response short and concise, and only use tools when necessary. Keep the response length under 2000 characters.
-      Do not include your own text in the response unless necessary. For text formatting, you can use discord's markdown syntax.
-      The current channel is ${
-        'name' in message.channel
-          ? message.channel.name
-          : message.channel.recipient?.displayName || 'DM'
-      } whose id is ${message.channelId}. ${
-        message.channel.isSendable()
-          ? 'You can send messages in this channel.'
-          : 'You cannot send messages in this channel.'
-      }
-      ${message.inGuild() ? `\nYou are currently in a guild named ${message.guild.name} whose id is ${message.guildId}. While in guild, you can fetch member information if needed.` : '\nYou are currently in a direct message with the user.'}
-      If the user asks you to create a poll or embeds, create a text containing the poll or embed information as a markdown instead of json. If structured response is possible, use the structured response format instead.
-      If the user asks you to perform a task that requires a tool, use the tool to perform the task and return the result. Reject any requests that are not related to the tools you have access to.
-      `;
-
-    const userInfo = `<user>
-    <id>${message.author.id}</id>
-    <name>${message.author.username}</name>
-    <displayName>${message.author.displayName}</displayName>
-    <avatar>${message.author.avatarURL()}</avatar>
-    </user>`;
 
     await runInAiWorkerContext(ctx, message, async () => {
-      const channel = message.channel as TextChannel;
-      const stopTyping = await this.startTyping(channel);
+      const systemPrompt = await prepareSystemPrompt(ctx, message);
+      const prompt = await preparePrompt(ctx, message);
+      const { model, abortSignal, maxSteps, ...modelOptions } =
+        await selectAiModel(ctx, message);
+
+      await onProcessingStart(ctx, message);
+
+      const tools = disableBuiltInTools
+        ? this.toolsRecord
+        : {
+            ...this.defaultTools,
+            ...this.toolsRecord,
+          };
 
       try {
-        const {
+        const result = await generateText({
           model,
-          options,
-          objectMode = false,
-        } = await aiModelSelector(message);
-
-        const originalPrompt = `${userInfo}\nUser: ${message.content}\nAI:`;
-
-        let result: Awaited<
-          ReturnType<typeof generateText | typeof generateObject>
-        >;
-
-        const config = {
-          model,
-          abortSignal: AbortSignal.timeout(60_000),
-          prompt: originalPrompt,
+          abortSignal: abortSignal ?? AbortSignal.timeout(60_000),
+          prompt,
           system: systemPrompt,
-          providerOptions: options,
-        };
+          maxSteps: maxSteps ?? 5,
+          ...modelOptions,
+          tools: {
+            ...tools,
+            ...modelOptions.tools,
+          },
+        });
 
-        if (objectMode) {
-          result = await generateObject({
-            ...config,
-            schema: AiResponseSchema,
-          });
-        } else {
-          result = await generateText({
-            ...config,
-            tools: { ...this.toolsRecord, ...this.defaultTools },
-            maxSteps: 5,
-          });
-        }
-
-        stopTyping();
-
-        let structuredResult: z.infer<typeof AiResponseSchema> | null = null;
-
-        structuredResult = !('text' in result)
-          ? (result.object as z.infer<typeof AiResponseSchema>)
-          : null;
-
-        if (structuredResult) {
-          const { poll, content, embed } = structuredResult;
-
-          if (!poll && !content && !embed) {
-            Logger.warn(
-              'AI response did not include any content, embed, or poll.',
-            );
-            return;
-          }
-
-          await message.reply({
-            content: content?.substring(0, 2000),
-            embeds: embed
-              ? [
-                  {
-                    title: embed.title,
-                    description: embed.description,
-                    url: embed.url,
-                    color: embed.color,
-                    image: embed.image ? { url: embed.image } : undefined,
-                    thumbnail: embed.thumbnailImage
-                      ? { url: embed.thumbnailImage }
-                      : undefined,
-                    fields: embed.fields?.map((field) => ({
-                      name: field.name,
-                      value: field.value,
-                      inline: field.inline,
-                    })),
-                  },
-                ]
-              : [],
-            poll: poll
-              ? {
-                  allowMultiselect: poll.allow_multiselect,
-                  answers: poll.answers.map((answer) => ({
-                    text: answer.text,
-                    emoji: answer.emoji,
-                  })),
-                  duration: poll.duration,
-                  question: { text: poll.question.text },
-                }
-              : undefined,
-          });
-        } else if ('text' in result && !!result.text) {
-          await message.reply({
-            content: result.text.substring(0, 2000),
-            allowedMentions: { parse: [] },
-          });
-        }
+        await onResult(ctx, message, result);
       } catch (e) {
-        Logger.error(`Error processing AI message: ${e}`);
-        const channel = message.channel as TextChannel;
-
-        if (channel.isSendable()) {
-          await message
-            .reply({
-              content: 'An error occurred while processing your request.',
-              allowedMentions: { parse: [] },
-            })
-            .catch((e) => Logger.error(`Failed to send error message: ${e}`));
-        }
+        await onError(ctx, message, e as Error);
       } finally {
-        stopTyping();
+        await onProcessingFinish(ctx, message);
       }
     });
   }
 
-  private async startTyping(channel: TextChannel): Promise<() => void> {
-    let stopped = false;
-
-    const runner = async () => {
-      if (stopped) return clearInterval(typingInterval);
-
-      if (channel.isSendable()) {
-        await channel.sendTyping().catch(Object);
-      }
-    };
-
-    const typingInterval = setInterval(runner, 3000).unref();
-
-    await runner();
-
-    return () => {
-      stopped = true;
-      clearInterval(typingInterval);
-    };
+  /**
+   * Executes the AI for a given message.
+   * @param message The message to process.
+   * @param commandkit The CommandKit instance to use. If not provided, it will be inferred automatically.
+   */
+  public async executeAI(
+    message: Message,
+    commandkit?: CommandKit,
+  ): Promise<void> {
+    commandkit ??= getCommandKit(true);
+    return this.handleMessage(commandkit, message);
   }
 
-  public async onBeforeCommandsLoad(
-    ctx: CommandKitPluginRuntime,
-  ): Promise<void> {
+  public async onBeforeCommandsLoad(): Promise<void> {
     this.toolsRecord = {};
   }
 
   async onAfterCommandsLoad(ctx: CommandKitPluginRuntime): Promise<void> {
-    const commands = ctx.commandkit.commandHandler
+    const { commandkit } = ctx;
+    const commands = commandkit.commandHandler
       .getCommandsArray()
       .filter(
         (command) =>
@@ -404,16 +161,13 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
       );
 
     if (!commands.length) {
-      Logger.warn(
-        'No commands with AI functionality found. Ensure commands are properly configured.',
-      );
       return;
     }
 
-    const tools = new Collection<string, WithAI<LoadedCommand>>();
+    const tools = new Collection<string, CommandTool>();
 
     for (const command of commands) {
-      const cmd = command as WithAI<LoadedCommand>;
+      const cmd = command as CommandTool;
       if (!cmd.data.ai || !cmd.data.aiConfig) {
         continue;
       }
@@ -423,13 +177,44 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
 
       const cmdTool = tool({
         description,
-        type: 'function',
         parameters: cmd.data.aiConfig.parameters,
         async execute(params) {
+          const config = getAIConfig();
           const ctx = getAiWorkerContext();
+
           ctx.ctx.setParams(params);
 
-          return cmd.data.ai(ctx.ctx);
+          try {
+            const target = await commandkit.commandHandler.prepareCommandRun(
+              ctx.message,
+              cmd.data.command.name,
+            );
+
+            if (!target) {
+              return {
+                error: true,
+                message: 'This command is not available.',
+              };
+            }
+
+            const res =
+              await commandkit.commandHandler.commandRunner.runCommand(
+                target,
+                ctx.message,
+                {
+                  handler: 'ai',
+                },
+              );
+
+            return res === undefined ? { success: true } : res;
+          } catch (e) {
+            await config.onError?.(ctx.ctx, ctx.message, e as Error);
+
+            return {
+              error: true,
+              message: 'This tool failed with unexpected error.',
+            };
+          }
         },
       });
 

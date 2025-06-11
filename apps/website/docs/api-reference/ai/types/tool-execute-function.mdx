@@ -1,0 +1,25 @@
+---
+title: "ToolExecuteFunction"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## ToolExecuteFunction
+
+<GenerationInfo sourceFile="packages/ai/src/tools/common/index.ts" sourceLine="55" packageName="@commandkit/ai" />
+
+Type definition for a tool's execute function.
+
+```ts title="Signature"
+type ToolExecuteFunction<T extends ToolParameterType, R> = (
+  ctx: AiContext,
+  parameters: InferParameters<T>,
+) => Awaitable<R>
+```

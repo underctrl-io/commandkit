@@ -4,13 +4,25 @@ import {
   ChatInputCommandContext,
   CommandData,
   OnButtonKitClick,
+  MessageCommandContext,
 } from 'commandkit';
 import { ButtonStyle, MessageFlags } from 'discord.js';
+import { AiConfig, AiContext } from '@commandkit/ai';
+import { z } from 'zod';
 
 export const command: CommandData = {
   name: 'confirmation',
   description: 'This is a confirm command.',
 };
+
+export const aiConfig = {
+  parameters: z.object({
+    message: z
+      .string()
+      .describe('The message to be shown in the confirmation.'),
+  }),
+  description: 'Confirm an action with buttons.',
+} satisfies AiConfig;
 
 const handleConfirm: OnButtonKitClick = async (interaction, context) => {
   await interaction.reply({
@@ -44,6 +56,26 @@ export async function chatInput({ interaction }: ChatInputCommandContext) {
 
   await interaction.reply({
     content: 'Are you sure you want to delete this item?',
+    components: [buttons],
+  });
+}
+
+export async function ai(ctx: MessageCommandContext) {
+  const message = ctx.ai?.params?.message as string;
+
+  const buttons = (
+    <ActionRow>
+      <Button onClick={handleCancel} style={ButtonStyle.Primary}>
+        Cancel
+      </Button>
+      <Button onClick={handleConfirm} style={ButtonStyle.Danger}>
+        Confirm
+      </Button>
+    </ActionRow>
+  );
+
+  await ctx.message.reply({
+    content: message || 'There was no confirmation message provided.',
     components: [buttons],
   });
 }

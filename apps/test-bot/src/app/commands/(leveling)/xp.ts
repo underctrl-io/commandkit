@@ -1,7 +1,11 @@
-import { ChatInputCommandContext, CommandData } from 'commandkit';
+import {
+  ChatInputCommandContext,
+  CommandData,
+  MessageCommandContext,
+} from 'commandkit';
 import { database } from '@/database/store.ts';
 import { cacheTag } from '@commandkit/cache';
-import { AiConfig, AiContext } from '@commandkit/ai';
+import { AiConfig } from '@commandkit/ai';
 import { z } from 'zod';
 
 export const command: CommandData = {
@@ -9,13 +13,13 @@ export const command: CommandData = {
   description: 'This is an xp command.',
 };
 
-export const aiConfig: AiConfig = {
+export const aiConfig = {
   description: 'Get the XP of a user in a guild.',
   parameters: z.object({
     guildId: z.string().describe('The ID of the guild.'),
     userId: z.string().describe('The ID of the user.'),
   }),
-};
+} satisfies AiConfig;
 
 async function getUserXP(guildId: string, userId: string) {
   'use cache';
@@ -50,7 +54,7 @@ export async function chatInput({ interaction }: ChatInputCommandContext) {
   });
 }
 
-export async function ai(ctx: AiContext) {
+export async function ai(ctx: MessageCommandContext) {
   const message = ctx.message;
 
   if (!message.inGuild()) {
@@ -59,10 +63,9 @@ export async function ai(ctx: AiContext) {
     };
   }
 
-  const { guildId, userId } = ctx.params as {
-    guildId: string;
-    userId: string;
-  };
+  const { guildId, userId } = ctx.ai?.params as z.infer<
+    (typeof aiConfig)['parameters']
+  >;
 
   const xp = await getUserXP(guildId, userId);
 

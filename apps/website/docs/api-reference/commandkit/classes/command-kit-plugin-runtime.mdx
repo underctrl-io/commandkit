@@ -22,6 +22,7 @@ class CommandKitPluginRuntime {
     constructor(commandkit: CommandKit)
     getPlugins() => ;
     getPlugin(pluginName: string) => RuntimePlugin | null;
+    get(plugin: T) => InstanceType<T> | null;
     softRegisterPlugin(plugin: RuntimePlugin) => ;
     registerPlugin(plugin: RuntimePlugin) => ;
     unregisterPlugin(plugin: RuntimePlugin) => ;
@@ -48,6 +49,11 @@ Returns the plugins registered in this runtime.
 <MemberInfo kind="method" type={`(pluginName: string) => <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a> | null`}   />
 
 Checks if there are no plugins registered in this runtime.
+### get
+
+<MemberInfo kind="method" type={`(plugin: T) => InstanceType&#60;T&#62; | null`}   />
+
+Fetches the given plugin
 ### softRegisterPlugin
 
 <MemberInfo kind="method" type={`(plugin: <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>) => `}   />
