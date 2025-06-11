@@ -1,4 +1,4 @@
-import { Collection } from 'discord.js';
+import { Collection, Constructable } from 'discord.js';
 import { CommandKit } from '../../CommandKit';
 import { RuntimePlugin } from '../RuntimePlugin';
 import {
@@ -31,10 +31,20 @@ export class CommandKitPluginRuntime {
 
   /**
    * Checks if there are no plugins registered in this runtime.
+   * @param pluginName The name of the plugin to check.
    * @returns Boolean indicating whether the runtime is empty.
    */
   public getPlugin(pluginName: string): RuntimePlugin | null {
     return this.plugins.get(pluginName) ?? null;
+  }
+
+  /**
+   * Fetches the given plugin
+   * @param plugin The plugin to be fetched.
+   */
+  public get<T extends Constructable<any>>(plugin: T): InstanceType<T> | null {
+    const p = this.plugins.find((p) => p instanceof plugin) ?? null;
+    return p as InstanceType<T> | null;
   }
 
   /**

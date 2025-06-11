@@ -1,8 +1,8 @@
 import { Message } from 'discord.js';
 
 /**
- * @internal
- * @private
+ * Creates the default system prompt for the AI bot based on the provided message context.
+ * This prompt includes the bot's role, current channel information, and response guidelines.
  */
 export function createSystemPrompt(message: Message): string {
   const channelInfo =

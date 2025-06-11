@@ -1,0 +1,516 @@
+---
+title: AI Troubleshooting
+description: Common issues and solutions when working with CommandKit's AI system.
+---
+
+# AI Troubleshooting
+
+This guide covers common issues you might encounter when working with CommandKit's AI system and how to resolve them.
+
+## Common Issues
+
+### AI Not Responding to Messages
+
+**Symptoms:** Bot doesn't respond when mentioned or keywords are used.
+
+**Possible Causes:**
+
+1. **AI plugin not registered**
+
+   ```ts title="commandkit.config.ts"
+   import { ai } from '@commandkit/ai';
+
+   export default defineConfig({
+     plugins: [ai()], // Make sure this is included
+   });
+   ```
+
+2. **Message filter too restrictive**
+
+   ```ts
+   // Check your message filter
+   messageFilter: async (message) => {
+     console.log('Filtering message:', message.content);
+     const shouldProcess = message.mentions.users.has(message.client.user.id);
+     console.log('Should process:', shouldProcess);
+     return shouldProcess;
+   };
+   ```
+
+3. **Missing bot permissions**
+   ```ts
+   // Bot needs these intents
+   const client = new Client({
+     intents: [
+       GatewayIntentBits.Guilds,
+       GatewayIntentBits.GuildMessages,
+       GatewayIntentBits.MessageContent, // Required for message content
+     ],
+   });
+   ```
+
+### AI Model Configuration Errors
+
+**Symptoms:** Errors about missing AI model or configuration.
+
+**Solutions:**
+
+1. **Check API keys**
+
+   ```bash
+   # Make sure environment variables are set
+   GOOGLE_API_KEY=your_api_key_here
+   OPENAI_API_KEY=your_api_key_here
+   ```
+
+2. **Verify model configuration**
+
+   ```ts
+   configureAI({
+     selectAiModel: async (ctx, message) => {
+       // Make sure this function is defined and returns a model
+       if (!process.env.GOOGLE_API_KEY) {
+         throw new Error('GOOGLE_API_KEY environment variable not set');
+       }
+
+       return {
+         model: google.languageModel('gemini-2.0-flash'),
+       };
+     },
+   });
+   ```
+
+3. **Handle model initialization errors**
+   ```ts
+   selectAiModel: async (ctx, message) => {
+     try {
+       return {
+         model: google.languageModel('gemini-2.0-flash'),
+       };
+     } catch (error) {
+       console.error('Model initialization failed:', error);
+       throw new Error('AI model not available');
+     }
+   };
+   ```
+
+### Command Parameters Not Working
+
+**Symptoms:** AI commands receive undefined or incorrect parameters.
+
+**Solutions:**
+
+1. **Check Zod schema definition**
+
+   ```ts
+   export const aiConfig = {
+     parameters: z.object({
+       // Make sure parameter names match what the AI should provide
+       username: z.string().describe('The username to greet'),
+       message: z.string().optional().describe('Optional greeting message'),
+     }),
+   } satisfies AiConfig;
+   ```
+
+2. **Validate parameters in command**
+
+   ```ts
+   export async function ai(ctx: AiContext) {
+     console.log('Received parameters:', ctx.ai.params);
+
+     const { username, message } = ctx.ai.params;
+
+     if (!username) {
+       await ctx.message.reply('❌ Username parameter is required');
+       return;
+     }
+
+     // Continue with command logic
+   }
+   ```
+
+3. **Improve parameter descriptions**
+   ```ts
+   parameters: z.object({
+     userId: z
+       .string()
+       .describe('Discord user ID (numbers only, like 123456789012345678)'),
+     duration: z
+       .number()
+       .describe('Duration in minutes (e.g., 30 for 30 minutes)'),
+     reason: z.string().optional().describe('Optional reason for the action'),
+   });
+   ```
+
+### Rate Limiting Issues
+
+**Symptoms:** AI stops responding or shows rate limit errors.
+
+**Solutions:**
+
+1. **Implement user-level rate limiting**
+
+   ```ts
+   const userCooldowns = new Map<string, number>();
+
+   messageFilter: async (message) => {
+     const userId = message.author.id;
+     const now = Date.now();
+     const cooldown = userCooldowns.get(userId) || 0;
+
+     if (now < cooldown + 30000) {
+       // 30 second cooldown
+       return false;
+     }
+
+     userCooldowns.set(userId, now);
+     return message.mentions.users.has(message.client.user.id);
+   };
+   ```
+
+2. **Add timeout configuration**
+
+   ```ts
+   selectAiModel: async (ctx, message) => ({
+     model: myModel,
+     abortSignal: AbortSignal.timeout(30000), // 30 second timeout
+   });
+   ```
+
+3. **Handle rate limit errors gracefully**
+   ```ts
+   onError: async (ctx, message, error) => {
+     if (error.message.includes('rate limit')) {
+       await message.reply(
+         "⏰ I'm being rate limited. Please wait a moment and try again.",
+       );
+     } else {
+       await message.reply(
+         '❌ An error occurred while processing your request.',
+       );
+     }
+   };
+   ```
+
+### Memory and Performance Issues
+
+**Symptoms:** Bot becomes slow or runs out of memory.
+
+**Solutions:**
+
+1. **Clear context store data**
+
+   ```ts
+   export async function ai(ctx: AiContext) {
+     try {
+       // Use context store
+       ctx.store.set('data', someData);
+
+       // Process command
+       await processCommand();
+     } finally {
+       // Clear large objects from store
+       ctx.store.clear();
+     }
+   }
+   ```
+
+2. **Limit AI steps and tokens**
+
+   ```ts
+   selectAiModel: async (ctx, message) => ({
+     model: myModel,
+     maxSteps: 5, // Limit tool calls
+     maxTokens: 1000, // Limit response length
+   });
+   ```
+
+3. **Implement caching for expensive operations**
+
+   ```ts
+   const cache = new Map();
+
+   export async function ai(ctx: AiContext) {
+     const cacheKey = `user:${ctx.message.author.id}`;
+
+     let userData = cache.get(cacheKey);
+     if (!userData) {
+       userData = await fetchUserData(ctx.message.author.id);
+       cache.set(cacheKey, userData);
+
+       // Clear cache after 5 minutes
+       setTimeout(() => cache.delete(cacheKey), 300000);
+     }
+   }
+   ```
+
+## Debugging Techniques
+
+### Enable Debug Logging
+
+```ts
+configureAI({
+  onProcessingStart: async (ctx, message) => {
+    console.log('AI processing started:', {
+      user: message.author.username,
+      content: message.content.substring(0, 100),
+      guild: message.guild?.name,
+    });
+  },
+
+  onResult: async (ctx, message, result) => {
+    console.log('AI result:', {
+      text: result.text?.substring(0, 100),
+      toolCalls: result.toolCalls?.length || 0,
+      finishReason: result.finishReason,
+    });
+  },
+
+  onError: async (ctx, message, error) => {
+    console.error('AI error:', {
+      error: error.message,
+      stack: error.stack,
+      user: message.author.id,
+      content: message.content,
+    });
+  },
+});
+```
+
+### Test AI Commands Manually
+
+```ts
+import { useAI } from '@commandkit/ai';
+
+// Test AI processing manually
+const aiPlugin = useAI();
+await aiPlugin.executeAI(message);
+```
+
+### Validate Tool Registration
+
+```ts
+// Check if tools are registered correctly
+onAfterCommandsLoad: async (ctx) => {
+  const commands = ctx.commandkit.commandHandler.getCommandsArray();
+  const aiCommands = commands.filter((cmd) => 'ai' in cmd.data);
+
+  console.log(
+    'AI commands registered:',
+    aiCommands.map((cmd) => cmd.data.command.name),
+  );
+};
+```
+
+## Environment-Specific Issues
+
+### Development Environment
+
+```ts
+// Add development-specific debugging
+if (process.env.NODE_ENV === 'development') {
+  configureAI({
+    onError: async (ctx, message, error) => {
+      // Show full error details in development
+      await message.reply(
+        `Debug Error: ${error.message}\n\`\`\`${error.stack}\`\`\``,
+      );
+    },
+  });
+}
+```
+
+### Production Environment
+
+```ts
+// Production error handling
+if (process.env.NODE_ENV === 'production') {
+  configureAI({
+    onError: async (ctx, message, error) => {
+      // Log to monitoring service
+      await logError(error, {
+        userId: message.author.id,
+        guildId: message.guildId,
+        command: 'ai',
+      });
+
+      // Send generic error to user
+      await message.reply('An error occurred. Please try again later.');
+    },
+  });
+}
+```
+
+## Discord API Issues
+
+### Missing Permissions
+
+```ts
+export async function ai(ctx: AiContext) {
+  // Check bot permissions
+  const botMember = ctx.message.guild?.members.me;
+  if (!botMember?.permissions.has('SendMessages')) {
+    console.error('Bot missing SendMessages permission');
+    return;
+  }
+
+  // Check specific permissions for command
+  if (!botMember.permissions.has('ManageMessages')) {
+    await ctx.message.reply(
+      '❌ I need "Manage Messages" permission to use this command.',
+    );
+    return;
+  }
+}
+```
+
+### Channel Access Issues
+
+```ts
+messageFilter: async (message) => {
+  // Check if bot can send messages in the channel
+  if (!message.channel.isSendable()) {
+    console.log('Cannot send messages in channel:', message.channelId);
+    return false;
+  }
+
+  return message.mentions.users.has(message.client.user.id);
+};
+```
+
+## Common Error Messages
+
+### "No AI model selected"
+
+**Solution:** Make sure you've configured `selectAiModel`:
+
+```ts
+configureAI({
+  selectAiModel: async (ctx, message) => ({
+    model: google.languageModel('gemini-2.0-flash'),
+  }),
+});
+```
+
+### "AI plugin is not registered"
+
+**Solution:** Add the AI plugin to your configuration:
+
+```ts title="commandkit.config.ts"
+import { ai } from '@commandkit/ai';
+
+export default defineConfig({
+  plugins: [ai()],
+});
+```
+
+### "Cannot read properties of undefined"
+
+**Solution:** Check parameter validation:
+
+```ts
+export async function ai(ctx: AiContext) {
+  // Add null checks
+  if (!ctx.ai.params) {
+    await ctx.message.reply('❌ No parameters provided');
+    return;
+  }
+
+  const { username } = ctx.ai.params;
+  if (!username) {
+    await ctx.message.reply('❌ Username is required');
+    return;
+  }
+}
+```
+
+## Performance Monitoring
+
+### Track Response Times
+
+```ts
+configureAI({
+  onProcessingStart: async (ctx, message) => {
+    ctx.store.set('startTime', Date.now());
+  },
+
+  onProcessingFinish: async (ctx, message) => {
+    const startTime = ctx.store.get('startTime');
+    if (startTime) {
+      const duration = Date.now() - startTime;
+      console.log(`AI processing took ${duration}ms`);
+
+      if (duration > 10000) {
+        // Warn if over 10 seconds
+        console.warn('Slow AI response detected');
+      }
+    }
+  },
+});
+```
+
+### Monitor Token Usage
+
+```ts
+onResult: async (ctx, message, result) => {
+  if (result.usage) {
+    console.log('Token usage:', {
+      prompt: result.usage.promptTokens,
+      completion: result.usage.completionTokens,
+      total: result.usage.totalTokens,
+    });
+  }
+};
+```
+
+## Getting Help
+
+If you're still experiencing issues:
+
+1. **Check the console logs** for detailed error messages
+2. **Verify your environment variables** are set correctly
+3. **Test with a simple AI command** first
+4. **Check Discord bot permissions** in the server
+5. **Review the AI model documentation** for your provider
+6. **Join the CommandKit Discord** for community support
+
+## Useful Debug Commands
+
+Create a debug command to test AI functionality:
+
+```ts
+export const command = {
+  name: 'ai-debug',
+  description: 'Debug AI system',
+};
+
+export async function messageCommand(ctx: MessageCommandContext) {
+  const aiPlugin = useAI();
+  const config = getAIConfig();
+
+  await ctx.message.reply({
+    embeds: [
+      {
+        title: 'AI Debug Information',
+        fields: [
+          {
+            name: 'Plugin Loaded',
+            value: !!aiPlugin ? '✅' : '❌',
+            inline: true,
+          },
+          {
+            name: 'Config Valid',
+            value: !!config.selectAiModel ? '✅' : '❌',
+            inline: true,
+          },
+          {
+            name: 'Bot Can Send',
+            value: ctx.message.channel.isSendable() ? '✅' : '❌',
+            inline: true,
+          },
+        ],
+      },
+    ],
+  });
+}
+```

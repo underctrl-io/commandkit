@@ -1,0 +1,248 @@
+---
+title: Creating AI Commands
+description: Learn how to create commands that can be executed by AI models.
+---
+
+# Creating AI Commands
+
+CommandKit allows you to create commands that can be executed by AI models through natural language. This enables users to interact with your bot using conversational language instead of specific command syntax.
+
+## Basic AI Command Structure
+
+To make a command AI-compatible, you need to:
+
+1. Add an `ai` function to handle AI execution
+2. Add an `aiConfig` object to define the AI parameters
+
+```ts title="src/commands/greet.ts"
+import { CommandData, MessageCommandContext } from 'commandkit';
+import { AiConfig, AiContext } from '@commandkit/ai';
+import { z } from 'zod';
+
+export const command: CommandData = {
+  name: 'greet',
+  description: 'Greet a user',
+};
+
+export const aiConfig = {
+  description: 'Greet a specific user by their name or mention',
+  parameters: z.object({
+    username: z.string().describe('The name or mention of the user to greet'),
+  }),
+} satisfies AiConfig;
+
+// Regular command handler
+export async function messageCommand(ctx: MessageCommandContext) {
+  const username = ctx.args.join(' ') || 'stranger';
+  await ctx.message.reply(`Hello, ${username}!`);
+}
+
+// AI command handler
+export async function ai(ctx: AiContext) {
+  const { username } = ctx.ai.params;
+  await ctx.message.reply(`Hello, ${username}! 👋`);
+}
+```
+
+## AI Configuration (`aiConfig`)
+
+The `aiConfig` object defines how the AI model should understand and execute your command:
+
+### Parameters
+
+The `parameters` field uses Zod schemas to define the structure and validation for AI-generated parameters:
+
+```ts
+export const aiConfig = {
+  description: 'Create a poll with multiple options',
+  parameters: z.object({
+    question: z.string().describe('The poll question'),
+    options: z.array(z.string()).describe('Array of poll options'),
+    duration: z.number().optional().describe('Poll duration in minutes'),
+  }),
+} satisfies AiConfig;
+```
+
+### Description
+
+The `description` field helps the AI model understand when and how to use your command:
+
+```ts
+export const aiConfig = {
+  description: 'Ban a user from the server with an optional reason',
+  parameters: z.object({
+    userId: z.string().describe('The ID of the user to ban'),
+    reason: z.string().optional().describe('The reason for the ban'),
+  }),
+} satisfies AiConfig;
+```
+
+## AI Context (`AiContext`)
+
+The `AiContext` provides access to AI-specific data and functionality:
+
+```ts
+export async function ai(ctx: AiContext) {
+  // Access AI-generated parameters
+  const { message, duration } = ctx.ai.params;
+
+  // Access the original message
+  const originalMessage = ctx.message;
+
+  // Access the client and CommandKit instance
+  const client = ctx.client;
+  const commandkit = ctx.commandkit;
+
+  // Use the store for temporary data
+  ctx.store.set('startTime', Date.now());
+}
+```
+
+### Available Properties
+
+- `params`: The AI-generated parameters based on your schema
+- `message`: The original Discord message that triggered the AI
+- `client`: The Discord client instance
+- `commandkit`: The CommandKit instance
+- `store`: A Map for storing temporary data during execution
+
+## Complex Parameter Schemas
+
+You can create sophisticated parameter schemas for complex commands:
+
+```ts title="src/commands/schedule-event.ts"
+export const aiConfig = {
+  description: 'Schedule a server event with date, time, and details',
+  parameters: z.object({
+    title: z.string().describe('Event title'),
+    description: z.string().optional().describe('Event description'),
+    date: z.string().describe('Event date in YYYY-MM-DD format'),
+    time: z.string().describe('Event time in HH:MM format'),
+    location: z.string().optional().describe('Event location or channel'),
+    maxParticipants: z
+      .number()
+      .optional()
+      .describe('Maximum number of participants'),
+  }),
+} satisfies AiConfig;
+
+export async function ai(ctx: AiContext) {
+  const { title, description, date, time, location, maxParticipants } =
+    ctx.ai.params;
+
+  // Create the event with the AI-generated parameters
+  await ctx.message.reply({
+    embeds: [
+      {
+        title: `📅 ${title}`,
+        description: description || 'No description provided',
+        fields: [
+          { name: 'Date', value: date, inline: true },
+          { name: 'Time', value: time, inline: true },
+          { name: 'Location', value: location || 'TBD', inline: true },
+          {
+            name: 'Max Participants',
+            value: maxParticipants?.toString() || 'Unlimited',
+            inline: true,
+          },
+        ],
+        color: 0x00ff00,
+      },
+    ],
+  });
+}
+```
+
+## Error Handling
+
+Handle errors gracefully in your AI commands:
+
+```ts
+export async function ai(ctx: AiContext) {
+  try {
+    const { userId, reason } = ctx.ai.params;
+
+    const user = await ctx.client.users.fetch(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Perform the action
+    await performBan(user, reason);
+  } catch (error) {
+    await ctx.message.reply({
+      content: `❌ Error: ${error.message}`,
+      allowedMentions: { parse: [] },
+    });
+  }
+}
+```
+
+## Best Practices
+
+1. **Clear Descriptions**: Write clear, specific descriptions for your commands and parameters
+2. **Validation**: Use Zod schemas to validate and constrain AI-generated parameters
+3. **Error Handling**: Always handle potential errors in AI command execution
+4. **User Feedback**: Provide clear feedback about the action taken
+5. **Permission Checks**: Verify user permissions before executing sensitive actions
+
+```ts
+export async function ai(ctx: AiContext) {
+  // Check permissions
+  if (!ctx.message.member?.permissions.has('ManageMessages')) {
+    await ctx.message.reply(
+      '❌ You need Manage Messages permission to use this command.',
+    );
+    return;
+  }
+
+  // Validate parameters
+  const { count } = ctx.ai.params;
+  if (count > 100) {
+    await ctx.message.reply('❌ Cannot delete more than 100 messages at once.');
+    return;
+  }
+
+  // Execute the action
+  // ... rest of the implementation
+}
+```
+
+## Interactive Components
+
+AI commands can also work with interactive components like buttons and select menus:
+
+```tsx
+import { Button, ActionRow } from 'commandkit';
+import { ButtonStyle } from 'discord.js';
+
+export async function ai(ctx: AiContext) {
+  const { message } = ctx.ai.params;
+
+  const confirmButton = (
+    <ActionRow>
+      <Button
+        onClick={async (interaction) => {
+          await interaction.reply('Action confirmed!');
+        }}
+        style={ButtonStyle.Success}
+      >
+        Confirm
+      </Button>
+      <Button
+        onClick={async (interaction) => {
+          await interaction.reply('Action cancelled.');
+        }}
+        style={ButtonStyle.Danger}
+      >
+        Cancel
+      </Button>
+    </ActionRow>
+  );
+
+  await ctx.message.reply({
+    content: message,
+    components: [confirmButton],
+  });
+}
+```

@@ -1,6 +1,8 @@
+import './augmentation';
 import { AiPlugin } from './plugin';
 import { AiPluginOptions } from './types';
 import { getAiWorkerContext } from './ai-context-worker';
+import { getCommandKit } from 'commandkit';
 
 /**
  * Retrieves the AI context.
@@ -8,6 +10,22 @@ import { getAiWorkerContext } from './ai-context-worker';
 export function useAIContext() {
   const { ctx } = getAiWorkerContext();
   return ctx;
+}
+
+/**
+ * Fetches the AI plugin instance.
+ */
+export function useAI() {
+  const commandkit = getCommandKit(true);
+  const aiPlugin = commandkit.plugins.get(AiPlugin);
+
+  if (!aiPlugin) {
+    throw new Error(
+      'AI plugin is not registered. Please ensure it is activated.',
+    );
+  }
+
+  return aiPlugin;
 }
 
 /**
@@ -22,3 +40,7 @@ export function ai(options?: AiPluginOptions) {
 export * from './types';
 export * from './plugin';
 export * from './context';
+export * from './configure';
+export * from './types';
+export * from './system-prompt';
+export * from './tools/common/index';

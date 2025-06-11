@@ -1,6 +1,6 @@
 import { CommandKitPluginRuntime, RuntimePlugin } from 'commandkit/plugin';
 import { AiPluginOptions, CommandTool } from './types';
-import { Logger } from 'commandkit';
+import CommandKit, { getCommandKit, Logger } from 'commandkit';
 import { AiContext } from './context';
 import { Collection, Events, Message } from 'discord.js';
 import { tool, Tool, generateText } from 'ai';
@@ -46,7 +46,8 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
   }
 
   public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
-    this.onMessageFunc = (message) => this.handleMessage(ctx, message);
+    this.onMessageFunc = (message) =>
+      this.handleMessage(ctx.commandkit, message);
     ctx.commandkit.client.on(Events.MessageCreate, this.onMessageFunc);
     augmentCommandKit(true);
 
@@ -64,7 +65,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
   }
 
   private async handleMessage(
-    pluginContext: CommandKitPluginRuntime,
+    commandkit: CommandKit,
     message: Message,
   ): Promise<void> {
     if (message.author.bot || !Object.keys(this.toolsRecord).length) return;
@@ -90,7 +91,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
     const ctx = new AiContext<any>({
       message,
       params: {},
-      commandkit: pluginContext.commandkit,
+      commandkit: commandkit,
     });
 
     await runInAiWorkerContext(ctx, message, async () => {
@@ -131,6 +132,19 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
     });
   }
 
+  /**
+   * Executes the AI for a given message.
+   * @param message The message to process.
+   * @param commandkit The CommandKit instance to use. If not provided, it will be inferred automatically.
+   */
+  public async executeAI(
+    message: Message,
+    commandkit?: CommandKit,
+  ): Promise<void> {
+    commandkit ??= getCommandKit(true);
+    return this.handleMessage(commandkit, message);
+  }
+
   public async onBeforeCommandsLoad(): Promise<void> {
     this.toolsRecord = {};
   }
@@ -167,6 +181,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
         async execute(params) {
           const config = getAIConfig();
           const ctx = getAiWorkerContext();
+
           ctx.ctx.setParams(params);
 
           try {
