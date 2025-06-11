@@ -3,10 +3,10 @@ import { AiPluginOptions, MessageFilter, SelectAiModel } from './types';
 import { LoadedCommand, Logger } from 'commandkit';
 import { AiContext } from './context';
 import { Collection, Events, Message, TextChannel } from 'discord.js';
-import { tool, Tool, generateText, Output } from 'ai';
+import { tool, Tool, generateText, generateObject } from 'ai';
 import { z } from 'zod';
 import { getAiWorkerContext, runInAiWorkerContext } from './ai-context-worker';
-import { AiResponseSchema } from './schema';
+import { AiResponseSchema, pollSchema } from './schema';
 
 type WithAI<T extends LoadedCommand> = T & {
   data: {
@@ -232,9 +232,18 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
       Tools are basically like commands that you can execute to perform specific actions based on user input.
       Keep the response short and concise, and only use tools when necessary. Keep the response length under 2000 characters.
       Do not include your own text in the response unless necessary. For text formatting, you can use discord's markdown syntax.
+      The current channel is ${
+        'name' in message.channel
+          ? message.channel.name
+          : message.channel.recipient?.displayName || 'DM'
+      } whose id is ${message.channelId}. ${
+        message.channel.isSendable()
+          ? 'You can send messages in this channel.'
+          : 'You cannot send messages in this channel.'
+      }
       ${message.inGuild() ? `\nYou are currently in a guild named ${message.guild.name} whose id is ${message.guildId}. While in guild, you can fetch member information if needed.` : '\nYou are currently in a direct message with the user.'}
       If the user asks you to create a poll or embeds, create a text containing the poll or embed information as a markdown instead of json. If structured response is possible, use the structured response format instead.
-      If the user asks you to perform a task that requires a tool, use the tool to perform the task and return the result.
+      If the user asks you to perform a task that requires a tool, use the tool to perform the task and return the result. Reject any requests that are not related to the tools you have access to.
       `;
 
     const userInfo = `<user>
@@ -257,65 +266,38 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
 
         const originalPrompt = `${userInfo}\nUser: ${message.content}\nAI:`;
 
-        const call = ({
-          prompt = originalPrompt,
-          includeTools = true,
-          disableObjectMode = false,
-        }) =>
-          generateText({
-            abortSignal: AbortSignal.timeout(60_000),
-            model,
-            ...(includeTools && {
-              tools: { ...this.toolsRecord, ...this.defaultTools },
-            }),
-            prompt,
-            system: systemPrompt,
-            maxSteps: 5,
-            providerOptions: options,
-            ...(objectMode && !disableObjectMode
-              ? {
-                  experimental_output: Output.object({
-                    schema: AiResponseSchema,
-                  }),
-                }
-              : {}),
+        let result: Awaited<
+          ReturnType<typeof generateText | typeof generateObject>
+        >;
+
+        const config = {
+          model,
+          abortSignal: AbortSignal.timeout(60_000),
+          prompt: originalPrompt,
+          system: systemPrompt,
+          providerOptions: options,
+        };
+
+        if (objectMode) {
+          result = await generateObject({
+            ...config,
+            schema: AiResponseSchema,
           });
-
-        let result: any;
-
-        try {
-          result = await call({});
-        } catch {
-          if (objectMode) {
-            const r1 = await call({
-              includeTools: true,
-              disableObjectMode: true,
-            });
-
-            if (!r1.text) throw new Error('No text response from AI');
-
-            const r2 = await call({
-              includeTools: false,
-              disableObjectMode: false,
-              prompt: `Original context: ${originalPrompt} ${r1.text}\n\nGenerate a structured response based on the previous response`,
-            });
-
-            result = r2;
-          }
+        } else {
+          result = await generateText({
+            ...config,
+            tools: { ...this.toolsRecord, ...this.defaultTools },
+            maxSteps: 5,
+          });
         }
 
         stopTyping();
 
         let structuredResult: z.infer<typeof AiResponseSchema> | null = null;
 
-        try {
-          const val =
-            'experimental_output' in result && result.experimental_output;
-
-          if (val) {
-            structuredResult = val;
-          }
-        } catch {}
+        structuredResult = !('text' in result)
+          ? (result.object as z.infer<typeof AiResponseSchema>)
+          : null;
 
         if (structuredResult) {
           const { poll, content, embed } = structuredResult;
@@ -360,7 +342,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
                 }
               : undefined,
           });
-        } else if (!!result.text) {
+        } else if ('text' in result && !!result.text) {
           await message.reply({
             content: result.text.substring(0, 2000),
             allowedMentions: { parse: [] },

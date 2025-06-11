@@ -11,7 +11,6 @@ configureAI({
   selectAiModel: async () => {
     return {
       model,
-      objectMode: true,
     };
   },
   messageFilter: async (message) => {

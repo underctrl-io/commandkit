@@ -13,6 +13,30 @@ const pollMediaObject = z
     'An object representing the media for a poll question, containing the text of the question. Emoji cannot be used in question text.',
   );
 
+export const pollSchema = z
+  .object({
+    question: pollMediaObject,
+    answers: z
+      .array(pollMediaObject)
+      .min(1)
+      .max(10)
+      .describe('An array of answers for the poll'),
+    allow_multiselect: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe('Whether the poll allows multiple selections'),
+    duration: z
+      .number()
+      .int()
+      .min(1)
+      .max(32)
+      .optional()
+      .default(24)
+      .describe('The duration of the poll in hours'),
+  })
+  .describe('An object representing a poll to include in the message');
+
 export const AiResponseSchema = z
   .object({
     content: z
@@ -95,30 +119,7 @@ export const AiResponseSchema = z
       .describe(
         'An object representing embeds to include in the discord message. This is an optional field.',
       ),
-    poll: z
-      .object({
-        question: pollMediaObject,
-        answers: z
-          .array(pollMediaObject)
-          .min(1)
-          .max(10)
-          .describe('An array of answers for the poll'),
-        allow_multiselect: z
-          .boolean()
-          .optional()
-          .default(false)
-          .describe('Whether the poll allows multiple selections'),
-        duration: z
-          .number()
-          .int()
-          .min(1)
-          .max(32)
-          .optional()
-          .default(24)
-          .describe('The duration of the poll in hours'),
-      })
-      .optional()
-      .describe('An object representing a poll to include in the message'),
+    poll: pollSchema.optional(),
   })
   .describe(
     'The schema for an AI response message to be sent to discord, including content and embeds. At least one of content, embeds, or poll must be present.',
