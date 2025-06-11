@@ -32,7 +32,7 @@ export const aiConfig = {
 } satisfies AiConfig;
 
 // Regular command handler
-export async function messageCommand(ctx: MessageCommandContext) {
+export async function message(ctx: MessageCommandContext) {
   const username = ctx.args.join(' ') || 'stranger';
   await ctx.message.reply(`Hello, ${username}!`);
 }

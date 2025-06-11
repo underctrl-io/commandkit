@@ -484,7 +484,7 @@ export const command = {
   description: 'Debug AI system',
 };
 
-export async function messageCommand(ctx: MessageCommandContext) {
+export async function message(ctx: MessageCommandContext) {
   const aiPlugin = useAI();
   const config = getAIConfig();
 
