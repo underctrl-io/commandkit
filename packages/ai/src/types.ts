@@ -24,7 +24,6 @@ export type MessageFilter = (message: Message) => Promise<boolean>;
 export type SelectAiModel = (message: Message) => Promise<{
   model: LanguageModelV1;
   options?: ProviderMetadata;
-  objectMode?: boolean;
 }>;
 
 /**

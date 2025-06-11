@@ -29,10 +29,11 @@ import colors from '../../utils/colors';
 export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
 
 /**
- * @private
- * @internal
+ * Represents a native command structure used in CommandKit.
+ * This structure includes the command definition and various handlers for different interaction types.
+ * It can be used to define slash commands, context menu commands, and message commands.
  */
-interface AppCommandNative {
+export interface AppCommandNative {
   command: SlashCommandBuilder | Record<string, any>;
   chatInput?: (ctx: Context) => Awaitable<unknown>;
   autocomplete?: (ctx: Context) => Awaitable<unknown>;
@@ -42,10 +43,19 @@ interface AppCommandNative {
 }
 
 /**
- * @private
- * @internal
+ * Custom properties that can be added to an AppCommand.
+ * This allows for additional metadata or configuration to be associated with a command.
  */
-type AppCommand = AppCommandNative & Record<string, any>;
+// export type CustomAppCommandProps = Record<string, any>;
+export interface CustomAppCommandProps {
+  [key: string]: any;
+}
+
+/**
+ * Represents a command in the CommandKit application, including its metadata and handlers.
+ * This type extends the native command structure with additional properties.
+ */
+export type AppCommand = AppCommandNative & CustomAppCommandProps;
 
 /**
  * @private
