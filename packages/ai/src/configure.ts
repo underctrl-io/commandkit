@@ -168,19 +168,5 @@ export function getAIConfig(): Required<ConfigureAI> {
  * @param config The configuration options for the AI plugin.
  */
 export function configureAI(config: ConfigureAI): void {
-  if (config.messageFilter) {
-    AIConfig.messageFilter = config.messageFilter;
-  }
-
-  if (config.selectAiModel) {
-    AIConfig.selectAiModel = config.selectAiModel;
-  }
-
-  if (config.prepareSystemPrompt) {
-    AIConfig.prepareSystemPrompt = config.prepareSystemPrompt;
-  }
-
-  if (config.preparePrompt) {
-    AIConfig.preparePrompt = config.preparePrompt;
-  }
+  Object.assign(AIConfig, config);
 }
