@@ -5,7 +5,12 @@ description: Learn how to create custom tools for AI models to extend functional
 
 # Custom AI Tools
 
-CommandKit allows you to create custom tools that AI models can use to extend their capabilities beyond built-in Discord functions.
+CommandKit allows you to create custom tools that AI models can use to extend their capabilities beyond built-in Discord functions. You can define tools in two ways,
+
+- one with the `createTool` function, which is a simple way to create tools that can be used by AI models. This is a wrapper around the `tool` function of `ai-sdk` which enables the tool to receive context (`AiContext` which contains client and message objects) and parameters.
+- another with the `tool` function directly, which does not provide context argument. You may use the `useAIContext` hook to access the context in the tool function if needed.
+
+This guide will walk you through creating custom tools, validating parameters, and integrating with external APIs.
 
 ## Creating Basic Tools
 
@@ -48,11 +53,15 @@ export const calculator = createTool({
 });
 ```
 
+See the [Tool Registration](#tool-registration) section to learn how to register this tool with your AI model.
+
 ## Parameter Validation
 
 Use Zod schemas for comprehensive parameter validation:
 
 ```ts title="src/tools/weather.ts"
+import { z } from 'zod';
+
 export const getWeather = createTool({
   name: 'getWeather',
   description: 'Get current weather information for any location',
@@ -543,8 +552,8 @@ import { searchGitHubRepos } from './tools/github';
 configureAI({
   selectAiModel: async (ctx, message) => ({
     model: myModel,
+    // Add your custom tools to use with the AI model
     tools: {
-      // Add your custom tools
       calculator,
       getWeather,
       searchGitHubRepos,

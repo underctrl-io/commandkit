@@ -1,5 +1,5 @@
 ---
-title: "AIGenerateResult"
+title: "AiMessage"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,12 +11,12 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## AIGenerateResult
+## AiMessage
 
-<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="11" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/configure.ts" sourceLine="9" packageName="@commandkit/ai" />
 
-Represents the result of an AI text generation operation.
+
 
 ```ts title="Signature"
-type AIGenerateResult = Awaited<ReturnType<typeof generateText>>
+type AiMessage = Parameters<typeof generateText>[0]['messages'] & {}
 ```

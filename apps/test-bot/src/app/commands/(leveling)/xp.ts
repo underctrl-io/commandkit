@@ -5,7 +5,7 @@ import {
 } from 'commandkit';
 import { database } from '@/database/store.ts';
 import { cacheTag } from '@commandkit/cache';
-import { AiConfig } from '@commandkit/ai';
+import { AiCommand, AiConfig } from '@commandkit/ai';
 import { z } from 'zod';
 
 export const command: CommandData = {
@@ -54,7 +54,7 @@ export async function chatInput({ interaction }: ChatInputCommandContext) {
   });
 }
 
-export async function ai(ctx: MessageCommandContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const message = ctx.message;
 
   if (!message.inGuild()) {
@@ -63,9 +63,7 @@ export async function ai(ctx: MessageCommandContext) {
     };
   }
 
-  const { guildId, userId } = ctx.ai?.params as z.infer<
-    (typeof aiConfig)['parameters']
-  >;
+  const { guildId, userId } = ctx.ai.params;
 
   const xp = await getUserXP(guildId, userId);
 
@@ -74,4 +72,4 @@ export async function ai(ctx: MessageCommandContext) {
     guildId,
     xp,
   };
-}
+};

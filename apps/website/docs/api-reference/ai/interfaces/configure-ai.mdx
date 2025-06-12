@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ConfigureAI
 
-<GenerationInfo sourceFile="packages/ai/src/configure.ts" sourceLine="13" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/configure.ts" sourceLine="16" packageName="@commandkit/ai" />
 
 Represents the configuration options for the AI model.
 
@@ -23,7 +23,10 @@ interface ConfigureAI {
     messageFilter?: MessageFilter;
     selectAiModel: SelectAiModel;
     prepareSystemPrompt?: (ctx: AiContext, message: Message) => Promise<string>;
-    preparePrompt?: (ctx: AiContext, message: Message) => Promise<string>;
+    preparePrompt?: (
+    ctx: AiContext,
+    message: Message,
+  ) => Promise<string | AiMessage>;
     onProcessingStart?: (ctx: AiContext, message: Message) => Promise<void>;
     onProcessingFinish?: (ctx: AiContext, message: Message) => Promise<void>;
     onResult?: (
@@ -63,7 +66,7 @@ This function should return a promise that resolves to a string containing the s
 If not provided, a default system prompt will be used.
 ### preparePrompt
 
-<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;string&#62;`}   />
+<MemberInfo kind="property" type={`(     ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>,     message: Message,   ) =&#62; Promise&#60;string | <a href='/docs/next/api-reference/ai/types/ai-message#aimessage'>AiMessage</a>&#62;`}   />
 
 A function that prepares the prompt for the AI model.
 ### onProcessingStart

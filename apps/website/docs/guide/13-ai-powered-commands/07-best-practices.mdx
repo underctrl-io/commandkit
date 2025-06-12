@@ -14,7 +14,7 @@ This guide covers best practices for implementing AI-powered Discord bots and pr
 Always validate user permissions before executing sensitive operations:
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const { userId, action } = ctx.ai.params;
 
   // Check if user has required permissions
@@ -36,7 +36,7 @@ export async function ai(ctx: AiContext) {
   }
 
   // Proceed with the action
-}
+};
 ```
 
 ### Input Sanitization
@@ -44,6 +44,8 @@ export async function ai(ctx: AiContext) {
 Sanitize and validate all user inputs:
 
 ```ts
+import { AiConfig, AiCommand } from '@commandkit/ai';
+
 export const aiConfig = {
   parameters: z.object({
     message: z
@@ -58,7 +60,7 @@ export const aiConfig = {
   }),
 } satisfies AiConfig;
 
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const { message, userId } = ctx.ai.params;
 
   // Additional runtime validation
@@ -72,7 +74,7 @@ export async function ai(ctx: AiContext) {
 
   // Use sanitized input
   await processMessage(sanitizedMessage, isValidUser);
-}
+};
 ```
 
 ### Rate Limiting
@@ -83,7 +85,7 @@ Implement rate limiting to prevent abuse:
 const userCooldowns = new Map<string, number>();
 const COOLDOWN_DURATION = 30000; // 30 seconds
 
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const userId = ctx.message.author.id;
   const now = Date.now();
   const cooldownEnd = userCooldowns.get(userId) || 0;
@@ -101,7 +103,7 @@ export async function ai(ctx: AiContext) {
 
   // Process command
   await processCommand(ctx);
-}
+};
 ```
 
 ## Performance Optimization
@@ -111,7 +113,7 @@ export async function ai(ctx: AiContext) {
 Optimize database operations in AI commands:
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const { userIds } = ctx.ai.params;
 
   // ❌ Bad: Multiple individual queries
@@ -128,7 +130,7 @@ export async function ai(ctx: AiContext) {
   });
 
   return users;
-}
+};
 ```
 
 ### Caching Strategies
@@ -136,32 +138,28 @@ export async function ai(ctx: AiContext) {
 Implement caching for frequently accessed data:
 
 ```ts
-import { Cache } from '@commandkit/cache';
+import { cacheTag } from '@commandkit/cache';
 
-const cache = new Cache({ ttl: 300000 }); // 5 minutes
-
-export async function ai(ctx: AiContext) {
-  const { guildId } = ctx.ai.params;
+async function getGuildSettings(guildId: string) {
+  'use cache';
   const cacheKey = `guild:${guildId}:settings`;
 
-  // Try to get from cache first
-  let guildSettings = cache.get(cacheKey);
+  cacheTag(cacheKey);
 
-  if (!guildSettings) {
-    // Fetch from database
-    guildSettings = await database.guild.findUnique({
-      where: { id: guildId },
-      include: { settings: true },
-    });
+  const settings = await database.guild.findUnique({
+    where: { id: guildId },
+    include: { settings: true },
+  });
 
-    // Cache the result
-    if (guildSettings) {
-      cache.set(cacheKey, guildSettings);
-    }
-  }
+  return settings;
+}
+
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const guildId = ctx.message.guildId;
+  const guildSettings = await getGuildSettings(guildId);
 
   return guildSettings;
-}
+};
 ```
 
 ### Async Processing
@@ -169,7 +167,7 @@ export async function ai(ctx: AiContext) {
 Handle long-running operations asynchronously:
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const { operation } = ctx.ai.params;
 
   if (isLongRunningOperation(operation)) {
@@ -191,7 +189,7 @@ export async function ai(ctx: AiContext) {
   // Handle quick operations normally
   const result = await processQuickOperation(operation);
   await ctx.message.reply(`✅ ${result}`);
-}
+};
 ```
 
 ## Real-World Examples
@@ -216,7 +214,7 @@ export const aiConfig = {
   }),
 } satisfies AiConfig;
 
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const { action, query, volume } = ctx.ai.params;
   const member = ctx.message.member;
   const voiceChannel = member?.voice.channel;
@@ -295,7 +293,7 @@ export async function ai(ctx: AiContext) {
       await ctx.message.reply(`🔊 Volume set to ${volume}%`);
       break;
   }
-}
+};
 ```
 
 ### Server Management
@@ -319,7 +317,7 @@ export const aiConfig = {
   }),
 } satisfies AiConfig;
 
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const {
     action,
     channelName,
@@ -393,7 +391,7 @@ export async function ai(ctx: AiContext) {
       );
       break;
   }
-}
+};
 ```
 
 ### Economy System
@@ -412,7 +410,7 @@ export const aiConfig = {
   }),
 } satisfies AiConfig;
 
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const { action, targetUser, amount, item } = ctx.ai.params;
   const userId = ctx.message.author.id;
 
@@ -508,7 +506,7 @@ export async function ai(ctx: AiContext) {
       }
       break;
   }
-}
+};
 ```
 
 ## Error Handling Patterns
@@ -516,7 +514,7 @@ export async function ai(ctx: AiContext) {
 ### Graceful Degradation
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   try {
     // Primary functionality
     const result = await primaryOperation(ctx.ai.params);
@@ -535,7 +533,7 @@ export async function ai(ctx: AiContext) {
       );
     }
   }
-}
+};
 ```
 
 ### User-Friendly Error Messages
@@ -643,7 +641,7 @@ export function getAIConfig() {
 ```ts
 import { Logger } from 'commandkit';
 
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const startTime = Date.now();
 
   try {
@@ -677,5 +675,5 @@ export async function ai(ctx: AiContext) {
 
     throw error;
   }
-}
+};
 ```

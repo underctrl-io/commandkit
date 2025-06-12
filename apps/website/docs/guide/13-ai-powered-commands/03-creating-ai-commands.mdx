@@ -7,12 +7,12 @@ description: Learn how to create commands that can be executed by AI models.
 
 AI commands can be created by exporting a function called `ai` from your regular command file. You can also export `aiConfig` object along with the `ai` function to specify the parameters for the command.
 
-The `ai` function behaves similar to a `message` command, but it receives an additional `ctx.ai` property that contains the parameters passed by the AI model.
+The `ai` function behaves similar to a `message` command, but it receives an additional `ctx.ai` property (which is an instance of [`AiContext`](../../api-reference/ai/classes/ai-context.mdx)) that contains the parameters passed by the AI model.
 
 ```typescript title="src/app/commands/balance.ts"
 import { ApplicationCommandOptionType } from 'discord.js';
 import { CommandData, ChatInputCommand } from 'commandkit';
-import { AiCommand } from '@commandkit/ai';
+import { AiConfig, AiCommand } from '@commandkit/ai';
 import { z } from 'zod';
 
 export const command: CommandData = {
@@ -44,8 +44,8 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 };
 
 // AI will call this function to get the balance of the user
-export const ai: MessageCommand = async (ctx) => {
-  const { userId } = ctx.ai!.params;
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const { userId } = ctx.ai.params;
   const balance = await db.getBalance(userId);
 
   // return object with the balance

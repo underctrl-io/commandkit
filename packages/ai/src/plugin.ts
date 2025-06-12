@@ -10,7 +10,7 @@ import { getChannelById } from './tools/get-channel-by-id';
 import { getCurrentClientInfo } from './tools/get-current-client-info';
 import { getGuildById } from './tools/get-guild-by-id';
 import { getUserById } from './tools/get-user-by-id';
-import { getAIConfig } from './configure';
+import { AiMessage, getAIConfig } from './configure';
 import { augmentCommandKit } from './augmentation';
 
 /**
@@ -100,27 +100,29 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
       const { model, abortSignal, maxSteps, ...modelOptions } =
         await selectAiModel(ctx, message);
 
-      await onProcessingStart(ctx, message);
+      const promptOrMessage =
+        typeof prompt === 'string' ? { prompt } : { messages: prompt };
 
-      const tools = disableBuiltInTools
-        ? this.toolsRecord
-        : {
-            ...this.defaultTools,
-            ...this.toolsRecord,
-          };
+      await onProcessingStart(ctx, message);
 
       try {
         const result = await generateText({
           model,
           abortSignal: abortSignal ?? AbortSignal.timeout(60_000),
-          prompt,
           system: systemPrompt,
           maxSteps: maxSteps ?? 5,
           ...modelOptions,
           tools: {
-            ...tools,
+            // Include built-in least significant tools if not disabled
+            ...(!disableBuiltInTools && this.defaultTools),
+            // include tools added by configureAI()
+            // this should be able to override built-in tools
             ...modelOptions.tools,
+            // include tools added by commands at last since
+            // they are the most specific and should override others
+            ...this.toolsRecord,
           },
+          ...promptOrMessage,
         });
 
         await onResult(ctx, message, result);
@@ -203,6 +205,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
                 ctx.message,
                 {
                   handler: 'ai',
+                  throwOnError: true,
                 },
               );
 

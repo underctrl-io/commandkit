@@ -115,7 +115,7 @@ This guide covers common issues you might encounter when working with CommandKit
 2. **Validate parameters in command**
 
    ```ts
-   export async function ai(ctx: AiContext) {
+   export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
      console.log('Received parameters:', ctx.ai.params);
 
      const { username, message } = ctx.ai.params;
@@ -126,7 +126,7 @@ This guide covers common issues you might encounter when working with CommandKit
      }
 
      // Continue with command logic
-   }
+   };
    ```
 
 3. **Improve parameter descriptions**
@@ -201,7 +201,7 @@ This guide covers common issues you might encounter when working with CommandKit
 1. **Clear context store data**
 
    ```ts
-   export async function ai(ctx: AiContext) {
+   export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
      try {
        // Use context store
        ctx.store.set('data', someData);
@@ -212,7 +212,7 @@ This guide covers common issues you might encounter when working with CommandKit
        // Clear large objects from store
        ctx.store.clear();
      }
-   }
+   };
    ```
 
 2. **Limit AI steps and tokens**
@@ -228,20 +228,21 @@ This guide covers common issues you might encounter when working with CommandKit
 3. **Implement caching for expensive operations**
 
    ```ts
-   const cache = new Map();
+   async function fetchUserData(userId: string) {
+     'use cache';
 
-   export async function ai(ctx: AiContext) {
-     const cacheKey = `user:${ctx.message.author.id}`;
+     const cacheKey = `user:${userId}`;
+     cacheTag(cacheKey);
+     cacheLife('5m');
 
-     let userData = cache.get(cacheKey);
-     if (!userData) {
-       userData = await fetchUserData(ctx.message.author.id);
-       cache.set(cacheKey, userData);
+     const userData = await getUserDataFromDatabase(userId);
 
-       // Clear cache after 5 minutes
-       setTimeout(() => cache.delete(cacheKey), 300000);
-     }
+     return userData;
    }
+
+   export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+     const userData = await fetchUserData(ctx.message.author.id);
+   };
    ```
 
 ## Debugging Techniques
@@ -346,7 +347,7 @@ if (process.env.NODE_ENV === 'production') {
 ### Missing Permissions
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   // Check bot permissions
   const botMember = ctx.message.guild?.members.me;
   if (!botMember?.permissions.has('SendMessages')) {
@@ -361,7 +362,7 @@ export async function ai(ctx: AiContext) {
     );
     return;
   }
-}
+};
 ```
 
 ### Channel Access Issues
@@ -409,7 +410,7 @@ export default defineConfig({
 **Solution:** Check parameter validation:
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   // Add null checks
   if (!ctx.ai.params) {
     await ctx.message.reply('❌ No parameters provided');
@@ -421,7 +422,7 @@ export async function ai(ctx: AiContext) {
     await ctx.message.reply('❌ Username is required');
     return;
   }
-}
+};
 ```
 
 ## Performance Monitoring
@@ -473,44 +474,3 @@ If you're still experiencing issues:
 4. **Check Discord bot permissions** in the server
 5. **Review the AI model documentation** for your provider
 6. **Join the CommandKit Discord** for community support
-
-## Useful Debug Commands
-
-Create a debug command to test AI functionality:
-
-```ts
-export const command = {
-  name: 'ai-debug',
-  description: 'Debug AI system',
-};
-
-export async function message(ctx: MessageCommandContext) {
-  const aiPlugin = useAI();
-  const config = getAIConfig();
-
-  await ctx.message.reply({
-    embeds: [
-      {
-        title: 'AI Debug Information',
-        fields: [
-          {
-            name: 'Plugin Loaded',
-            value: !!aiPlugin ? '✅' : '❌',
-            inline: true,
-          },
-          {
-            name: 'Config Valid',
-            value: !!config.selectAiModel ? '✅' : '❌',
-            inline: true,
-          },
-          {
-            name: 'Bot Can Send',
-            value: ctx.message.channel.isSendable() ? '✅' : '❌',
-            inline: true,
-          },
-        ],
-      },
-    ],
-  });
-}
-```

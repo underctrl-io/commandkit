@@ -162,6 +162,12 @@ const config: Config = {
       theme: prismThemes.vsLight,
       darkTheme: prismThemes.dracula,
     },
+    mermaid: {
+      theme: {
+        dark: 'dark',
+        light: 'dark',
+      },
+    },
   } satisfies Preset.ThemeConfig,
   plugins: [
     function tailwindPlugin(context, options) {
@@ -179,6 +185,10 @@ const config: Config = {
     },
     require('./src/plugins/llms-txt.js'),
   ],
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
 };
 
 export default config;

@@ -18,8 +18,23 @@ import {
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 import { AnalyticsEvents } from '../../analytics/constants';
 
+/**
+ * Options for running a command in CommandKit.
+ */
 export interface RunCommandOptions {
+  /**
+   * The handler to use for executing the command.
+   * If not provided, the execution mode will determine the handler.
+   * For example, 'chatInputCommand', 'message', etc.
+   */
   handler?: string;
+  /**
+   * Whether to throw an error if the command execution fails.
+   * If true, any error during execution will be thrown.
+   * Default is false, which means errors will be logged but not thrown.
+   * @default false
+   */
+  throwOnError?: boolean;
 }
 
 /**
@@ -45,6 +60,8 @@ export class AppCommandRunner {
     options?: RunCommandOptions,
   ) {
     const { commandkit } = this.handler;
+
+    const shouldThrowOnError = !!options?.throwOnError;
 
     const executionMode = this.getExecutionMode(source);
 
@@ -209,10 +226,19 @@ export class AppCommandRunner {
               CommandKitErrorCodes.ExitMiddleware,
             ])
           ) {
+            if (shouldThrowOnError) {
+              throw e;
+            }
+
             Logger.error(e);
           }
         }
       }
+    } else {
+      result = {
+        error: true,
+        message: 'Command execution was cancelled by the middleware.',
+      };
     }
 
     // Run middleware after command execution

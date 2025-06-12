@@ -40,7 +40,17 @@ configureAI({
 
   // Optional: Custom prompt preparation
   preparePrompt: async (ctx, message) => {
+    // either return a string
     return `User: ${message.content}\nAI:`;
+
+    // or return an array of messages
+    // this is useful if you want to include conversation history
+    return [
+      {
+        role: 'user',
+        content: message.content,
+      },
+    ];
   },
 
   // Optional: Processing lifecycle hooks
@@ -267,20 +277,34 @@ Please respond appropriately based on the context and available tools.`;
 ### Conversation History
 
 ```ts
+import type { AiMessage } from '@commandkit/ai';
+
 preparePrompt: async (ctx, message) => {
-  const recentMessages = await message.channel.messages.fetch({ limit: 5 });
-  const conversation = recentMessages
+  const recentMessages = await message.channel.messages.fetch({
+    limit: 5,
+    // fetch 5 messages before the current one
+    before: message.id,
+  });
+
+  const isMe = (id: string) => id === message.client.user.id;
+
+  const conversation: AiMessage = recentMessages
+    // Filter out non-text messages and other bots
+    .filter((msg) => msg.content && (!msg.author.bot || isMe(msg.author.id)))
     .reverse()
-    .map((msg) => `${msg.author.username}: ${msg.content}`)
-    .join('\n');
+    .map((msg) => ({
+      role: isMe(msg.author.id) ? 'assistant' : 'user',
+      content: msg.content,
+    }));
 
-  return `Recent conversation:
-${conversation}
-
-Current user: ${message.author.username}
-Current message: ${message.content}
-
-AI: `;
+  // Add the current user message to the conversation
+  return [
+    ...conversation,
+    {
+      role: 'user',
+      content: message.content,
+    },
+  ];
 };
 ```
 

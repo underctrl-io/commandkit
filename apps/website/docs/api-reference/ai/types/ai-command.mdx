@@ -13,12 +13,10 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AiCommand
 
-<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="50" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="66" packageName="@commandkit/ai" />
 
 Represents a command that can be executed by the AI.
 
 ```ts title="Signature"
-type AiCommand<T extends Record<string, unknown>> = (
-  ctx: AiContext<T>,
-) => Promise<unknown> | unknown
+type AiCommand<T extends Record<string, unknown> = Record<string, unknown>> = (ctx: AiCommandContext<ExtractAiConfig<T>>) => Promise<unknown> | unknown
 ```

@@ -26,6 +26,12 @@ export function createSystemPrompt(message: Message): string {
 - Permissions: ${message.channel.isSendable() ? 'Can send messages' : 'Cannot send messages'}
 - Location: ${guildInfo}
 
+**Current User Information:**
+- id: ${message.author.id}
+- name: ${message.author.username}
+- display name: ${message.author.displayName}
+- avatar: ${message.author.avatarURL()}
+
 **Response Guidelines:**
 - Use Discord markdown for formatting
 - Only use tools when necessary for the task

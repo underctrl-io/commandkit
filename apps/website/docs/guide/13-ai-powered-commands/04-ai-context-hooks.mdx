@@ -14,9 +14,9 @@ The `AiContext` class provides comprehensive access to the AI execution environm
 ### Context Properties
 
 ```ts
-import { AiContext } from '@commandkit/ai';
+import { AiCommand } from '@commandkit/ai';
 
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   // AI-generated parameters based on your schema
   const params = ctx.ai.params;
 
@@ -31,7 +31,7 @@ export async function ai(ctx: AiContext) {
 
   // Key-value store for temporary data
   const store = ctx.store;
-}
+};
 ```
 
 ### Using the Store
@@ -39,7 +39,7 @@ export async function ai(ctx: AiContext) {
 The context store allows you to persist data during command execution:
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   // Store data
   ctx.store.set('startTime', Date.now());
   ctx.store.set('userPreferences', { theme: 'dark', lang: 'en' });
@@ -55,7 +55,7 @@ export async function ai(ctx: AiContext) {
 
   // Delete data
   ctx.store.delete('temporaryData');
-}
+};
 ```
 
 ## AI Hooks
@@ -193,7 +193,7 @@ export const calculateTax = createTool({
 The AI context provides access to all Discord.js objects:
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   const { message, client } = ctx;
 
   // Access guild information
@@ -216,7 +216,7 @@ export async function ai(ctx: AiContext) {
   // Access bot information
   const botUser = client.user;
   console.log(`Bot: ${botUser.username}#${botUser.discriminator}`);
-}
+};
 ```
 
 ### Error Handling in Context
@@ -224,7 +224,7 @@ export async function ai(ctx: AiContext) {
 Implement robust error handling in your AI commands:
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   try {
     const { userId } = ctx.ai.params;
 
@@ -249,7 +249,7 @@ export async function ai(ctx: AiContext) {
 
     await ctx.message.reply('❌ An unexpected error occurred.');
   }
-}
+};
 ```
 
 ## Context Lifecycle
@@ -257,7 +257,7 @@ export async function ai(ctx: AiContext) {
 Understanding the AI context lifecycle helps with proper resource management:
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   // 1. Context is created when AI processes the message
   console.log('AI context created');
 
@@ -269,7 +269,7 @@ export async function ai(ctx: AiContext) {
 
   // 4. Context is cleaned up automatically
   // Note: Store data is automatically cleared after execution
-}
+};
 ```
 
 ## Best Practices
@@ -281,7 +281,7 @@ export async function ai(ctx: AiContext) {
 5. **Performance**: Avoid storing large objects in the context store
 
 ```ts
-export async function ai(ctx: AiContext) {
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   // Good: Validate critical parameters
   const { amount } = ctx.ai.params;
   if (amount <= 0 || amount > 1000000) {
@@ -302,5 +302,5 @@ export async function ai(ctx: AiContext) {
     console.error('Payment failed:', error);
     await ctx.message.reply('❌ Payment processing failed. Please try again.');
   }
-}
+};
 ```

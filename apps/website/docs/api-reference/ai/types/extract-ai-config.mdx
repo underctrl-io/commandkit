@@ -1,5 +1,5 @@
 ---
-title: "AIGenerateResult"
+title: "ExtractAiConfig"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,12 +11,12 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## AIGenerateResult
+## ExtractAiConfig
 
-<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="11" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="50" packageName="@commandkit/ai" />
 
-Represents the result of an AI text generation operation.
+Extracts the AI configuration params.
 
 ```ts title="Signature"
-type AIGenerateResult = Awaited<ReturnType<typeof generateText>>
+type ExtractAiConfig<T extends Record<string, unknown>> = T extends AiConfig ? InferParameters<T['parameters']> : T
 ```

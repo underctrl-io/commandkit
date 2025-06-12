@@ -1,0 +1,23 @@
+---
+title: "AiCommandContext"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## AiCommandContext
+
+<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="58" packageName="@commandkit/ai" />
+
+Represents the context in which an AI command is executed.
+It extends the MessageCommandContext to include AI-specific properties.
+
+```ts title="Signature"
+type AiCommandContext<T extends Record<string, unknown>> = MessageCommandContext & { ai: AiContext<ExtractAiConfig<T>> }
+```

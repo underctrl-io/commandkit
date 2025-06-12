@@ -4,6 +4,9 @@ import { createSystemPrompt } from './system-prompt';
 import { createTypingIndicator } from './utils';
 import { AiContext } from './context';
 import { Logger } from 'commandkit';
+import type { generateText } from 'ai';
+
+export type AiMessage = Parameters<typeof generateText>[0]['messages'] & {};
 
 const CKIT_INTERNAL_STOP_TYPING = '<<{{[[((ckitInternalStopTyping))]]}}>>';
 
@@ -34,7 +37,10 @@ export interface ConfigureAI {
   /**
    * A function that prepares the prompt for the AI model.
    */
-  preparePrompt?: (ctx: AiContext, message: Message) => Promise<string>;
+  preparePrompt?: (
+    ctx: AiContext,
+    message: Message,
+  ) => Promise<string | AiMessage>;
   /**
    * A function that gets called when the AI starts processing a message.
    */
@@ -62,15 +68,51 @@ const AIConfig: Required<ConfigureAI> = {
   messageFilter: async (message) =>
     message.mentions.users.has(message.client.user.id),
   prepareSystemPrompt: async (_ctx, message) => createSystemPrompt(message),
-  async preparePrompt(_ctx, message) {
-    const userInfo = `<user>
-    <id>${message.author.id}</id>
-    <name>${message.author.username}</name>
-    <displayName>${message.author.displayName}</displayName>
-    <avatar>${message.author.avatarURL()}</avatar>
-    </user>`;
+  preparePrompt: async (_ctx, message) => {
+    const recentMessages = await message.channel.messages.fetch({
+      limit: 10,
+      before: message.id,
+    });
 
-    return `${userInfo}\nUser: ${message.content}\nAI:`;
+    const isMe = (id: string) => id === message.client.user.id;
+
+    const conversation: AiMessage = recentMessages
+      .filter((msg) => msg.content && (!msg.author.bot || isMe(msg.author.id)))
+      .reverse()
+      .map((msg) => ({
+        role: isMe(msg.author.id) ? 'assistant' : 'user',
+        annotations: {
+          authorId: msg.author.id,
+          authorName: msg.author.username,
+          authorAvatar: msg.author.displayAvatarURL(),
+        },
+        createdAt: msg.createdAt,
+        content: msg.content,
+        experimental_attachments: msg.attachments.map((attachment) => ({
+          url: attachment.url,
+          name: attachment.name,
+          contentType: attachment.contentType || undefined,
+        })),
+      }));
+
+    return [
+      ...conversation,
+      {
+        role: 'user',
+        annotations: {
+          authorId: message.author.id,
+          authorName: message.author.username,
+          authorAvatar: message.author.displayAvatarURL(),
+        },
+        createdAt: message.createdAt,
+        content: message.content,
+        experimental_attachments: message.attachments.map((attachment) => ({
+          url: attachment.url,
+          name: attachment.name,
+          contentType: attachment.contentType || undefined,
+        })),
+      },
+    ] as AiMessage;
   },
   selectAiModel: async () => {
     throw new Error(

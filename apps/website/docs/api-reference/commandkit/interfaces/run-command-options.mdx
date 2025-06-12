@@ -13,13 +13,14 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## RunCommandOptions
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/commands/AppCommandRunner.ts" sourceLine="21" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/AppCommandRunner.ts" sourceLine="24" packageName="commandkit" />
 
-
+Options for running a command in CommandKit.
 
 ```ts title="Signature"
 interface RunCommandOptions {
     handler?: string;
+    throwOnError?: boolean;
 }
 ```
 
@@ -29,7 +30,16 @@ interface RunCommandOptions {
 
 <MemberInfo kind="property" type={`string`}   />
 
+The handler to use for executing the command.
+If not provided, the execution mode will determine the handler.
+For example, 'chatInputCommand', 'message', etc.
+### throwOnError
 
+<MemberInfo kind="property" type={`boolean`} default={`false`}   />
+
+Whether to throw an error if the command execution fails.
+If true, any error during execution will be thrown.
+Default is false, which means errors will be logged but not thrown.
 
 
 </div>

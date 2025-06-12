@@ -4,10 +4,9 @@ import {
   ChatInputCommandContext,
   CommandData,
   OnButtonKitClick,
-  MessageCommandContext,
 } from 'commandkit';
 import { ButtonStyle, MessageFlags } from 'discord.js';
-import { AiConfig, AiContext } from '@commandkit/ai';
+import { AiConfig, AiCommand } from '@commandkit/ai';
 import { z } from 'zod';
 
 export const command: CommandData = {
@@ -60,8 +59,8 @@ export async function chatInput({ interaction }: ChatInputCommandContext) {
   });
 }
 
-export async function ai(ctx: MessageCommandContext) {
-  const message = ctx.ai?.params?.message as string;
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const message = ctx.ai.params.message;
 
   const buttons = (
     <ActionRow>
@@ -78,4 +77,4 @@ export async function ai(ctx: MessageCommandContext) {
     content: message || 'There was no confirmation message provided.',
     components: [buttons],
   });
-}
+};
