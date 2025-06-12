@@ -91,10 +91,11 @@ selectAiModel: async (ctx, message) => {
 
 The AI has access to Discord-specific information:
 
+- Basic information about itself
 - Server/guild information
-- User and role data
-- Channel management
-- Permission checking
+- Basic user data
+- Basic channel data
+- Available commands
 - Message history
 
 ### Extensible Tool System
@@ -230,6 +231,10 @@ const rateLimiter = new RateLimiter(5, 60000); // 5 requests per minute
 const cache = new Map();
 const cachedResult = cache.get(cacheKey) || (await expensiveOperation());
 ```
+
+:::info
+For a better cache management solution, check out the [@commandkit/cache](../04-caching/01-caching-in-commandkit.mdx) plugin guide.
+:::
 
 ### Async Processing
 
