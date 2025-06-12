@@ -26,6 +26,8 @@ interface CommandData {
   parentPath: string;
   relativePath: string;
   middlewares: string[];
+  supportsAI: boolean;
+  description?: string;
 }
 
 interface MiddlewareData {
@@ -52,12 +54,25 @@ const CommandDetails = ({
 }) => {
   return (
     <Card className="p-4 mt-4 bg-muted/50 border-l-4 border-l-primary rounded-sm">
-      <h3 className="text-lg font-bold mb-2">{command.name}</h3>
+      <h3 className="text-lg font-bold mb-2">
+        {command.name}
+        {command.supportsAI && (
+          <Badge variant="outline" className="ml-2">
+            ✨
+          </Badge>
+        )}
+      </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
         <div>
           <p className="text-muted-foreground">ID:</p>
           <p className="font-mono text-xs break-all">{command.id}</p>
         </div>
+        {command.description && (
+          <div>
+            <p className="text-muted-foreground">Description:</p>
+            <p className="italic">{command.description}</p>
+          </div>
+        )}
         <div>
           <p className="text-muted-foreground">Category:</p>
           <p>{command.category || 'Uncategorized'}</p>
@@ -106,6 +121,7 @@ const TreeNode = ({
   hasMiddleware = false,
   onClick,
   isSelected,
+  supportsAI,
 }: {
   name: string;
   children?: React.ReactNode;
@@ -113,6 +129,7 @@ const TreeNode = ({
   hasMiddleware?: boolean;
   onClick?: () => void;
   isSelected?: boolean;
+  supportsAI?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const hasChildren = Boolean(children);
@@ -157,6 +174,11 @@ const TreeNode = ({
         {hasMiddleware && (
           <Badge variant="outline" className="ml-2 py-0 h-5">
             <Shield className="h-3 w-3 mr-1" />λ
+          </Badge>
+        )}
+        {supportsAI && (
+          <Badge variant="outline" className="ml-2 py-0 h-5">
+            ✨
           </Badge>
         )}
       </div>
@@ -236,6 +258,7 @@ function CommandHierarchy() {
                       key={command.id}
                       name={command.name}
                       isCommand={true}
+                      supportsAI={command.supportsAI}
                       hasMiddleware={command.middlewares.length > 0}
                       onClick={() => setSelectedCommand(command.id)}
                       isSelected={selectedCommand === command.id}

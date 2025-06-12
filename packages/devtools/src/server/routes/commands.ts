@@ -14,11 +14,13 @@ app.get('/', (req, res) => {
       {
         id: command.command.id,
         name: command.data.command.name,
+        description: command.data.command.description,
         path: command.command.path,
         category: command.command.category,
         parentPath: command.command.parentPath,
         relativePath: command.command.relativePath,
         middlewares: command.command.middlewares,
+        supportsAI: !!command.data.ai,
       },
     ];
   });
