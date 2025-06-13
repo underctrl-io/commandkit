@@ -5,8 +5,9 @@ const matter = require('gray-matter');
 const DOCS_URL = 'https://commandkit.dev/docs/next/guide';
 
 const removeNumericPrefix = (path) => {
-  // 01-getting-started -> getting-started
-  return path.replace(/^\d+\-/, '');
+  // 01-getting-started/01-introduction -> getting-started/introduction
+  const segments = path.split('/');
+  return segments.map(segment => segment.replace(/^\d+\-/, '')).join('/');
 };
 
 module.exports = function (context) {
