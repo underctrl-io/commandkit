@@ -114,6 +114,9 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
+      gray-matter:
+        specifier: ^4.0.3
+        version: 4.0.3
       prism-react-renderer:
         specifier: ^2.3.0
         version: 2.4.1(react@19.1.0)
