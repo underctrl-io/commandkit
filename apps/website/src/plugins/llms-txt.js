@@ -4,6 +4,11 @@ const matter = require('gray-matter');
 
 const DOCS_URL = 'https://commandkit.dev/docs/next/guide';
 
+const removeNumericPrefix = (path) => {
+  // 01-getting-started -> getting-started
+  return path.replace(/^\d+\-/, '');
+};
+
 module.exports = function (context) {
   return {
     name: 'llms-txt-plugin',
@@ -61,7 +66,7 @@ module.exports = function (context) {
         ...allDocs
           .filter(doc => doc.title && doc.description)
           .map(doc => {
-            const url = `${DOCS_URL}/${doc.path}`;
+            const url = `${DOCS_URL}/${removeNumericPrefix(doc.path)}`;
             return `- [${doc.title}](${url}): ${doc.description || doc.title}`;
           })
       ].join('\n');
