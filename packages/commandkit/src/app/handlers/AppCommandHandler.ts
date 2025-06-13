@@ -1,4 +1,3 @@
-import type { CommandKit } from '../../CommandKit';
 import {
   AutocompleteInteraction,
   Awaitable,
@@ -10,18 +9,20 @@ import {
   Message,
   SlashCommandBuilder,
 } from 'discord.js';
-import { Context } from '../commands/Context';
-import { toFileURL } from '../../utils/resolve-file-url';
-import { MessageCommandParser } from '../commands/MessageCommandParser';
-import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
-import { CommandRegistrar } from '../register/CommandRegistrar';
+import type { CommandKit } from '../../CommandKit';
 import { AsyncFunction, GenericFunction } from '../../context/async-context';
 import { Logger } from '../../logger/Logger';
-import { Command, Middleware } from '../router';
-import { AppCommandRunner } from '../commands/AppCommandRunner';
-import { COMMANDKIT_IS_DEV } from '../../utils/constants';
-import { rewriteCommandDeclaration } from '../../utils/types-package';
+import type { CommandData } from '../../types';
 import colors from '../../utils/colors';
+import { COMMANDKIT_IS_DEV } from '../../utils/constants';
+import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
+import { toFileURL } from '../../utils/resolve-file-url';
+import { rewriteCommandDeclaration } from '../../utils/types-package';
+import { AppCommandRunner } from '../commands/AppCommandRunner';
+import { Context } from '../commands/Context';
+import { MessageCommandParser } from '../commands/MessageCommandParser';
+import { CommandRegistrar } from '../register/CommandRegistrar';
+import { Command, Middleware } from '../router';
 
 /**
  * Function type for wrapping command execution with custom logic.
@@ -34,7 +35,7 @@ export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
  * It can be used to define slash commands, context menu commands, and message commands.
  */
 export interface AppCommandNative {
-  command: SlashCommandBuilder | Record<string, any>;
+  command: CommandData | Record<string, any>;
   chatInput?: (ctx: Context) => Awaitable<unknown>;
   autocomplete?: (ctx: Context) => Awaitable<unknown>;
   message?: (ctx: Context) => Awaitable<unknown>;
@@ -126,6 +127,10 @@ const commandDataSchema = {
   messageContextMenu: (c: unknown) => typeof c === 'function',
   userContextMenu: (c: unknown) => typeof c === 'function',
 };
+
+export type CommandDataSchema = typeof commandDataSchema;
+export type CommandDataSchemaKey = keyof CommandDataSchema;
+export type CommandDataSchemaValue = CommandDataSchema[CommandDataSchemaKey];
 
 /**
  * @private
@@ -682,21 +687,35 @@ export class AppCommandHandler {
         return;
       }
 
-      const data = await import(`${toFileURL(command.path)}?t=${Date.now()}`);
+      const commandFileData = (await import(
+        `${toFileURL(command.path)}?t=${Date.now()}`
+      )) as AppCommandNative;
 
-      if (!data.command) {
+      if (!commandFileData.command) {
         throw new Error(
           `Invalid export for command ${command.name}: no command definition found`,
         );
       }
 
       let handlerCount = 0;
-      for (const [key, validator] of Object.entries(commandDataSchema)) {
-        if (key !== 'command' && data[key]) handlerCount++;
-        if (data[key] && !(await validator(data[key]))) {
-          throw new Error(
-            `Invalid export for command ${command.name}: ${key} does not match expected value`,
-          );
+
+      for (const [key, propValidator] of Object.entries(commandDataSchema) as [
+        CommandDataSchemaKey,
+        CommandDataSchemaValue,
+      ][]) {
+        const exportedProp = commandFileData[key];
+
+        if (exportedProp) {
+          if (!(await propValidator(exportedProp))) {
+            throw new Error(
+              `Invalid export for command ${command.name}: ${key} does not match expected value`,
+            );
+          }
+
+          if (key !== 'command') {
+            // command file includes a handler function (chatInput, message, etc)
+            handlerCount++;
+          }
         }
       }
 
@@ -706,7 +725,7 @@ export class AppCommandHandler {
         );
       }
 
-      let lastUpdated = data.command;
+      let lastUpdated = commandFileData.command;
 
       await this.commandkit.plugins.execute(async (ctx, plugin) => {
         const res = await plugin.prepareCommand(ctx, lastUpdated);
@@ -718,9 +737,9 @@ export class AppCommandHandler {
 
       this.loadedCommands.set(id, {
         command,
-        guilds: data.guilds,
+        guilds: commandFileData.command.guilds,
         data: {
-          ...data,
+          ...commandFileData,
           command: 'toJSON' in lastUpdated ? lastUpdated.toJSON() : lastUpdated,
         },
       });

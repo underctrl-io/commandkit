@@ -6,6 +6,10 @@ import {
 } from 'discord.js';
 import type { CommandKit } from './CommandKit';
 
+type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};
+
 /**
  * Options for instantiating a CommandKit handler.
  */
@@ -40,6 +44,9 @@ export interface CommandContext<
 /**
  * Represents a command that can be executed by CommandKit.
  */
-export type CommandData = RESTPostAPIApplicationCommandsJSONBody & {
-  guilds?: string[];
-};
+export type CommandData = Prettify<
+  Omit<RESTPostAPIApplicationCommandsJSONBody, 'description'> & {
+    description?: string;
+    guilds?: string[];
+  }
+>;
