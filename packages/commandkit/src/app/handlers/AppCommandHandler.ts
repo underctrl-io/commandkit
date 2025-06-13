@@ -699,7 +699,8 @@ export class AppCommandHandler {
       }
 
       if (
-        commandFileData.command.type === ApplicationCommandType.ChatInput &&
+        (!commandFileData.command.type ||
+          commandFileData.command.type === ApplicationCommandType.ChatInput) &&
         !commandFileData.command.description
       ) {
         commandFileData.command.description = `${command.name} command`;
