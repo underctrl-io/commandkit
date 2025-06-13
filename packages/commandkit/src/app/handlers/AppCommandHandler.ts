@@ -1,4 +1,5 @@
 import {
+  ApplicationCommandType,
   AutocompleteInteraction,
   Awaitable,
   Collection,
@@ -679,7 +680,7 @@ export class AppCommandHandler {
           data: {
             command: {
               name: command.name,
-              description: `${command.name} commands`,
+              description: `${command.name} command`,
               type: 1,
             },
           },
@@ -695,6 +696,13 @@ export class AppCommandHandler {
         throw new Error(
           `Invalid export for command ${command.name}: no command definition found`,
         );
+      }
+
+      if (
+        commandFileData.command.type === ApplicationCommandType.ChatInput &&
+        !commandFileData.command.description
+      ) {
+        commandFileData.command.description = `${command.name} command`;
       }
 
       let handlerCount = 0;
