@@ -38,7 +38,7 @@ const config: Config = {
           versions: {
             current: {
               label: '1.2',
-              path: 'v1',
+              // path: 'v1',
             },
             '0.1.10': {
               label: '0.1.10',
