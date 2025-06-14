@@ -3,6 +3,7 @@ import { AiPlugin } from './plugin';
 import { AiPluginOptions } from './types';
 import { getAiWorkerContext } from './ai-context-worker';
 import { getCommandKit } from 'commandkit';
+import type { Message } from 'discord.js';
 
 /**
  * Retrieves the AI context.
@@ -26,6 +27,21 @@ export function useAI() {
   }
 
   return aiPlugin;
+}
+
+/**
+ * Executes an AI command.
+ * @param message The message to execute the AI command on
+ * @example
+ * ```ts
+ * const message = await getMessageSomehow();
+ * // use AI to process the message
+ * await executeAI(message);
+ * ```
+ */
+export function executeAI(message: Message): Promise<void> {
+  const aiPlugin = useAI();
+  return aiPlugin.executeAI(message);
 }
 
 /**

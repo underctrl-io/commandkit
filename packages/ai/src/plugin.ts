@@ -68,7 +68,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
     commandkit: CommandKit,
     message: Message,
   ): Promise<void> {
-    if (message.author.bot || !Object.keys(this.toolsRecord).length) return;
+    if (message.author.bot) return;
     const {
       messageFilter,
       selectAiModel,
