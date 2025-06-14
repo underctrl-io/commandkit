@@ -1,3 +1,74 @@
 ---
 title: Setup CommandKit
+description: Setup a new CommandKit project using the create-commandkit CLI
 ---
+
+:::warning
+
+- CommandKit requires at least [Node.js](https://nodejs.org/) v22
+- This documentation assumes that you have a basic understanding of how to use [discord.js](https://discord.js.org/). If you are new to discord.js, we recommend you to read the [discord.js guide](https://discordjs.guide/) first.
+  :::
+
+The quickest way to setup a new CommandKit project is to use the `create-commandkit` CLI. To get started, run the following command in your terminal:
+
+```sh npm2yarn
+npm create commandkit@latest
+```
+
+This will start the CLI in an interactive mode. You can follow the prompts to setup your project.
+
+## Project structure
+
+By using the CLI to create a base project, you should get a file tree that looks something like this:
+
+```
+.
+├── src/
+│   ├── app/
+│   │   ├── commands/
+│   │   │   └── ping.ts
+│   │   └── events/
+│   │       └── ready/
+│   │           └── log.ts
+│   └── app.ts
+├── .env
+├── .gitignore
+├── commandkit.config.ts
+├── package.json
+└── tsconfig.json
+```
+
+## Entry point
+
+The `src/app.ts` file is the main entry point for your application. This file default exports the discord.js client instance which CommandKit loads at runtime.
+
+```ts title="src/app.ts"
+import { Client } from 'discord.js';
+
+const client = new Client({
+  intents: ['Guilds', 'GuildMessages', 'MessageContent'],
+});
+
+// Optional: Setting up the token manually
+client.token = process.env.MY_BOT_TOKEN;
+
+export default client;
+```
+
+Notice how there's no `client.login()` in this file. This is because CommandKit will automatically handle the login process for you when the application starts.
+
+## Development version
+
+If you would like to try the latest development builds, you can use the `@dev` tag like so:
+
+```sh npm2yarn
+npx create-commandkit@dev
+```
+
+:::warning
+The development version is likely to have bugs.
+:::
+
+## Manual setup
+
+Alternatively, if you would like to setup a new CommandKit project manually, you can follow [this guide](../08-advanced/01-setup-commandkit-manually.mdx).
