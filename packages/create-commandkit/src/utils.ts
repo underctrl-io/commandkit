@@ -7,8 +7,8 @@ export const textColors = {
 export const commands = {
   init: {
     npm: 'npm init -y',
-    yarn: 'yarn init -y; yarn config set nodeLinker node-modules; yarn set version stable',
+    yarn: 'yarn init -y; yarn set version stable; yarn config set nodeLinker node-modules;',
     pnpm: 'pnpm init',
-    bun: 'bun init -y',
+    bun: 'bun init -y -m',
   },
 };
