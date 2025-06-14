@@ -7,7 +7,7 @@ const DOCS_URL = 'https://commandkit.dev/docs/next/guide';
 const removeNumericPrefix = (path) => {
   // 01-getting-started/01-introduction -> getting-started/introduction
   const segments = path.split('/');
-  return segments.map(segment => segment.replace(/^\d+\-/, '')).join('/');
+  return segments.map((segment) => segment.replace(/^\d+\-/, '')).join('/');
 };
 
 module.exports = function (context) {
@@ -32,12 +32,16 @@ module.exports = function (context) {
           const fullPath = path.join(dir, entry.name);
           if (entry.isDirectory()) {
             await getMdxFiles(fullPath, versionPrefix);
-          } else if (entry.name.endsWith('.mdx') || entry.name.endsWith('.md')) {
+          } else if (
+            entry.name.endsWith('.mdx') ||
+            entry.name.endsWith('.md')
+          ) {
             const content = await fs.promises.readFile(fullPath, 'utf8');
             const { data: frontmatter } = matter(content);
 
             // Get relative path from guide directory
-            const relativePath = path.relative(guideDir, fullPath)
+            const relativePath = path
+              .relative(guideDir, fullPath)
               .replace(/\.mdx?$/, '')
               .replace(/\\/g, '/');
 
@@ -65,11 +69,11 @@ module.exports = function (context) {
       const markdownContent = [
         '# CommandKit Docs\n',
         ...allDocs
-          .filter(doc => doc.title && doc.description)
-          .map(doc => {
+          .filter((doc) => doc.title && doc.description)
+          .map((doc) => {
             const url = `${DOCS_URL}/${removeNumericPrefix(doc.path)}`;
             return `- [${doc.title}](${url}): ${doc.description || doc.title}`;
-          })
+          }),
       ].join('\n');
 
       // Write markdown content
