@@ -26,7 +26,7 @@ configureAI({
   }),
 
   // Optional: Filter which messages trigger AI processing
-  messageFilter: async (message) => {
+  messageFilter: async (commandkit, message) => {
     return message.mentions.users.has(message.client.user.id);
   },
 
@@ -130,7 +130,7 @@ selectAiModel: async (ctx, message) => ({
 ### Basic Filtering
 
 ```ts
-messageFilter: async (message) => {
+messageFilter: async (commandkit, message) => {
   // Only respond to mentions
   return message.mentions.users.has(message.client.user.id);
 };
@@ -139,7 +139,7 @@ messageFilter: async (message) => {
 ### Advanced Filtering
 
 ```ts
-messageFilter: async (message) => {
+messageFilter: async (commandkit, message) => {
   // Don't process bot messages
   if (message.author.bot) return false;
 
@@ -165,7 +165,7 @@ messageFilter: async (message) => {
 ### Role-based Filtering
 
 ```ts
-messageFilter: async (message) => {
+messageFilter: async (commandkit, message) => {
   if (!message.inGuild()) return false;
 
   const member = message.member;

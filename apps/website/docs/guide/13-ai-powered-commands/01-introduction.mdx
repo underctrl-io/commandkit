@@ -127,7 +127,7 @@ message: 'Hey bot, can you play some music?';
 ### 2. Message Filtering
 
 ```ts
-messageFilter: async (message) => {
+messageFilter: async (commandkit, message) => {
   return message.mentions.users.has(message.client.user.id);
 };
 ```
@@ -176,7 +176,7 @@ await message.reply('🎵 Now playing music!');
 ```ts
 configureAI({
   selectAiModel: async () => ({ model: myModel }),
-  messageFilter: async (message) =>
+  messageFilter: async (commandkit, message) =>
     message.mentions.users.has(message.client.user.id),
 });
 ```

@@ -29,7 +29,7 @@ This guide covers common issues you might encounter when working with CommandKit
 
    ```ts
    // Check your message filter
-   messageFilter: async (message) => {
+   messageFilter: async (commandkit, message) => {
      console.log('Filtering message:', message.content);
      const shouldProcess = message.mentions.users.has(message.client.user.id);
      console.log('Should process:', shouldProcess);
@@ -153,7 +153,7 @@ This guide covers common issues you might encounter when working with CommandKit
    ```ts
    const userCooldowns = new Map<string, number>();
 
-   messageFilter: async (message) => {
+   messageFilter: async (commandkit, message) => {
      const userId = message.author.id;
      const now = Date.now();
      const cooldown = userCooldowns.get(userId) || 0;
@@ -368,7 +368,7 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 ### Channel Access Issues
 
 ```ts
-messageFilter: async (message) => {
+messageFilter: async (commandkit, message) => {
   // Check if bot can send messages in the channel
   if (!message.channel.isSendable()) {
     console.log('Cannot send messages in channel:', message.channelId);

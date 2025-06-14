@@ -13,9 +13,4 @@ configureAI({
       model,
     };
   },
-  messageFilter: async (message) => {
-    return (
-      message.inGuild() && message.mentions.users.has(message.client.user.id)
-    );
-  },
 });
