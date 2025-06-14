@@ -1,6 +1,6 @@
 import type {
-  CommandData,
   ChatInputCommand,
+  CommandData,
   MessageCommand,
   MessageContextMenuCommand,
 } from 'commandkit';
@@ -12,7 +12,7 @@ import {
 
 export const command: CommandData = {
   name: 'cat',
-  description: 'cat command',
+  // description: 'cat command',
   integration_types: [
     ApplicationIntegrationType.GuildInstall,
     ApplicationIntegrationType.UserInstall,
