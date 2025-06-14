@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const matter = require('gray-matter');
 
-const DOCS_URL = 'https://commandkit.dev/docs/next/guide';
+const DOCS_URL = 'https://commandkit.dev/docs/guide';
 
 const removeNumericPrefix = (path) => {
   // 01-getting-started/01-introduction -> getting-started/introduction
@@ -24,7 +24,8 @@ module.exports = function (context) {
         if (!fs.existsSync(dir)) return;
 
         // skip versioned docs
-        if (dir.includes(versionedDocsDir)) return;
+        // TODO: remove guide.old
+        if (dir.includes(versionedDocsDir) || dir.includes('guide.old')) return;
 
         const entries = await fs.promises.readdir(dir, { withFileTypes: true });
 
