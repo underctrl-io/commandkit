@@ -1,5 +1,5 @@
 ---
-title: "CommandFilterFunction"
+title: "CommandDataSchemaValue"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,12 +11,12 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## CommandFilterFunction
+## CommandDataSchemaValue
 
-<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="18" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="134" packageName="commandkit" />
 
-Function type for filtering commands based on their name.
+
 
 ```ts title="Signature"
-type CommandFilterFunction = (commandName: string) => boolean
+type CommandDataSchemaValue = CommandDataSchema[CommandDataSchemaKey]
 ```

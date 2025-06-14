@@ -1,5 +1,5 @@
 ---
-title: "AI"
+title: "ExecuteAI"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,18 +11,28 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## ai
+## executeAI
 
-<GenerationInfo sourceFile="packages/ai/src/index.ts" sourceLine="52" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/index.ts" sourceLine="42" packageName="@commandkit/ai" />
 
-Defines the AI plugin for the application.
+Executes an AI command.
+
+
+
+*Example*
+
+```ts
+const message = await getMessageSomehow();
+// use AI to process the message
+await executeAI(message);
+```
 
 ```ts title="Signature"
-function ai(options?: AiPluginOptions): void
+function executeAI(message: Message): Promise<void>
 ```
 Parameters
 
-### options
+### message
 
-<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/ai/interfaces/ai-plugin-options#aipluginoptions'>AiPluginOptions</a>`} />
+<MemberInfo kind="parameter" type={`Message`} />
 

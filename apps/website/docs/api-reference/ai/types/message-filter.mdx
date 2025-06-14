@@ -13,10 +13,13 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## MessageFilter
 
-<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="25" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="18" packageName="@commandkit/ai" />
 
 Function type for filtering messages before they are processed by the AI.
 
 ```ts title="Signature"
-type MessageFilter = (message: Message) => Promise<boolean>
+type MessageFilter = (
+  commandkit: CommandKit,
+  message: Message,
+) => Promise<boolean>
 ```
