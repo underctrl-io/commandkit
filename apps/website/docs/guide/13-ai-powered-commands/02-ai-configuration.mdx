@@ -44,7 +44,7 @@ configureAI({
   },
 
   // Optional: Filter which messages trigger AI processing
-  messageFilter: async (message) => {
+  messageFilter: async (commandkit, message) => {
     // Only respond when the bot is mentioned
     return (
       message.inGuild() && message.mentions.users.has(message.client.user.id)
@@ -89,7 +89,7 @@ selectAiModel: async (ctx, message) => {
 Control which messages trigger AI processing:
 
 ```ts
-messageFilter: async (message) => {
+messageFilter: async (commandkit, message) => {
   // Only respond to mentions
   return message.mentions.users.has(message.client.user.id);
 
@@ -236,7 +236,7 @@ configureAI({
     };
   },
 
-  messageFilter: async (message) => {
+  messageFilter: async (commandkit, message) => {
     return message.mentions.users.has(message.client.user.id);
   },
 });

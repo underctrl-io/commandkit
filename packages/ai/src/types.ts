@@ -1,7 +1,7 @@
 import { Tool, type generateText } from 'ai';
 import { Message } from 'discord.js';
 import { AiContext } from './context';
-import { LoadedCommand, MessageCommandContext } from 'commandkit';
+import CommandKit, { LoadedCommand, MessageCommandContext } from 'commandkit';
 import { AiConfig } from './plugin';
 import { InferParameters } from './tools/common';
 
@@ -11,18 +11,14 @@ import { InferParameters } from './tools/common';
 export type AIGenerateResult = Awaited<ReturnType<typeof generateText>>;
 
 /**
- * Function type for filtering commands based on their name.
- * @param commandName - The name of the command to filter.
- * @returns A boolean indicating whether the command should be included in the filter.
- */
-export type CommandFilterFunction = (commandName: string) => boolean;
-
-/**
  * Function type for filtering messages before they are processed by the AI.
  * @param message - The message to filter.
  * @returns A promise that resolves to a boolean indicating whether the message should be processed.
  */
-export type MessageFilter = (message: Message) => Promise<boolean>;
+export type MessageFilter = (
+  commandkit: CommandKit,
+  message: Message,
+) => Promise<boolean>;
 
 /**
  * Function type for selecting an AI model based on the message.

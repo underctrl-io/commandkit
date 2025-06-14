@@ -85,7 +85,9 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
 
     if (!message.channel.isTextBased() || !message.channel.isSendable()) return;
 
-    const shouldContinue = messageFilter ? await messageFilter(message) : true;
+    const shouldContinue = messageFilter
+      ? await messageFilter(commandkit, message)
+      : true;
     if (!shouldContinue) return;
 
     const ctx = new AiContext<any>({

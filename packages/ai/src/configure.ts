@@ -65,8 +65,21 @@ export interface ConfigureAI {
 
 const AIConfig: Required<ConfigureAI> = {
   disableBuiltInTools: false,
-  messageFilter: async (message) =>
-    message.mentions.users.has(message.client.user.id),
+  messageFilter: async (commandkit, message) => {
+    const prefixOrPrefixes =
+      await commandkit.config.getMessageCommandPrefix(message);
+
+    const prefixes = Array.isArray(prefixOrPrefixes)
+      ? prefixOrPrefixes
+      : [prefixOrPrefixes];
+
+    const possiblyCommand = prefixes.some((p) => message.content.startsWith(p));
+
+    // TODO: figure out a workaround for mention prefixes
+    return (
+      !possiblyCommand && message.mentions.users.has(message.client.user.id)
+    );
+  },
   prepareSystemPrompt: async (_ctx, message) => createSystemPrompt(message),
   preparePrompt: async (_ctx, message) => {
     const recentMessages = await message.channel.messages.fetch({
