@@ -19,7 +19,7 @@ const maybeUpperCase = (str: string) => {
 
 const config: Config = {
   title: 'CommandKit',
-  tagline: 'A Discord.js handler',
+  tagline: 'The discord.js meta-framework',
   favicon: 'img/favicon.ico',
   url: 'https://commandkit.dev',
   baseUrl: '/',
@@ -34,6 +34,17 @@ const config: Config = {
       'classic',
       {
         docs: {
+          lastVersion: 'current',
+          versions: {
+            current: {
+              label: '1.2',
+              path: 'v1',
+            },
+            '0.1.10': {
+              label: '0.1.10',
+              path: 'v0',
+            },
+          },
           sidebarPath: './sidebars.ts',
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
@@ -127,6 +138,10 @@ const config: Config = {
         {
           type: 'docsVersionDropdown',
           position: 'right',
+          versions: {
+            current: { label: 'v1' },
+            '0.1.10': { label: 'v0' },
+          },
         },
         {
           href: 'https://github.com/underctrl-io/commandkit',
