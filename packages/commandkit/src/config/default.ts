@@ -24,4 +24,5 @@ export const defaultConfig: ResolvedCommandKitConfig = {
     production: true,
   },
   typedCommands: true,
+  disablePrefixCommands: false,
 };

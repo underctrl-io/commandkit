@@ -54,6 +54,8 @@ export function defineConfig(
       ...defaultConfig.typescript,
       ...config.typescript,
     },
+    disablePrefixCommands:
+      config.disablePrefixCommands ?? defaultConfig.disablePrefixCommands,
   };
 
   return defined;
