@@ -1,5 +1,5 @@
 ---
-title: "GetI18n"
+title: "UseI18n"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,9 +11,9 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## getI18n
+## useI18n
 
-<GenerationInfo sourceFile="packages/i18n/src/i18n.ts" sourceLine="136" packageName="@commandkit/i18n" />
+<GenerationInfo sourceFile="packages/i18n/src/i18n.ts" sourceLine="137" packageName="@commandkit/i18n" />
 
 Retrieves the i18n instance from the commandkit store.
 
@@ -22,17 +22,17 @@ Retrieves the i18n instance from the commandkit store.
 *Example*
 
 ```ts
-import { getI18n } from '@commandkit/i18n';
+import { useI18n } from '@commandkit/i18n';
 import { commandkit } from 'commandkit';
 
-const i18n = getI18n(commandkit);
+const i18n = useI18n(commandkit);
 
 // Use the i18n instance
 i18n.t('key');
 ```
 
 ```ts title="Signature"
-function getI18n(commandkit: CommandKit): i18n
+function useI18n(commandkit?: CommandKit): i18n
 ```
 Parameters
 
