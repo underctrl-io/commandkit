@@ -13,9 +13,24 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## rethrow
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/middleware/signals.ts" sourceLine="21" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/interrupt/signals.ts" sourceLine="30" packageName="commandkit" />
 
 Rethrow the error if it is a CommandKit error.
+
+
+
+*Example*
+
+```ts
+try {
+doSomething();
+} catch(e) {
+// do something
+
+// throw the error if it's a commandkit error
+rethrow(e)
+}
+```
 
 ```ts title="Signature"
 function rethrow(error: unknown): void
