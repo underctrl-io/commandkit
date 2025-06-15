@@ -51,7 +51,6 @@ export class AnalyticsEngine {
    * @param provider The analytics provider to register.
    */
   public registerProvider(provider: AnalyticsProvider) {
-    warnUnstable('analytics');
     this.#provider = provider;
   }
 

@@ -21,10 +21,9 @@ export {
   getSourceDirectories,
   devOnly,
   debounce,
-  stopEvents,
-  StopEventPropagationError,
   defer,
 } from './utils/utilities';
+export * from './app/interrupt/signals';
 export type { CommandKitHMREvent } from './utils/dev-hooks';
 export * from './utils/constants';
 export * from './app/events/EventWorkerContext';

@@ -18,7 +18,7 @@ import {
 } from './MessageCommandParser';
 import { CommandKitEnvironment } from '../../context/environment';
 import { GenericFunction, getContext } from '../../context/async-context';
-import { exitMiddleware, redirect } from '../middleware/signals';
+import { exitMiddleware, redirect } from '../interrupt/signals';
 import {
   LoadedCommand,
   ResolvableCommand,
