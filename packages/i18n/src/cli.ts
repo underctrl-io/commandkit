@@ -20,7 +20,7 @@ export class I18nCliTemplatePlugin extends CompilerPlugin {
     try {
       ctx.registerTemplate('locale', this.handleTemplate.bind(this));
     } catch (e) {
-      Logger.error(`Failed to register CLI template "locale": ${e}`);
+      Logger.error(`Failed to register the CLI template "locale": ${e}`);
     }
   }
 

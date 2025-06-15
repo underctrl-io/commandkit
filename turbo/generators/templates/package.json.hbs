@@ -1,7 +1,7 @@
 {
-  "name": "@commandkit/tasks",
-  "version": "0.1.0",
-  "description": "Tasks management plugin for CommandKit",
+  "name": "@commandkit/{{name}}",
+  "version": "0.0.0",
+  "description": "{{description}}",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -13,23 +13,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/underctrl-io/commandkit.git"
+    "url": "git+https://github.com/underctrl-io/commandkit.git",
+    "directory": "packages/{{name}}"
   },
   "keywords": [
     "commandkit",
-    "tasks",
-    "scheduler"
+    "{{name}}"
   ],
-  "author": "twilight <hello@twlite.dev>",
+  "contributors": [
+    "Twilight <hello@twlite.dev>",
+    "Avraj <avraj@underctrl.io>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/underctrl-io/commandkit/issues"
   },
   "homepage": "https://github.com/underctrl-io/commandkit#readme",
   "devDependencies": {
-    "bullmq": "^5.48.1",
-    "commandkit": "workspace:*",
     "tsconfig": "workspace:*",
     "typescript": "^5.7.3"
-  }
+  },
+  "dependencies": {}
 }

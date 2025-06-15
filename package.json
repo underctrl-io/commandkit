@@ -8,6 +8,7 @@
     "apps/*"
   ],
   "scripts": {
+    "bootstrap": "turbo gen bootstrap --args",
     "lint": "turbo run --filter=\"./packages/*\" lint",
     "build": "turbo run --filter=\"./packages/*\" build",
     "publish-package": "pnpm publish-package",
@@ -71,8 +72,10 @@
     ]
   },
   "dependencies": {
+    "@turbo/gen": "^2.5.4",
     "fs-extra": "^11.3.0",
     "klaw-sync": "^7.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "yaml": "^2.8.0"
   }
 }

@@ -22,7 +22,10 @@
     "cache management",
     "commandkit cache"
   ],
-  "author": "twilight <hello@twlite.dev>",
+  "contributors": [
+    "Twilight <hello@twlite.dev>",
+    "Avraj <avraj@underctrl.io>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/underctrl-io/commandkit/issues"
@@ -32,7 +35,8 @@
     "@types/ms": "^2.0.0",
     "commandkit": "workspace:*",
     "tsconfig": "workspace:*",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "tsdown": "^0.12.7"
   },
   "dependencies": {
     "ms": "^2.1.3",
