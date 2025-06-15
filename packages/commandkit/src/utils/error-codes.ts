@@ -18,6 +18,10 @@ export const CommandKitErrorCodes = {
    * Error code for plugin capture handle.
    */
   PluginCaptureHandle: Symbol('kPluginCaptureHandle'),
+  /**
+   * Error code for event interruption signal
+   */
+  StopEvents: Symbol('kStopEvents'),
 } as const;
 
 /**

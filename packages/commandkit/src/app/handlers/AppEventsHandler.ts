@@ -3,10 +3,10 @@ import { CommandKit } from '../../CommandKit';
 import { ListenerFunction } from '../../events/CommandKitEventsChannel';
 import { Logger } from '../../logger/Logger';
 import { toFileURL } from '../../utils/resolve-file-url';
-import { StopEventPropagationError } from '../../utils/utilities';
 import { runInEventWorkerContext } from '../events/EventWorkerContext';
 import { ParsedEvent } from '../router';
 import { CommandKitEventDispatch } from '../../plugins';
+import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 
 /**
  * Represents an event listener with its configuration.
@@ -207,7 +207,7 @@ export class AppEventsHandler {
                 await listener.handler(...args);
               } catch (e) {
                 // Check if this is a stop propagation signal
-                if (e instanceof StopEventPropagationError) {
+                if (isErrorType(e, CommandKitErrorCodes.StopEvents)) {
                   Logger.debug(
                     `Event propagation stopped for ${name}${
                       namespace ? ` of namespace ${namespace}` : ''
@@ -274,7 +274,7 @@ export class AppEventsHandler {
                 executedOnceListeners.add(listener.handler);
               } catch (e) {
                 // Check if this is a stop propagation signal
-                if (e instanceof StopEventPropagationError) {
+                if (isErrorType(e, CommandKitErrorCodes.StopEvents)) {
                   Logger.debug(
                     `Event propagation stopped for ${name}${
                       namespace ? ` of namespace ${namespace}` : ''

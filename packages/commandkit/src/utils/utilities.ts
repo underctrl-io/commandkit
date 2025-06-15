@@ -167,37 +167,6 @@ export function devOnly<T extends (...args: any[]) => any>(fn: T): T {
 }
 
 /**
- * Custom error for stopping event propagation.
- */
-export class StopEventPropagationError extends Error {
-  constructor() {
-    super('Event propagation stopped');
-    this.name = 'StopEventPropagationError';
-  }
-}
-
-/**
- * Stops event propagation. This function should be called inside an event handler
- * to prevent further event handling.
- * @throws {StopEventPropagationError}
- * @example // src/app/events/messageCreate/handler.ts
- * import { stopEvents } from 'commandkit';
- *
- * export default async function messageCreateHandler() {
- *   console.log('Message created');
- *   // Stop further event propagation
- *   stopEvents();
- * }
- */
-export function stopEvents(): never {
-  if (!eventWorkerContext.getStore()) {
-    throw new Error('stopEvents() may only be called inside an event handler');
-  }
-
-  throw new StopEventPropagationError();
-}
-
-/**
  * Represents a simple proxy object that mirrors a target object.
  */
 export interface SimpleProxy<T extends object> {

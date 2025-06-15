@@ -82,8 +82,6 @@ export interface FragmentElementProps {
 export function Fragment(
   props: FragmentElementProps,
 ): CommandKitElementData[ElementType][] {
-  warnUnstable('CommandKit JSX');
-
   return Array.isArray(props.children)
     ? props.children.flat()
     : [props.children];
@@ -101,7 +99,6 @@ export function createElement(
   props: Record<string, unknown>,
   ...children: any[]
 ): CommandKitElement<ElementType> {
-  warnUnstable('CommandKit JSX');
   return type({ ...props, children: props.children ?? children });
 }
 
