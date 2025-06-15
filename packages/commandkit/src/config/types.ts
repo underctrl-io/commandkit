@@ -66,4 +66,9 @@ export interface CommandKitConfig {
    * @default true
    */
   typedCommands?: boolean;
+  /**
+   * Whether or not to disable the prefix commands.
+   * @default false
+   */
+  disablePrefixCommands?: boolean;
 }

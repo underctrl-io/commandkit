@@ -53,7 +53,7 @@ const onApplicationBootstrapHooks = new Set<BootstrapFunction>();
 /**
  * Registers a bootstrap hook that will be called when the CommandKit instance is created.
  * This is useful for plugins that need to run some code after the CommandKit instance is fully initialized.
- * Note that not all commandkit dependiencs are available at this point. It is recommended to use the `onApplicationBootstrap` hook instead,
+ * Note that not all commandkit dependencies are available at this point. It is recommended to use the `onApplicationBootstrap` hook instead,
  * if you need access to the commandkit dependencies.
  * @param fn The bootstrap function to register.
  * @example ```ts

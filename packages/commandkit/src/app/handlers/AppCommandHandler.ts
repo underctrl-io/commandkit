@@ -24,6 +24,7 @@ import { Context } from '../commands/Context';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandRegistrar } from '../register/CommandRegistrar';
 import { Command, Middleware } from '../router';
+import { getConfig } from '../../config/config';
 
 /**
  * Function type for wrapping command execution with custom logic.
@@ -419,6 +420,12 @@ export class AppCommandHandler {
     source: Interaction | Message,
     cmdName?: string,
   ): Promise<PreparedAppCommandExecution | null> {
+    const config = getConfig();
+
+    if (config.disablePrefixCommands && source instanceof Message) {
+      return null;
+    }
+
     let parser: MessageCommandParser | undefined;
 
     // Extract command name (and possibly subcommand) from the source
@@ -428,6 +435,8 @@ export class AppCommandHandler {
 
         const prefix =
           await this.commandkit.config.getMessageCommandPrefix(source);
+
+        if (!prefix || !prefix.length) return null;
 
         parser = new MessageCommandParser(
           source,
