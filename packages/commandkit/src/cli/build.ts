@@ -85,6 +85,19 @@ export async function buildApplication({
             importSource: 'commandkit',
           },
         },
+        checks: {
+          circularDependency: true,
+        },
+        onwarn: (warning, defaultWarn) => {
+          if (warning?.message?.includes('compilerOptions.jsx')) return;
+
+          return defaultWarn(warning);
+        },
+        onLog: (level, log, defaultLog) => {
+          if (isDev) return;
+
+          return defaultLog(level, log);
+        },
         moduleTypes: {
           '.json': 'js',
           '.node': 'binary',

@@ -20,7 +20,10 @@
     "redis",
     "cache"
   ],
-  "author": "twilight <hello@twlite.dev>",
+  "contributors": [
+    "Twilight <hello@twlite.dev>",
+    "Avraj <avraj@underctrl.io>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/underctrl-io/commandkit/issues"
