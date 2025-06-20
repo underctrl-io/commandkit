@@ -3,6 +3,7 @@ import {
   MaybeFalsey,
   TransformedResult,
   TemplateHandler,
+  isCompilerPlugin,
 } from '..';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
@@ -49,7 +50,9 @@ export class CompilerPluginRuntime {
    * Creates a new instance of CompilerPluginRuntime.
    * @param plugins An array of compiler plugins to be managed by this runtime.
    */
-  public constructor(private readonly plugins: CompilerPlugin[]) {}
+  public constructor(private readonly plugins: CompilerPlugin[]) {
+    this.plugins = this.plugins.filter((p) => !!p && isCompilerPlugin(p));
+  }
 
   /**
    * Returns the plugins managed by this runtime.
