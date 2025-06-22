@@ -153,6 +153,10 @@ export class CompilerPluginRuntime {
   ): Promise<{ code: string; map: string | null }> {
     let map: string | null = null;
     for (const plugin of this.plugins) {
+      if (!plugin?.transform || typeof plugin?.transform !== 'function') {
+        continue;
+      }
+
       try {
         const res: MaybeFalsey<TransformedResult> = await plugin.transform?.({
           code,
