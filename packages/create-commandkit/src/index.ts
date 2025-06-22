@@ -8,11 +8,11 @@ import { execSync } from 'node:child_process';
 import path from 'node:path';
 import colors from 'picocolors';
 
-import { copyTemplates } from './functions/copyTemplates';
-import { installDeps } from './functions/installDeps';
-import { setup } from './functions/setup';
+import { copyTemplates } from './functions/copyTemplates.js';
+import { installDeps } from './functions/installDeps.js';
+import { setup } from './functions/setup.js';
 import type { Language, PackageManager } from './types';
-import { textColors } from './utils';
+import { textColors } from './utils.js';
 
 const commandkitGradient = gradient(textColors.commandkit)('CommandKit');
 intro(`Welcome to ${commandkitGradient}!`);
