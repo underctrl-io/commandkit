@@ -34,7 +34,17 @@
     "./analytics.cjs",
     "./analytics.d.ts",
     "./ai.cjs",
-    "./ai.d.ts"
+    "./ai.d.ts",
+    "./env.cjs",
+    "./env.d.ts",
+    "./async-queue.cjs",
+    "./async-queue.d.ts",
+    "./ratelimit.cjs",
+    "./ratelimit.d.ts",
+    "./semaphore.cjs",
+    "./semaphore.d.ts",
+    "./mutex.cjs",
+    "./mutex.d.ts"
   ],
   "exports": {
     ".": {
@@ -101,6 +111,31 @@
       "require": "./ai.cjs",
       "import": "./ai.cjs",
       "types": "./ai.d.ts"
+    },
+    "./env": {
+      "require": "./env.cjs",
+      "import": "./env.cjs",
+      "types": "./env.d.ts"
+    },
+    "./async-queue": {
+      "require": "./async-queue.cjs",
+      "import": "./async-queue.cjs",
+      "types": "./async-queue.d.ts"
+    },
+    "./ratelimit": {
+      "require": "./ratelimit.cjs",
+      "import": "./ratelimit.cjs",
+      "types": "./ratelimit.d.ts"
+    },
+    "./semaphore": {
+      "require": "./semaphore.cjs",
+      "import": "./semaphore.cjs",
+      "types": "./semaphore.d.ts"
+    },
+    "./mutex": {
+      "require": "./mutex.cjs",
+      "import": "./mutex.cjs",
+      "types": "./mutex.d.ts"
     }
   },
   "scripts": {

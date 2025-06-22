@@ -1,0 +1,118 @@
+---
+title: Rate Limiter
+description: Control request frequency with configurable limits and intervals
+---
+
+# Rate Limiter
+
+Think of a rate limiter like a traffic light for your application. It controls how often something can happen - like how many times a user can click a button or make an API request. This prevents your system from being overwhelmed.
+
+## Basic Usage
+
+The simplest way to use rate limiting is with the default settings:
+
+```typescript
+import { ratelimit } from 'commandkit/ratelimit';
+
+// Check if this user can make another request
+const allowed = await ratelimit('user:123');
+if (allowed) {
+  // Process the request
+  console.log('Request processed successfully');
+} else {
+  // User has made too many requests
+  console.log('Please wait before making another request');
+}
+```
+
+## Custom Configuration
+
+Sometimes you need different limits for different situations. You can create a custom rate limiter with specific settings:
+
+```typescript
+import { createRateLimiter } from 'commandkit/ratelimit';
+
+// Create a stricter rate limiter for API endpoints
+const apiLimiter = createRateLimiter({
+  maxRequests: 5, // Allow 5 requests
+  interval: 30000, // Per 30 seconds
+});
+
+const allowed = await apiLimiter.limit('api:endpoint');
+```
+
+## Advanced Usage
+
+### Checking Remaining Requests
+
+You can check how many requests a user has left and when the limit resets:
+
+```typescript
+import { getRemainingRequests, getResetTime } from 'commandkit/ratelimit';
+
+const remaining = await getRemainingRequests('user:123');
+const resetTime = await getResetTime('user:123');
+
+console.log(`${remaining} requests remaining`);
+console.log(`Limit resets in ${Math.round(resetTime / 1000)} seconds`);
+```
+
+### Manual Reset
+
+In some cases, you might want to reset a user's rate limit (like after they upgrade their account):
+
+```typescript
+import { resetRateLimit } from 'commandkit/ratelimit';
+
+// Give the user a fresh start
+await resetRateLimit('user:123');
+```
+
+### Using External Storage
+
+By default, rate limiters store data in memory. If you're running multiple servers, you'll want to use external storage like Redis so all servers can share the same rate limit information:
+
+```typescript
+import { RateLimiter, RateLimitStorage } from 'commandkit/ratelimit';
+
+// Example of how you might use Redis for rate limiting
+class RedisRateLimitStorage implements RateLimitStorage {
+  async get(key: string): Promise<number> {
+    // Get the current count from Redis
+    return (await redis.get(key)) || 0;
+  }
+
+  async set(key: string, value: number): Promise<void> {
+    // Store the count in Redis
+    await redis.set(key, value);
+  }
+
+  async delete(key: string): Promise<void> {
+    // Remove the count from Redis
+    await redis.del(key);
+  }
+}
+
+const limiter = new RateLimiter(10, 60000, new RedisRateLimitStorage());
+```
+
+## Default Settings
+
+- **Max Requests**: 10 requests
+- **Time Window**: 60 seconds (1 minute)
+- **Storage**: In-memory (works for single-server applications)
+
+## Common Use Cases
+
+- **API Rate Limiting**: Prevent users from making too many API calls
+- **User Action Throttling**: Limit how often users can click buttons or submit forms
+- **Resource Access Control**: Control access to expensive operations
+- **Spam Prevention**: Stop automated bots from overwhelming your system
+
+## Tips for Beginners
+
+1. **Start Simple**: Use the default `ratelimit()` function for basic needs
+2. **Choose Good Keys**: Use descriptive keys like `user:123` or `api:endpoint` to make debugging easier
+3. **Set Reasonable Limits**: Don't make limits too strict or too loose - find the right balance
+4. **Handle Rejection**: Always check if the rate limit allows the action before proceeding
+5. **Consider Your Users**: Think about legitimate use cases when setting limits
