@@ -97,27 +97,32 @@ const result = await queue.add(async () => await task());
 
 ### Using External Storage
 
-By default, these utilities store their data in memory. But if you're running multiple instances of your application (like on different servers), you'll want to use external storage like Redis so they can share information.
+All utilities support custom storage implementations for distributed environments:
 
 ```typescript
-// Example of how you might use Redis for rate limiting
-class RedisRateLimitStorage implements RateLimitStorage {
-  async get(key: string): Promise<number> {
-    // Get the current count from Redis
-    return (await redis.get(key)) || 0;
-  }
-  async set(key: string, value: number): Promise<void> {
-    // Store the count in Redis
-    await redis.set(key, value);
-  }
-  async delete(key: string): Promise<void> {
-    // Remove the count from Redis
-    await redis.del(key);
-  }
-}
+// Redis storage implementations are available from @commandkit/redis
+import {
+  RedisRateLimitStorage,
+  RedisMutexStorage,
+  RedisSemaphoreStorage,
+} from '@commandkit/redis';
+import { Redis } from 'ioredis';
 
-const limiter = createRateLimiter({
-  storage: new RedisRateLimitStorage(),
+const redis = new Redis();
+
+// Rate limiting with Redis
+const rateLimiter = createRateLimiter({
+  storage: new RedisRateLimitStorage(redis),
+});
+
+// Mutex with Redis
+const mutex = createMutex({
+  storage: new RedisMutexStorage(redis),
+});
+
+// Semaphore with Redis
+const semaphore = createSemaphore({
+  storage: new RedisSemaphoreStorage(redis),
 });
 ```
 

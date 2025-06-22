@@ -74,26 +74,27 @@ By default, rate limiters store data in memory. If you're running multiple serve
 
 ```typescript
 import { RateLimiter, RateLimitStorage } from 'commandkit/ratelimit';
+import { RedisRateLimitStorage } from '@commandkit/redis';
+import { Redis } from 'ioredis';
 
-// Example of how you might use Redis for rate limiting
-class RedisRateLimitStorage implements RateLimitStorage {
-  async get(key: string): Promise<number> {
-    // Get the current count from Redis
-    return (await redis.get(key)) || 0;
-  }
+// Create Redis client
+const redis = new Redis();
 
-  async set(key: string, value: number): Promise<void> {
-    // Store the count in Redis
-    await redis.set(key, value);
-  }
+// Use Redis-based rate limit storage
+const limiter = new RateLimiter(10, 60000, new RedisRateLimitStorage(redis));
+```
 
-  async delete(key: string): Promise<void> {
-    // Remove the count from Redis
-    await redis.del(key);
-  }
-}
+You can also use the convenience function:
 
-const limiter = new RateLimiter(10, 60000, new RedisRateLimitStorage());
+```typescript
+import { createRateLimiter } from 'commandkit/ratelimit';
+import { RedisRateLimitStorage } from '@commandkit/redis';
+
+const limiter = createRateLimiter({
+  maxRequests: 10,
+  interval: 60000,
+  storage: new RedisRateLimitStorage(redis),
+});
 ```
 
 ## Default Settings

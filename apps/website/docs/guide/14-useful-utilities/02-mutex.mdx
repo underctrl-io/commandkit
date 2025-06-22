@@ -95,30 +95,28 @@ By default, mutexes store lock information in memory. If you're running multiple
 
 ```typescript
 import { Mutex, MutexStorage } from 'commandkit/mutex';
+import { RedisMutexStorage } from '@commandkit/redis';
+import { Redis } from 'ioredis';
 
-// Example of how you might use Redis for mutex locks
-class RedisMutexStorage implements MutexStorage {
-  async acquire(
-    key: string,
-    timeout?: number,
-    signal?: AbortSignal,
-  ): Promise<boolean> {
-    // Try to acquire a lock in Redis
-    // Return true if successful, false if already locked
-  }
+// Create Redis client
+const redis = new Redis();
 
-  async release(key: string): Promise<void> {
-    // Release the lock in Redis
-  }
-
-  async isLocked(key: string): Promise<boolean> {
-    // Check if a lock exists in Redis
-  }
-}
-
+// Use Redis-based mutex storage
 const mutex = new Mutex({
   timeout: 30000,
-  storage: new RedisMutexStorage(),
+  storage: new RedisMutexStorage(redis),
+});
+```
+
+You can also use the convenience function:
+
+```typescript
+import { createMutex } from 'commandkit/mutex';
+import { RedisMutexStorage } from '@commandkit/redis';
+
+const mutex = createMutex({
+  timeout: 60000,
+  storage: new RedisMutexStorage(redis),
 });
 ```
 

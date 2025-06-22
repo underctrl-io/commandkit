@@ -150,3 +150,7 @@ export class RedisPlugin extends RuntimePlugin<RedisOptions> {
 export function redis(options?: RedisOptions) {
   return new RedisPlugin(options ?? {});
 }
+
+export * from './ratelimit-storage';
+export * from './mutex-storage';
+export * from './semaphore-storage';
