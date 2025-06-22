@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import path from 'node:path';
 
 import type { PackageManager } from '../types';
-import { commands } from '../utils';
+import { commands } from '../utils.js';
 
 interface SetupProps {
   manager: PackageManager;
