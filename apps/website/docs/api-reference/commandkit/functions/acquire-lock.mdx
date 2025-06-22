@@ -1,0 +1,36 @@
+---
+title: "AcquireLock"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## acquireLock
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/mutex.ts" sourceLine="278" packageName="commandkit" />
+
+Acquires a lock using the default mutex
+
+```ts title="Signature"
+function acquireLock(key: string, timeout?: number, signal?: AbortSignal): Promise<boolean>
+```
+Parameters
+
+### key
+
+<MemberInfo kind="parameter" type={`string`} />
+
+### timeout
+
+<MemberInfo kind="parameter" type={`number`} />
+
+### signal
+
+<MemberInfo kind="parameter" type={`AbortSignal`} />
+

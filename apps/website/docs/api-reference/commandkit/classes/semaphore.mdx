@@ -1,0 +1,90 @@
+---
+title: "Semaphore"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## Semaphore
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/semaphore.ts" sourceLine="149" packageName="commandkit" />
+
+Async semaphore implementation that controls access to a limited pool of resources.
+Allows a specified number of concurrent operations while blocking additional requests.
+
+```ts title="Signature"
+class Semaphore {
+    constructor(options: SemaphoreOptions = {})
+    setStorage(storage: SemaphoreStorage) => ;
+    getStorage() => SemaphoreStorage;
+    acquire(key: string, timeout?: number, signal?: AbortSignal) => Promise<boolean>;
+    release(key: string) => Promise<void>;
+    getAvailablePermits(key: string) => Promise<number>;
+    getTotalPermits(key: string) => Promise<number>;
+    getAcquiredPermits(key: string) => Promise<number>;
+    withPermit(key: string, fn: () => Promise<T> | T, timeout?: number, signal?: AbortSignal) => Promise<T>;
+    getConfig() => Omit<SemaphoreOptions, 'storage'>;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/commandkit/interfaces/semaphore-options#semaphoreoptions'>SemaphoreOptions</a> = {}) => Semaphore`}   />
+
+Creates a new semaphore instance
+### setStorage
+
+<MemberInfo kind="method" type={`(storage: <a href='/docs/next/api-reference/commandkit/interfaces/semaphore-storage#semaphorestorage'>SemaphoreStorage</a>) => `}   />
+
+Sets the storage implementation for the semaphore
+### getStorage
+
+<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/semaphore-storage#semaphorestorage'>SemaphoreStorage</a>`}   />
+
+Gets the storage implementation for the semaphore
+### acquire
+
+<MemberInfo kind="method" type={`(key: string, timeout?: number, signal?: AbortSignal) => Promise&#60;boolean&#62;`}   />
+
+Acquires a permit for the given key
+### release
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+Releases a permit for the given key
+### getAvailablePermits
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+Gets the number of available permits for the given key
+### getTotalPermits
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+Gets the total number of permits for the given key
+### getAcquiredPermits
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+Gets the number of acquired permits for the given key
+### withPermit
+
+<MemberInfo kind="method" type={`(key: string, fn: () =&#62; Promise&#60;T&#62; | T, timeout?: number, signal?: AbortSignal) => Promise&#60;T&#62;`}   />
+
+Executes a function with a permit from the semaphore
+### getConfig
+
+<MemberInfo kind="method" type={`() => Omit&#60;<a href='/docs/next/api-reference/commandkit/interfaces/semaphore-options#semaphoreoptions'>SemaphoreOptions</a>, 'storage'&#62;`}   />
+
+Gets the current configuration of the semaphore
+
+
+</div>

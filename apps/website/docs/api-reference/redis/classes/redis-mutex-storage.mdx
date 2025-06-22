@@ -1,0 +1,78 @@
+---
+title: "RedisMutexStorage"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## RedisMutexStorage
+
+<GenerationInfo sourceFile="packages/redis/src/mutex-storage.ts" sourceLine="4" packageName="@commandkit/redis" />
+
+
+
+```ts title="Signature"
+class RedisMutexStorage implements MutexStorage {
+    constructor(redis: Redis)
+    acquire(key: string, timeout: number = this.defaultTimeout, signal?: AbortSignal) => Promise<boolean>;
+    release(key: string) => Promise<void>;
+    isLocked(key: string) => Promise<boolean>;
+    getLockInfo(key: string) => Promise<{
+    locked: boolean;
+    ttl: number;
+    value?: string;
+  }>;
+    forceRelease(key: string) => Promise<void>;
+    extendLock(key: string, additionalTime: number) => Promise<boolean>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/commandkit/interfaces/mutex-storage#mutexstorage'>MutexStorage</a></code>
+
+
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(redis: Redis) => RedisMutexStorage`}   />
+
+
+### acquire
+
+<MemberInfo kind="method" type={`(key: string, timeout: number = this.defaultTimeout, signal?: AbortSignal) => Promise&#60;boolean&#62;`}   />
+
+
+### release
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+
+### isLocked
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;boolean&#62;`}   />
+
+
+### getLockInfo
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;{     locked: boolean;     ttl: number;     value?: string;   }&#62;`}   />
+
+Gets information about a lock including its TTL
+### forceRelease
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+Force releases a lock (use with caution)
+### extendLock
+
+<MemberInfo kind="method" type={`(key: string, additionalTime: number) => Promise&#60;boolean&#62;`}   />
+
+Extends the lock timeout
+
+
+</div>

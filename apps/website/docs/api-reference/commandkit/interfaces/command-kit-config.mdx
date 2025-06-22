@@ -53,6 +53,7 @@ interface CommandKitConfig {
     production?: boolean;
   };
     typedCommands?: boolean;
+    disablePrefixCommands?: boolean;
 }
 ```
 
@@ -104,6 +105,11 @@ Whether or not to enable the source map generation.
 <MemberInfo kind="property" type={`boolean`} default={`true`}   />
 
 Whether or not to enable the typed commands.
+### disablePrefixCommands
+
+<MemberInfo kind="property" type={`boolean`} default={`false`}   />
+
+Whether or not to disable the prefix commands.
 
 
 </div>

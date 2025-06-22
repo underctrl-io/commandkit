@@ -1,0 +1,51 @@
+---
+title: "MemoryRateLimitStorage"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## MemoryRateLimitStorage
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/ratelimiter.ts" sourceLine="55" packageName="commandkit" />
+
+In-memory storage implementation for rate limiting.
+Suitable for single-instance applications.
+
+```ts title="Signature"
+class MemoryRateLimitStorage implements RateLimitStorage {
+    get(key: string) => Promise<number>;
+    set(key: string, value: number) => Promise<void>;
+    delete(key: string) => Promise<void>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a></code>
+
+
+
+<div className="members-wrapper">
+
+### get
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+Retrieves the current request count for a given key
+### set
+
+<MemberInfo kind="method" type={`(key: string, value: number) => Promise&#60;void&#62;`}   />
+
+Sets the request count for a given key
+### delete
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+Deletes the rate limit entry for a given key
+
+
+</div>

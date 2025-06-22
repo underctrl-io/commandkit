@@ -1,0 +1,51 @@
+---
+title: "MemoryMutexStorage"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## MemoryMutexStorage
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/mutex.ts" sourceLine="53" packageName="commandkit" />
+
+In-memory storage implementation for mutex locks.
+Suitable for single-instance applications.
+
+```ts title="Signature"
+class MemoryMutexStorage implements MutexStorage {
+    acquire(key: string, timeout: number = 30000, signal?: AbortSignal) => Promise<boolean>;
+    release(key: string) => Promise<void>;
+    isLocked(key: string) => Promise<boolean>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/commandkit/interfaces/mutex-storage#mutexstorage'>MutexStorage</a></code>
+
+
+
+<div className="members-wrapper">
+
+### acquire
+
+<MemberInfo kind="method" type={`(key: string, timeout: number = 30000, signal?: AbortSignal) => Promise&#60;boolean&#62;`}   />
+
+Attempts to acquire a lock for a given key
+### release
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+Releases the lock for a given key
+### isLocked
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;boolean&#62;`}   />
+
+Checks if a lock is currently held for a given key
+
+
+</div>

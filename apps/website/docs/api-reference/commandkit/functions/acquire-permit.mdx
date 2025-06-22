@@ -1,0 +1,36 @@
+---
+title: "AcquirePermit"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## acquirePermit
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/semaphore.ts" sourceLine="341" packageName="commandkit" />
+
+Acquires a permit using the default semaphore
+
+```ts title="Signature"
+function acquirePermit(key: string, timeout?: number, signal?: AbortSignal): Promise<boolean>
+```
+Parameters
+
+### key
+
+<MemberInfo kind="parameter" type={`string`} />
+
+### timeout
+
+<MemberInfo kind="parameter" type={`number`} />
+
+### signal
+
+<MemberInfo kind="parameter" type={`AbortSignal`} />
+

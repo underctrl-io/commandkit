@@ -1,0 +1,40 @@
+---
+title: "CreateSemaphore"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## createSemaphore
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/semaphore.ts" sourceLine="330" packageName="commandkit" />
+
+Creates a new semaphore instance with the specified configuration
+
+
+
+*Example*
+
+```typescript
+const semaphore = createSemaphore({
+  permits: 5,
+  timeout: 60000,
+  storage: new RedisSemaphoreStorage()
+});
+```
+
+```ts title="Signature"
+function createSemaphore(options: SemaphoreOptions): Semaphore
+```
+Parameters
+
+### options
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/commandkit/interfaces/semaphore-options#semaphoreoptions'>SemaphoreOptions</a>`} />
+
