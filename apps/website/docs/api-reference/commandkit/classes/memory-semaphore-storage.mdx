@@ -1,0 +1,63 @@
+---
+title: "MemorySemaphoreStorage"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## MemorySemaphoreStorage
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/semaphore.ts" sourceLine="62" packageName="commandkit" />
+
+In-memory storage implementation for semaphore permits.
+Suitable for single-instance applications.
+
+```ts title="Signature"
+class MemorySemaphoreStorage implements SemaphoreStorage {
+    acquire(key: string, timeout: number = 30000, signal?: AbortSignal) => Promise<boolean>;
+    release(key: string) => Promise<void>;
+    getAvailablePermits(key: string) => Promise<number>;
+    getTotalPermits(key: string) => Promise<number>;
+    initialize(key: string, permits: number) => void;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/commandkit/interfaces/semaphore-storage#semaphorestorage'>SemaphoreStorage</a></code>
+
+
+
+<div className="members-wrapper">
+
+### acquire
+
+<MemberInfo kind="method" type={`(key: string, timeout: number = 30000, signal?: AbortSignal) => Promise&#60;boolean&#62;`}   />
+
+Attempts to acquire a permit for a given key
+### release
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+Releases a permit for a given key
+### getAvailablePermits
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+Gets the number of available permits for a given key
+### getTotalPermits
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+Gets the total number of permits for a given key
+### initialize
+
+<MemberInfo kind="method" type={`(key: string, permits: number) => void`}   />
+
+Initializes a semaphore with the specified number of permits
+
+
+</div>

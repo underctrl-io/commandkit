@@ -1,0 +1,40 @@
+---
+title: "CreateRateLimiter"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## createRateLimiter
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/ratelimiter.ts" sourceLine="255" packageName="commandkit" />
+
+Creates a new rate limiter instance with the specified configuration
+
+
+
+*Example*
+
+```typescript
+const limiter = createRateLimiter({
+  maxRequests: 5,
+  interval: 30000,
+  storage: new CustomStorage()
+});
+```
+
+```ts title="Signature"
+function createRateLimiter(options: RateLimitOptions): RateLimiter
+```
+Parameters
+
+### options
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-options#ratelimitoptions'>RateLimitOptions</a>`} />
+

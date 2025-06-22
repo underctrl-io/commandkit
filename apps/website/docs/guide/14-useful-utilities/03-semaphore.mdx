@@ -1,0 +1,165 @@
+---
+title: Semaphore
+description: Control concurrent access to limited resources with async semaphores
+---
+
+# Semaphore
+
+A semaphore is like a parking lot with a limited number of spaces. It allows a specific number of operations to happen at the same time, but no more. Perfect for controlling access to limited resources like database connections.
+
+## Basic Usage
+
+The easiest way to use a semaphore is with the `withPermit` function, which automatically handles getting and releasing permits:
+
+```typescript
+import { withPermit } from 'commandkit/semaphore';
+
+// This ensures only a limited number of operations can run at once
+const result = await withPermit('database-connection', async () => {
+  // This code runs with a permit from the semaphore
+  return await executeDatabaseQuery();
+});
+```
+
+## Custom Configuration
+
+You can create a semaphore with specific limits and timeout settings:
+
+```typescript
+import { createSemaphore } from 'commandkit/semaphore';
+
+const semaphore = createSemaphore({
+  permits: 5, // Allow 5 concurrent operations
+  timeout: 60000, // 60 second timeout
+});
+
+const result = await semaphore.withPermit('api-endpoint', async () => {
+  return await apiCall();
+});
+```
+
+## Advanced Usage
+
+### Manual Permit Management
+
+Sometimes you need more control over when permits are acquired and released:
+
+```typescript
+import {
+  acquirePermit,
+  releasePermit,
+  getAvailablePermits,
+} from 'commandkit/semaphore';
+
+// Acquire permit manually
+const acquired = await acquirePermit('resource', 30000);
+if (acquired) {
+  try {
+    // Perform operation with limited concurrency
+    await limitedOperation();
+  } finally {
+    // Always release the permit, even if an error occurs
+    await releasePermit('resource');
+  }
+}
+
+// Check how many permits are available
+const available = await getAvailablePermits('resource');
+console.log(`${available} permits available`);
+```
+
+### Cancelling Operations
+
+You can cancel a semaphore operation if it takes too long or if you need to stop it for any reason:
+
+```typescript
+import { withPermit } from 'commandkit/semaphore';
+
+// Create a timeout that cancels after 5 seconds
+const signal = AbortSignal.timeout(5000);
+
+try {
+  const result = await withPermit(
+    'resource',
+    async () => {
+      return await longRunningOperation();
+    },
+    30000,
+    signal,
+  );
+} catch (error) {
+  if (error.message.includes('aborted')) {
+    console.log('Permit acquisition was cancelled');
+  }
+}
+```
+
+### Monitoring Semaphore State
+
+You can check how many permits are being used and how many are available:
+
+```typescript
+import { getAvailablePermits, getAcquiredPermits } from 'commandkit/semaphore';
+
+const available = await getAvailablePermits('database');
+const acquired = await getAcquiredPermits('database');
+
+console.log(`Database connections: ${acquired} active, ${available} available`);
+```
+
+### Using External Storage
+
+By default, semaphores store permit information in memory. If you're running multiple servers, you'll want to use external storage like Redis:
+
+```typescript
+import { Semaphore, SemaphoreStorage } from 'commandkit/semaphore';
+import { RedisSemaphoreStorage } from '@commandkit/redis';
+import { Redis } from 'ioredis';
+
+// Create Redis client
+const redis = new Redis();
+
+// Use Redis-based semaphore storage
+const semaphore = new Semaphore({
+  permits: 10,
+  timeout: 30000,
+  storage: new RedisSemaphoreStorage(redis),
+});
+```
+
+You can also use the convenience function:
+
+```typescript
+import { createSemaphore } from 'commandkit/semaphore';
+import { RedisSemaphoreStorage } from '@commandkit/redis';
+
+const semaphore = createSemaphore({
+  permits: 5,
+  timeout: 60000,
+  storage: new RedisSemaphoreStorage(redis),
+});
+```
+
+## Default Settings
+
+- **Permits**: 1 (sequential access)
+- **Timeout**: 30 seconds (30000ms)
+- **Storage**: In-memory (works for single-server applications)
+
+## Common Use Cases
+
+- **Database Connection Pooling**: Limit how many database connections are used at once
+- **API Rate Limiting with Concurrency**: Allow multiple API calls but not too many
+- **File Upload Throttling**: Control how many files can be uploaded simultaneously
+- **External Service Access**: Limit calls to third-party services
+- **Resource Pool Management**: Manage access to limited resources like memory or CPU
+
+## Tips for Beginners
+
+1. **Use `withPermit` When Possible**: It automatically handles cleanup, so you don't forget to release permits
+2. **Set Appropriate Limits**: Don't set too many permits (might overwhelm resources) or too few (might be too slow)
+3. **Monitor Usage**: Keep an eye on how many permits are being used to optimize performance
+4. **Use Descriptive Names**: Give your resources meaningful names like `database:main` or `api:external`
+5. **Handle Errors**: Always handle cases where permit acquisition fails
+6. **Consider Your Resources**: Set permit limits based on what your system can actually handle
+7. **Think About Your Setup**: Use external storage if you have multiple servers

@@ -1,0 +1,56 @@
+---
+title: "RedisRateLimitStorage"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## RedisRateLimitStorage
+
+<GenerationInfo sourceFile="packages/redis/src/ratelimit-storage.ts" sourceLine="4" packageName="@commandkit/redis" />
+
+
+
+```ts title="Signature"
+class RedisRateLimitStorage implements RateLimitStorage {
+    constructor(redis: Redis)
+    get(key: string) => Promise<number>;
+    set(key: string, value: number) => Promise<void>;
+    delete(key: string) => Promise<void>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a></code>
+
+
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(redis: Redis) => RedisRateLimitStorage`}   />
+
+
+### get
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+
+### set
+
+<MemberInfo kind="method" type={`(key: string, value: number) => Promise&#60;void&#62;`}   />
+
+
+### delete
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+
+
+
+</div>

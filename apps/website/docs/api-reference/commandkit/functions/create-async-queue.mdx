@@ -1,0 +1,42 @@
+---
+title: "CreateAsyncQueue"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## createAsyncQueue
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/async-queue.ts" sourceLine="173" packageName="commandkit" />
+
+Creates a new async queue instance with the specified configuration.
+
+
+
+*Example*
+
+```typescript
+const controller = new AbortController();
+const queue = createAsyncQueue({
+  concurrency: 2,
+  signal: controller.signal
+});
+queue.add(async () => await doSomething());
+controller.abort(); // Aborts the queue
+```
+
+```ts title="Signature"
+function createAsyncQueue(options?: AsyncQueueOptions): AsyncQueue
+```
+Parameters
+
+### options
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/commandkit/interfaces/async-queue-options#asyncqueueoptions'>AsyncQueueOptions</a>`} />
+

@@ -1,0 +1,53 @@
+---
+title: "WithPermit"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## withPermit
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/semaphore.ts" sourceLine="307" packageName="commandkit" />
+
+Convenience function to execute a function with a permit using the default semaphore.
+
+
+
+*Example*
+
+```typescript
+const controller = new AbortController();
+const result = await withPermit('database-connection', async () => {
+  // This code runs with a permit from the semaphore
+  return await executeDatabaseQuery();
+}, 30000, controller.signal);
+controller.abort(); // Cancels the permit acquisition
+```
+
+```ts title="Signature"
+function withPermit<T>(key: string, fn: () => Promise<T> | T, timeout?: number, signal?: AbortSignal): Promise<T>
+```
+Parameters
+
+### key
+
+<MemberInfo kind="parameter" type={`string`} />
+
+### fn
+
+<MemberInfo kind="parameter" type={`() =&#62; Promise&#60;T&#62; | T`} />
+
+### timeout
+
+<MemberInfo kind="parameter" type={`number`} />
+
+### signal
+
+<MemberInfo kind="parameter" type={`AbortSignal`} />
+

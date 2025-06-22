@@ -1,0 +1,78 @@
+---
+title: "Mutex"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## Mutex
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/mutex.ts" sourceLine="121" packageName="commandkit" />
+
+Async mutex implementation that provides mutual exclusion for shared resources.
+Ensures only one task can access a protected resource at a time.
+
+```ts title="Signature"
+class Mutex {
+    constructor(options: MutexOptions = {})
+    setStorage(storage: MutexStorage) => ;
+    getStorage() => MutexStorage;
+    acquire(key: string, timeout?: number, signal?: AbortSignal) => Promise<boolean>;
+    release(key: string) => Promise<void>;
+    isLocked(key: string) => Promise<boolean>;
+    withLock(key: string, fn: () => Promise<T> | T, timeout?: number, signal?: AbortSignal) => Promise<T>;
+    getConfig() => Omit<MutexOptions, 'storage'>;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/commandkit/interfaces/mutex-options#mutexoptions'>MutexOptions</a> = {}) => Mutex`}   />
+
+Creates a new mutex instance
+### setStorage
+
+<MemberInfo kind="method" type={`(storage: <a href='/docs/next/api-reference/commandkit/interfaces/mutex-storage#mutexstorage'>MutexStorage</a>) => `}   />
+
+Sets the storage implementation for the mutex
+### getStorage
+
+<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/mutex-storage#mutexstorage'>MutexStorage</a>`}   />
+
+Gets the storage implementation for the mutex
+### acquire
+
+<MemberInfo kind="method" type={`(key: string, timeout?: number, signal?: AbortSignal) => Promise&#60;boolean&#62;`}   />
+
+Acquires a lock for the given key
+### release
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+Releases the lock for the given key
+### isLocked
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;boolean&#62;`}   />
+
+Checks if a lock is currently held for the given key
+### withLock
+
+<MemberInfo kind="method" type={`(key: string, fn: () =&#62; Promise&#60;T&#62; | T, timeout?: number, signal?: AbortSignal) => Promise&#60;T&#62;`}   />
+
+Executes a function with exclusive access to the resource
+### getConfig
+
+<MemberInfo kind="method" type={`() => Omit&#60;<a href='/docs/next/api-reference/commandkit/interfaces/mutex-options#mutexoptions'>MutexOptions</a>, 'storage'&#62;`}   />
+
+Gets the current configuration of the mutex
+
+
+</div>

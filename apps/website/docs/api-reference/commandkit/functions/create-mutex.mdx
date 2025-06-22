@@ -1,0 +1,39 @@
+---
+title: "CreateMutex"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## createMutex
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/mutex.ts" sourceLine="267" packageName="commandkit" />
+
+Creates a new mutex instance with the specified configuration
+
+
+
+*Example*
+
+```typescript
+const mutex = createMutex({
+  timeout: 60000,
+  storage: new RedisMutexStorage()
+});
+```
+
+```ts title="Signature"
+function createMutex(options: MutexOptions): Mutex
+```
+Parameters
+
+### options
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/commandkit/interfaces/mutex-options#mutexoptions'>MutexOptions</a>`} />
+
