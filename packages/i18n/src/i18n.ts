@@ -197,7 +197,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
     }
 
     // Set the default locale for command execution
-    ctx.commandkit.config.defaultLocale = (this.i18n.language ||
+    ctx.commandkit.appConfig.defaultLocale = (this.i18n.language ||
       'en-US') as Locale;
 
     Logger.info('I18nPlugin has been activated');

@@ -67,7 +67,7 @@ const AIConfig: Required<ConfigureAI> = {
   disableBuiltInTools: false,
   messageFilter: async (commandkit, message) => {
     const prefixOrPrefixes =
-      await commandkit.config.getMessageCommandPrefix(message);
+      await commandkit.appConfig.getMessageCommandPrefix(message);
 
     const prefixes = Array.isArray(prefixOrPrefixes)
       ? prefixOrPrefixes
