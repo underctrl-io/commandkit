@@ -500,7 +500,7 @@ export class Context<
     const locale = preferUser ? this.getUserLocale() : this.getGuildLocale();
 
     if (!locale) {
-      return this.commandkit.config.defaultLocale;
+      return this.commandkit.appConfig.defaultLocale;
     }
 
     return locale;

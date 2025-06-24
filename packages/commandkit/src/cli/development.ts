@@ -223,17 +223,21 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
     console.error(e);
   });
 
-  ps = await buildAndStart(cwd);
-
-  const end = performance.now();
-
-  console.log(
-    `${colors.greenBright('Development server started in')} ${colors.yellowBright(`${(end - start).toFixed(2)}ms`)}
+  console.log(`${colors.greenBright('Bootstrapped CommandKit Development Environment in')} ${colors.yellowBright(`${(performance.now() - start).toFixed(2)}ms`)}
 ${colors.greenBright('Watching for changes in')} ${colors.yellowBright('src')} ${colors.greenBright('directory')}
 
 ${colors.greenBright('Commands:')}
 ${colors.yellowBright('r')} - Restart the server
 ${colors.yellowBright('rc')} - Reload all commands
-${colors.yellowBright('re')} - Reload all events`,
+${colors.yellowBright('re')} - Reload all events`);
+
+  const buildStart = performance.now();
+
+  ps = await buildAndStart(cwd);
+
+  const buildEnd = performance.now();
+
+  console.log(
+    `\n${colors.greenBright('Development mode compilation took')} ${colors.yellowBright(`${(buildEnd - buildStart).toFixed(2)}ms`)}\n`,
   );
 }

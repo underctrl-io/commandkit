@@ -48,5 +48,6 @@ export type CommandData = Prettify<
   Omit<RESTPostAPIApplicationCommandsJSONBody, 'description'> & {
     description?: string;
     guilds?: string[];
+    aliases?: string[];
   }
 >;

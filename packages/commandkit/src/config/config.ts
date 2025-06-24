@@ -56,6 +56,9 @@ export function defineConfig(
     },
     disablePrefixCommands:
       config.disablePrefixCommands ?? defaultConfig.disablePrefixCommands,
+    showUnknownPrefixCommandsWarning:
+      config.showUnknownPrefixCommandsWarning ??
+      defaultConfig.showUnknownPrefixCommandsWarning,
   };
 
   return defined;

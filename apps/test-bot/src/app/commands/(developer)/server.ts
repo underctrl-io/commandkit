@@ -9,6 +9,7 @@ export const command: CommandData = {
   name: 'server',
   description: 'server command',
   guilds: [process.env.DEV_GUILD_ID!],
+  aliases: ['s', 'serv'],
 };
 
 export const chatInput: ChatInputCommand = async (ctx) => {
