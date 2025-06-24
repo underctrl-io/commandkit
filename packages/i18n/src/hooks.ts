@@ -30,7 +30,7 @@ export function locale(locale?: Locale): CommandLocalizationContext {
     const commandkit = context.commandkit;
 
     const i18n = useI18n(commandkit);
-    const detectedLocale: Locale = locale || commandkit.config.defaultLocale;
+    const detectedLocale: Locale = locale || commandkit.appConfig.defaultLocale;
 
     return {
       t: i18n.getFixedT(detectedLocale, `${context.event}.event`),
