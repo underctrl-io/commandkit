@@ -25,4 +25,5 @@ export const defaultConfig: ResolvedCommandKitConfig = {
   },
   typedCommands: true,
   disablePrefixCommands: false,
+  showUnknownPrefixCommandsWarning: true,
 };

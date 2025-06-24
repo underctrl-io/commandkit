@@ -71,4 +71,9 @@ export interface CommandKitConfig {
    * @default false
    */
   disablePrefixCommands?: boolean;
+  /**
+   * Whether or not to show a warning when a prefix command is not found. This only affects development mode.
+   * @default true
+   */
+  showUnknownPrefixCommandsWarning?: boolean;
 }

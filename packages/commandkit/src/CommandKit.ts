@@ -21,6 +21,8 @@ import { Logger } from './logger/Logger';
 import { AsyncFunction, GenericFunction } from './context/async-context';
 import { FlagStore } from './flags/store';
 import { AnalyticsEngine } from './analytics/analytics-engine';
+import { ResolvedCommandKitConfig } from './config/utils';
+import { getConfig } from './config/config';
 
 /**
  * Configurations for the CommandKit instance.
@@ -110,10 +112,15 @@ export class CommandKit extends EventEmitter {
   /**
    * The configuration for the CommandKit instance.
    */
-  public readonly config: CommandKitConfiguration = {
+  public readonly appConfig: CommandKitConfiguration = {
     defaultLocale: Locale.EnglishUS,
     getMessageCommandPrefix: () => '!',
   };
+
+  /**
+   * The configuration for the CommandKit environment.
+   */
+  public config: ResolvedCommandKitConfig = getConfig();
 
   /**
    * A key-value store for storing arbitrary data.
@@ -177,6 +184,9 @@ export class CommandKit extends EventEmitter {
     }
 
     super();
+
+    // lazily load the actual config file
+    loadConfigFile().then((config) => (this.config = config));
 
     if (!CommandKit.instance) {
       CommandKit.instance = this;
@@ -313,7 +323,7 @@ export class CommandKit extends EventEmitter {
   setPrefixResolver(
     resolver: (message: Message) => Awaitable<string | string[]>,
   ) {
-    this.config.getMessageCommandPrefix = resolver;
+    this.appConfig.getMessageCommandPrefix = resolver;
     return this;
   }
 
@@ -322,7 +332,7 @@ export class CommandKit extends EventEmitter {
    * @param locale The default locale.
    */
   setDefaultLocale(locale: Locale) {
-    this.config.defaultLocale = locale;
+    this.appConfig.defaultLocale = locale;
     return this;
   }
 
