@@ -49,7 +49,7 @@ importers:
         specifier: ^22.10.2
         version: 22.15.32
       prettier:
-        specifier: ^3.0.3
+        specifier: ^3.6.0
         version: 3.6.0
       tsx:
         specifier: ^4.7.0
