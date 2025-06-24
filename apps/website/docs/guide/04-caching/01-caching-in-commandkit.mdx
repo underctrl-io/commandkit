@@ -72,13 +72,11 @@ When you call this function multiple times with the same `userId`, it will only 
 CommandKit's caching system works by:
 
 1. **Generating a Cache Key**: Each cached function call generates a unique key based on:
-
    - The function's identity
    - The arguments passed to the function
    - A build ID for stability
 
 2. **Storing Results**: When a function is called:
-
    - If the result isn't cached, the function executes and stores its result
    - If the result is cached, it's returned immediately without executing the function
 
@@ -107,19 +105,16 @@ async function fetchUserData(userId: string) {
 ## Best Practices
 
 1. **Choose What to Cache**:
-
    - Cache expensive operations (API calls, database queries)
    - Cache data that doesn't change frequently
    - Don't cache sensitive or frequently changing data
 
 2. **Set Appropriate TTL**:
-
    - Use shorter TTL for frequently changing data
    - Use longer TTL for static data
    - Consider your data's update frequency
 
 3. **Use Tags for Revalidation**:
-
    - Add meaningful tags to your cache entries
    - Group related cache entries with the same tag
    - Use tags for targeted cache invalidation

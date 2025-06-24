@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKit
 
-<GenerationInfo sourceFile="packages/commandkit/src/CommandKit.ts" sourceLine="92" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/CommandKit.ts" sourceLine="94" packageName="commandkit" />
 
 The commandkit class that serves as the main entry point for the CommandKit framework.
 
@@ -22,10 +22,11 @@ class CommandKit extends EventEmitter {
     public eventInterceptor!: EventInterceptor;
     public static readonly createElement = createElement;
     public static readonly Fragment = Fragment;
-    public readonly config: CommandKitConfiguration = {
+    public readonly appConfig: CommandKitConfiguration = {
     defaultLocale: Locale.EnglishUS,
     getMessageCommandPrefix: () => '!',
   };
+    public config: ResolvedCommandKitConfig = getConfig();
     public readonly store = new Map<string, any>();
     public readonly flags = new FlagStore();
     public commandsRouter!: CommandsRouter;
@@ -73,11 +74,16 @@ The static createElement function to create jsx elements
 <MemberInfo kind="property" type={``}   />
 
 The static Fragment component to create jsx fragments
-### config
+### appConfig
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/command-kit-configuration#commandkitconfiguration'>CommandKitConfiguration</a>`}   />
 
 The configuration for the CommandKit instance.
+### config
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/resolved-command-kit-config#resolvedcommandkitconfig'>ResolvedCommandKitConfig</a>`}   />
+
+The configuration for the CommandKit environment.
 ### store
 
 <MemberInfo kind="property" type={``}   />

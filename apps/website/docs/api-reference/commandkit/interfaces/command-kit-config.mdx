@@ -54,6 +54,7 @@ interface CommandKitConfig {
   };
     typedCommands?: boolean;
     disablePrefixCommands?: boolean;
+    showUnknownPrefixCommandsWarning?: boolean;
 }
 ```
 
@@ -110,6 +111,11 @@ Whether or not to enable the typed commands.
 <MemberInfo kind="property" type={`boolean`} default={`false`}   />
 
 Whether or not to disable the prefix commands.
+### showUnknownPrefixCommandsWarning
+
+<MemberInfo kind="property" type={`boolean`} default={`true`}   />
+
+Whether or not to show a warning when a prefix command is not found. This only affects development mode.
 
 
 </div>

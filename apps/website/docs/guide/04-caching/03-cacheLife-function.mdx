@@ -99,13 +99,11 @@ async function fetchData(type: 'frequent' | 'rare') {
 ## Best Practices
 
 1. **Choose Appropriate Duration**:
-
    - Use shorter TTL for frequently changing data
    - Use longer TTL for static content
    - Consider your data update patterns
 
 2. **Balance Freshness and Performance**:
-
    - Don't cache too long if data changes often
    - Don't cache too short if data is static
    - Consider your application's needs
