@@ -18,7 +18,7 @@
     "@commandkit/legacy": "workspace:*",
     "commandkit": "workspace:*",
     "discord.js": "^14.19.1",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.0.0",
     "zod": "^3.25.56"
   },
   "devDependencies": {
