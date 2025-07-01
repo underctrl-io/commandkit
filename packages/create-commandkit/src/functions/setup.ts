@@ -19,24 +19,32 @@ export async function setup({
   stdio = 'pipe',
 }: SetupProps) {
   await fs.emptyDir(dir);
-  execSync(commands.init[manager], { cwd: dir, stdio });
+
+  if (manager === 'yarn') {
+    execSync(commands.init.yarn, { cwd: dir, stdio });
+  }
 
   const packageJsonPath = path.join(dir, 'package.json');
-  const packageJson = await fs.readJSON(packageJsonPath);
 
-  delete packageJson.main;
-  packageJson.name = packageJson.name.toLowerCase();
-  packageJson.type = 'module';
-  packageJson.version = '0.1.0';
-  packageJson.private = true;
-  packageJson.description = 'A CommandKit project';
-
-  packageJson.scripts = {
-    dev: 'commandkit dev',
-    build: 'commandkit build',
-    start: 'commandkit start',
+  const packageJson = {
+    name:
+      dir.replaceAll('\\', '/').split('/').pop()?.toLowerCase() ||
+      'commandkit-project',
+    description: 'A CommandKit project',
+    version: '0.1.0',
+    type: 'module',
+    private: true,
+    main: 'dist/index.js',
+    scripts: {
+      dev: 'commandkit dev',
+      build: 'commandkit build',
+      start: 'commandkit start',
+    },
+    devDependencies: {},
+    dependencies: {},
   };
 
   await fs.writeJSON(packageJsonPath, packageJson, { spaces: 2 });
-  await fs.writeFile(`${dir}/.env`, `DISCORD_TOKEN="${token}"`);
+
+  await fs.writeFile(`${dir}/.env`, `DISCORD_TOKEN="${token || ''}"`);
 }

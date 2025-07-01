@@ -12,9 +12,10 @@ import { copyTemplates } from './functions/copyTemplates.js';
 import { installDeps } from './functions/installDeps.js';
 import { setup } from './functions/setup.js';
 import type { Language, PackageManager } from './types';
-import { textColors } from './utils.js';
+import { detectPackageManager, textColors } from './utils.js';
 
 const commandkitGradient = gradient(textColors.commandkit)('CommandKit');
+
 intro(`Welcome to ${commandkitGradient}!`);
 
 const dir = path.resolve(
@@ -41,12 +42,13 @@ const dir = path.resolve(
 
 const manager = (await select({
   message: 'Select a package manager:',
-  initialValue: 'npm' as PackageManager,
+  initialValue: detectPackageManager(),
   options: [
     { label: 'npm', value: 'npm' },
     { label: 'pnpm', value: 'pnpm' },
     { label: 'yarn', value: 'yarn' },
     { label: 'bun', value: 'bun' },
+    { label: 'deno', value: 'deno' },
   ],
 })) as PackageManager;
 
@@ -98,13 +100,29 @@ installDeps({
   stdio: 'pipe',
 });
 
+const command = (cmd: string) => {
+  switch (manager) {
+    case 'npm':
+    // bun build runs bundler instead of the build script
+    case 'bun':
+      return `${manager} run ${cmd}`;
+    case 'pnpm':
+    case 'yarn':
+      return `${manager} ${cmd}`;
+    case 'deno':
+      return `deno task ${cmd}`;
+    default:
+      return manager satisfies never;
+  }
+};
+
 console.log(
   `${gradient(textColors.commandkit)('Thank you for choosing CommandKit!')}
 
 To start your bot, use the following commands:
-  ${colors.magenta(`${manager} run dev`)}     - Run your bot in development mode
-  ${colors.magenta(`${manager} run build`)}   - Build your bot for production
-  ${colors.magenta(`${manager} run start`)}   - Run your bot in production mode
+  ${colors.magenta(command('dev'))}     - Run your bot in development mode
+  ${colors.magenta(command('build'))}   - Build your bot for production
+  ${colors.magenta(command('start'))}   - Run your bot in production mode
 
 • Documentation: ${colors.blue('https://commandkit.dev')}
 • GitHub: ${colors.blue('https://github.com/underctrl-io/commandkit')}
