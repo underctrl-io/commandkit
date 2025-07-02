@@ -1,0 +1,618 @@
+---
+title: Advanced Features
+description: Learn about advanced KV store features like iteration, resource management, and database access.
+---
+
+# Advanced Features
+
+This guide covers advanced features of the KV store, including iteration, resource management, database access, and performance optimization.
+
+## Iteration Support
+
+The KV store implements the JavaScript iterator protocol, allowing you to use standard iteration patterns.
+
+### Basic Iteration
+
+```ts
+import { openKV } from 'commandkit/kv';
+
+const kv = openKV('data.db');
+
+// Store some data
+kv.set('user:1', JSON.stringify({ name: 'Alice', level: 5 }));
+kv.set('user:2', JSON.stringify({ name: 'Bob', level: 3 }));
+kv.set('user:3', JSON.stringify({ name: 'Charlie', level: 7 }));
+
+// Iterate over all key-value pairs
+for (const [key, value] of kv) {
+  console.log(`${key}: ${value}`);
+}
+```
+
+### Using Spread Operator
+
+```ts
+// Convert to array of entries
+const entries = [...kv];
+console.log('All entries:', entries);
+
+// Convert to array of keys
+const keys = [...kv].map(([key]) => key);
+console.log('All keys:', keys);
+
+// Convert to array of values
+const values = [...kv].map(([, value]) => value);
+console.log('All values:', values);
+```
+
+### Filtering During Iteration
+
+```ts
+// Filter entries during iteration
+const userEntries = [...kv].filter(([key]) => key.startsWith('user:'));
+console.log('User entries:', userEntries);
+
+// Find specific entries
+const aliceEntry = [...kv].find(([key, value]) => {
+  const user = JSON.parse(value);
+  return user.name === 'Alice';
+});
+console.log('Alice entry:', aliceEntry);
+```
+
+### Processing Large Datasets
+
+```ts
+// Process entries in chunks to avoid memory issues
+function processInChunks(kv: KV, chunkSize: number = 100) {
+  const entries = [...kv];
+
+  for (let i = 0; i < entries.length; i += chunkSize) {
+    const chunk = entries.slice(i, i + chunkSize);
+
+    // Process chunk
+    chunk.forEach(([key, value]) => {
+      const user = JSON.parse(value);
+      console.log(`Processing ${user.name}...`);
+    });
+
+    // Optional: Add delay between chunks
+    if (i + chunkSize < entries.length) {
+      // await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+}
+
+processInChunks(kv, 50);
+```
+
+## Transaction Support
+
+The KV store provides ACID transaction support using SQLite's built-in transaction capabilities.
+
+### Basic Transactions
+
+```ts
+import { openKV } from 'commandkit/kv';
+
+const kv = openKV();
+
+// Execute multiple operations atomically (synchronous)
+kv.transaction(() => {
+  kv.set('user:123', JSON.stringify({ name: 'John', balance: 100 }));
+  kv.set('user:456', JSON.stringify({ name: 'Jane', balance: 200 }));
+
+  // If any operation fails, all changes are rolled back
+  console.log('Transaction completed successfully');
+});
+
+// Execute multiple operations atomically (asynchronous)
+await kv.transaction(async () => {
+  kv.set('user:123', JSON.stringify({ name: 'John', balance: 100 }));
+
+  // You can perform async operations within the transaction
+  await someAsyncOperation();
+
+  kv.set('user:456', JSON.stringify({ name: 'Jane', balance: 200 }));
+
+  // If any operation fails, all changes are rolled back
+  console.log('Async transaction completed successfully');
+});
+```
+
+### Transaction with Error Handling
+
+```ts
+// Synchronous transaction with error handling
+try {
+  kv.transaction(() => {
+    kv.set('user:123', JSON.stringify({ name: 'John' }));
+
+    // Simulate an error
+    throw new Error('Something went wrong');
+
+    // This line won't execute due to the error
+    kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+  });
+} catch (error) {
+  console.error('Transaction failed:', error);
+  // All changes were automatically rolled back
+}
+
+// Async transaction with error handling
+try {
+  await kv.transaction(async () => {
+    kv.set('user:123', JSON.stringify({ name: 'John' }));
+
+    // Simulate an async error
+    await Promise.reject(new Error('Async operation failed'));
+
+    // This line won't execute due to the error
+    kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+  });
+} catch (error) {
+  console.error('Async transaction failed:', error);
+  // All changes were automatically rolled back
+}
+```
+
+### Nested Operations in Transactions
+
+```ts
+// Synchronous nested operations
+kv.transaction(() => {
+  // All operations within this block are part of the same transaction
+  const userKv = kv.namespace('users');
+  const statsKv = kv.namespace('stats');
+
+  userKv.set('123', JSON.stringify({ name: 'John', level: 5 }));
+  statsKv.set('total_users', '1');
+
+  // Even operations on different namespaces are part of the same transaction
+  // If any operation fails, all changes are rolled back
+});
+
+// Async nested operations
+await kv.transaction(async () => {
+  // All operations within this block are part of the same transaction
+  const userKv = kv.namespace('users');
+  const statsKv = kv.namespace('stats');
+
+  userKv.set('123', JSON.stringify({ name: 'John', level: 5 }));
+
+  // You can perform async operations between KV operations
+  await validateUserData({ name: 'John', level: 5 });
+
+  statsKv.set('total_users', '1');
+
+  // Even operations on different namespaces are part of the same transaction
+  // If any operation fails, all changes are rolled back
+});
+```
+
+### Transaction Best Practices
+
+1. **Keep transactions short**: Long-running transactions can block other operations
+2. **Handle errors properly**: Always wrap transactions in try-catch blocks
+3. **Use for related operations**: Group operations that should succeed or fail together
+4. **Async operations are supported**: You can perform async operations within transactions
+5. **Prepared statements**: Transaction commands use prepared statements for better performance
+
+```ts
+// Good: Related operations in a transaction
+kv.transaction(() => {
+  kv.set('user:123', JSON.stringify({ name: 'John' }));
+  kv.set('user_count', '1');
+});
+
+// Good: Async operations in a transaction
+await kv.transaction(async () => {
+  kv.set('user:123', JSON.stringify({ name: 'John' }));
+
+  // Async operations are supported
+  await validateUserData({ name: 'John' });
+  await updateUserStats();
+
+  kv.set('user_count', '1');
+});
+
+// Avoid: Very long-running transactions
+kv.transaction(() => {
+  // Don't do heavy processing here
+  for (let i = 0; i < 1000000; i++) {
+    kv.set(`key:${i}`, `value:${i}`);
+  }
+});
+```
+
+## Resource Management
+
+The KV store implements both `Disposable` and `AsyncDisposable` interfaces for automatic resource management.
+
+### Using the `using` Statement
+
+```ts
+// Synchronous using statement
+{
+  using kv = openKV('data.db');
+  kv.set('key', 'value');
+  console.log('Data stored');
+} // kv is automatically closed
+
+// Async using statement
+async function processData() {
+  await using kv = openKV('data.db');
+
+  kv.set('user:123', JSON.stringify({ name: 'John' }));
+  const userData = kv.get('user:123');
+
+  console.log('User data:', userData);
+} // kv is automatically closed when function exits
+```
+
+### Manual Resource Management
+
+```ts
+const kv = openKV('data.db');
+
+try {
+  // Perform operations
+  kv.set('key', 'value');
+  const value = kv.get('key');
+  console.log('Value:', value);
+} catch (error) {
+  console.error('Error:', error);
+} finally {
+  // Always close the connection
+  kv.close();
+}
+```
+
+### Checking Connection Status
+
+```ts
+const kv = openKV('data.db');
+
+// Check if database is open
+if (kv.isOpen()) {
+  console.log('Database is open and ready');
+
+  // Perform operations
+  kv.set('key', 'value');
+} else {
+  console.error('Database is not open');
+}
+
+// Close the connection
+kv.close();
+
+// Check again
+if (!kv.isOpen()) {
+  console.log('Database is now closed');
+}
+```
+
+## Database Access
+
+You can access the underlying SQLite database for advanced operations.
+
+### Getting the Database Instance
+
+```ts
+import { openKV } from 'commandkit/kv';
+import type { DatabaseSync } from 'node:sqlite';
+
+const kv = openKV('data.db');
+const db = kv.getDatabase();
+
+// Now you can use the SQLite database directly
+console.log('Database path:', db.name);
+console.log('Database is open:', db.isOpen);
+```
+
+### Custom SQL Queries
+
+```ts
+const kv = openKV('data.db');
+const db = kv.getDatabase();
+
+// Execute custom SQL queries
+const result = db
+  .prepare(
+    `
+  SELECT key, value 
+  FROM commandkit_kv 
+  WHERE key LIKE 'user:%'
+  ORDER BY key
+`,
+  )
+  .all();
+
+console.log('User data:', result);
+
+// Execute raw SQL
+db.exec(`
+  CREATE TABLE IF NOT EXISTS custom_table (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+// Insert data into custom table
+db.prepare(
+  `
+  INSERT INTO custom_table (name) VALUES (?)
+`,
+).run('Custom Entry');
+```
+
+### Database Backup
+
+```ts
+import { openKV } from 'commandkit/kv';
+import { DatabaseSync } from 'node:sqlite';
+import { copyFileSync } from 'node:fs';
+
+const kv = openKV('data.db');
+
+// Create a backup
+function backupDatabase(sourcePath: string, backupPath: string) {
+  try {
+    copyFileSync(sourcePath, backupPath);
+    console.log(`Backup created: ${backupPath}`);
+  } catch (error) {
+    console.error('Backup failed:', error);
+  }
+}
+
+// Backup the database
+backupDatabase('data.db', `data-backup-${Date.now()}.db`);
+```
+
+## Performance Optimization
+
+### Write-Ahead Logging (WAL)
+
+WAL mode is enabled by default and provides better performance for concurrent access:
+
+```ts
+const kv = openKV('data.db', {
+  enableWAL: true, // Default: true
+  namespace: 'my_bot',
+});
+```
+
+### Batch Operations
+
+For better performance when working with multiple items:
+
+```ts
+const kv = openKV('data.db');
+
+// Batch set operations
+function batchSet(kv: KV, entries: Array<[string, string]>) {
+  const db = kv.getDatabase();
+
+  // Start a transaction
+  db.exec('BEGIN TRANSACTION');
+
+  try {
+    const stmt = db.prepare(`
+      INSERT OR REPLACE INTO ${kv.getCurrentNamespace()} (key, value) 
+      VALUES (?, ?)
+    `);
+
+    for (const [key, value] of entries) {
+      stmt.run(key, value);
+    }
+
+    // Commit the transaction
+    db.exec('COMMIT');
+  } catch (error) {
+    // Rollback on error
+    db.exec('ROLLBACK');
+    throw error;
+  }
+}
+
+// Use batch operations
+const entries = [
+  ['user:1', JSON.stringify({ name: 'Alice', level: 5 })],
+  ['user:2', JSON.stringify({ name: 'Bob', level: 3 })],
+  ['user:3', JSON.stringify({ name: 'Charlie', level: 7 })],
+];
+
+batchSet(kv, entries);
+```
+
+### Efficient Data Retrieval
+
+```ts
+const kv = openKV('data.db');
+
+// Get multiple specific keys efficiently
+function getMultiple(kv: KV, keys: string[]) {
+  const db = kv.getDatabase();
+  const placeholders = keys.map(() => '?').join(',');
+
+  const stmt = db.prepare(`
+    SELECT key, value 
+    FROM ${kv.getCurrentNamespace()} 
+    WHERE key IN (${placeholders})
+  `);
+
+  return stmt.all(keys);
+}
+
+// Use efficient retrieval
+const keys = ['user:1', 'user:2', 'user:3'];
+const results = getMultiple(kv, keys);
+console.log('Multiple results:', results);
+```
+
+## Error Handling and Recovery
+
+### Robust Error Handling
+
+```ts
+import { openKV } from 'commandkit/kv';
+
+class KVManager {
+  private kv: KV;
+
+  constructor(dbPath: string) {
+    this.kv = openKV(dbPath);
+  }
+
+  async set(key: string, value: string): Promise<boolean> {
+    try {
+      if (!this.kv.isOpen()) {
+        console.error('Database is not open');
+        return false;
+      }
+
+      this.kv.set(key, value);
+      return true;
+    } catch (error) {
+      console.error('Error setting value:', error);
+      return false;
+    }
+  }
+
+  async get(key: string): Promise<string | undefined> {
+    try {
+      if (!this.kv.isOpen()) {
+        console.error('Database is not open');
+        return undefined;
+      }
+
+      return this.kv.get(key);
+    } catch (error) {
+      console.error('Error getting value:', error);
+      return undefined;
+    }
+  }
+
+  async has(key: string): Promise<boolean> {
+    try {
+      if (!this.kv.isOpen()) {
+        return false;
+      }
+
+      return this.kv.has(key);
+    } catch (error) {
+      console.error('Error checking key:', error);
+      return false;
+    }
+  }
+
+  close(): void {
+    try {
+      this.kv.close();
+    } catch (error) {
+      console.error('Error closing database:', error);
+    }
+  }
+}
+
+// Use the manager
+const manager = new KVManager('data.db');
+await manager.set('key', 'value');
+const value = await manager.get('key');
+manager.close();
+```
+
+### Data Validation
+
+```ts
+// Validate data before storing
+function validateUserData(data: any): boolean {
+  return (
+    typeof data === 'object' &&
+    typeof data.name === 'string' &&
+    typeof data.level === 'number' &&
+    data.level >= 0
+  );
+}
+
+// Safe set operation with validation
+function safeSetUser(kv: KV, userId: string, userData: any): boolean {
+  if (!validateUserData(userData)) {
+    console.error('Invalid user data');
+    return false;
+  }
+
+  try {
+    kv.set(`user:${userId}`, JSON.stringify(userData));
+    return true;
+  } catch (error) {
+    console.error('Error storing user data:', error);
+    return false;
+  }
+}
+
+// Use safe operations
+const userData = { name: 'John', level: 5 };
+if (safeSetUser(kv, '123', userData)) {
+  console.log('User data stored successfully');
+}
+```
+
+## Monitoring and Debugging
+
+### Database Statistics
+
+```ts
+const kv = openKV('data.db');
+
+// Get database statistics
+function getDatabaseStats(kv: KV) {
+  const db = kv.getDatabase();
+
+  return {
+    isOpen: kv.isOpen(),
+    namespace: kv.getCurrentNamespace(),
+    entryCount: kv.count(),
+    totalKeys: kv.keys().length,
+    totalValues: kv.values().length,
+    databaseName: db.name,
+    databasePath: db.filename,
+  };
+}
+
+const stats = getDatabaseStats(kv);
+console.log('Database stats:', stats);
+```
+
+### Performance Monitoring
+
+```ts
+// Monitor operation performance
+function measureOperation<T>(operation: () => T): {
+  result: T;
+  duration: number;
+} {
+  const start = performance.now();
+  const result = operation();
+  const duration = performance.now() - start;
+
+  return { result, duration };
+}
+
+// Measure different operations
+const setResult = measureOperation(() => kv.set('test', 'value'));
+console.log(`Set operation took ${setResult.duration.toFixed(2)}ms`);
+
+const getResult = measureOperation(() => kv.get('test'));
+console.log(`Get operation took ${getResult.duration.toFixed(2)}ms`);
+
+const countResult = measureOperation(() => kv.count());
+console.log(`Count operation took ${countResult.duration.toFixed(2)}ms`);
+```
+
+## Next Steps
+
+Now that you understand the advanced features, explore:
+
+- Integration with your Discord bot commands and events

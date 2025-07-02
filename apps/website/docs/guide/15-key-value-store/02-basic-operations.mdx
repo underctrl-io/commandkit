@@ -1,0 +1,378 @@
+---
+title: Basic Operations
+description: Learn the fundamental operations for working with the KV store.
+---
+
+# Basic Operations
+
+This guide covers the essential operations you'll use most frequently with the KV store: getting, setting, deleting, and checking for data.
+
+## Creating a KV Store
+
+First, let's create a KV store instance:
+
+```ts
+import { openKV } from 'commandkit/kv';
+
+// Create with default settings (uses 'commandkit_kv.db')
+const kv = openKV();
+
+// Create with custom database file
+const kv = openKV('my-bot-data.db');
+
+// Create in-memory store for caching
+const kv = openKV(':memory:');
+
+// Create with custom options
+const kv = openKV('data.db', {
+  enableWAL: true,
+  namespace: 'my_bot',
+});
+```
+
+## Setting Data
+
+Use the `set` method to store key-value pairs:
+
+```ts
+// Store simple string values
+kv.set('bot_name', 'MyAwesomeBot');
+kv.set('version', '1.0.0');
+
+// Store serialized objects
+kv.set(
+  'user:123',
+  JSON.stringify({
+    name: 'John Doe',
+    level: 5,
+    joinDate: new Date().toISOString(),
+  }),
+);
+
+// Store configuration
+kv.set('config:theme', 'dark');
+kv.set('config:language', 'en');
+```
+
+## Getting Data
+
+Use the `get` method to retrieve stored values:
+
+```ts
+// Get simple values
+const botName = kv.get('bot_name');
+console.log(botName); // 'MyAwesomeBot'
+
+// Get and parse JSON data
+const userData = kv.get('user:123');
+if (userData) {
+  const user = JSON.parse(userData);
+  console.log(`User: ${user.name}, Level: ${user.level}`);
+}
+
+// Handle missing data
+const missingData = kv.get('non_existent_key');
+if (missingData === undefined) {
+  console.log('Key does not exist');
+}
+```
+
+## Checking for Existence
+
+Use the `has` method to check if a key exists:
+
+```ts
+// Check if a key exists
+if (kv.has('user:123')) {
+  console.log('User data exists');
+} else {
+  console.log('User data not found');
+}
+
+// Use in conditional logic
+if (kv.has('config:theme')) {
+  const theme = kv.get('config:theme');
+  console.log(`Current theme: ${theme}`);
+} else {
+  // Set default theme
+  kv.set('config:theme', 'light');
+}
+```
+
+## Deleting Data
+
+Use the `delete` method to remove key-value pairs:
+
+```ts
+// Delete a single key
+kv.delete('user:123');
+
+// Delete configuration
+kv.delete('config:theme');
+
+// Check if deletion was successful
+if (!kv.has('user:123')) {
+  console.log('User data successfully deleted');
+}
+```
+
+## Bulk Operations
+
+### Getting All Keys
+
+```ts
+// Get all keys in the current namespace
+const allKeys = kv.keys();
+console.log('All keys:', allKeys);
+
+// Filter keys by pattern
+const userKeys = allKeys.filter((key) => key.startsWith('user:'));
+console.log('User keys:', userKeys);
+```
+
+### Getting All Values
+
+```ts
+// Get all values
+const allValues = kv.values();
+console.log('All values:', allValues);
+
+// Process all values
+allValues.forEach((value) => {
+  try {
+    const parsed = JSON.parse(value);
+    console.log('Parsed value:', parsed);
+  } catch {
+    console.log('Raw value:', value);
+  }
+});
+```
+
+### Getting All Data
+
+```ts
+// Get all key-value pairs as an object
+const allData = kv.all();
+console.log('All data:', allData);
+
+// Process all data
+Object.entries(allData).forEach(([key, value]) => {
+  console.log(`${key}: ${value}`);
+});
+```
+
+### Counting Entries
+
+```ts
+// Get total number of entries
+const count = kv.count();
+console.log(`Total entries: ${count}`);
+
+// Check if store is empty
+if (count === 0) {
+  console.log('KV store is empty');
+}
+```
+
+## Clearing Data
+
+Use the `clear` method to remove all data from the current namespace:
+
+```ts
+// Clear all data in current namespace
+kv.clear();
+
+// Verify it's empty
+console.log(`Entries after clear: ${kv.count()}`); // 0
+```
+
+## Expiration Operations
+
+### Setting Data with Expiration
+
+```ts
+// Set data with expiration (1 hour)
+kv.setex(
+  'session:123',
+  JSON.stringify({ userId: '123', data: 'temp' }),
+  60 * 60 * 1000,
+);
+
+// Set data with 5 minutes expiration
+kv.setex('temp:data', 'cached_value', 5 * 60 * 1000);
+
+// Set data with 1 day expiration
+kv.setex('daily:stats', JSON.stringify({ count: 100 }), 24 * 60 * 60 * 1000);
+```
+
+### Setting Expiration for Existing Keys
+
+```ts
+// First set the data
+kv.set('user:123', JSON.stringify({ name: 'John', level: 5 }));
+
+// Then set expiration (30 minutes)
+if (kv.expire('user:123', 30 * 60 * 1000)) {
+  console.log('Expiration set successfully');
+} else {
+  console.log('Key does not exist');
+}
+```
+
+### Checking Time to Live
+
+```ts
+const ttl = kv.ttl('user:123');
+
+if (ttl > 0) {
+  console.log(`Key expires in ${ttl}ms (${Math.floor(ttl / 1000)}s)`);
+} else if (ttl === -2) {
+  console.log('Key has no expiration');
+} else {
+  console.log('Key does not exist or has expired');
+}
+```
+
+### Automatic Expiration Handling
+
+```ts
+// Set data with expiration
+kv.setex('temp:key', 'value', 1000); // 1 second
+
+// Immediately check - should exist
+console.log(kv.has('temp:key')); // true
+
+// Wait for expiration
+setTimeout(() => {
+  console.log(kv.has('temp:key')); // false
+  console.log(kv.get('temp:key')); // undefined
+}, 1100);
+```
+
+## Working with Different Data Types
+
+### Storing Numbers
+
+```ts
+// Store numbers as strings
+kv.set('counter', '42');
+kv.set('score', '1500');
+
+// Retrieve and convert back to numbers
+const counter = parseInt(kv.get('counter') || '0');
+const score = parseInt(kv.get('score') || '0');
+```
+
+### Storing Booleans
+
+```ts
+// Store booleans as strings
+kv.set('feature_enabled', 'true');
+kv.set('maintenance_mode', 'false');
+
+// Retrieve and convert back to booleans
+const featureEnabled = kv.get('feature_enabled') === 'true';
+const maintenanceMode = kv.get('maintenance_mode') === 'true';
+```
+
+### Storing Dates
+
+```ts
+// Store dates as ISO strings
+kv.set('last_backup', new Date().toISOString());
+kv.set('user_created', '2024-01-15T10:30:00.000Z');
+
+// Retrieve and parse dates
+const lastBackup = new Date(kv.get('last_backup') || '');
+const userCreated = new Date(kv.get('user_created') || '');
+```
+
+## Transaction Operations
+
+### Basic Transaction Usage
+
+```ts
+// Execute multiple operations atomically
+kv.transaction(() => {
+  kv.set('user:123', JSON.stringify({ name: 'John', balance: 100 }));
+  kv.set('user:456', JSON.stringify({ name: 'Jane', balance: 200 }));
+
+  // If any operation fails, all changes are rolled back
+});
+```
+
+### Transaction with Error Handling
+
+```ts
+try {
+  kv.transaction(() => {
+    kv.set('user:123', JSON.stringify({ name: 'John' }));
+
+    // Simulate an error
+    throw new Error('Database error');
+
+    // This won't execute due to the error
+    kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+  });
+} catch (error) {
+  console.error('Transaction failed:', error);
+  // All changes were automatically rolled back
+}
+```
+
+### Combining Expiration with Transactions
+
+```ts
+kv.transaction(() => {
+  // Set permanent data
+  kv.set('user:123', JSON.stringify({ name: 'John', level: 5 }));
+
+  // Set temporary data with expiration
+  kv.setex('session:123', JSON.stringify({ token: 'abc123' }), 60 * 60 * 1000);
+
+  // If any operation fails, both permanent and temporary data are rolled back
+});
+```
+
+## Error Handling
+
+Always handle potential errors when working with the KV store:
+
+```ts
+try {
+  // Check if database is open
+  if (!kv.isOpen()) {
+    console.error('Database is not open');
+    return;
+  }
+
+  // Perform operations
+  kv.set('key', 'value');
+  const value = kv.get('key');
+
+  if (value === undefined) {
+    console.log('Key not found');
+  }
+} catch (error) {
+  console.error('Error working with KV store:', error);
+} finally {
+  // Always close the connection
+  kv.close();
+}
+```
+
+## Best Practices
+
+1. **Always check for undefined**: The `get` method returns `undefined` for missing keys
+2. **Serialize complex data**: Use `JSON.stringify()` for objects and arrays
+3. **Use meaningful key names**: Make keys descriptive and consistent
+4. **Handle errors gracefully**: Wrap operations in try-catch blocks
+5. **Close connections**: Always close the KV store when done
+6. **Validate data**: Check data types and structure when retrieving
+
+## Next Steps
+
+Now that you understand the basic operations, learn about:
+
+- [Namespaces](./03-namespaces.mdx) for organizing your data
+- [Advanced features](./04-advanced-features.mdx) for more complex use cases
