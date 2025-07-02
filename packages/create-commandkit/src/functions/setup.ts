@@ -24,6 +24,33 @@ export async function setup({
     execSync(commands.init.yarn, { cwd: dir, stdio });
   }
 
+  if (manager === 'deno') {
+    const denoJsonPath = path.join(dir, 'deno.json');
+    const denoJson = {
+      compilerOptions: {
+        jsx: 'react-jsx',
+        jsxImportSource: 'commandkit',
+      },
+      nodeModulesDir: 'auto',
+      lock: true,
+      lint: {
+        include: ['src/'],
+        exclude: ['node_modules/', 'dist/', '.commandkit/'],
+      },
+      fmt: {
+        useTabs: false,
+        lineWidth: 120,
+        indentWidth: 2,
+        semiColons: true,
+        singleQuote: true,
+        include: ['src/'],
+        exclude: ['node_modules/', 'dist/', '.commandkit/'],
+      },
+    };
+
+    await fs.writeJSON(denoJsonPath, denoJson, { spaces: 2, EOL: '\n' });
+  }
+
   const packageJsonPath = path.join(dir, 'package.json');
 
   const packageJson = {
