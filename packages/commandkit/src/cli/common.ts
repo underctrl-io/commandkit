@@ -85,6 +85,7 @@ function detectPackageManager() {
     'package-lock.json': 'npm',
     'bun.lock': 'bun',
     'bun.lockb': 'bun',
+    'deno.lock': 'deno',
   };
 
   for (const [lockfile, manager] of Object.entries(lockfiles)) {
@@ -114,8 +115,8 @@ export async function loadTypeScript(e?: string) {
     if (e instanceof Error && 'code' in e && e.code === 'MODULE_NOT_FOUND') {
       try {
         const packageManager = detectPackageManager();
-
-        execSync(`${packageManager} add typescript`, {
+        const prefix = packageManager === 'deno' ? 'npm:' : '';
+        execSync(`${packageManager} add -D ${prefix}typescript`, {
           stdio: 'inherit',
           cwd: process.cwd(),
         });
