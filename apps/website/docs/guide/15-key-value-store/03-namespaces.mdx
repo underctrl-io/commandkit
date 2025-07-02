@@ -1,0 +1,339 @@
+---
+title: Namespaces
+description: Learn how to use namespaces to organize your KV store data logically.
+---
+
+# Namespaces
+
+Namespaces are a powerful feature of the KV store that allows you to organize your data into logical groups. This helps keep your data organized, prevents key conflicts, and makes it easier to manage different types of data.
+
+## What are Namespaces?
+
+Namespaces are like separate tables within your SQLite database. Each namespace has its own set of key-value pairs, completely isolated from other namespaces. This means you can have the same key in different namespaces without conflicts.
+
+## Creating Namespaces
+
+You can create namespaces in two ways:
+
+### 1. During Initialization
+
+```ts
+import { openKV } from 'commandkit/kv';
+
+// Create KV store with a specific namespace
+const kv = openKV('data.db', {
+  namespace: 'users',
+});
+
+// This will store data in the 'users' namespace
+kv.set('123', JSON.stringify({ name: 'John' }));
+```
+
+### 2. Using the namespace() Method
+
+```ts
+import { openKV } from 'commandkit/kv';
+
+// Create the main KV store
+const kv = openKV('data.db');
+
+// Create namespace instances
+const userKv = kv.namespace('users');
+const configKv = kv.namespace('config');
+const statsKv = kv.namespace('statistics');
+```
+
+## Working with Multiple Namespaces
+
+Here's how to work with different namespaces:
+
+```ts
+import { openKV } from 'commandkit/kv';
+
+const kv = openKV('bot-data.db');
+
+// Create namespace instances
+const userKv = kv.namespace('users');
+const configKv = kv.namespace('config');
+const guildKv = kv.namespace('guilds');
+
+// Store data in different namespaces
+userKv.set(
+  '123',
+  JSON.stringify({
+    name: 'John Doe',
+    level: 5,
+    joinDate: new Date().toISOString(),
+  }),
+);
+
+configKv.set('theme', 'dark');
+configKv.set('language', 'en');
+configKv.set('timezone', 'UTC');
+
+guildKv.set(
+  '456',
+  JSON.stringify({
+    name: 'My Discord Server',
+    memberCount: 1000,
+    premium: true,
+  }),
+);
+
+// Each namespace can have the same key without conflicts
+userKv.set('settings', JSON.stringify({ theme: 'light' }));
+configKv.set('settings', JSON.stringify({ maintenance: false }));
+```
+
+## Getting Current Namespace
+
+You can check which namespace you're currently working with:
+
+```ts
+const kv = openKV('data.db', { namespace: 'users' });
+console.log(kv.getCurrentNamespace()); // 'users'
+
+const configKv = kv.namespace('config');
+console.log(configKv.getCurrentNamespace()); // 'config'
+```
+
+## Listing All Namespaces
+
+You can get a list of all available namespaces in your database:
+
+```ts
+const kv = openKV('data.db');
+
+// Create some namespaces
+kv.namespace('users').set('123', 'user data');
+kv.namespace('config').set('theme', 'dark');
+kv.namespace('guilds').set('456', 'guild data');
+
+// Get all namespaces
+const namespaces = kv.namespaces();
+console.log('Available namespaces:', namespaces);
+// Output: ['users', 'config', 'guilds']
+```
+
+## Namespace-Specific Operations
+
+Each namespace instance has its own set of operations:
+
+```ts
+const kv = openKV('data.db');
+const userKv = kv.namespace('users');
+const configKv = kv.namespace('config');
+
+// Each namespace has its own count
+console.log(`Users: ${userKv.count()}`);
+console.log(`Config items: ${configKv.count()}`);
+
+// Each namespace has its own keys
+console.log('User keys:', userKv.keys());
+console.log('Config keys:', configKv.keys());
+
+// Each namespace has its own data
+console.log('All users:', userKv.all());
+console.log('All config:', configKv.all());
+```
+
+## Common Namespace Patterns
+
+### User Data Management
+
+```ts
+const kv = openKV('bot-data.db');
+
+// User profiles
+const userProfiles = kv.namespace('user_profiles');
+userProfiles.set(
+  '123',
+  JSON.stringify({
+    username: 'john_doe',
+    level: 5,
+    experience: 1250,
+    joinDate: new Date().toISOString(),
+  }),
+);
+
+// User settings
+const userSettings = kv.namespace('user_settings');
+userSettings.set(
+  '123',
+  JSON.stringify({
+    theme: 'dark',
+    language: 'en',
+    notifications: true,
+  }),
+);
+
+// User statistics
+const userStats = kv.namespace('user_stats');
+userStats.set(
+  '123',
+  JSON.stringify({
+    messagesSent: 150,
+    commandsUsed: 45,
+    timeSpent: 3600,
+  }),
+);
+```
+
+### Guild/Server Management
+
+```ts
+const kv = openKV('bot-data.db');
+
+// Guild configurations
+const guildConfig = kv.namespace('guild_config');
+guildConfig.set(
+  '456',
+  JSON.stringify({
+    prefix: '!',
+    welcomeChannel: '123456789',
+    modRole: '987654321',
+    autoRole: '111222333',
+  }),
+);
+
+// Guild statistics
+const guildStats = kv.namespace('guild_stats');
+guildStats.set(
+  '456',
+  JSON.stringify({
+    memberCount: 1000,
+    messageCount: 50000,
+    commandUsage: 2500,
+  }),
+);
+
+// Guild features
+const guildFeatures = kv.namespace('guild_features');
+guildFeatures.set(
+  '456',
+  JSON.stringify({
+    welcomeMessages: true,
+    autoModeration: false,
+    leveling: true,
+    music: false,
+  }),
+);
+```
+
+### Bot Configuration
+
+```ts
+const kv = openKV('bot-data.db');
+
+// Global bot settings
+const botConfig = kv.namespace('bot_config');
+botConfig.set(
+  'global',
+  JSON.stringify({
+    defaultPrefix: '!',
+    maintenanceMode: false,
+    logLevel: 'info',
+    backupInterval: 3600,
+  }),
+);
+
+// Feature flags
+const featureFlags = kv.namespace('feature_flags');
+featureFlags.set('ai_commands', 'true');
+featureFlags.set('analytics', 'false');
+featureFlags.set('beta_features', 'true');
+
+// API keys and secrets
+const secrets = kv.namespace('secrets');
+secrets.set('openai_key', 'sk-...');
+secrets.set('weather_api', 'abc123...');
+```
+
+## Namespace Best Practices
+
+### 1. **Use Descriptive Names**
+
+```ts
+// Good
+const userProfiles = kv.namespace('user_profiles');
+const guildSettings = kv.namespace('guild_settings');
+const botConfiguration = kv.namespace('bot_config');
+
+// Avoid
+const up = kv.namespace('up');
+const gs = kv.namespace('gs');
+const bc = kv.namespace('bc');
+```
+
+### 2. **Group Related Data**
+
+```ts
+// Group all user-related data
+const userData = kv.namespace('users');
+const userProfiles = kv.namespace('user_profiles');
+const userSettings = kv.namespace('user_settings');
+const userStats = kv.namespace('user_statistics');
+
+// Group all guild-related data
+const guildData = kv.namespace('guilds');
+const guildConfig = kv.namespace('guild_configuration');
+const guildFeatures = kv.namespace('guild_features');
+```
+
+### 3. **Use Consistent Naming**
+
+```ts
+// Be consistent with naming conventions
+const userKv = kv.namespace('users');
+const guildKv = kv.namespace('guilds');
+const configKv = kv.namespace('config');
+
+// Or use descriptive suffixes
+const userProfiles = kv.namespace('user_profiles');
+const guildSettings = kv.namespace('guild_settings');
+const botConfiguration = kv.namespace('bot_configuration');
+```
+
+### 4. **Document Your Namespaces**
+
+```ts
+// Create a namespace registry
+const namespaces = {
+  users: kv.namespace('users'),
+  userProfiles: kv.namespace('user_profiles'),
+  userSettings: kv.namespace('user_settings'),
+  guilds: kv.namespace('guilds'),
+  guildConfig: kv.namespace('guild_config'),
+  botConfig: kv.namespace('bot_config'),
+  featureFlags: kv.namespace('feature_flags'),
+};
+
+// Use the registry
+namespaces.users.set('123', 'user data');
+namespaces.guildConfig.set('456', 'guild config');
+```
+
+## Namespace Cleanup
+
+You can clear specific namespaces:
+
+```ts
+const kv = openKV('data.db');
+const userKv = kv.namespace('users');
+const configKv = kv.namespace('config');
+
+// Clear only the users namespace
+userKv.clear();
+
+// Clear only the config namespace
+configKv.clear();
+
+// Clear all data (all namespaces)
+kv.clear(); // This only clears the default namespace
+```
+
+## Next Steps
+
+Now that you understand namespaces, learn about:
+
+- [Advanced features](./04-advanced-features.mdx) like iteration and resource management

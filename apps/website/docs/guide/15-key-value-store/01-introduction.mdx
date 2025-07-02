@@ -1,0 +1,191 @@
+---
+title: Key-Value Store
+description: Learn how to use CommandKit's built-in key-value store for persistent data storage.
+---
+
+# Key-Value Store
+
+CommandKit provides a built-in key-value store implementation using SQLite for persistent data storage. This guide will show you how to use the KV store effectively in your bot for storing configuration, user data, and other persistent information.
+
+## What is the KV Store?
+
+The KV store is a simple, persistent key-value storage solution that:
+
+- **Persistent**: Data is stored in a SQLite database file
+- **Namespaced**: Organize data into logical groups using namespaces
+- **Type-safe**: Full TypeScript support with proper typing
+- **Iterable**: Use standard JavaScript iteration patterns
+- **Resource-safe**: Implements disposable patterns for automatic cleanup
+
+## When to Use the KV Store
+
+Use the KV store when you need to:
+
+- Store user preferences and settings
+- Cache frequently accessed data persistently
+- Store bot configuration that needs to survive restarts
+- Keep track of user statistics and progress
+- Store temporary data that needs to persist between sessions
+
+:::warning Node.js Version Requirement
+The KV store requires Node.js version that supports the `node:sqlite` module. Make sure you're using a compatible Node.js version.
+:::
+
+## Basic Setup
+
+The KV store is available directly from the CommandKit package:
+
+```ts
+import { KV, openKV } from 'commandkit/kv';
+```
+
+## Quick Start
+
+Here's a simple example of how to use the KV store:
+
+```ts
+import { openKV } from 'commandkit/kv';
+
+// Create a new KV store instance (uses default database file)
+const kv = openKV();
+
+// Or create with custom database file
+const kv = openKV('bot-data.db');
+
+// Or create in-memory store for caching
+const kv = openKV(':memory:');
+
+// Store some data
+kv.set('user:123', JSON.stringify({ name: 'John', level: 5 }));
+
+// Retrieve data
+const userData = kv.get('user:123');
+if (userData) {
+  const user = JSON.parse(userData);
+  console.log(`User ${user.name} is level ${user.level}`);
+}
+
+// Check if a key exists
+if (kv.has('user:123')) {
+  console.log('User data exists');
+}
+
+// Get all keys
+const allKeys = kv.keys();
+console.log('All stored keys:', allKeys);
+
+// Clean up when done
+kv.close();
+```
+
+## Key Features
+
+### 1. **Namespaces**
+
+Organize your data into logical groups:
+
+```ts
+const userKv = kv.namespace('users');
+const configKv = kv.namespace('config');
+
+userKv.set('123', JSON.stringify({ name: 'John' }));
+configKv.set('theme', 'dark');
+```
+
+### 2. **Iteration Support**
+
+Use standard JavaScript iteration patterns:
+
+```ts
+// Iterate over all key-value pairs
+for (const [key, value] of kv) {
+  console.log(`${key}: ${value}`);
+}
+
+// Convert to array
+const entries = [...kv];
+```
+
+### 3. **Automatic Resource Management**
+
+The KV store implements disposable patterns:
+
+```ts
+// Using with statement (automatic cleanup)
+{
+  using kv = openKV();
+  kv.set('key', 'value');
+} // kv is automatically closed
+
+// Using async/await with automatic disposal (fake promise wrapper)
+await using kv = openKV();
+kv.set('key', 'value');
+// kv is automatically closed when the block ends
+```
+
+:::note Async Disposal
+The `async using` statement is just a fake promise wrapper around the synchronous `using` statement. The disposal is still synchronous.
+:::
+
+### 4. **Expiration Support**
+
+Store temporary data with automatic expiration:
+
+```ts
+// Set data with expiration (1 hour)
+kv.setex('session:123', 'user_data', 60 * 60 * 1000);
+
+// Set expiration for existing key (30 minutes)
+kv.expire('user:123', 30 * 60 * 1000);
+
+// Check time to live
+const ttl = kv.ttl('user:123');
+if (ttl > 0) {
+  console.log(`Expires in ${ttl}ms`);
+}
+```
+
+### 5. **Transaction Support**
+
+Execute multiple operations atomically:
+
+```ts
+kv.transaction(() => {
+  kv.set('user:123', JSON.stringify({ name: 'John' }));
+  kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+  // If any operation fails, all changes are rolled back
+});
+```
+
+### 6. **Bulk Operations**
+
+Perform operations on multiple items:
+
+```ts
+// Get all data as an object (excluding expired keys)
+const allData = kv.all();
+console.log('All data:', allData);
+
+// Get all values (excluding expired keys)
+const values = kv.values();
+console.log('All values:', values);
+
+// Count total entries (excluding expired keys)
+const count = kv.count();
+console.log(`Total entries: ${count}`);
+```
+
+## Best Practices
+
+1. **Use Meaningful Keys**: Use descriptive key names that make sense in your context
+2. **Serialize Complex Data**: Store objects as JSON strings
+3. **Use Namespaces**: Organize related data into namespaces
+4. **Handle Missing Data**: Always check if data exists before using it
+5. **Clean Up Resources**: Use disposable patterns or manually close connections
+6. **Backup Important Data**: Regularly backup your database files
+
+## Next Steps
+
+- Learn about [basic operations](./02-basic-operations.mdx)
+- Explore [namespaces](./03-namespaces.mdx)
+- Understand [advanced features](./04-advanced-features.mdx) including transactions

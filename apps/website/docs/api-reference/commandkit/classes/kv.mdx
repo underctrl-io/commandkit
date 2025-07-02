@@ -1,0 +1,371 @@
+---
+title: "KV"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## KV
+
+<GenerationInfo sourceFile="packages/commandkit/src/kv/kv.ts" sourceLine="30" packageName="commandkit" />
+
+A key-value store implementation using SQLite
+
+This class provides a simple, persistent key-value storage solution
+with support for namespaces, automatic cleanup, iteration, and expiration.
+
+
+
+*Example*
+
+```typescript
+const kv = new KV('data.db');
+kv.set('user:123', JSON.stringify({ name: 'John', age: 30 }));
+const user = JSON.parse(kv.get('user:123') || '{}');
+
+// Using namespaces
+const userKv = kv.namespace('users');
+userKv.set('123', JSON.stringify({ name: 'John' }));
+```
+
+```ts title="Signature"
+class KV implements Disposable, AsyncDisposable {
+    constructor(path: string | Buffer | URL | DatabaseSync, options: KvOptions = {
+      enableWAL: true,
+      namespace: 'commandkit_kv',
+    })
+    isOpen() => boolean;
+    getDatabase() => DatabaseSync;
+    close() => void;
+    [Symbol.dispose]() => ;
+    [Symbol.asyncDispose]() => ;
+    get(key: string) => string | undefined;
+    set(key: string, value: string) => void;
+    setex(key: string, value: string, ttl: number) => void;
+    expire(key: string, ttl: number) => boolean;
+    ttl(key: string) => number;
+    delete(key: string) => void;
+    has(key: string) => boolean;
+    keys() => string[];
+    values() => string[];
+    count() => number;
+    clear() => void;
+    all() => Record<string, string>;
+    namespaces() => string[];
+    getCurrentNamespace() => string;
+    namespace(namespace: string) => KV;
+    [Symbol.iterator]() => Iterator<[string, string]>;
+    transaction(fn: () => T | Promise<T>) => Promise<T>;
+}
+```
+* Implements: <code>Disposable</code>, <code>AsyncDisposable</code>
+
+
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(path: string | Buffer | URL | DatabaseSync, options: <a href='/docs/next/api-reference/commandkit/interfaces/kv-options#kvoptions'>KvOptions</a> = {
+      enableWAL: true,
+      namespace: 'commandkit_kv',
+    }) => KV`}   />
+
+Creates a new KV store instance
+### isOpen
+
+<MemberInfo kind="method" type={`() => boolean`}   />
+
+Checks if the database connection is open
+### getDatabase
+
+<MemberInfo kind="method" type={`() => DatabaseSync`}   />
+
+Gets the underlying SQLite database instance
+### close
+
+<MemberInfo kind="method" type={`() => void`}   />
+
+Closes the database connection
+### \[Symbol.dispose]
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Disposable implementation - closes the database when disposed
+### \[Symbol.asyncDispose]
+
+<MemberInfo kind="method" type={`() => `}   />
+
+AsyncDisposable implementation - closes the database when disposed
+### get
+
+<MemberInfo kind="method" type={`(key: string) => string | undefined`}   />
+
+Retrieves a value by key
+
+
+
+*Example*
+
+```typescript
+const value = kv.get('my-key');
+if (value) {
+  console.log('Found:', value);
+}
+```
+### set
+
+<MemberInfo kind="method" type={`(key: string, value: string) => void`}   />
+
+Sets a key-value pair
+
+
+
+*Example*
+
+```typescript
+kv.set('user:123', JSON.stringify({ name: 'John' }));
+kv.set('counter', '42');
+```
+### setex
+
+<MemberInfo kind="method" type={`(key: string, value: string, ttl: number) => void`}   />
+
+Sets a key-value pair with expiration
+
+
+
+*Example*
+
+```typescript
+// Set with 1 hour expiration
+kv.setex('session:123', 'user_data', 60 * 60 * 1000);
+
+// Set with 5 minutes expiration
+kv.setex('temp:data', 'cached_value', 5 * 60 * 1000);
+```
+### expire
+
+<MemberInfo kind="method" type={`(key: string, ttl: number) => boolean`}   />
+
+Sets expiration for an existing key
+
+
+
+*Example*
+
+```typescript
+kv.set('user:123', 'user_data');
+
+// Set 30 minute expiration
+if (kv.expire('user:123', 30 * 60 * 1000)) {
+  console.log('Expiration set successfully');
+}
+```
+### ttl
+
+<MemberInfo kind="method" type={`(key: string) => number`}   />
+
+Gets the time to live for a key
+
+
+
+*Example*
+
+```typescript
+const ttl = kv.ttl('user:123');
+if (ttl > 0) {
+  console.log(`Key expires in ${ttl}ms`);
+} else if (ttl === -2) {
+  console.log('Key has no expiration');
+} else {
+  console.log('Key does not exist');
+}
+```
+### delete
+
+<MemberInfo kind="method" type={`(key: string) => void`}   />
+
+Deletes a key-value pair
+
+
+
+*Example*
+
+```typescript
+kv.delete('user:123');
+```
+### has
+
+<MemberInfo kind="method" type={`(key: string) => boolean`}   />
+
+Checks if a key exists and is not expired
+
+
+
+*Example*
+
+```typescript
+if (kv.has('user:123')) {
+  console.log('User exists and is not expired');
+}
+```
+### keys
+
+<MemberInfo kind="method" type={`() => string[]`}   />
+
+Gets all keys in the current namespace (excluding expired keys)
+
+
+
+*Example*
+
+```typescript
+const keys = kv.keys();
+console.log('All keys:', keys);
+```
+### values
+
+<MemberInfo kind="method" type={`() => string[]`}   />
+
+Gets all values in the current namespace (excluding expired keys)
+
+
+
+*Example*
+
+```typescript
+const values = kv.values();
+console.log('All values:', values);
+```
+### count
+
+<MemberInfo kind="method" type={`() => number`}   />
+
+Gets the total number of key-value pairs in the current namespace (excluding expired keys)
+
+
+
+*Example*
+
+```typescript
+const count = kv.count();
+console.log(`Total entries: ${count}`);
+```
+### clear
+
+<MemberInfo kind="method" type={`() => void`}   />
+
+Removes all key-value pairs from the current namespace
+
+
+
+*Example*
+
+```typescript
+kv.clear(); // Removes all entries in current namespace
+```
+### all
+
+<MemberInfo kind="method" type={`() => Record&#60;string, string&#62;`}   />
+
+Gets all key-value pairs as an object (excluding expired keys)
+
+
+
+*Example*
+
+```typescript
+const all = kv.all();
+console.log('All entries:', all);
+// Output: { 'key1': 'value1', 'key2': 'value2' }
+```
+### namespaces
+
+<MemberInfo kind="method" type={`() => string[]`}   />
+
+Gets all available namespaces (tables) in the database
+
+
+
+*Example*
+
+```typescript
+const namespaces = kv.namespaces();
+console.log('Available namespaces:', namespaces);
+```
+### getCurrentNamespace
+
+<MemberInfo kind="method" type={`() => string`}   />
+
+Gets the current namespace name
+### namespace
+
+<MemberInfo kind="method" type={`(namespace: string) => <a href='/docs/next/api-reference/commandkit/classes/kv#kv'>KV</a>`}   />
+
+Creates a new KV instance with a different namespace
+
+
+
+*Example*
+
+```typescript
+const userKv = kv.namespace('users');
+const configKv = kv.namespace('config');
+
+userKv.set('123', 'John Doe');
+configKv.set('theme', 'dark');
+```
+### \[Symbol.iterator]
+
+<MemberInfo kind="method" type={`() => Iterator&#60;[string, string]&#62;`}   />
+
+Iterator implementation for iterating over all non-expired key-value pairs
+
+
+
+*Example*
+
+```typescript
+for (const [key, value] of kv) {
+  console.log(`${key}: ${value}`);
+}
+
+// Or using spread operator
+const entries = [...kv];
+```
+### transaction
+
+<MemberInfo kind="method" type={`(fn: () =&#62; T | Promise&#60;T&#62;) => Promise&#60;T&#62;`}   />
+
+Executes a function within a transaction
+
+
+
+*Example*
+
+```typescript
+// Synchronous transaction
+kv.transaction(() => {
+  kv.set('user:123', JSON.stringify({ name: 'John' }));
+  kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+  // If any operation fails, all changes are rolled back
+});
+
+// Async transaction
+await kv.transaction(async () => {
+  kv.set('user:123', JSON.stringify({ name: 'John' }));
+  await someAsyncOperation();
+  kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+  // If any operation fails, all changes are rolled back
+});
+```
+
+
+</div>
