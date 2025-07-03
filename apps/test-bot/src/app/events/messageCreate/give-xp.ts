@@ -7,10 +7,10 @@ export default async function (message: Message) {
 
   const key = `xp:${message.guildId}:${message.author.id}`;
 
-  const oldXp = (await database.get(key)) ?? 0;
+  const oldXp = database.get<number>(key) ?? 0;
   const xp = Math.floor(Math.random() * 10) + 1;
   const newXp = oldXp + xp;
 
-  await database.set(key, newXp);
+  database.set(key, newXp);
   await revalidateTag(key);
 }

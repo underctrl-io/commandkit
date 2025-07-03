@@ -1,4 +1,8 @@
 import { DatabaseSync, StatementSync } from 'node:sqlite';
+import { deserializer, serializer } from './serde';
+import { getNestedValue, setNestedValue } from './dotprops';
+
+export type { SerializedValue } from './serde';
 
 /**
  * Configuration options for the KV store
@@ -14,17 +18,25 @@ export interface KvOptions {
  * A key-value store implementation using SQLite
  *
  * This class provides a simple, persistent key-value storage solution
- * with support for namespaces, automatic cleanup, iteration, and expiration.
+ * with support for namespaces, automatic cleanup, iteration, expiration, and JSON serialization.
  *
  * @example
  * ```typescript
  * const kv = new KV('data.db');
- * kv.set('user:123', JSON.stringify({ name: 'John', age: 30 }));
- * const user = JSON.parse(kv.get('user:123') || '{}');
  *
- * // Using namespaces
- * const userKv = kv.namespace('users');
- * userKv.set('123', JSON.stringify({ name: 'John' }));
+ * // Store any JSON-serializable data
+ * kv.set('user:123', { name: 'John', age: 30 });
+ * kv.set('counter', 42);
+ * kv.set('active', true);
+ * kv.set('dates', [new Date(), new Date()]);
+ *
+ * // Use dot notation for nested properties
+ * kv.set('user:123.name', 'John');
+ * kv.set('user:123.settings.theme', 'dark');
+ *
+ * // Retrieve data
+ * const user = kv.get('user:123'); // { name: 'John', age: 30, settings: { theme: 'dark' } }
+ * const name = kv.get('user:123.name'); // 'John'
  * ```
  */
 export class KV implements Disposable, AsyncDisposable {
@@ -53,49 +65,51 @@ export class KV implements Disposable, AsyncDisposable {
       this.db.exec(/* sql */ `PRAGMA journal_mode = WAL;`);
     }
 
-    this.db
-      .prepare(
-        /* sql */ `
-      CREATE TABLE IF NOT EXISTS ? (
+    const namespace = this.options.namespace ?? 'commandkit_kv';
+
+    this.db.exec(/* sql */ `
+      CREATE TABLE IF NOT EXISTS ${namespace} (
         key TEXT PRIMARY KEY,
         value TEXT,
         expires_at INTEGER
       )
-    `,
-      )
-      .run(options.namespace ?? 'commandkit_kv');
+    `);
 
     this.statements = {
       get: this.db.prepare(
-        /* sql */ `SELECT value, expires_at FROM ? WHERE key = ?`,
+        /* sql */ `SELECT value, expires_at FROM ${namespace} WHERE key = ?`,
       ),
       set: this.db.prepare(
-        /* sql */ `INSERT OR REPLACE INTO ? (key, value, expires_at) VALUES (?, ?, ?)`,
+        /* sql */ `INSERT OR REPLACE INTO ${namespace} (key, value, expires_at) VALUES (?, ?, ?)`,
       ),
       setex: this.db.prepare(
-        /* sql */ `INSERT OR REPLACE INTO ? (key, value, expires_at) VALUES (?, ?, ?)`,
+        /* sql */ `INSERT OR REPLACE INTO ${namespace} (key, value, expires_at) VALUES (?, ?, ?)`,
       ),
-      delete: this.db.prepare(/* sql */ `DELETE FROM ? WHERE key = ?`),
+      delete: this.db.prepare(
+        /* sql */ `DELETE FROM ${namespace} WHERE key = ?`,
+      ),
       has: this.db.prepare(
-        /* sql */ `SELECT COUNT(*) FROM ? WHERE key = ? AND (expires_at IS NULL OR expires_at > ?)`,
+        /* sql */ `SELECT COUNT(*) FROM ${namespace} WHERE key = ? AND (expires_at IS NULL OR expires_at > ?)`,
       ),
       keys: this.db.prepare(
-        /* sql */ `SELECT key FROM ? WHERE expires_at IS NULL OR expires_at > ?`,
+        /* sql */ `SELECT key FROM ${namespace} WHERE expires_at IS NULL OR expires_at > ?`,
       ),
       values: this.db.prepare(
-        /* sql */ `SELECT value FROM ? WHERE expires_at IS NULL OR expires_at > ?`,
+        /* sql */ `SELECT value FROM ${namespace} WHERE expires_at IS NULL OR expires_at > ?`,
       ),
-      clear: this.db.prepare(/* sql */ `DELETE FROM ?`),
+      clear: this.db.prepare(/* sql */ `DELETE FROM ${namespace}`),
       count: this.db.prepare(
-        /* sql */ `SELECT COUNT(*) FROM ? WHERE expires_at IS NULL OR expires_at > ?`,
+        /* sql */ `SELECT COUNT(*) FROM ${namespace} WHERE expires_at IS NULL OR expires_at > ?`,
       ),
       all: this.db.prepare(
-        /* sql */ `SELECT key, value FROM ? WHERE expires_at IS NULL OR expires_at > ?`,
+        /* sql */ `SELECT key, value FROM ${namespace} WHERE expires_at IS NULL OR expires_at > ?`,
       ),
       expire: this.db.prepare(
-        /* sql */ `UPDATE ? SET expires_at = ? WHERE key = ?`,
+        /* sql */ `UPDATE ${namespace} SET expires_at = ? WHERE key = ?`,
       ),
-      ttl: this.db.prepare(/* sql */ `SELECT expires_at FROM ? WHERE key = ?`),
+      ttl: this.db.prepare(
+        /* sql */ `SELECT expires_at FROM ${namespace} WHERE key = ?`,
+      ),
       namespaces: this.db.prepare(
         /* sql */ `SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'`,
       ),
@@ -154,19 +168,25 @@ export class KV implements Disposable, AsyncDisposable {
   /**
    * Retrieves a value by key
    *
-   * @param key - The key to retrieve
+   * @param key - The key to retrieve (supports dot notation for nested properties)
    * @returns The value associated with the key, or `undefined` if not found or expired
    *
    * @example
    * ```typescript
-   * const value = kv.get('my-key');
-   * if (value) {
-   *   console.log('Found:', value);
-   * }
+   * // Store an object
+   * kv.set('user:123', { name: 'John', age: 30, settings: { theme: 'dark' } });
+   *
+   * // Get the entire object
+   * const user = kv.get('user:123');
+   * // { name: 'John', age: 30, settings: { theme: 'dark' } }
+   *
+   * // Get nested properties using dot notation
+   * const name = kv.get('user:123.name'); // 'John'
+   * const theme = kv.get('user:123.settings.theme'); // 'dark'
    * ```
    */
-  public get(key: string): string | undefined {
-    const result = this.statements.get.get(this.getCurrentNamespace(), key);
+  public get<T = any>(key: string): T | undefined {
+    const result = this.statements.get.get(key);
 
     if (!result) return undefined;
 
@@ -179,49 +199,114 @@ export class KV implements Disposable, AsyncDisposable {
       return undefined;
     }
 
-    return result.value as string;
+    const serialized = JSON.parse(result.value as string);
+    const deserialized = deserializer(serialized);
+
+    // Handle dot notation for nested properties
+    if (key.includes('.')) {
+      return getNestedValue(deserialized, key.split('.').slice(1).join('.'));
+    }
+
+    return deserialized;
   }
 
   /**
    * Sets a key-value pair
    *
-   * @param key - The key to set
-   * @param value - The value to associate with the key
+   * @param key - The key to set (supports dot notation for nested properties)
+   * @param value - The value to associate with the key (any JSON-serializable type)
    *
    * @example
    * ```typescript
-   * kv.set('user:123', JSON.stringify({ name: 'John' }));
-   * kv.set('counter', '42');
+   * // Store primitive values
+   * kv.set('counter', 42);
+   * kv.set('active', true);
+   * kv.set('name', 'John');
+   *
+   * // Store objects
+   * kv.set('user:123', { name: 'John', age: 30 });
+   *
+   * // Store arrays
+   * kv.set('tags', ['javascript', 'typescript', 'sqlite']);
+   *
+   * // Store dates
+   * kv.set('created', new Date());
+   *
+   * // Store maps and sets
+   * kv.set('permissions', new Map([['admin', true], ['user', false]]));
+   * kv.set('unique_ids', new Set([1, 2, 3, 4, 5]));
+   *
+   * // Use dot notation for nested properties
+   * kv.set('user:123.settings.theme', 'dark');
+   * kv.set('user:123.settings.notifications', true);
    * ```
    */
-  public set(key: string, value: string): void {
-    this.statements.set.run(this.getCurrentNamespace(), key, value, null);
+  public set(key: string, value: any): void {
+    let serializedValue: string;
+
+    if (key.includes('.')) {
+      // Handle dot notation for nested properties
+      const [baseKey, ...pathParts] = key.split('.');
+      const path = pathParts.join('.');
+
+      // Get existing value or create new object
+      const existing = this.get(baseKey) || {};
+      setNestedValue(existing, path, value);
+
+      const serialized = serializer(existing);
+      serializedValue = JSON.stringify(serialized);
+
+      this.statements.set.run(baseKey, serializedValue, null);
+    } else {
+      const serialized = serializer(value);
+      serializedValue = JSON.stringify(serialized);
+
+      this.statements.set.run(key, serializedValue, null);
+    }
   }
 
   /**
    * Sets a key-value pair with expiration
    *
-   * @param key - The key to set
-   * @param value - The value to associate with the key
+   * @param key - The key to set (supports dot notation for nested properties)
+   * @param value - The value to associate with the key (any JSON-serializable type)
    * @param ttl - Time to live in milliseconds
    *
    * @example
    * ```typescript
    * // Set with 1 hour expiration
-   * kv.setex('session:123', 'user_data', 60 * 60 * 1000);
+   * kv.setex('session:123', { userId: 123, token: 'abc123' }, 60 * 60 * 1000);
    *
    * // Set with 5 minutes expiration
-   * kv.setex('temp:data', 'cached_value', 5 * 60 * 1000);
+   * kv.setex('temp:data', { cached: true, timestamp: Date.now() }, 5 * 60 * 1000);
+   *
+   * // Use dot notation with expiration
+   * kv.setex('user:123.temp_settings', { theme: 'light' }, 30 * 60 * 1000);
    * ```
    */
-  public setex(key: string, value: string, ttl: number): void {
+  public setex(key: string, value: any, ttl: number): void {
     const expiresAt = this.getCurrentTime() + ttl;
-    this.statements.setex.run(
-      this.getCurrentNamespace(),
-      key,
-      value,
-      expiresAt,
-    );
+    let serializedValue: string;
+
+    if (key.includes('.')) {
+      // Handle dot notation for nested properties
+      const [baseKey, ...pathParts] = key.split('.');
+      const path = pathParts.join('.');
+
+      // Get existing value or create new object
+      const existing = this.get(baseKey) || {};
+      setNestedValue(existing, path, value);
+
+      const serialized = serializer(existing);
+      serializedValue = JSON.stringify(serialized);
+
+      this.statements.setex.run(baseKey, serializedValue, expiresAt);
+    } else {
+      const serialized = serializer(value);
+      serializedValue = JSON.stringify(serialized);
+
+      this.statements.setex.run(key, serializedValue, expiresAt);
+    }
   }
 
   /**
@@ -233,7 +318,7 @@ export class KV implements Disposable, AsyncDisposable {
    *
    * @example
    * ```typescript
-   * kv.set('user:123', 'user_data');
+   * kv.set('user:123', { name: 'John', age: 30 });
    *
    * // Set 30 minute expiration
    * if (kv.expire('user:123', 30 * 60 * 1000)) {
@@ -245,7 +330,7 @@ export class KV implements Disposable, AsyncDisposable {
     if (!this.has(key)) return false;
 
     const expiresAt = this.getCurrentTime() + ttl;
-    this.statements.expire.run(this.getCurrentNamespace(), expiresAt, key);
+    this.statements.expire.run(expiresAt, key);
     return true;
   }
 
@@ -268,7 +353,7 @@ export class KV implements Disposable, AsyncDisposable {
    * ```
    */
   public ttl(key: string): number {
-    const result = this.statements.ttl.get(this.getCurrentNamespace(), key);
+    const result = this.statements.ttl.get(key);
 
     if (!result) return -1; // Key doesn't exist
 
@@ -286,10 +371,11 @@ export class KV implements Disposable, AsyncDisposable {
    * @example
    * ```typescript
    * kv.delete('user:123');
+   * kv.delete('user:123.settings.theme'); // Delete nested property
    * ```
    */
   public delete(key: string): void {
-    this.statements.delete.run(this.getCurrentNamespace(), key);
+    this.statements.delete.run(key);
   }
 
   /**
@@ -303,14 +389,14 @@ export class KV implements Disposable, AsyncDisposable {
    * if (kv.has('user:123')) {
    *   console.log('User exists and is not expired');
    * }
+   *
+   * if (kv.has('user:123.settings.theme')) {
+   *   console.log('Theme setting exists');
+   * }
    * ```
    */
   public has(key: string): boolean {
-    const result = this.statements.has.get(
-      this.getCurrentNamespace(),
-      key,
-      this.getCurrentTime(),
-    );
+    const result = this.statements.has.get(key, this.getCurrentTime());
 
     return (
       result?.count !== undefined &&
@@ -331,10 +417,7 @@ export class KV implements Disposable, AsyncDisposable {
    * ```
    */
   public keys(): string[] {
-    const result = this.statements.keys.all(
-      this.getCurrentNamespace(),
-      this.getCurrentTime(),
-    );
+    const result = this.statements.keys.all(this.getCurrentTime());
 
     return result.map((row) => row.key as string);
   }
@@ -350,13 +433,13 @@ export class KV implements Disposable, AsyncDisposable {
    * console.log('All values:', values);
    * ```
    */
-  public values(): string[] {
-    const result = this.statements.values.all(
-      this.getCurrentNamespace(),
-      this.getCurrentTime(),
-    );
+  public values(): any[] {
+    const result = this.statements.values.all(this.getCurrentTime());
 
-    return result.map((row) => row.value as string);
+    return result.map((row) => {
+      const serialized = JSON.parse(row.value as string);
+      return deserializer(serialized);
+    });
   }
 
   /**
@@ -371,10 +454,7 @@ export class KV implements Disposable, AsyncDisposable {
    * ```
    */
   public count(): number {
-    const result = this.statements.count.get(
-      this.getCurrentNamespace(),
-      this.getCurrentTime(),
-    );
+    const result = this.statements.count.get(this.getCurrentTime());
 
     return Number(result?.count ?? 0);
   }
@@ -388,7 +468,7 @@ export class KV implements Disposable, AsyncDisposable {
    * ```
    */
   public clear(): void {
-    this.statements.clear.run(this.getCurrentNamespace());
+    this.statements.clear.run();
   }
 
   /**
@@ -400,17 +480,17 @@ export class KV implements Disposable, AsyncDisposable {
    * ```typescript
    * const all = kv.all();
    * console.log('All entries:', all);
-   * // Output: { 'key1': 'value1', 'key2': 'value2' }
+   * // Output: { 'key1': value1, 'key2': value2 }
    * ```
    */
-  public all(): Record<string, string> {
-    const result = this.statements.all.all(
-      this.getCurrentNamespace(),
-      this.getCurrentTime(),
-    );
+  public all(): Record<string, any> {
+    const result = this.statements.all.all(this.getCurrentTime());
 
     return Object.fromEntries(
-      result.map((row) => [row.key as string, row.value as string]),
+      result.map((row) => {
+        const serialized = JSON.parse(row.value as string);
+        return [row.key as string, deserializer(serialized)];
+      }),
     );
   }
 
@@ -451,7 +531,7 @@ export class KV implements Disposable, AsyncDisposable {
    * const userKv = kv.namespace('users');
    * const configKv = kv.namespace('config');
    *
-   * userKv.set('123', 'John Doe');
+   * userKv.set('123', { name: 'John', age: 30 });
    * configKv.set('theme', 'dark');
    * ```
    */
@@ -470,21 +550,19 @@ export class KV implements Disposable, AsyncDisposable {
    * @example
    * ```typescript
    * for (const [key, value] of kv) {
-   *   console.log(`${key}: ${value}`);
+   *   console.log(`${key}:`, value);
    * }
    *
    * // Or using spread operator
    * const entries = [...kv];
    * ```
    */
-  public *[Symbol.iterator](): Iterator<[string, string]> {
-    const result = this.statements.all.iterate(
-      this.getCurrentNamespace(),
-      this.getCurrentTime(),
-    );
+  public *[Symbol.iterator](): Iterator<[string, any]> {
+    const result = this.statements.all.iterate(this.getCurrentTime());
 
     for (const row of result) {
-      yield [row.key as string, row.value as string];
+      const serialized = JSON.parse(row.value as string);
+      yield [row.key as string, deserializer(serialized)];
     }
   }
 
@@ -498,16 +576,16 @@ export class KV implements Disposable, AsyncDisposable {
    * ```typescript
    * // Synchronous transaction
    * kv.transaction(() => {
-   *   kv.set('user:123', JSON.stringify({ name: 'John' }));
-   *   kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+   *   kv.set('user:123', { name: 'John', age: 30 });
+   *   kv.set('user:456', { name: 'Jane', age: 25 });
    *   // If any operation fails, all changes are rolled back
    * });
    *
    * // Async transaction
    * await kv.transaction(async () => {
-   *   kv.set('user:123', JSON.stringify({ name: 'John' }));
+   *   kv.set('user:123', { name: 'John', age: 30 });
    *   await someAsyncOperation();
-   *   kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+   *   kv.set('user:456', { name: 'Jane', age: 25 });
    *   // If any operation fails, all changes are rolled back
    * });
    * ```
