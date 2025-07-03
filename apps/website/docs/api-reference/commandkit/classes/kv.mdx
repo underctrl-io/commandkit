@@ -13,12 +13,12 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## KV
 
-<GenerationInfo sourceFile="packages/commandkit/src/kv/kv.ts" sourceLine="30" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/kv/kv.ts" sourceLine="42" packageName="commandkit" />
 
 A key-value store implementation using SQLite
 
 This class provides a simple, persistent key-value storage solution
-with support for namespaces, automatic cleanup, iteration, and expiration.
+with support for namespaces, automatic cleanup, iteration, expiration, and JSON serialization.
 
 
 
@@ -26,12 +26,20 @@ with support for namespaces, automatic cleanup, iteration, and expiration.
 
 ```typescript
 const kv = new KV('data.db');
-kv.set('user:123', JSON.stringify({ name: 'John', age: 30 }));
-const user = JSON.parse(kv.get('user:123') || '{}');
 
-// Using namespaces
-const userKv = kv.namespace('users');
-userKv.set('123', JSON.stringify({ name: 'John' }));
+// Store any JSON-serializable data
+kv.set('user:123', { name: 'John', age: 30 });
+kv.set('counter', 42);
+kv.set('active', true);
+kv.set('dates', [new Date(), new Date()]);
+
+// Use dot notation for nested properties
+kv.set('user:123.name', 'John');
+kv.set('user:123.settings.theme', 'dark');
+
+// Retrieve data
+const user = kv.get('user:123'); // { name: 'John', age: 30, settings: { theme: 'dark' } }
+const name = kv.get('user:123.name'); // 'John'
 ```
 
 ```ts title="Signature"
@@ -45,22 +53,22 @@ class KV implements Disposable, AsyncDisposable {
     close() => void;
     [Symbol.dispose]() => ;
     [Symbol.asyncDispose]() => ;
-    get(key: string) => string | undefined;
-    set(key: string, value: string) => void;
-    setex(key: string, value: string, ttl: number) => void;
+    get(key: string) => T | undefined;
+    set(key: string, value: any) => void;
+    setex(key: string, value: any, ttl: number) => void;
     expire(key: string, ttl: number) => boolean;
     ttl(key: string) => number;
     delete(key: string) => void;
     has(key: string) => boolean;
     keys() => string[];
-    values() => string[];
+    values() => any[];
     count() => number;
     clear() => void;
-    all() => Record<string, string>;
+    all() => Record<string, any>;
     namespaces() => string[];
     getCurrentNamespace() => string;
     namespace(namespace: string) => KV;
-    [Symbol.iterator]() => Iterator<[string, string]>;
+    [Symbol.iterator]() => Iterator<[string, any]>;
     transaction(fn: () => T | Promise<T>) => Promise<T>;
 }
 ```
@@ -105,7 +113,7 @@ Disposable implementation - closes the database when disposed
 AsyncDisposable implementation - closes the database when disposed
 ### get
 
-<MemberInfo kind="method" type={`(key: string) => string | undefined`}   />
+<MemberInfo kind="method" type={`(key: string) => T | undefined`}   />
 
 Retrieves a value by key
 
@@ -114,14 +122,20 @@ Retrieves a value by key
 *Example*
 
 ```typescript
-const value = kv.get('my-key');
-if (value) {
-  console.log('Found:', value);
-}
+// Store an object
+kv.set('user:123', { name: 'John', age: 30, settings: { theme: 'dark' } });
+
+// Get the entire object
+const user = kv.get('user:123');
+// { name: 'John', age: 30, settings: { theme: 'dark' } }
+
+// Get nested properties using dot notation
+const name = kv.get('user:123.name'); // 'John'
+const theme = kv.get('user:123.settings.theme'); // 'dark'
 ```
 ### set
 
-<MemberInfo kind="method" type={`(key: string, value: string) => void`}   />
+<MemberInfo kind="method" type={`(key: string, value: any) => void`}   />
 
 Sets a key-value pair
 
@@ -130,12 +144,31 @@ Sets a key-value pair
 *Example*
 
 ```typescript
-kv.set('user:123', JSON.stringify({ name: 'John' }));
-kv.set('counter', '42');
+// Store primitive values
+kv.set('counter', 42);
+kv.set('active', true);
+kv.set('name', 'John');
+
+// Store objects
+kv.set('user:123', { name: 'John', age: 30 });
+
+// Store arrays
+kv.set('tags', ['javascript', 'typescript', 'sqlite']);
+
+// Store dates
+kv.set('created', new Date());
+
+// Store maps and sets
+kv.set('permissions', new Map([['admin', true], ['user', false]]));
+kv.set('unique_ids', new Set([1, 2, 3, 4, 5]));
+
+// Use dot notation for nested properties
+kv.set('user:123.settings.theme', 'dark');
+kv.set('user:123.settings.notifications', true);
 ```
 ### setex
 
-<MemberInfo kind="method" type={`(key: string, value: string, ttl: number) => void`}   />
+<MemberInfo kind="method" type={`(key: string, value: any, ttl: number) => void`}   />
 
 Sets a key-value pair with expiration
 
@@ -145,10 +178,13 @@ Sets a key-value pair with expiration
 
 ```typescript
 // Set with 1 hour expiration
-kv.setex('session:123', 'user_data', 60 * 60 * 1000);
+kv.setex('session:123', { userId: 123, token: 'abc123' }, 60 * 60 * 1000);
 
 // Set with 5 minutes expiration
-kv.setex('temp:data', 'cached_value', 5 * 60 * 1000);
+kv.setex('temp:data', { cached: true, timestamp: Date.now() }, 5 * 60 * 1000);
+
+// Use dot notation with expiration
+kv.setex('user:123.temp_settings', { theme: 'light' }, 30 * 60 * 1000);
 ```
 ### expire
 
@@ -161,7 +197,7 @@ Sets expiration for an existing key
 *Example*
 
 ```typescript
-kv.set('user:123', 'user_data');
+kv.set('user:123', { name: 'John', age: 30 });
 
 // Set 30 minute expiration
 if (kv.expire('user:123', 30 * 60 * 1000)) {
@@ -200,6 +236,7 @@ Deletes a key-value pair
 
 ```typescript
 kv.delete('user:123');
+kv.delete('user:123.settings.theme'); // Delete nested property
 ```
 ### has
 
@@ -214,6 +251,10 @@ Checks if a key exists and is not expired
 ```typescript
 if (kv.has('user:123')) {
   console.log('User exists and is not expired');
+}
+
+if (kv.has('user:123.settings.theme')) {
+  console.log('Theme setting exists');
 }
 ```
 ### keys
@@ -232,7 +273,7 @@ console.log('All keys:', keys);
 ```
 ### values
 
-<MemberInfo kind="method" type={`() => string[]`}   />
+<MemberInfo kind="method" type={`() => any[]`}   />
 
 Gets all values in the current namespace (excluding expired keys)
 
@@ -273,7 +314,7 @@ kv.clear(); // Removes all entries in current namespace
 ```
 ### all
 
-<MemberInfo kind="method" type={`() => Record&#60;string, string&#62;`}   />
+<MemberInfo kind="method" type={`() => Record&#60;string, any&#62;`}   />
 
 Gets all key-value pairs as an object (excluding expired keys)
 
@@ -284,7 +325,7 @@ Gets all key-value pairs as an object (excluding expired keys)
 ```typescript
 const all = kv.all();
 console.log('All entries:', all);
-// Output: { 'key1': 'value1', 'key2': 'value2' }
+// Output: { 'key1': value1, 'key2': value2 }
 ```
 ### namespaces
 
@@ -319,12 +360,12 @@ Creates a new KV instance with a different namespace
 const userKv = kv.namespace('users');
 const configKv = kv.namespace('config');
 
-userKv.set('123', 'John Doe');
+userKv.set('123', { name: 'John', age: 30 });
 configKv.set('theme', 'dark');
 ```
 ### \[Symbol.iterator]
 
-<MemberInfo kind="method" type={`() => Iterator&#60;[string, string]&#62;`}   />
+<MemberInfo kind="method" type={`() => Iterator&#60;[string, any]&#62;`}   />
 
 Iterator implementation for iterating over all non-expired key-value pairs
 
@@ -334,7 +375,7 @@ Iterator implementation for iterating over all non-expired key-value pairs
 
 ```typescript
 for (const [key, value] of kv) {
-  console.log(`${key}: ${value}`);
+  console.log(`${key}:`, value);
 }
 
 // Or using spread operator
@@ -353,16 +394,16 @@ Executes a function within a transaction
 ```typescript
 // Synchronous transaction
 kv.transaction(() => {
-  kv.set('user:123', JSON.stringify({ name: 'John' }));
-  kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+  kv.set('user:123', { name: 'John', age: 30 });
+  kv.set('user:456', { name: 'Jane', age: 25 });
   // If any operation fails, all changes are rolled back
 });
 
 // Async transaction
 await kv.transaction(async () => {
-  kv.set('user:123', JSON.stringify({ name: 'John' }));
+  kv.set('user:123', { name: 'John', age: 30 });
   await someAsyncOperation();
-  kv.set('user:456', JSON.stringify({ name: 'Jane' }));
+  kv.set('user:456', { name: 'Jane', age: 25 });
   // If any operation fails, all changes are rolled back
 });
 ```
