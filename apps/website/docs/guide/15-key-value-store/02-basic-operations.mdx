@@ -5,374 +5,259 @@ description: Learn the fundamental operations for working with the KV store.
 
 # Basic Operations
 
-This guide covers the essential operations you'll use most frequently with the KV store: getting, setting, deleting, and checking for data.
+This guide covers the fundamental operations of the CommandKit KV store, including storing and retrieving data with JSON serialization and dot notation support.
 
 ## Creating a KV Store
 
-First, let's create a KV store instance:
-
-```ts
-import { openKV } from 'commandkit/kv';
-
-// Create with default settings (uses 'commandkit_kv.db')
-const kv = openKV();
+```typescript
+import { KV, openKV } from '@commandkit/kv';
 
 // Create with custom database file
+const kv = new KV('my-bot-data.db');
+
+// Or use the convenience function
 const kv = openKV('my-bot-data.db');
 
-// Create in-memory store for caching
+// In-memory store for testing
 const kv = openKV(':memory:');
-
-// Create with custom options
-const kv = openKV('data.db', {
-  enableWAL: true,
-  namespace: 'my_bot',
-});
 ```
 
-## Setting Data
+## Storing Data
 
-Use the `set` method to store key-value pairs:
+The KV store supports storing any JSON-serializable data type directly:
 
-```ts
-// Store simple string values
+### Primitive Values
+
+```typescript
+// Strings
 kv.set('bot_name', 'MyAwesomeBot');
-kv.set('version', '1.0.0');
 
-// Store serialized objects
+// Numbers
+kv.set('user_count', 1234);
+kv.set('pi', 3.14159);
+
+// Booleans
+kv.set('maintenance_mode', false);
+kv.set('feature_enabled', true);
+
+// BigInt
+kv.set('large_number', BigInt('12345678901234567890'));
+
+// Null and undefined
+kv.set('empty_value', null);
+kv.set('no_value', undefined);
+```
+
+### Objects and Arrays
+
+```typescript
+// Objects
+kv.set('user:123', {
+  name: 'John Doe',
+  age: 30,
+  email: 'john@example.com',
+  preferences: {
+    theme: 'dark',
+    notifications: true,
+  },
+});
+
+// Arrays
+kv.set('tags', ['javascript', 'typescript', 'discord']);
+kv.set('numbers', [1, 2, 3, 4, 5]);
+
+// Mixed arrays
+kv.set('mixed_data', ['string', 42, true, { key: 'value' }, [1, 2, 3]]);
+```
+
+### Complex Data Types
+
+```typescript
+// Dates
+kv.set('created_at', new Date());
+kv.set('expires_at', new Date('2024-12-31'));
+
+// Maps
 kv.set(
-  'user:123',
-  JSON.stringify({
-    name: 'John Doe',
-    level: 5,
-    joinDate: new Date().toISOString(),
-  }),
+  'permissions',
+  new Map([
+    ['admin', true],
+    ['moderator', false],
+    ['user', true],
+  ]),
 );
 
-// Store configuration
-kv.set('config:theme', 'dark');
-kv.set('config:language', 'en');
+// Sets
+kv.set('unique_ids', new Set([1, 2, 3, 4, 5]));
+
+// Buffers
+kv.set('binary_data', Buffer.from('Hello, World!'));
+
+// Regular Expressions
+kv.set('email_regex', /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+
+// Functions (serialized as strings)
+kv.set('validator', (value: string) => value.length > 0);
 ```
 
-## Getting Data
+## Retrieving Data
 
-Use the `get` method to retrieve stored values:
+### Basic Retrieval
 
-```ts
-// Get simple values
-const botName = kv.get('bot_name');
-console.log(botName); // 'MyAwesomeBot'
+```typescript
+// Get stored values
+const botName = kv.get('bot_name'); // 'MyAwesomeBot'
+const userCount = kv.get('user_count'); // 1234
+const isMaintenance = kv.get('maintenance_mode'); // false
 
-// Get and parse JSON data
-const userData = kv.get('user:123');
-if (userData) {
-  const user = JSON.parse(userData);
-  console.log(`User: ${user.name}, Level: ${user.level}`);
-}
+// Get objects
+const user = kv.get('user:123');
+// { name: 'John Doe', age: 30, email: 'john@example.com', preferences: { theme: 'dark', notifications: true } }
 
-// Handle missing data
-const missingData = kv.get('non_existent_key');
-if (missingData === undefined) {
-  console.log('Key does not exist');
-}
+// Get arrays
+const tags = kv.get('tags'); // ['javascript', 'typescript', 'discord']
+
+// Get complex types
+const createdAt = kv.get('created_at'); // Date object
+const permissions = kv.get('permissions'); // Map object
+const uniqueIds = kv.get('unique_ids'); // Set object
 ```
 
-## Checking for Existence
+### Dot Notation for Nested Properties
 
-Use the `has` method to check if a key exists:
+The KV store supports accessing nested properties using dot notation:
 
-```ts
+```typescript
+// Store an object
+kv.set('user:123', {
+  name: 'John Doe',
+  age: 30,
+  settings: {
+    theme: 'dark',
+    notifications: {
+      email: true,
+      push: false,
+    },
+  },
+});
+
+// Access nested properties
+const userName = kv.get('user:123.name'); // 'John Doe'
+const userAge = kv.get('user:123.age'); // 30
+const theme = kv.get('user:123.settings.theme'); // 'dark'
+const emailNotifications = kv.get('user:123.settings.notifications.email'); // true
+
+// Set nested properties
+kv.set('user:123.settings.theme', 'light');
+kv.set('user:123.settings.notifications.push', true);
+
+// The object is automatically updated
+const updatedUser = kv.get('user:123');
+// { name: 'John Doe', age: 30, settings: { theme: 'light', notifications: { email: true, push: true } } }
+```
+
+## Checking Existence
+
+```typescript
 // Check if a key exists
 if (kv.has('user:123')) {
-  console.log('User data exists');
-} else {
-  console.log('User data not found');
+  console.log('User exists');
 }
 
-// Use in conditional logic
-if (kv.has('config:theme')) {
-  const theme = kv.get('config:theme');
-  console.log(`Current theme: ${theme}`);
-} else {
-  // Set default theme
-  kv.set('config:theme', 'light');
+// Check nested properties
+if (kv.has('user:123.settings.theme')) {
+  console.log('User has theme setting');
 }
 ```
 
 ## Deleting Data
 
-Use the `delete` method to remove key-value pairs:
-
-```ts
-// Delete a single key
+```typescript
+// Delete a key
 kv.delete('user:123');
 
-// Delete configuration
-kv.delete('config:theme');
-
-// Check if deletion was successful
-if (!kv.has('user:123')) {
-  console.log('User data successfully deleted');
-}
+// Delete nested properties (removes the entire object)
+kv.delete('user:123.settings.theme');
 ```
 
 ## Bulk Operations
 
-### Getting All Keys
+### Get All Data
 
-```ts
-// Get all keys in the current namespace
-const allKeys = kv.keys();
-console.log('All keys:', allKeys);
-
-// Filter keys by pattern
-const userKeys = allKeys.filter((key) => key.startsWith('user:'));
-console.log('User keys:', userKeys);
-```
-
-### Getting All Values
-
-```ts
-// Get all values
-const allValues = kv.values();
-console.log('All values:', allValues);
-
-// Process all values
-allValues.forEach((value) => {
-  try {
-    const parsed = JSON.parse(value);
-    console.log('Parsed value:', parsed);
-  } catch {
-    console.log('Raw value:', value);
-  }
-});
-```
-
-### Getting All Data
-
-```ts
+```typescript
 // Get all key-value pairs as an object
 const allData = kv.all();
-console.log('All data:', allData);
+console.log('All stored data:', allData);
+// { 'bot_name': 'MyAwesomeBot', 'user_count': 1234, ... }
 
-// Process all data
-Object.entries(allData).forEach(([key, value]) => {
-  console.log(`${key}: ${value}`);
-});
-```
+// Get all keys
+const keys = kv.keys();
+console.log('All keys:', keys);
+// ['bot_name', 'user_count', 'user:123', ...]
 
-### Counting Entries
+// Get all values
+const values = kv.values();
+console.log('All values:', values);
+// ['MyAwesomeBot', 1234, { name: 'John Doe', ... }, ...]
 
-```ts
-// Get total number of entries
+// Count total entries
 const count = kv.count();
 console.log(`Total entries: ${count}`);
+```
 
-// Check if store is empty
-if (count === 0) {
-  console.log('KV store is empty');
+### Iteration
+
+```typescript
+// Iterate over all key-value pairs
+for (const [key, value] of kv) {
+  console.log(`${key}:`, value);
 }
+
+// Convert to array
+const entries = [...kv];
+console.log('All entries:', entries);
+
+// Use with array methods
+const userEntries = [...kv].filter(([key]) => key.startsWith('user:'));
 ```
 
 ## Clearing Data
 
-Use the `clear` method to remove all data from the current namespace:
-
-```ts
-// Clear all data in current namespace
+```typescript
+// Remove all data from the current namespace
 kv.clear();
-
-// Verify it's empty
-console.log(`Entries after clear: ${kv.count()}`); // 0
-```
-
-## Expiration Operations
-
-### Setting Data with Expiration
-
-```ts
-// Set data with expiration (1 hour)
-kv.setex(
-  'session:123',
-  JSON.stringify({ userId: '123', data: 'temp' }),
-  60 * 60 * 1000,
-);
-
-// Set data with 5 minutes expiration
-kv.setex('temp:data', 'cached_value', 5 * 60 * 1000);
-
-// Set data with 1 day expiration
-kv.setex('daily:stats', JSON.stringify({ count: 100 }), 24 * 60 * 60 * 1000);
-```
-
-### Setting Expiration for Existing Keys
-
-```ts
-// First set the data
-kv.set('user:123', JSON.stringify({ name: 'John', level: 5 }));
-
-// Then set expiration (30 minutes)
-if (kv.expire('user:123', 30 * 60 * 1000)) {
-  console.log('Expiration set successfully');
-} else {
-  console.log('Key does not exist');
-}
-```
-
-### Checking Time to Live
-
-```ts
-const ttl = kv.ttl('user:123');
-
-if (ttl > 0) {
-  console.log(`Key expires in ${ttl}ms (${Math.floor(ttl / 1000)}s)`);
-} else if (ttl === -2) {
-  console.log('Key has no expiration');
-} else {
-  console.log('Key does not exist or has expired');
-}
-```
-
-### Automatic Expiration Handling
-
-```ts
-// Set data with expiration
-kv.setex('temp:key', 'value', 1000); // 1 second
-
-// Immediately check - should exist
-console.log(kv.has('temp:key')); // true
-
-// Wait for expiration
-setTimeout(() => {
-  console.log(kv.has('temp:key')); // false
-  console.log(kv.get('temp:key')); // undefined
-}, 1100);
-```
-
-## Working with Different Data Types
-
-### Storing Numbers
-
-```ts
-// Store numbers as strings
-kv.set('counter', '42');
-kv.set('score', '1500');
-
-// Retrieve and convert back to numbers
-const counter = parseInt(kv.get('counter') || '0');
-const score = parseInt(kv.get('score') || '0');
-```
-
-### Storing Booleans
-
-```ts
-// Store booleans as strings
-kv.set('feature_enabled', 'true');
-kv.set('maintenance_mode', 'false');
-
-// Retrieve and convert back to booleans
-const featureEnabled = kv.get('feature_enabled') === 'true';
-const maintenanceMode = kv.get('maintenance_mode') === 'true';
-```
-
-### Storing Dates
-
-```ts
-// Store dates as ISO strings
-kv.set('last_backup', new Date().toISOString());
-kv.set('user_created', '2024-01-15T10:30:00.000Z');
-
-// Retrieve and parse dates
-const lastBackup = new Date(kv.get('last_backup') || '');
-const userCreated = new Date(kv.get('user_created') || '');
-```
-
-## Transaction Operations
-
-### Basic Transaction Usage
-
-```ts
-// Execute multiple operations atomically
-kv.transaction(() => {
-  kv.set('user:123', JSON.stringify({ name: 'John', balance: 100 }));
-  kv.set('user:456', JSON.stringify({ name: 'Jane', balance: 200 }));
-
-  // If any operation fails, all changes are rolled back
-});
-```
-
-### Transaction with Error Handling
-
-```ts
-try {
-  kv.transaction(() => {
-    kv.set('user:123', JSON.stringify({ name: 'John' }));
-
-    // Simulate an error
-    throw new Error('Database error');
-
-    // This won't execute due to the error
-    kv.set('user:456', JSON.stringify({ name: 'Jane' }));
-  });
-} catch (error) {
-  console.error('Transaction failed:', error);
-  // All changes were automatically rolled back
-}
-```
-
-### Combining Expiration with Transactions
-
-```ts
-kv.transaction(() => {
-  // Set permanent data
-  kv.set('user:123', JSON.stringify({ name: 'John', level: 5 }));
-
-  // Set temporary data with expiration
-  kv.setex('session:123', JSON.stringify({ token: 'abc123' }), 60 * 60 * 1000);
-
-  // If any operation fails, both permanent and temporary data are rolled back
-});
 ```
 
 ## Error Handling
 
-Always handle potential errors when working with the KV store:
+```typescript
+// Always check if data exists before using it
+const user = kv.get('user:123');
+if (user) {
+  console.log('User found:', user.name);
+} else {
+  console.log('User not found');
+}
 
-```ts
-try {
-  // Check if database is open
-  if (!kv.isOpen()) {
-    console.error('Database is not open');
-    return;
-  }
-
-  // Perform operations
-  kv.set('key', 'value');
-  const value = kv.get('key');
-
-  if (value === undefined) {
-    console.log('Key not found');
-  }
-} catch (error) {
-  console.error('Error working with KV store:', error);
-} finally {
-  // Always close the connection
-  kv.close();
+// Handle missing nested properties
+const theme = kv.get('user:123.settings.theme');
+if (theme !== undefined) {
+  console.log('Theme:', theme);
+} else {
+  console.log('No theme setting found');
 }
 ```
 
 ## Best Practices
 
-1. **Always check for undefined**: The `get` method returns `undefined` for missing keys
-2. **Serialize complex data**: Use `JSON.stringify()` for objects and arrays
-3. **Use meaningful key names**: Make keys descriptive and consistent
-4. **Handle errors gracefully**: Wrap operations in try-catch blocks
-5. **Close connections**: Always close the KV store when done
-6. **Validate data**: Check data types and structure when retrieving
+1. **Use Descriptive Keys**: Choose meaningful key names that clearly indicate what data they contain
+2. **Structure Your Data**: Use consistent object structures for related data
+3. **Handle Missing Data**: Always check if data exists before using it
+4. **Use Dot Notation Wisely**: Dot notation is convenient but can make data structure less explicit
+5. **Serialize Complex Data**: The KV store handles serialization automatically, but be aware of what can be serialized
+6. **Clean Up Resources**: Close the database connection when you're done
 
 ## Next Steps
 
-Now that you understand the basic operations, learn about:
-
-- [Namespaces](./03-namespaces.mdx) for organizing your data
-- [Advanced features](./04-advanced-features.mdx) for more complex use cases
+- [Namespaces](./03-namespaces.md) - Organize data with namespaces
+- [Advanced Features](./04-advanced-features.md) - Expiration, transactions, and more

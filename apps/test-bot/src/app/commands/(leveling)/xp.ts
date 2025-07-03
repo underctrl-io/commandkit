@@ -1,8 +1,4 @@
-import {
-  ChatInputCommandContext,
-  CommandData,
-  MessageCommandContext,
-} from 'commandkit';
+import { ChatInputCommandContext, CommandData } from 'commandkit';
 import { database } from '@/database/store.ts';
 import { cacheTag } from '@commandkit/cache';
 import { AiCommand, AiConfig } from '@commandkit/ai';
@@ -27,7 +23,7 @@ async function getUserXP(guildId: string, userId: string) {
   const key = `xp:${guildId}:${userId}`;
   cacheTag(key);
 
-  const xp: number = (await database.get(key)) ?? 0;
+  const xp = database.get<number>(key) ?? 0;
 
   return xp;
 }
