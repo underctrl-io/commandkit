@@ -35,10 +35,9 @@
     "@docusaurus/types": "3.8.1",
     "@tailwindcss/postcss": "^4.1.7",
     "autoprefixer": "^10.4.20",
-    "micro-docgen": "^0.3.5",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.16",
-    "typescript": "~5.8.0"
+    "typescript": "catalog:build"
   },
   "browserslist": {
     "production": [

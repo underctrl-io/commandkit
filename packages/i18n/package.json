@@ -35,8 +35,8 @@
   },
   "devDependencies": {
     "commandkit": "workspace:*",
-    "discord.js": "^14.19.1",
+    "discord.js": "catalog:discordjs",
     "tsconfig": "workspace:*",
-    "typescript": "^5.7.3"
+    "typescript": "catalog:build"
   }
 }

@@ -35,7 +35,7 @@
     "@types/ms": "^2.0.0",
     "commandkit": "workspace:*",
     "tsconfig": "workspace:*",
-    "typescript": "^5.7.3"
+    "typescript": "catalog:build"
   },
   "dependencies": {
     "ms": "^2.1.3",

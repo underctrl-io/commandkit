@@ -73,7 +73,7 @@
     "@turbo/gen": "^2.5.4",
     "fs-extra": "^11.3.0",
     "klaw-sync": "^7.0.0",
-    "typescript": "^5.8.3",
+    "typescript": "catalog:build",
     "yaml": "^2.8.0"
   }
 }
