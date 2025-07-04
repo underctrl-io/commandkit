@@ -154,3 +154,4 @@ export function redis(options?: RedisOptions) {
 export * from './ratelimit-storage';
 export * from './mutex-storage';
 export * from './semaphore-storage';
+export { RedisCache as RedisCacheProvider };
