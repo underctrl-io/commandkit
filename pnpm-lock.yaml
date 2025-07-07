@@ -96,7 +96,7 @@ importers:
         version: 14.21.0
       dotenv:
         specifier: ^16.4.7
-        version: 16.5.0
+        version: 16.6.1
       zod:
         specifier: ^3.25.56
         version: 3.25.74
@@ -247,7 +247,7 @@ importers:
         version: 0.0.2
       dotenv:
         specifier: ^16.4.7
-        version: 16.5.0
+        version: 16.6.1
       ms:
         specifier: ^2.1.3
         version: 2.1.3
@@ -5051,8 +5051,8 @@ packages:
     resolution: {integrity: sha512-tE7ztYzXHIeyvc7N+hR3oi7FIbf/NIjVP9hmAt3yMXzrQ072/fpjGLx2GxNxGxUl5V73MEqYzioOMoVhGMJ5cA==}
     engines: {node: '>=10'}
 
-  dotenv@16.5.0:
-    resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
+  dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
 
   dts-resolver@2.1.1:
@@ -15311,7 +15311,7 @@ snapshots:
     dependencies:
       is-obj: 2.0.0
 
-  dotenv@16.5.0: {}
+  dotenv@16.6.1: {}
 
   dts-resolver@2.1.1: {}
 
