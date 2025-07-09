@@ -39,6 +39,7 @@ jobs:
             "@commandkit/i18n:packages/i18n"
             "@commandkit/devtools:packages/devtools"
             "@commandkit/cache:packages/cache"
+            "@commandkit/queue:packages/queue"
           )
 
           for entry in "${PACKAGES[@]}"; do

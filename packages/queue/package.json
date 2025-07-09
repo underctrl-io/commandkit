@@ -1,0 +1,47 @@
+{
+  "name": "@commandkit/queue",
+  "version": "0.1.0",
+  "description": "Service agnostic message queue api for commandkit",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./discordjs": {
+      "types": "./dist/discordjs/index.d.ts",
+      "import": "./dist/discordjs/index.js"
+    }
+  },
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underctrl-io/commandkit.git",
+    "directory": "packages/queue"
+  },
+  "keywords": [
+    "commandkit",
+    "queue"
+  ],
+  "contributors": [
+    "Twilight <hello@twlite.dev>",
+    "Avraj <avraj@underctrl.io>"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/underctrl-io/commandkit/issues"
+  },
+  "homepage": "https://github.com/underctrl-io/commandkit#readme",
+  "devDependencies": {
+    "@discordjs/brokers": "^1.0.0",
+    "tsconfig": "workspace:*",
+    "typescript": "catalog:build"
+  }
+}
