@@ -1,0 +1,32 @@
+---
+title: "Send"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## send
+
+<GenerationInfo sourceFile="packages/queue/src/index.ts" sourceLine="18" packageName="@commandkit/queue" />
+
+Send a message to a topic.
+
+```ts title="Signature"
+function send<T>(topic: string, message: T): Promise<void>
+```
+Parameters
+
+### topic
+
+<MemberInfo kind="parameter" type={`string`} />
+
+### message
+
+<MemberInfo kind="parameter" type={`T`} />
+

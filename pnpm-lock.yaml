@@ -572,6 +572,18 @@ importers:
         specifier: catalog:build
         version: 5.8.3
 
+  packages/queue:
+    devDependencies:
+      '@discordjs/brokers':
+        specifier: ^1.0.0
+        version: 1.0.0
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: catalog:build
+        version: 5.8.3
+
   packages/redis:
     dependencies:
       ioredis:
@@ -1595,6 +1607,10 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
+  '@discordjs/brokers@1.0.0':
+    resolution: {integrity: sha512-cZnkTnmsIlW4G4j5i+h6N/j96uWypVE6QYNckodlp/gTd4EHUZAMRrSsLGuqPra7A1ZXdGlmgf8R7UMttPCRtA==}
+    engines: {node: '>=20'}
+
   '@discordjs/builders@1.11.2':
     resolution: {integrity: sha512-F1WTABdd8/R9D1icJzajC4IuLyyS8f3rTOz66JsSI3pKvpCAtsMBweu8cyNYsIyvcrKAVn9EPK+Psoymq+XC0A==}
     engines: {node: '>=16.11.0'}
@@ -2193,6 +2209,10 @@ packages:
 
   '@mermaid-js/parser@0.4.0':
     resolution: {integrity: sha512-wla8XOWvQAwuqy+gxiZqY+c7FokraOTHRWMsbB4AgRx9Sy7zKslNyejy7E+a77qHfey5GXw/ik3IXv/NHMJgaA==}
+
+  '@msgpack/msgpack@3.1.2':
+    resolution: {integrity: sha512-JEW4DEtBzfe8HvUYecLU9e6+XJnKDlUAIve8FvPzF3Kzs6Xo/KuZkZJsDH0wJXl/qEZbeeE7edxDNY3kMs39hQ==}
+    engines: {node: '>= 18'}
 
   '@napi-rs/wasm-runtime@0.2.11':
     resolution: {integrity: sha512-9DPkXtvHydrcOsopiYpUgPHpmj0HWZKMUnL2dZqpvC42lsratuBG06V5ipyno0fUek5VlFsNQ+AcFATSrJXgMA==}
@@ -11021,6 +11041,14 @@ snapshots:
     dependencies:
       postcss: 8.5.6
 
+  '@discordjs/brokers@1.0.0':
+    dependencies:
+      '@msgpack/msgpack': 3.1.2
+      '@vladfrangu/async_event_emitter': 2.4.6
+      ioredis: 5.6.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@discordjs/builders@1.11.2':
     dependencies:
       '@discordjs/formatters': 0.6.1
@@ -11678,7 +11706,7 @@ snapshots:
 
   '@docusaurus/react-loadable@6.0.0(react@19.1.0)':
     dependencies:
-      '@types/react': 19.1.6
+      '@types/react': 19.1.8
       react: 19.1.0
 
   '@docusaurus/remark-plugin-npm2yarn@3.8.1':
@@ -12252,6 +12280,8 @@ snapshots:
   '@mermaid-js/parser@0.4.0':
     dependencies:
       langium: 3.3.1
+
+  '@msgpack/msgpack@3.1.2': {}
 
   '@napi-rs/wasm-runtime@0.2.11':
     dependencies:
@@ -13716,7 +13746,7 @@ snapshots:
   '@types/react-router@5.1.20':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.1.6
+      '@types/react': 19.1.8
 
   '@types/react@19.1.6':
     dependencies:

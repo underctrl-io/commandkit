@@ -1,0 +1,50 @@
+---
+title: "MessageQueue"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## MessageQueue
+
+<GenerationInfo sourceFile="packages/queue/src/driver.ts" sourceLine="3" packageName="@commandkit/queue" />
+
+
+
+```ts title="Signature"
+interface MessageQueue {
+    send(topic: string, message: any): Promise<void>;
+    receive(
+    topic: string,
+    handler: (message: any) => Awaitable<void>,
+  ): Promise<void>;
+    close?(): Promise<void>;
+}
+```
+
+<div className="members-wrapper">
+
+### send
+
+<MemberInfo kind="method" type={`(topic: string, message: any) => Promise&#60;void&#62;`}   />
+
+
+### receive
+
+<MemberInfo kind="method" type={`(topic: string, handler: (message: any) =&#62; <a href='/docs/next/api-reference/queue/types/awaitable#awaitable'>Awaitable</a>&#60;void&#62;) => Promise&#60;void&#62;`}   />
+
+
+### close
+
+<MemberInfo kind="method" type={`() => Promise&#60;void&#62;`}   />
+
+
+
+
+</div>
