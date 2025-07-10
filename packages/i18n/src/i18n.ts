@@ -19,6 +19,7 @@ import CommandKit, {
   CommandBuilderLike,
   CommandKitHMREvent,
   getCommandKit,
+  COMMANDKIT_CWD,
 } from 'commandkit';
 import FsBackend from 'i18next-fs-backend';
 import { basename, extname, join } from 'path';
@@ -298,7 +299,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
     event: CommandKitHMREvent,
   ): Promise<void> {
     const targetLocation = event.path;
-    const localeDir = join(process.cwd(), '/src/app/locales');
+    const localeDir = join(COMMANDKIT_CWD, '/src/app/locales');
 
     if (!targetLocation.startsWith(localeDir)) return;
 

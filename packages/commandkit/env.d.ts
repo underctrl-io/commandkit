@@ -3,4 +3,5 @@ export {
   COMMANDKIT_IS_CLI,
   COMMANDKIT_IS_DEV,
   COMMANDKIT_IS_TEST,
-} from 'commandkit';
+  COMMANDKIT_CWD,
+} from './dist/utils/constants';

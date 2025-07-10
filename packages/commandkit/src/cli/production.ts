@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { loadConfigFile } from '../config/loader';
 import { createAppProcess } from './app-process';
 import { existsSync } from 'fs';
@@ -6,6 +5,7 @@ import { findEntrypoint, panic } from './common';
 import { buildApplication } from './build';
 import { CompilerPlugin, isCompilerPlugin } from '../plugins';
 import { createSpinner } from './utils';
+import { COMMANDKIT_CWD } from '../utils/constants';
 
 /**
  * @private
@@ -13,7 +13,7 @@ import { createSpinner } from './utils';
  */
 export async function bootstrapProductionServer(configPath?: string) {
   process.env.COMMANDKIT_BOOTSTRAP_MODE = 'production';
-  const cwd = configPath || process.cwd();
+  const cwd = configPath || COMMANDKIT_CWD;
   const config = await loadConfigFile(cwd);
   const mainFile = findEntrypoint(config.distDir);
 
@@ -32,7 +32,7 @@ export async function bootstrapProductionServer(configPath?: string) {
  */
 export async function createProductionBuild(configPath?: string) {
   process.env.COMMANDKIT_BOOTSTRAP_MODE = 'production';
-  const cwd = configPath || process.cwd();
+  const cwd = configPath || COMMANDKIT_CWD;
   const config = await loadConfigFile(cwd);
 
   const spinner = await createSpinner(

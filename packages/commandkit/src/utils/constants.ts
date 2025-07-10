@@ -1,4 +1,9 @@
 /**
+ * The current working directory of the CommandKit instance.
+ */
+export const COMMANDKIT_CWD = process.env.COMMANDKIT_CWD || process.cwd();
+
+/**
  * Indicates whether CommandKit is running in development mode.
  */
 export const COMMANDKIT_IS_DEV = process.env.COMMANDKIT_IS_DEV === 'true';

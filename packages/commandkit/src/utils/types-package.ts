@@ -1,13 +1,13 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { COMMANDKIT_IS_DEV } from './constants';
+import { COMMANDKIT_CWD, COMMANDKIT_IS_DEV } from './constants';
 import { existsSync } from 'node:fs';
 
 /**
  * @private
  */
 export async function generateTypesPackage(force = false) {
-  const location = join(process.cwd(), 'node_modules', 'commandkit-types');
+  const location = join(COMMANDKIT_CWD, 'node_modules', 'commandkit-types');
   if (!COMMANDKIT_IS_DEV && !force) return location;
   const packageJSON = join(location, 'package.json');
   const index = join(location, 'index.js');
@@ -58,7 +58,7 @@ export async function rewriteCommandDeclaration(data: string) {
     export {};
 `;
 
-  const location = join(process.cwd(), 'node_modules', 'commandkit-types');
+  const location = join(COMMANDKIT_CWD, 'node_modules', 'commandkit-types');
 
   if (!existsSync(location)) return;
 
