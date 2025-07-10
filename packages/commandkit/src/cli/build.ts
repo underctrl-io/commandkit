@@ -8,6 +8,7 @@ import { rimraf } from 'rimraf';
 import { performTypeCheck } from './type-checker';
 import { copyLocaleFiles } from './common';
 import { MaybeArray } from '../components';
+import { COMMANDKIT_CWD } from '../utils/constants';
 
 /**
  * @private
@@ -51,7 +52,7 @@ export async function buildApplication({
   const config = await loadConfigFile(configPath);
 
   if (!isDev && !config?.typescript?.ignoreBuildErrors) {
-    await performTypeCheck(configPath || process.cwd());
+    await performTypeCheck(configPath || COMMANDKIT_CWD);
   }
 
   const pluginRuntime = new CompilerPluginRuntime(
@@ -121,7 +122,11 @@ export async function buildApplication({
     });
 
     await copyLocaleFiles('src', dest);
-    await injectEntryFile(configPath || process.cwd(), !!isDev, config.distDir);
+    await injectEntryFile(
+      configPath || COMMANDKIT_CWD,
+      !!isDev,
+      config.distDir,
+    );
   } catch (error) {
     console.error('Build failed:', error);
     if (error instanceof Error) {

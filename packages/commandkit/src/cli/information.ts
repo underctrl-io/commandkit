@@ -3,6 +3,7 @@ import { execSync } from 'node:child_process';
 import { version as commandkitVersion } from '../version';
 import fs from 'node:fs';
 import path from 'node:path';
+import { COMMANDKIT_CWD } from '../utils/constants';
 
 /**
  * @private
@@ -65,11 +66,11 @@ function findPackageVersion(packageName: string) {
   } catch (e) {
     try {
       const basePaths = [
-        path.join(process.cwd(), 'node_modules', packageName),
-        path.join(process.cwd(), '..', '..', 'node_modules', packageName),
-        path.join(process.cwd(), '..', '..', '.pnpm', packageName),
+        path.join(COMMANDKIT_CWD, 'node_modules', packageName),
+        path.join(COMMANDKIT_CWD, '..', '..', 'node_modules', packageName),
+        path.join(COMMANDKIT_CWD, '..', '..', '.pnpm', packageName),
         path.join(
-          process.cwd(),
+          COMMANDKIT_CWD,
           '..',
           '..',
           'node_modules',
@@ -89,7 +90,7 @@ function findPackageVersion(packageName: string) {
       }
 
       const nodeModulesPath = path.join(
-        process.cwd(),
+        COMMANDKIT_CWD,
         '..',
         '..',
         'node_modules',

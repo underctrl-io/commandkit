@@ -9,7 +9,7 @@ import colors from '../utils/colors';
 import { ChildProcess } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { randomUUID } from 'node:crypto';
-import { HMREventType } from '../utils/constants';
+import { COMMANDKIT_CWD, HMREventType } from '../utils/constants';
 import { findEntrypoint } from './common';
 
 /**
@@ -55,7 +55,7 @@ const isEventSource = (p: string) =>
 export async function bootstrapDevelopmentServer(configPath?: string) {
   process.env.COMMANDKIT_BOOTSTRAP_MODE = 'development';
   const start = performance.now();
-  const cwd = configPath || process.cwd();
+  const cwd = configPath || COMMANDKIT_CWD;
   const configPaths = getPossibleConfigPaths(cwd);
 
   const watcher = watch([join(cwd, 'src'), ...configPaths], {

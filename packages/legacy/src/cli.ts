@@ -1,4 +1,9 @@
-import { CompilerPlugin, CompilerPluginRuntime, Logger } from 'commandkit';
+import {
+  COMMANDKIT_CWD,
+  CompilerPlugin,
+  CompilerPluginRuntime,
+  Logger,
+} from 'commandkit';
 import { LegacyHandlerPluginOptions } from './plugin.js';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
@@ -74,7 +79,7 @@ export async function run({ interaction }: SlashCommandProps) {
       this.panic(message);
     }
 
-    const isTypeScript = existsSync(join(process.cwd(), 'tsconfig.json'));
+    const isTypeScript = existsSync(join(COMMANDKIT_CWD, 'tsconfig.json'));
     const extension = isTypeScript ? 'ts' : 'js';
 
     const [type, name] = args;
@@ -82,7 +87,7 @@ export async function run({ interaction }: SlashCommandProps) {
     switch (type) {
       case 'command': {
         const commandPath = join(
-          process.cwd(),
+          COMMANDKIT_CWD,
           'src',
           this.options.commandsPath,
           `${name}.${extension}`,
@@ -101,7 +106,7 @@ export async function run({ interaction }: SlashCommandProps) {
       case 'event': {
         let fileName = `${name}.${extension}`;
         const eventPathDir = join(
-          process.cwd(),
+          COMMANDKIT_CWD,
           'src',
           this.options.eventsPath,
           name,
