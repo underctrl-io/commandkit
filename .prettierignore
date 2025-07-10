@@ -32,3 +32,4 @@ turbo-lint.log
 .source
 
 turbo/generators/templates/**/*.hbs
+routeTree.gen.ts
