@@ -11,7 +11,7 @@ import {
   Guild,
   TextBasedChannel,
 } from 'discord.js';
-import { CommandKit } from '../../CommandKit';
+import { CommandKit } from '../../commandkit';
 import {
   MessageCommandOptions,
   MessageCommandParser,

@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { CommandKitEnvironment } from './environment';
-import { CommandKit } from '../CommandKit';
+import { CommandKit } from '../commandkit';
 import { isCommandKitError } from '../utils/error-codes';
 
 const kCommandWorker = Symbol('commandkitCommandWorker');

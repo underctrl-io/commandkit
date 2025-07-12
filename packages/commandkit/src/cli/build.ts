@@ -26,7 +26,7 @@ export interface ApplicationBuildOptions {
  * @private
  * @internal
  */
-function mergeDefinitionsIfNeeded(env: Record<string, string>) {
+function mergeDefinitionsIfNeeded(env: Record<string, string>, isDev: boolean) {
   const values = Object.fromEntries(
     Object.entries(process.env).filter(
       ([k]) => !(k in env) && k.startsWith('COMMANDKIT_PUBLIC_'),
@@ -36,6 +36,19 @@ function mergeDefinitionsIfNeeded(env: Record<string, string>) {
   return {
     ...env,
     ...values,
+    ...(isDev
+      ? {
+          NODE_ENV: 'development',
+          COMMANDKIT_BOOTSTRAP_MODE: 'development',
+          COMMANDKIT_IS_DEV: 'true',
+          COMMANDKIT_IS_TEST: 'false',
+        }
+      : {
+          NODE_ENV: 'production',
+          COMMANDKIT_BOOTSTRAP_MODE: 'production',
+          COMMANDKIT_IS_DEV: 'false',
+          COMMANDKIT_IS_TEST: 'false',
+        }),
   };
 }
 
@@ -110,7 +123,7 @@ export async function buildApplication({
       sourcemap: true,
       target: 'node16',
       outDir: dest,
-      env: mergeDefinitionsIfNeeded(config.env || {}),
+      env: mergeDefinitionsIfNeeded(config.env || {}, !!isDev),
       entry: [
         'src',
         `!${config.distDir}`,

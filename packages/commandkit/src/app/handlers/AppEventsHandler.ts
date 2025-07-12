@@ -1,5 +1,5 @@
 import { Collection } from 'discord.js';
-import { CommandKit } from '../../CommandKit';
+import { CommandKit } from '../../commandkit';
 import { ListenerFunction } from '../../events/CommandKitEventsChannel';
 import { Logger } from '../../logger/Logger';
 import { toFileURL } from '../../utils/resolve-file-url';

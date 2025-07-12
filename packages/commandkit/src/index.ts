@@ -1,8 +1,8 @@
-import { CommandKit } from './CommandKit';
+import { CommandKit } from './commandkit';
 
 export default CommandKit;
 
-export * from './CommandKit';
+export * from './commandkit';
 export * from './components';
 export * from './config/config';
 export * from './context/async-context';
