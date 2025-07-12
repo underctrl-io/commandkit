@@ -10,7 +10,7 @@ import {
   Message,
   SlashCommandBuilder,
 } from 'discord.js';
-import type { CommandKit } from '../../CommandKit';
+import type { CommandKit } from '../../commandkit';
 import { AsyncFunction, GenericFunction } from '../../context/async-context';
 import { Logger } from '../../logger/Logger';
 import type { CommandData } from '../../types';

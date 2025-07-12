@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
   cache,

@@ -1,4 +1,4 @@
-import { CommandKit } from '../CommandKit';
+import { CommandKit } from '../commandkit';
 import { Logger } from '../logger/Logger';
 import { warnUnstable } from '../utils/warn-unstable';
 import {

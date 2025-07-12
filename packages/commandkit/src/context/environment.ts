@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { CommandKit } from '../CommandKit';
+import { CommandKit } from '../commandkit';
 import { GenericFunction, getContext } from './async-context';
 import type { Context } from '../app';
 
