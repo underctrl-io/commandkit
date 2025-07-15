@@ -72,7 +72,7 @@ importers:
     dependencies:
       '@ai-sdk/google':
         specifier: ^1.2.19
-        version: 1.2.22(zod@3.25.76)
+        version: 1.2.22(zod@4.0.5)
       '@commandkit/ai':
         specifier: workspace:*
         version: link:../../packages/ai
@@ -98,8 +98,8 @@ importers:
         specifier: ^16.4.7
         version: 16.6.1
       zod:
-        specifier: ^3.25.56
-        version: 3.25.76
+        specifier: ^4.0.0
+        version: 4.0.5
     devDependencies:
       tsx:
         specifier: ^4.7.0
@@ -173,10 +173,10 @@ importers:
     dependencies:
       ai:
         specifier: ^4.3.16
-        version: 4.3.19(react@19.1.0)(zod@3.25.76)
+        version: 4.3.19(react@19.1.0)(zod@4.0.5)
       zod:
-        specifier: ^3.25.48
-        version: 3.25.76
+        specifier: ^4.0.0
+        version: 4.0.5
     devDependencies:
       commandkit:
         specifier: workspace:*
@@ -483,8 +483,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       zod:
-        specifier: ^3.24.2
-        version: 3.25.76
+        specifier: ^4.0.0
+        version: 4.0.5
       zustand:
         specifier: ^5.0.3
         version: 5.0.6(@types/react@19.1.8)(immer@9.0.21)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
@@ -9196,6 +9196,9 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
+  zod@4.0.5:
+    resolution: {integrity: sha512-/5UuuRPStvHXu7RS+gmvRf4NXrNxpSllGwDnCBcJZtQsKrviYXm54yDGV2KYNLT5kq0lHGcl7lqWJLgSaG+tgA==}
+
   zustand@5.0.6:
     resolution: {integrity: sha512-ihAqNeUVhe0MAD+X8M5UzqyZ9k3FFZLBTtqo6JLPwV53cbRB/mJwBI0PxcIgqhBBHlEs8G45OTDTMq3gNcLq3A==}
     engines: {node: '>=12.20.0'}
@@ -9219,39 +9222,39 @@ packages:
 
 snapshots:
 
-  '@ai-sdk/google@1.2.22(zod@3.25.76)':
+  '@ai-sdk/google@1.2.22(zod@4.0.5)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
-      zod: 3.25.76
+      '@ai-sdk/provider-utils': 2.2.8(zod@4.0.5)
+      zod: 4.0.5
 
-  '@ai-sdk/provider-utils@2.2.8(zod@3.25.76)':
+  '@ai-sdk/provider-utils@2.2.8(zod@4.0.5)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
       nanoid: 3.3.11
       secure-json-parse: 2.7.0
-      zod: 3.25.76
+      zod: 4.0.5
 
   '@ai-sdk/provider@1.1.3':
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@1.2.12(react@19.1.0)(zod@3.25.76)':
+  '@ai-sdk/react@1.2.12(react@19.1.0)(zod@4.0.5)':
     dependencies:
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.76)
+      '@ai-sdk/provider-utils': 2.2.8(zod@4.0.5)
+      '@ai-sdk/ui-utils': 1.2.11(zod@4.0.5)
       react: 19.1.0
       swr: 2.3.4(react@19.1.0)
       throttleit: 2.1.0
     optionalDependencies:
-      zod: 3.25.76
+      zod: 4.0.5
 
-  '@ai-sdk/ui-utils@1.2.11(zod@3.25.76)':
+  '@ai-sdk/ui-utils@1.2.11(zod@4.0.5)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
-      zod: 3.25.76
-      zod-to-json-schema: 3.24.6(zod@3.25.76)
+      '@ai-sdk/provider-utils': 2.2.8(zod@4.0.5)
+      zod: 4.0.5
+      zod-to-json-schema: 3.24.6(zod@4.0.5)
 
   '@algolia/autocomplete-core@1.17.9(@algolia/client-search@5.19.0)(algoliasearch@5.19.0)(search-insights@2.17.3)':
     dependencies:
@@ -11721,7 +11724,7 @@ snapshots:
 
   '@docusaurus/react-loadable@6.0.0(react@19.1.0)':
     dependencies:
-      '@types/react': 19.1.6
+      '@types/react': 19.1.8
       react: 19.1.0
 
   '@docusaurus/remark-plugin-npm2yarn@3.8.1':
@@ -13756,7 +13759,7 @@ snapshots:
   '@types/react-router@5.1.20':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.1.6
+      '@types/react': 19.1.8
 
   '@types/react@19.1.6':
     dependencies:
@@ -14074,15 +14077,15 @@ snapshots:
       clean-stack: 2.2.0
       indent-string: 4.0.0
 
-  ai@4.3.19(react@19.1.0)(zod@3.25.76):
+  ai@4.3.19(react@19.1.0)(zod@4.0.5):
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
-      '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@3.25.76)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.76)
+      '@ai-sdk/provider-utils': 2.2.8(zod@4.0.5)
+      '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@4.0.5)
+      '@ai-sdk/ui-utils': 1.2.11(zod@4.0.5)
       '@opentelemetry/api': 1.9.0
       jsondiffpatch: 0.6.0
-      zod: 3.25.76
+      zod: 4.0.5
     optionalDependencies:
       react: 19.1.0
 
@@ -20255,11 +20258,13 @@ snapshots:
 
   yocto-queue@1.2.1: {}
 
-  zod-to-json-schema@3.24.6(zod@3.25.76):
+  zod-to-json-schema@3.24.6(zod@4.0.5):
     dependencies:
-      zod: 3.25.76
+      zod: 4.0.5
 
   zod@3.25.76: {}
+
+  zod@4.0.5: {}
 
   zustand@5.0.6(@types/react@19.1.8)(immer@9.0.21)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)):
     optionalDependencies:
