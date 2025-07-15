@@ -19,7 +19,7 @@
     "commandkit": "workspace:*",
     "discord.js": "catalog:discordjs",
     "dotenv": "^16.4.7",
-    "zod": "^3.25.56"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "tsx": "^4.7.0"
