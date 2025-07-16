@@ -82,6 +82,7 @@ export async function setup({
       dev: 'commandkit dev',
       build: 'commandkit build',
       start: 'commandkit start',
+      format: 'prettier --write "src/**/*.{js,ts}"',
     },
     devDependencies: {},
     dependencies: {},

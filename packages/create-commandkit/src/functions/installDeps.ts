@@ -12,11 +12,11 @@ const baseDependencies = [
 const dependencies = {
   js: {
     dependencies: baseDependencies,
-    devDependencies: ['@types/node', 'typescript'],
+    devDependencies: ['@types/node', 'typescript', 'prettier'],
   },
   ts: {
     dependencies: baseDependencies,
-    devDependencies: ['@types/node', 'typescript'],
+    devDependencies: ['@types/node', 'typescript', 'prettier'],
   },
 };
 
