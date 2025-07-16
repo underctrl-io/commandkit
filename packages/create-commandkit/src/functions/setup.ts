@@ -41,6 +41,7 @@ export async function setup({
         useTabs: false,
         lineWidth: 120,
         indentWidth: 2,
+        endOfLine: 'lf',
         semiColons: true,
         singleQuote: true,
         include: ['src/'],
@@ -50,6 +51,21 @@ export async function setup({
 
     await fs.writeJSON(denoJsonPath, denoJson, { spaces: 2, EOL: '\n' });
   }
+
+  const prettierrc = path.join(dir, '.prettierrc');
+
+  const prettierConfig = {
+    printWidth: 120,
+    tabWidth: 2,
+    useTabs: false,
+    semi: true,
+    endOfLine: 'lf',
+    singleQuote: true,
+    trailingComma: 'all',
+    arrowParens: 'always',
+  };
+
+  await fs.writeJSON(prettierrc, prettierConfig, { spaces: 2, EOL: '\n' });
 
   const packageJsonPath = path.join(dir, 'package.json');
 
@@ -66,6 +82,7 @@ export async function setup({
       dev: 'commandkit dev',
       build: 'commandkit build',
       start: 'commandkit start',
+      format: 'prettier --write "src/**/*.{js,ts}"',
     },
     devDependencies: {},
     dependencies: {},
