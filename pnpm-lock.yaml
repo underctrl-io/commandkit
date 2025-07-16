@@ -264,7 +264,7 @@ importers:
         specifier: ^6.0.0
         version: 6.0.1
       tsdown:
-        specifier: ^0.12.7
+        specifier: ^0.12.9
         version: 0.12.9(typescript@5.8.3)
       use-macro:
         specifier: ^1.1.0
@@ -11716,7 +11716,7 @@ snapshots:
 
   '@docusaurus/react-loadable@6.0.0(react@19.1.0)':
     dependencies:
-      '@types/react': 19.1.6
+      '@types/react': 19.1.8
       react: 19.1.0
 
   '@docusaurus/remark-plugin-npm2yarn@3.8.1':
