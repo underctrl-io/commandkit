@@ -1,0 +1,112 @@
+---
+title: "Task"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## Task
+
+<GenerationInfo sourceFile="packages/tasks/src/task.ts" sourceLine="30" packageName="@commandkit/tasks" />
+
+Represents a task instance with execution logic and metadata.
+
+Tasks can be scheduled to run at specific times or intervals using cron expressions
+or date-based scheduling. They support preparation logic to conditionally execute
+and provide a context for accessing CommandKit and Discord.js functionality.
+
+
+
+*Example*
+
+```ts
+import { task } from '@commandkit/tasks';
+
+export const cleanupTask = task({
+  name: 'cleanup-old-data',
+  schedule: { type: 'cron', value: '0 2 * * *' }, // Daily at 2 AM
+  async prepare(ctx) {
+    // Only run if there's old data to clean
+    return await hasOldData();
+  },
+  async execute(ctx) {
+    await cleanupOldRecords();
+    await ctx.commandkit.client.channels.cache
+      .get('log-channel')?.send('Cleanup completed!');
+  },
+});
+```
+
+```ts title="Signature"
+class Task<T extends Record<string, any> = Record<string, any>> {
+    constructor(data: TaskDefinition<T>)
+    immediate: boolean
+    name: string
+    schedule: TaskSchedule | null
+    isCron() => boolean;
+    isDate() => boolean;
+    prepare(ctx: TaskContext<T>) => Promise<boolean>;
+    execute(ctx: TaskContext<T>) => Promise<void>;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/tasks/interfaces/task-definition#taskdefinition'>TaskDefinition</a>&#60;T&#62;) => Task`}   />
+
+Creates a new task instance.
+### immediate
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether this task should run immediately when created.
+Only applicable to cron tasks, defaults to false.
+### name
+
+<MemberInfo kind="property" type={`string`}   />
+
+The unique identifier for this task.
+### schedule
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/types/task-schedule#taskschedule'>TaskSchedule</a> | null`}   />
+
+The schedule configuration for this task.
+Returns null if no schedule is defined (manual execution only).
+### isCron
+
+<MemberInfo kind="method" type={`() => boolean`}   />
+
+Checks if this task uses cron-based scheduling.
+### isDate
+
+<MemberInfo kind="method" type={`() => boolean`}   />
+
+Checks if this task uses date-based scheduling.
+### prepare
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) => Promise&#60;boolean&#62;`}   />
+
+Determines if the task is ready to be executed.
+
+This method calls the optional prepare function if defined. If no prepare
+function is provided, the task is always ready to execute.
+### execute
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) => Promise&#60;void&#62;`}   />
+
+Executes the task's main logic.
+
+This method calls the execute function defined in the task definition.
+It provides access to the CommandKit instance, Discord.js client, and
+any custom data passed to the task.
+
+
+</div>

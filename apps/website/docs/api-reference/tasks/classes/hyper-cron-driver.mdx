@@ -1,0 +1,95 @@
+---
+title: "HyperCronDriver"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## HyperCronDriver
+
+<GenerationInfo sourceFile="packages/tasks/src/drivers/hypercron.ts" sourceLine="36" packageName="@commandkit/tasks" />
+
+HyperCron-based task driver for lightweight task scheduling.
+
+This driver uses HyperCron to provide simple, in-memory task scheduling.
+It's ideal for single-instance applications or development environments
+where you don't need distributed task scheduling.
+
+**Requirements**: Requires the `hypercron` package to be installed.
+
+
+
+*Example*
+
+```ts
+import { HyperCronDriver } from '@commandkit/tasks/hypercron';
+import { setDriver } from '@commandkit/tasks';
+
+const driver = new HyperCronDriver();
+setDriver(driver);
+```
+
+*Example*
+
+```ts
+// With custom cron service
+import { cronService } from 'hypercron';
+
+const customService = cronService.create({
+  // Custom configuration
+});
+
+const driver = new HyperCronDriver(customService);
+setDriver(driver);
+```
+
+```ts title="Signature"
+class HyperCronDriver implements TaskDriver {
+    constructor(service:  = cronService)
+    create(task: TaskData) => Promise<string>;
+    delete(identifier: string) => Promise<void>;
+    setTaskRunner(runner: TaskRunner) => Promise<void>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a></code>
+
+
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(service:  = cronService) => HyperCronDriver`}   />
+
+Creates a new HyperCron driver instance.
+### create
+
+<MemberInfo kind="method" type={`(task: <a href='/docs/next/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
+
+Creates a new scheduled task in HyperCron.
+
+This schedules the task using the HyperCron service and starts the service
+if it's not already running.
+### delete
+
+<MemberInfo kind="method" type={`(identifier: string) => Promise&#60;void&#62;`}   />
+
+Deletes a scheduled task from HyperCron.
+
+This cancels the scheduled task and removes it from the cron service.
+### setTaskRunner
+
+<MemberInfo kind="method" type={`(runner: <a href='/docs/next/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
+
+Sets the task execution runner function.
+
+This function will be called by the HyperCron service when a task is due for execution.
+
+
+</div>

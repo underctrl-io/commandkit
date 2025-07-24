@@ -1,0 +1,49 @@
+---
+title: "Task"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## task
+
+<GenerationInfo sourceFile="packages/tasks/src/task.ts" sourceLine="130" packageName="@commandkit/tasks" />
+
+Creates a new task definition.
+
+This is the main function for defining tasks in your application. Tasks can be
+scheduled using cron expressions or specific dates, and can include preparation
+logic to conditionally execute based on runtime conditions.
+
+
+
+*Example*
+
+```ts
+import { task } from '@commandkit/tasks';
+
+// Simple scheduled task
+export const dailyBackup = task({
+  name: 'daily-backup',
+  schedule: { type: 'cron', value: '0 0 * * *' },
+  async execute(ctx) {
+    await performBackup();
+  },
+});
+```
+
+```ts title="Signature"
+function task<T extends Record<string, any> = Record<string, any>>(data: TaskDefinition<T>): Task<T>
+```
+Parameters
+
+### data
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/tasks/interfaces/task-definition#taskdefinition'>TaskDefinition</a>&#60;T&#62;`} />
+

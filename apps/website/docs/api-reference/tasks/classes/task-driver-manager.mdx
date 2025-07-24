@@ -1,0 +1,88 @@
+---
+title: "TaskDriverManager"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TaskDriverManager
+
+<GenerationInfo sourceFile="packages/tasks/src/driver-manager.ts" sourceLine="27" packageName="@commandkit/tasks" />
+
+Manages the active task driver and provides a unified interface for task operations.
+
+This class acts as a facade for the underlying task driver, providing methods
+to create, delete, and manage tasks. It ensures that a driver is set before
+any operations are performed.
+
+
+
+*Example*
+
+```ts
+import { TaskDriverManager } from '@commandkit/tasks';
+import { HyperCronDriver } from '@commandkit/tasks/hypercron';
+
+const manager = new TaskDriverManager();
+manager.setDriver(new HyperCronDriver());
+
+// Now you can create and manage tasks
+const taskId = await manager.createTask({
+  name: 'my-task',
+  data: { userId: '123' },
+  schedule: { type: 'date', value: Date.now() + 60000 },
+});
+```
+
+```ts title="Signature"
+class TaskDriverManager {
+    setDriver(driver: TaskDriver) => void;
+    createTask(task: TaskData) => Promise<string>;
+    deleteTask(identifier: string) => Promise<void>;
+    setTaskRunner(runner: TaskRunner) => Promise<void>;
+}
+```
+
+<div className="members-wrapper">
+
+### setDriver
+
+<MemberInfo kind="method" type={`(driver: <a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a>) => void`}   />
+
+Sets the active task driver.
+
+This method must be called before any task operations can be performed.
+The driver handles all scheduling, persistence, and execution timing.
+### createTask
+
+<MemberInfo kind="method" type={`(task: <a href='/docs/next/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
+
+Creates a new scheduled task.
+
+This method delegates to the active driver to schedule the task according
+to its configuration. The task will be executed when its schedule is due.
+### deleteTask
+
+<MemberInfo kind="method" type={`(identifier: string) => Promise&#60;void&#62;`}   />
+
+Deletes a scheduled task by its identifier.
+
+This method delegates to the active driver to remove the task from the
+scheduling system and cancel any pending executions.
+### setTaskRunner
+
+<MemberInfo kind="method" type={`(runner: <a href='/docs/next/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
+
+Sets the task execution runner function.
+
+This method delegates to the active driver to set up the execution handler
+that will be called when tasks are due to run.
+
+
+</div>
