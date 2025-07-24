@@ -1,0 +1,337 @@
+---
+title: Dynamic Tasks
+description: Learn how to create tasks on-demand from commands and events.
+---
+
+# Dynamic Tasks
+
+While static tasks are great for recurring operations, you often need to create tasks dynamically based on user interactions or events. The tasks plugin provides utilities for creating tasks on-demand.
+
+## Creating Dynamic Tasks
+
+Use the `createTask` function to create tasks programmatically:
+
+```ts
+import { createTask } from '@commandkit/tasks';
+
+// Create a task that runs in 5 minutes
+const taskId = await createTask({
+  name: 'reminder',
+  data: { userId: '123', message: "Don't forget your meeting!" },
+  schedule: { type: 'date', value: Date.now() + 5 * 60 * 1000 },
+});
+```
+
+## Reminder System Example
+
+Here's a complete example of a reminder command that creates dynamic tasks:
+
+```ts
+import { createTask } from '@commandkit/tasks';
+
+export default {
+  name: 'remind',
+  description: 'Set a reminder',
+  options: [
+    {
+      name: 'time',
+      description: 'When to remind you (e.g., 5m, 1h, 1d)',
+      type: 'string',
+      required: true,
+    },
+    {
+      name: 'message',
+      description: 'What to remind you about',
+      type: 'string',
+      required: true,
+    },
+  ],
+  async run(ctx) {
+    const timeStr = ctx.interaction.options.getString('time', true);
+    const message = ctx.interaction.options.getString('message', true);
+
+    // Parse time string (you can use a library like ms)
+    const delay = parseTime(timeStr);
+    if (!delay) {
+      await ctx.interaction.reply('Invalid time format. Use: 5m, 1h, 1d, etc.');
+      return;
+    }
+
+    // Create the reminder task
+    const taskId = await createTask({
+      name: 'reminder',
+      data: {
+        userId: ctx.interaction.user.id,
+        channelId: ctx.interaction.channelId,
+        message,
+      },
+      schedule: { type: 'date', value: Date.now() + delay },
+    });
+
+    await ctx.interaction.reply(`Reminder set! I'll remind you in ${timeStr}.`);
+  },
+};
+```
+
+## The Reminder Task
+
+Create a static task definition that handles the actual reminder:
+
+```ts
+// src/app/tasks/reminder.ts
+import { task } from '@commandkit/tasks';
+
+export const reminder = task({
+  name: 'reminder',
+  async execute(ctx) {
+    const { userId, channelId, message } = ctx.data;
+
+    try {
+      const user = await ctx.commandkit.client.users.fetch(userId);
+      await user.send(`Reminder: ${message}`);
+    } catch (error) {
+      // If DM fails, try to send to the original channel
+      const channel = ctx.commandkit.client.channels.cache.get(channelId);
+      if (channel?.isTextBased()) {
+        await channel.send(`<@${userId}> Reminder: ${message}`);
+      }
+    }
+  },
+});
+```
+
+## Advanced Dynamic Task Patterns
+
+### Conditional Task Creation
+
+```ts
+export default {
+  name: 'schedule-maintenance',
+  description: 'Schedule maintenance for a specific time',
+  async run(ctx) {
+    const maintenanceMode = ctx.commandkit.store.get('maintenance-mode');
+
+    if (maintenanceMode) {
+      await ctx.interaction.reply('Maintenance mode is already enabled.');
+      return;
+    }
+
+    // Create maintenance task
+    await createTask({
+      name: 'maintenance',
+      data: {
+        requestedBy: ctx.interaction.user.id,
+        duration: 30 * 60 * 1000, // 30 minutes
+      },
+      schedule: { type: 'date', value: Date.now() + 5 * 60 * 1000 }, // 5 minutes from now
+    });
+
+    await ctx.interaction.reply(
+      'Maintenance scheduled for 5 minutes from now.',
+    );
+  },
+};
+```
+
+### Batch Task Creation
+
+```ts
+export default {
+  name: 'schedule-events',
+  description: 'Schedule multiple events',
+  async run(ctx) {
+    const events = [
+      { name: 'Event 1', time: Date.now() + 60 * 60 * 1000 },
+      { name: 'Event 2', time: Date.now() + 2 * 60 * 60 * 1000 },
+      { name: 'Event 3', time: Date.now() + 3 * 60 * 60 * 1000 },
+    ];
+
+    const taskIds = await Promise.all(
+      events.map((event) =>
+        createTask({
+          name: 'event-notification',
+          data: {
+            eventName: event.name,
+            channelId: ctx.interaction.channelId,
+          },
+          schedule: { type: 'date', value: event.time },
+        }),
+      ),
+    );
+
+    await ctx.interaction.reply(`Scheduled ${events.length} events.`);
+  },
+};
+```
+
+## Managing Dynamic Tasks
+
+### Deleting Tasks
+
+```ts
+import { deleteTask } from '@commandkit/tasks';
+
+export default {
+  name: 'cancel-reminder',
+  description: 'Cancel a scheduled reminder',
+  async run(ctx) {
+    const taskId = ctx.interaction.options.getString('task-id', true);
+
+    try {
+      await deleteTask(taskId);
+      await ctx.interaction.reply('Reminder cancelled successfully.');
+    } catch (error) {
+      await ctx.interaction.reply(
+        'Failed to cancel reminder. It may have already been executed.',
+      );
+    }
+  },
+};
+```
+
+### Task Storage and Retrieval
+
+For more complex scenarios, you might want to store task IDs in your database:
+
+```ts
+export default {
+  name: 'remind',
+  description: 'Set a reminder',
+  async run(ctx) {
+    const timeStr = ctx.interaction.options.getString('time', true);
+    const message = ctx.interaction.options.getString('message', true);
+
+    const delay = parseTime(timeStr);
+    const taskId = await createTask({
+      name: 'reminder',
+      data: {
+        userId: ctx.interaction.user.id,
+        message,
+      },
+      schedule: { type: 'date', value: Date.now() + delay },
+    });
+
+    // Store the task ID in your database
+    await db.reminders.create({
+      userId: ctx.interaction.user.id,
+      taskId,
+      message,
+      scheduledFor: new Date(Date.now() + delay),
+    });
+
+    await ctx.interaction.reply(`Reminder set! Task ID: ${taskId}`);
+  },
+};
+```
+
+## Error Handling
+
+Always handle potential errors when creating dynamic tasks:
+
+```ts
+export default {
+  name: 'schedule-task',
+  description: 'Schedule a custom task',
+  async run(ctx) {
+    try {
+      const taskId = await createTask({
+        name: 'custom-task',
+        data: { userId: ctx.interaction.user.id },
+        schedule: { type: 'date', value: Date.now() + 60000 },
+      });
+
+      await ctx.interaction.reply(`Task scheduled successfully. ID: ${taskId}`);
+    } catch (error) {
+      console.error('Failed to schedule task:', error);
+      await ctx.interaction.reply('Failed to schedule task. Please try again.');
+    }
+  },
+};
+```
+
+## Best Practices
+
+### 1. Use Descriptive Task Names
+
+```ts
+// Good
+await createTask({
+  name: 'user-reminder',
+  data: { userId, message },
+  schedule: { type: 'date', value: reminderTime },
+});
+
+// Avoid
+await createTask({
+  name: 'task',
+  data: { userId, message },
+  schedule: { type: 'date', value: reminderTime },
+});
+```
+
+### 2. Validate Input Data
+
+```ts
+export default {
+  name: 'schedule-reminder',
+  async run(ctx) {
+    const timeStr = ctx.interaction.options.getString('time', true);
+    const message = ctx.interaction.options.getString('message', true);
+
+    // Validate time format
+    const delay = parseTime(timeStr);
+    if (!delay || delay < 60000 || delay > 30 * 24 * 60 * 60 * 1000) {
+      await ctx.interaction.reply(
+        'Please specify a time between 1 minute and 30 days.',
+      );
+      return;
+    }
+
+    // Validate message length
+    if (message.length > 1000) {
+      await ctx.interaction.reply(
+        'Message too long. Please keep it under 1000 characters.',
+      );
+      return;
+    }
+
+    // Create task
+    await createTask({
+      name: 'reminder',
+      data: { userId: ctx.interaction.user.id, message },
+      schedule: { type: 'date', value: Date.now() + delay },
+    });
+  },
+};
+```
+
+### 3. Handle Task Limits
+
+```ts
+export default {
+  name: 'schedule-reminder',
+  async run(ctx) {
+    const userId = ctx.interaction.user.id;
+
+    // Check existing reminders
+    const existingReminders = await db.reminders.count({
+      where: { userId, active: true },
+    });
+
+    if (existingReminders >= 10) {
+      await ctx.interaction.reply(
+        'You already have 10 active reminders. Please cancel some first.',
+      );
+      return;
+    }
+
+    // Create new reminder
+    // ...
+  },
+};
+```
+
+## Next Steps
+
+- [Advanced Patterns](./04-advanced-patterns) - Learn advanced task management techniques
+- [Task Drivers](./02-task-drivers) - Understand different persistence options

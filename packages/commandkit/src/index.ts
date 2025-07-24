@@ -23,10 +23,12 @@ export {
   debounce,
   defer,
 } from './utils/utilities';
+export { toFileURL } from './utils/resolve-file-url';
 export * from './app/interrupt/signals';
 export type { CommandKitHMREvent } from './utils/dev-hooks';
 export * from './utils/constants';
 export * from './app/events/EventWorkerContext';
+export { Collection, type Client } from 'discord.js';
 
 // cli
 export { bootstrapCommandkitCLI } from './cli/init';

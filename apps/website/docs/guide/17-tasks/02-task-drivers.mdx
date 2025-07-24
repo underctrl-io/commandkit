@@ -1,0 +1,230 @@
+---
+title: Task Drivers
+description: Learn about different task drivers and how to configure them for your use case.
+---
+
+# Task Drivers
+
+Task drivers handle the persistence and scheduling of your tasks. The tasks plugin supports multiple drivers to fit different deployment scenarios and requirements.
+
+## Available Drivers
+
+### HyperCron Driver (Default)
+
+The HyperCron driver provides lightweight, in-memory task scheduling. It's perfect for single-instance applications or development environments.
+
+**Pros:**
+
+- Simple setup, no external dependencies
+- Lightweight and fast
+- Perfect for development and single-instance bots
+
+**Cons:**
+
+- Tasks are lost on restart
+- No distributed scheduling support
+- Limited to single instance
+
+**Installation:**
+
+```bash
+npm install hypercron
+```
+
+**Usage:**
+
+```ts
+import { HyperCronDriver } from '@commandkit/tasks/hypercron';
+import { setDriver } from '@commandkit/tasks';
+
+const driver = new HyperCronDriver();
+setDriver(driver);
+```
+
+### BullMQ Driver
+
+The BullMQ driver provides robust, distributed task scheduling using Redis as the backend. It's ideal for production environments with multiple bot instances.
+
+**Pros:**
+
+- Distributed scheduling across multiple instances
+- Persistent task storage
+- Built-in retry mechanisms
+- Production-ready with Redis
+
+**Cons:**
+
+- Requires Redis server
+- More complex setup
+- Additional dependency
+
+**Installation:**
+
+```bash
+npm install bullmq
+```
+
+**Usage:**
+
+```ts
+import { BullMQDriver } from '@commandkit/tasks/bullmq';
+import { setDriver } from '@commandkit/tasks';
+
+const driver = new BullMQDriver(
+  {
+    host: 'localhost',
+    port: 6379,
+  },
+  'my-tasks-queue',
+);
+
+setDriver(driver);
+```
+
+**Advanced Redis Configuration:**
+
+```ts
+const driver = new BullMQDriver({
+  host: 'redis.example.com',
+  port: 6379,
+  password: 'your-password',
+  tls: true,
+  retryDelayOnFailover: 100,
+  maxRetriesPerRequest: 3,
+});
+```
+
+## Setting Up Drivers
+
+### Basic Setup
+
+Configure your driver before the tasks plugin loads:
+
+```ts
+import { tasks } from '@commandkit/tasks';
+import { HyperCronDriver } from '@commandkit/tasks/hypercron';
+import { setDriver } from '@commandkit/tasks';
+
+// Set up the driver
+setDriver(new HyperCronDriver());
+
+export default {
+  plugins: [tasks()],
+};
+```
+
+### Advanced Setup with Custom Configuration
+
+```ts
+import { tasks } from '@commandkit/tasks';
+import { BullMQDriver } from '@commandkit/tasks/bullmq';
+import { setDriver } from '@commandkit/tasks';
+
+// Configure BullMQ with custom settings
+const driver = new BullMQDriver(
+  {
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379'),
+    password: process.env.REDIS_PASSWORD,
+  },
+  'commandkit-tasks',
+);
+
+setDriver(driver);
+
+export default {
+  plugins: [tasks()],
+};
+```
+
+## Driver Comparison
+
+| Feature              | HyperCron   | BullMQ          |
+| -------------------- | ----------- | --------------- |
+| **Setup Complexity** | Simple      | Moderate        |
+| **Dependencies**     | `hypercron` | `bullmq`, Redis |
+| **Persistence**      | In-memory   | Redis           |
+| **Distributed**      | No          | Yes             |
+| **Retry Logic**      | Basic       | Advanced        |
+| **Production Ready** | Development | Yes             |
+| **Memory Usage**     | Low         | Moderate        |
+
+## Choosing the Right Driver
+
+### Use HyperCron when:
+
+- You're developing locally
+- You have a single bot instance
+- You don't need task persistence across restarts
+- You want minimal setup complexity
+
+### Use BullMQ when:
+
+- You have multiple bot instances
+- You need task persistence across restarts
+- You're deploying to production
+- You need advanced features like retries and monitoring
+
+## Environment-Specific Configuration
+
+### Development Environment
+
+```ts
+import { HyperCronDriver } from '@commandkit/tasks/hypercron';
+
+if (process.env.NODE_ENV === 'development') {
+  setDriver(new HyperCronDriver());
+}
+```
+
+### Production Environment
+
+```ts
+import { BullMQDriver } from '@commandkit/tasks/bullmq';
+
+if (process.env.NODE_ENV === 'production') {
+  setDriver(
+    new BullMQDriver({
+      host: process.env.REDIS_HOST,
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+    }),
+  );
+}
+```
+
+## Custom Drivers
+
+You can create your own driver by implementing the `TaskDriver` interface:
+
+```ts
+import { TaskDriver, TaskRunner } from '@commandkit/tasks';
+import { TaskData } from '@commandkit/tasks';
+
+class CustomDriver implements TaskDriver {
+  private runner: TaskRunner | null = null;
+
+  async create(task: TaskData): Promise<string> {
+    // Implement your scheduling logic
+    const id = await this.scheduler.schedule(task);
+    return id;
+  }
+
+  async delete(task: string): Promise<void> {
+    // Implement your deletion logic
+    await this.scheduler.cancel(task);
+  }
+
+  async setTaskRunner(runner: TaskRunner): Promise<void> {
+    this.runner = runner;
+  }
+}
+
+// Use your custom driver
+setDriver(new CustomDriver());
+```
+
+## Next Steps
+
+- [Dynamic Tasks](./03-dynamic-tasks) - Learn how to create tasks on-demand
+- [Advanced Patterns](./04-advanced-patterns) - Best practices for task management

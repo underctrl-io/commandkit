@@ -1,0 +1,59 @@
+{
+  "name": "@commandkit/tasks",
+  "version": "0.0.0",
+  "description": "Task management plugin for CommandKit",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./bullmq": {
+      "types": "./dist/drivers/bullmq.d.ts",
+      "import": "./dist/drivers/bullmq.js",
+      "require": "./dist/drivers/bullmq.js"
+    },
+    "./hypercron": {
+      "types": "./dist/drivers/hypercron.d.ts",
+      "import": "./dist/drivers/hypercron.js",
+      "require": "./dist/drivers/hypercron.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underctrl-io/commandkit.git",
+    "directory": "packages/tasks"
+  },
+  "keywords": [
+    "commandkit",
+    "tasks"
+  ],
+  "contributors": [
+    "Twilight <hello@twlite.dev>",
+    "Avraj <avraj@underctrl.io>"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/underctrl-io/commandkit/issues"
+  },
+  "homepage": "https://github.com/underctrl-io/commandkit#readme",
+  "devDependencies": {
+    "bullmq": "^5.56.5",
+    "commandkit": "workspace:*",
+    "hypercron": "^0.1.0",
+    "tsconfig": "workspace:*",
+    "typescript": "catalog:build"
+  },
+  "dependencies": {
+    "cron-parser": "^4.9.0"
+  }
+}
