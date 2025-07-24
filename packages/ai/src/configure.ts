@@ -90,7 +90,7 @@ const AIConfig: Required<ConfigureAI> = {
     const isMe = (id: string) => id === message.client.user.id;
 
     const conversation: AiMessage = recentMessages
-      .filter((msg) => msg.content && (!msg.author.bot || isMe(msg.author.id)))
+      .filter((msg) => msg.content && (isMe(msg.author.id) || !msg.author.bot))
       .reverse()
       .map((msg) => ({
         role: isMe(msg.author.id) ? 'assistant' : 'user',
@@ -108,6 +108,10 @@ const AIConfig: Required<ConfigureAI> = {
         })),
       }));
 
+    const ref = message.reference
+      ? await message.fetchReference().catch(() => null)
+      : null;
+
     return [
       ...conversation,
       {
@@ -116,14 +120,24 @@ const AIConfig: Required<ConfigureAI> = {
           authorId: message.author.id,
           authorName: message.author.username,
           authorAvatar: message.author.displayAvatarURL(),
+          referencedMessageId: ref?.id ?? null,
+          referencedMessageContent: ref?.content ?? null,
         },
         createdAt: message.createdAt,
         content: message.content,
-        experimental_attachments: message.attachments.map((attachment) => ({
-          url: attachment.url,
-          name: attachment.name,
-          contentType: attachment.contentType || undefined,
-        })),
+        experimental_attachments: message.attachments
+          .map((attachment) => ({
+            url: attachment.url,
+            name: attachment.name,
+            contentType: attachment.contentType || undefined,
+          }))
+          .concat(
+            ref?.attachments.map((attachment) => ({
+              url: attachment.url,
+              name: attachment.name,
+              contentType: attachment.contentType || undefined,
+            })) ?? [],
+          ),
       },
     ] as AiMessage;
   },
