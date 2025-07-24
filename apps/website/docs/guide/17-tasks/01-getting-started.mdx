@@ -21,10 +21,11 @@ Add the tasks plugin to your CommandKit configuration:
 
 ```ts
 import { tasks } from '@commandkit/tasks';
+import { defineConfig } from 'commandkit/config'
 
-export default {
+export default defineConfig({
   plugins: [tasks()],
-};
+});
 ```
 
 ## Creating Your First Task
