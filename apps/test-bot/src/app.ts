@@ -1,5 +1,7 @@
 import { Client } from 'discord.js';
 import { Logger, commandkit } from 'commandkit';
+import { setDriver } from '@commandkit/tasks';
+import { HyperCronDriver } from '@commandkit/tasks/hypercron';
 import './ai.ts';
 
 const client = new Client({
@@ -11,6 +13,8 @@ const client = new Client({
     'GuildMessageTyping',
   ],
 });
+
+setDriver(new HyperCronDriver());
 
 Logger.log('Application bootstrapped successfully!');
 

@@ -1,4 +1,4 @@
 .env
 .commandkit
 compiled-commandkit.config.mjs
-commandkit*.db*
+*.db*

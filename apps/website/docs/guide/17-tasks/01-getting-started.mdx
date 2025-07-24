@@ -1,0 +1,156 @@
+---
+title: Getting Started with Tasks
+description: Learn how to set up and use the tasks plugin for scheduling background tasks in your CommandKit bot.
+---
+
+# Getting Started with Tasks
+
+The tasks plugin provides a powerful way to schedule and manage background tasks in your CommandKit bot. Whether you need to run periodic maintenance, send scheduled reminders, or perform data cleanup, the tasks plugin has you covered.
+
+## Installation
+
+First, install the tasks plugin:
+
+```bash
+npm install @commandkit/tasks
+```
+
+## Basic Setup
+
+Add the tasks plugin to your CommandKit configuration:
+
+```ts
+import { tasks } from '@commandkit/tasks';
+
+export default {
+  plugins: [tasks()],
+};
+```
+
+## Creating Your First Task
+
+Create a file in `src/app/tasks/` to define your tasks:
+
+```ts
+import { task } from '@commandkit/tasks';
+
+export const dailyBackup = task({
+  name: 'daily-backup',
+  schedule: { type: 'cron', value: '0 0 * * *' }, // Daily at midnight
+  async execute(ctx) {
+    // Your task logic here
+    await performBackup();
+    console.log('Daily backup completed!');
+  },
+});
+```
+
+## Task Structure
+
+Every task has the following components:
+
+- **name**: A unique identifier for the task
+- **schedule**: When the task should run (optional for manual execution)
+- **execute**: The main function that performs the task work
+- **prepare**: Optional function to determine if the task should run
+
+## Schedule Types
+
+### Cron Schedules
+
+Use cron expressions for recurring tasks:
+
+```ts
+export const hourlyTask = task({
+  name: 'hourly-task',
+  schedule: { type: 'cron', value: '0 * * * *' }, // Every hour
+  async execute(ctx) {
+    // Task logic
+  },
+});
+```
+
+### Date Schedules
+
+Schedule tasks for specific times:
+
+```ts
+export const reminderTask = task({
+  name: 'reminder',
+  schedule: { type: 'date', value: new Date('2024-01-01T12:00:00Z') },
+  async execute(ctx) {
+    // Send reminder
+  },
+});
+```
+
+### Timezone Support
+
+Specify timezones for your schedules:
+
+```ts
+export const timezoneTask = task({
+  name: 'timezone-task',
+  schedule: {
+    type: 'cron',
+    value: '0 9 * * *',
+    timezone: 'America/New_York',
+  },
+  async execute(ctx) {
+    // Runs at 9 AM Eastern Time
+  },
+});
+```
+
+## Task Context
+
+The `execute` function receives a context object with useful properties:
+
+```ts
+export const contextExample = task({
+  name: 'context-example',
+  schedule: { type: 'cron', value: '0 */6 * * *' },
+  async execute(ctx) {
+    // Access the Discord.js client
+    const client = ctx.commandkit.client;
+
+    // Access custom data (for dynamic tasks)
+    const { userId, message } = ctx.data;
+
+    // Use the temporary store
+    ctx.store.set('lastRun', Date.now());
+
+    // Send a message to a channel
+    const channel = client.channels.cache.get('channel-id');
+    if (channel?.isTextBased()) {
+      await channel.send('Task executed!');
+    }
+  },
+});
+```
+
+## Conditional Execution
+
+Use the `prepare` function to conditionally execute tasks:
+
+```ts
+export const conditionalTask = task({
+  name: 'conditional-task',
+  schedule: { type: 'cron', value: '0 */2 * * *' }, // Every 2 hours
+  async prepare(ctx) {
+    // Only run if maintenance mode is not enabled
+    return !ctx.commandkit.store.get('maintenance-mode');
+  },
+  async execute(ctx) {
+    await performMaintenanceChecks();
+  },
+});
+```
+
+## Next Steps
+
+Now that you have the basics, explore:
+
+- [Task Drivers](./02-task-drivers) - Learn about different persistence options
+- [Dynamic Tasks](./03-dynamic-tasks) - Create tasks on-demand from commands
+- [Advanced Patterns](./04-advanced-patterns) - Best practices and advanced usage

@@ -61,6 +61,7 @@ jobs:
             "@commandkit/analytics:packages/analytics"
             "@commandkit/ai:packages/ai"
             "@commandkit/queue:packages/queue"
+            "@commandkit/tasks:packages/tasks"
           )
 
           for entry in "${PACKAGES[@]}"; do
@@ -84,6 +85,7 @@ jobs:
             "@commandkit/analytics"
             "@commandkit/ai"
             "@commandkit/queue"
+            "@commandkit/tasks"
           )
 
           for pkg in "${PACKAGES[@]}"; do
