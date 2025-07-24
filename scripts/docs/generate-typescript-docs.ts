@@ -57,6 +57,11 @@ const sections: DocsSectionConfig[] = [
     outputPath: '',
     category: 'queue',
   },
+  {
+    sourceDirs: ['packages/tasks/src/'],
+    outputPath: '',
+    category: 'tasks',
+  },
 ];
 
 generateTypescriptDocs(sections);

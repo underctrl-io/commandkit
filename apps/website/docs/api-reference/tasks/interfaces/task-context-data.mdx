@@ -1,0 +1,50 @@
+---
+title: "TaskContextData"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TaskContextData
+
+<GenerationInfo sourceFile="packages/tasks/src/context.ts" sourceLine="10" packageName="@commandkit/tasks" />
+
+Data structure for creating a task execution context.
+
+This interface contains all the necessary information to create a task context,
+including the task instance, custom data, and CommandKit instance.
+
+```ts title="Signature"
+interface TaskContextData<T extends Record<string, any> = Record<string, any>> {
+    task: Task;
+    data: T;
+    commandkit: CommandKit;
+}
+```
+
+<div className="members-wrapper">
+
+### task
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/classes/task#task'>Task</a>`}   />
+
+The task instance that is being executed
+### data
+
+<MemberInfo kind="property" type={`T`}   />
+
+Custom data passed to the task execution
+### commandkit
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
+
+The CommandKit instance for accessing bot functionality
+
+
+</div>

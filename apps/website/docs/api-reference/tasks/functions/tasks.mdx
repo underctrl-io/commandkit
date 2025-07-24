@@ -1,0 +1,51 @@
+---
+title: "Tasks"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## tasks
+
+<GenerationInfo sourceFile="packages/tasks/src/index.ts" sourceLine="29" packageName="@commandkit/tasks" />
+
+Creates a tasks plugin instance for CommandKit.
+
+This plugin provides task management capabilities including:
+- Static task definitions with cron and date-based scheduling
+- Dynamic task creation and management
+- Hot module replacement (HMR) support for development
+- Multiple persistence drivers (in-memory, SQLite, BullMQ)
+
+
+
+*Example*
+
+```ts
+import { tasks } from '@commandkit/tasks';
+
+export default {
+  plugins: [
+    tasks({
+      tasksPath: 'app/tasks',
+      enableHMR: true,
+    }),
+  ],
+};
+```
+
+```ts title="Signature"
+function tasks(options?: TasksPluginOptions): void
+```
+Parameters
+
+### options
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/tasks/interfaces/tasks-plugin-options#taskspluginoptions'>TasksPluginOptions</a>`} />
+

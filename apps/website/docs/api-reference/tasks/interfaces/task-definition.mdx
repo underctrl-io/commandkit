@@ -1,0 +1,64 @@
+---
+title: "TaskDefinition"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TaskDefinition
+
+<GenerationInfo sourceFile="packages/tasks/src/types.ts" sourceLine="33" packageName="@commandkit/tasks" />
+
+Defines a task with its execution logic and scheduling.
+
+Tasks can have optional preparation logic that determines whether the task should run,
+and required execution logic that performs the actual task work.
+
+```ts title="Signature"
+interface TaskDefinition<T extends Record<string, any> = Record<string, any>> {
+    name: string;
+    schedule?: TaskSchedule;
+    immediate?: boolean;
+    prepare?: (ctx: TaskContext<T>) => Promise<boolean>;
+    execute: (ctx: TaskContext<T>) => Promise<void>;
+}
+```
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={`string`}   />
+
+Unique identifier for the task
+### schedule
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/types/task-schedule#taskschedule'>TaskSchedule</a>`}   />
+
+Optional schedule configuration for recurring or delayed execution
+### immediate
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether the task should run immediately when created (only for cron tasks)
+### prepare
+
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) =&#62; Promise&#60;boolean&#62;`}   />
+
+Optional preparation function that determines if the task should execute.
+Return false to skip execution for this run.
+### execute
+
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) =&#62; Promise&#60;void&#62;`}   />
+
+The main execution function that performs the task work.
+This is called when the task is scheduled to run.
+
+
+</div>

@@ -1,0 +1,44 @@
+---
+title: "CreateTask"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## createTask
+
+<GenerationInfo sourceFile="packages/tasks/src/driver-manager.ts" sourceLine="135" packageName="@commandkit/tasks" />
+
+Creates a new scheduled task using the global driver manager.
+
+This is a convenience function that creates a task using the global task driver manager.
+
+
+
+*Example*
+
+```ts
+import { createTask } from '@commandkit/tasks';
+
+const taskId = await createTask({
+  name: 'reminder',
+  data: { userId: '123', message: 'Hello!' },
+  schedule: { type: 'date', value: Date.now() + 60000 },
+});
+```
+
+```ts title="Signature"
+function createTask(task: TaskData): Promise<string>
+```
+Parameters
+
+### task
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>`} />
+

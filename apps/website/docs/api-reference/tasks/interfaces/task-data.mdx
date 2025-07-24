@@ -1,0 +1,55 @@
+---
+title: "TaskData"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TaskData
+
+<GenerationInfo sourceFile="packages/tasks/src/types.ts" sourceLine="59" packageName="@commandkit/tasks" />
+
+Represents the data structure for a task instance.
+
+This includes the task metadata and any custom data passed to the task.
+
+```ts title="Signature"
+interface TaskData<T extends Record<string, any> = Record<string, any>> {
+    name: string;
+    data: T;
+    schedule: TaskSchedule;
+    immediate?: boolean;
+}
+```
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={`string`}   />
+
+The name of the task definition to execute
+### data
+
+<MemberInfo kind="property" type={`T`}   />
+
+Custom data passed to the task execution context
+### schedule
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/types/task-schedule#taskschedule'>TaskSchedule</a>`}   />
+
+Schedule configuration for when the task should run
+### immediate
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Whether the task should run immediately when created
+
+
+</div>
