@@ -68,7 +68,7 @@
     "tailwindcss": "^4.0.17",
     "typescript": "catalog:build",
     "typescript-eslint": "^8.24.1",
-    "vite": "^6.2.0"
+    "vite": "^7.0.1"
   },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021"
