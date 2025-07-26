@@ -29,7 +29,7 @@ logic to conditionally execute based on runtime conditions.
 import { task } from '@commandkit/tasks';
 
 // Simple scheduled task
-export const dailyBackup = task({
+export default task({
   name: 'daily-backup',
   schedule: { type: 'cron', value: '0 0 * * *' },
   async execute(ctx) {

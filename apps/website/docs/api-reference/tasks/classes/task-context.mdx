@@ -27,7 +27,7 @@ and a temporary store for sharing data between prepare and execute functions.
 ```ts
 import { task } from '@commandkit/tasks';
 
-export const reminderTask = task({
+export default task({
   name: 'reminder',
   async execute(ctx) {
     // Access custom data passed to the task
@@ -71,7 +71,7 @@ and execute phases of task execution.
 *Example*
 
 ```ts
-export const conditionalTask = task({
+export default task({
   name: 'conditional-task',
   async prepare(ctx) {
     const shouldRun = await checkConditions();

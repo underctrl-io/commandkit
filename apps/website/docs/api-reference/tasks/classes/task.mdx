@@ -28,7 +28,7 @@ and provide a context for accessing CommandKit and Discord.js functionality.
 ```ts
 import { task } from '@commandkit/tasks';
 
-export const cleanupTask = task({
+export default task({
   name: 'cleanup-old-data',
   schedule: { type: 'cron', value: '0 2 * * *' }, // Daily at 2 AM
   async prepare(ctx) {

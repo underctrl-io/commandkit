@@ -50,7 +50,7 @@ Create a file in `src/app/tasks/` to define your tasks:
 ```ts
 import { task } from '@commandkit/tasks';
 
-export const dailyBackup = task({
+export default task({
   name: 'daily-backup',
   schedule: '0 0 * * *', // Daily at midnight (cron string)
   async execute(ctx) {
@@ -77,7 +77,7 @@ Every task has the following components:
 Use cron expressions for recurring tasks:
 
 ```ts
-export const hourlyTask = task({
+export default task({
   name: 'hourly-task',
   schedule: '0 * * * *', // Every hour
   async execute(ctx) {
@@ -91,7 +91,7 @@ export const hourlyTask = task({
 Schedule tasks for specific times:
 
 ```ts
-export const reminderTask = task({
+export default task({
   name: 'reminder',
   schedule: new Date('2024-01-01T12:00:00Z'), // Specific date
   async execute(ctx) {
@@ -100,7 +100,7 @@ export const reminderTask = task({
 });
 
 // Or use timestamps
-export const timestampTask = task({
+export default task({
   name: 'timestamp-task',
   schedule: Date.now() + 60000, // 1 minute from now
   async execute(ctx) {
@@ -114,7 +114,7 @@ export const timestampTask = task({
 The `execute` function receives a context object with useful properties:
 
 ```ts
-export const contextExample = task({
+export default task({
   name: 'context-example',
   schedule: '0 */6 * * *', // Every 6 hours
   async execute(ctx) {
@@ -141,7 +141,7 @@ export const contextExample = task({
 Use the `prepare` function to conditionally execute tasks:
 
 ```ts
-export const conditionalTask = task({
+export default task({
   name: 'conditional-task',
   schedule: '0 */2 * * *', // Every 2 hours
   async prepare(ctx) {

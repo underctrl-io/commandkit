@@ -12,7 +12,7 @@ import { TaskDefinition, TaskSchedule } from './types';
  * ```ts
  * import { task } from '@commandkit/tasks';
  *
- * export const cleanupTask = task({
+ * export default task({
  *   name: 'cleanup-old-data',
  *   schedule: { type: 'cron', value: '0 2 * * *' }, // Daily at 2 AM
  *   async prepare(ctx) {
@@ -124,7 +124,7 @@ export class Task<T extends Record<string, any> = Record<string, any>> {
  * import { task } from '@commandkit/tasks';
  *
  * // Simple scheduled task
- * export const dailyBackup = task({
+ * export default task({
  *   name: 'daily-backup',
  *   schedule: { type: 'cron', value: '0 0 * * *' },
  *   async execute(ctx) {

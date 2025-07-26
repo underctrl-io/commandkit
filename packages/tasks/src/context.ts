@@ -28,7 +28,7 @@ export interface TaskContextData<
  * ```ts
  * import { task } from '@commandkit/tasks';
  *
- * export const reminderTask = task({
+ * export default task({
  *   name: 'reminder',
  *   async execute(ctx) {
  *     // Access custom data passed to the task
@@ -54,7 +54,7 @@ export class TaskContext<T extends Record<string, any> = Record<string, any>> {
    *
    * @example
    * ```ts
-   * export const conditionalTask = task({
+   * export default task({
    *   name: 'conditional-task',
    *   async prepare(ctx) {
    *     const shouldRun = await checkConditions();
