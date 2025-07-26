@@ -9,39 +9,33 @@ Task drivers handle the persistence and scheduling of your tasks. The tasks plug
 
 ## Available Drivers
 
-### HyperCron Driver (Default)
+### SQLite Driver (Development)
 
-The HyperCron driver provides lightweight, in-memory task scheduling. It's perfect for single-instance applications or development environments.
+The SQLite driver provides persistent, file-based task scheduling. It's perfect for development environments and single-instance applications with job recovery on restart.
 
 **Pros:**
 
-- Simple setup, no external dependencies
-- Lightweight and fast
-- Perfect for development and single-instance bots
+- Persistent job storage
+- Jobs recoverable on restart
+- No external dependencies
+- Lightweight and reliable
 
 **Cons:**
 
-- Tasks are lost on restart
+- Single instance only
 - No distributed scheduling support
-- Limited to single instance
-
-**Installation:**
-
-```bash
-npm install hypercron
-```
+- Intended for development use
 
 **Usage:**
 
 ```ts
-import { HyperCronDriver } from '@commandkit/tasks/hypercron';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
 import { setDriver } from '@commandkit/tasks';
 
-const driver = new HyperCronDriver();
-setDriver(driver);
+setDriver(new SQLiteDriver('./tasks.db'));
 ```
 
-### BullMQ Driver
+### BullMQ Driver (Production)
 
 The BullMQ driver provides robust, distributed task scheduling using Redis as the backend. It's ideal for production environments with multiple bot instances.
 
@@ -70,15 +64,12 @@ npm install bullmq
 import { BullMQDriver } from '@commandkit/tasks/bullmq';
 import { setDriver } from '@commandkit/tasks';
 
-const driver = new BullMQDriver(
-  {
+setDriver(
+  new BullMQDriver({
     host: 'localhost',
     port: 6379,
-  },
-  'my-tasks-queue',
+  }),
 );
-
-setDriver(driver);
 ```
 
 **Advanced Redis Configuration:**
@@ -102,35 +93,38 @@ Configure your driver before the tasks plugin loads:
 
 ```ts
 import { tasks } from '@commandkit/tasks';
-import { HyperCronDriver } from '@commandkit/tasks/hypercron';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
 import { setDriver } from '@commandkit/tasks';
 
 // Set up the driver
-setDriver(new HyperCronDriver());
+setDriver(new SQLiteDriver('./tasks.db'));
 
 export default {
   plugins: [tasks()],
 };
 ```
 
-### Advanced Setup with Custom Configuration
+### Environment-Specific Configuration
 
 ```ts
 import { tasks } from '@commandkit/tasks';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
 import { BullMQDriver } from '@commandkit/tasks/bullmq';
 import { setDriver } from '@commandkit/tasks';
+import { COMMANDKIT_IS_DEV } from 'commandkit';
 
-// Configure BullMQ with custom settings
-const driver = new BullMQDriver(
-  {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
-    password: process.env.REDIS_PASSWORD,
-  },
-  'commandkit-tasks',
-);
-
-setDriver(driver);
+// Choose driver based on environment
+if (COMMANDKIT_IS_DEV) {
+  setDriver(new SQLiteDriver('./tasks.db'));
+} else {
+  setDriver(
+    new BullMQDriver({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+    }),
+  );
+}
 
 export default {
   plugins: [tasks()],
@@ -139,59 +133,31 @@ export default {
 
 ## Driver Comparison
 
-| Feature              | HyperCron   | BullMQ          |
+| Feature              | SQLite      | BullMQ          |
 | -------------------- | ----------- | --------------- |
 | **Setup Complexity** | Simple      | Moderate        |
-| **Dependencies**     | `hypercron` | `bullmq`, Redis |
-| **Persistence**      | In-memory   | Redis           |
+| **Dependencies**     | None        | `bullmq`, Redis |
+| **Persistence**      | File-based  | Redis           |
 | **Distributed**      | No          | Yes             |
-| **Retry Logic**      | Basic       | Advanced        |
+| **Job Recovery**     | Yes         | Yes             |
 | **Production Ready** | Development | Yes             |
 | **Memory Usage**     | Low         | Moderate        |
 
 ## Choosing the Right Driver
 
-### Use HyperCron when:
+### Use SQLite when:
 
 - You're developing locally
+- You want persistent job storage during development
 - You have a single bot instance
-- You don't need task persistence across restarts
-- You want minimal setup complexity
+- You need job recovery on restart
 
 ### Use BullMQ when:
 
 - You have multiple bot instances
-- You need task persistence across restarts
+- You need distributed task scheduling
 - You're deploying to production
 - You need advanced features like retries and monitoring
-
-## Environment-Specific Configuration
-
-### Development Environment
-
-```ts
-import { HyperCronDriver } from '@commandkit/tasks/hypercron';
-
-if (process.env.NODE_ENV === 'development') {
-  setDriver(new HyperCronDriver());
-}
-```
-
-### Production Environment
-
-```ts
-import { BullMQDriver } from '@commandkit/tasks/bullmq';
-
-if (process.env.NODE_ENV === 'production') {
-  setDriver(
-    new BullMQDriver({
-      host: process.env.REDIS_HOST,
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-    }),
-  );
-}
-```
 
 ## Custom Drivers
 

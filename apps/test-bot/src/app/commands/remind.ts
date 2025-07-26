@@ -36,10 +36,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
       channelId: ctx.interaction.channelId,
       setAt: Date.now(),
     } satisfies RemindTaskData,
-    schedule: {
-      type: 'date',
-      value: timeMs,
-    },
+    schedule: timeMs,
   });
 
   await ctx.interaction.reply(
@@ -60,10 +57,7 @@ export const message: MessageCommand = async (ctx) => {
       channelId: ctx.message.channelId,
       setAt: Date.now(),
     } satisfies RemindTaskData,
-    schedule: {
-      type: 'date',
-      value: timeMs,
-    },
+    schedule: timeMs,
   });
 
   await ctx.message.reply(

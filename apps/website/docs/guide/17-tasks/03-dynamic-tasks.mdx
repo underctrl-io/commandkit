@@ -18,7 +18,7 @@ import { createTask } from '@commandkit/tasks';
 const taskId = await createTask({
   name: 'reminder',
   data: { userId: '123', message: "Don't forget your meeting!" },
-  schedule: { type: 'date', value: Date.now() + 5 * 60 * 1000 },
+  schedule: Date.now() + 5 * 60 * 1000, // 5 minutes from now
 });
 ```
 
@@ -27,49 +27,49 @@ const taskId = await createTask({
 Here's a complete example of a reminder command that creates dynamic tasks:
 
 ```ts
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+import ms from 'ms';
 import { createTask } from '@commandkit/tasks';
 
-export default {
+export const command: CommandData = {
   name: 'remind',
-  description: 'Set a reminder',
+  description: 'remind command',
   options: [
     {
       name: 'time',
-      description: 'When to remind you (e.g., 5m, 1h, 1d)',
-      type: 'string',
+      description: 'The time to remind after. Eg: 6h, 10m, 1d',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: 'message',
-      description: 'What to remind you about',
-      type: 'string',
+      description: 'The message to remind about.',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],
-  async run(ctx) {
-    const timeStr = ctx.interaction.options.getString('time', true);
-    const message = ctx.interaction.options.getString('message', true);
+};
 
-    // Parse time string (you can use a library like ms)
-    const delay = parseTime(timeStr);
-    if (!delay) {
-      await ctx.interaction.reply('Invalid time format. Use: 5m, 1h, 1d, etc.');
-      return;
-    }
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const time = ctx.options.getString('time', true);
+  const message = ctx.options.getString('message', true);
+  const timeMs = Date.now() + ms(time as `${number}`);
 
-    // Create the reminder task
-    const taskId = await createTask({
-      name: 'reminder',
-      data: {
-        userId: ctx.interaction.user.id,
-        channelId: ctx.interaction.channelId,
-        message,
-      },
-      schedule: { type: 'date', value: Date.now() + delay },
-    });
+  await createTask({
+    name: 'remind',
+    data: {
+      userId: ctx.interaction.user.id,
+      message,
+      channelId: ctx.interaction.channelId,
+      setAt: Date.now(),
+    },
+    schedule: timeMs,
+  });
 
-    await ctx.interaction.reply(`Reminder set! I'll remind you in ${timeStr}.`);
-  },
+  await ctx.interaction.reply(
+    `I will remind you <t:${Math.floor(timeMs / 1000)}:R> for \`${message}\``,
+  );
 };
 ```
 
@@ -78,24 +78,36 @@ export default {
 Create a static task definition that handles the actual reminder:
 
 ```ts
-// src/app/tasks/reminder.ts
+// src/app/tasks/remind.ts
 import { task } from '@commandkit/tasks';
 
-export const reminder = task({
-  name: 'reminder',
-  async execute(ctx) {
-    const { userId, channelId, message } = ctx.data;
+export interface RemindTaskData {
+  userId: string;
+  message: string;
+  channelId: string;
+  setAt: number;
+}
 
-    try {
-      const user = await ctx.commandkit.client.users.fetch(userId);
-      await user.send(`Reminder: ${message}`);
-    } catch (error) {
-      // If DM fails, try to send to the original channel
-      const channel = ctx.commandkit.client.channels.cache.get(channelId);
-      if (channel?.isTextBased()) {
-        await channel.send(`<@${userId}> Reminder: ${message}`);
-      }
-    }
+export default task<RemindTaskData>({
+  name: 'remind',
+  async execute(ctx) {
+    const { userId, message, channelId, setAt } = ctx.data;
+
+    const channel = await ctx.client.channels.fetch(channelId);
+
+    if (!channel?.isTextBased() || !channel.isSendable()) return;
+
+    await channel.send({
+      content: `<@${userId}>`,
+      embeds: [
+        {
+          title: `You asked me <t:${Math.floor(setAt / 1000)}:R> to remind you about:`,
+          description: message,
+          color: 0x0099ff,
+          timestamp: new Date(setAt).toISOString(),
+        },
+      ],
+    });
   },
 });
 ```
@@ -105,62 +117,89 @@ export const reminder = task({
 ### Conditional Task Creation
 
 ```ts
-export default {
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+import { createTask } from '@commandkit/tasks';
+
+export const command: CommandData = {
   name: 'schedule-maintenance',
   description: 'Schedule maintenance for a specific time',
-  async run(ctx) {
-    const maintenanceMode = ctx.commandkit.store.get('maintenance-mode');
+  options: [
+    {
+      name: 'duration',
+      description: 'Duration in minutes',
+      type: ApplicationCommandOptionType.Integer,
+      required: true,
+    },
+  ],
+};
 
-    if (maintenanceMode) {
-      await ctx.interaction.reply('Maintenance mode is already enabled.');
-      return;
-    }
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const maintenanceMode = ctx.commandkit.store.get('maintenance-mode');
 
-    // Create maintenance task
-    await createTask({
-      name: 'maintenance',
-      data: {
-        requestedBy: ctx.interaction.user.id,
-        duration: 30 * 60 * 1000, // 30 minutes
-      },
-      schedule: { type: 'date', value: Date.now() + 5 * 60 * 1000 }, // 5 minutes from now
-    });
+  if (maintenanceMode) {
+    await ctx.interaction.reply('Maintenance mode is already enabled.');
+    return;
+  }
 
-    await ctx.interaction.reply(
-      'Maintenance scheduled for 5 minutes from now.',
-    );
-  },
+  const duration = ctx.options.getInteger('duration', true);
+
+  // Create maintenance task
+  await createTask({
+    name: 'maintenance',
+    data: {
+      requestedBy: ctx.interaction.user.id,
+      duration: duration * 60 * 1000, // Convert to milliseconds
+    },
+    schedule: Date.now() + 5 * 60 * 1000, // 5 minutes from now
+  });
+
+  await ctx.interaction.reply('Maintenance scheduled for 5 minutes from now.');
 };
 ```
 
 ### Batch Task Creation
 
 ```ts
-export default {
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+import { createTask } from '@commandkit/tasks';
+
+export const command: CommandData = {
   name: 'schedule-events',
   description: 'Schedule multiple events',
-  async run(ctx) {
-    const events = [
-      { name: 'Event 1', time: Date.now() + 60 * 60 * 1000 },
-      { name: 'Event 2', time: Date.now() + 2 * 60 * 60 * 1000 },
-      { name: 'Event 3', time: Date.now() + 3 * 60 * 60 * 1000 },
-    ];
+  options: [
+    {
+      name: 'events',
+      description: 'Number of events to schedule',
+      type: ApplicationCommandOptionType.Integer,
+      required: true,
+    },
+  ],
+};
 
-    const taskIds = await Promise.all(
-      events.map((event) =>
-        createTask({
-          name: 'event-notification',
-          data: {
-            eventName: event.name,
-            channelId: ctx.interaction.channelId,
-          },
-          schedule: { type: 'date', value: event.time },
-        }),
-      ),
-    );
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const eventCount = ctx.options.getInteger('events', true);
 
-    await ctx.interaction.reply(`Scheduled ${events.length} events.`);
-  },
+  const events = Array.from({ length: eventCount }, (_, i) => ({
+    name: `Event ${i + 1}`,
+    time: Date.now() + (i + 1) * 60 * 60 * 1000, // 1 hour apart
+  }));
+
+  const taskIds = await Promise.all(
+    events.map((event) =>
+      createTask({
+        name: 'event-notification',
+        data: {
+          eventName: event.name,
+          channelId: ctx.interaction.channelId,
+        },
+        schedule: event.time,
+      }),
+    ),
+  );
+
+  await ctx.interaction.reply(`Scheduled ${events.length} events.`);
 };
 ```
 
@@ -169,23 +208,34 @@ export default {
 ### Deleting Tasks
 
 ```ts
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
 import { deleteTask } from '@commandkit/tasks';
 
-export default {
+export const command: CommandData = {
   name: 'cancel-reminder',
   description: 'Cancel a scheduled reminder',
-  async run(ctx) {
-    const taskId = ctx.interaction.options.getString('task-id', true);
+  options: [
+    {
+      name: 'task-id',
+      description: 'The task ID to cancel',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+  ],
+};
 
-    try {
-      await deleteTask(taskId);
-      await ctx.interaction.reply('Reminder cancelled successfully.');
-    } catch (error) {
-      await ctx.interaction.reply(
-        'Failed to cancel reminder. It may have already been executed.',
-      );
-    }
-  },
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const taskId = ctx.options.getString('task-id', true);
+
+  try {
+    await deleteTask(taskId);
+    await ctx.interaction.reply('Reminder cancelled successfully.');
+  } catch (error) {
+    await ctx.interaction.reply(
+      'Failed to cancel reminder. It may have already been executed.',
+    );
+  }
 };
 ```
 
@@ -194,58 +244,92 @@ export default {
 For more complex scenarios, you might want to store task IDs in your database:
 
 ```ts
-export default {
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+import ms from 'ms';
+import { createTask } from '@commandkit/tasks';
+
+export const command: CommandData = {
   name: 'remind',
   description: 'Set a reminder',
-  async run(ctx) {
-    const timeStr = ctx.interaction.options.getString('time', true);
-    const message = ctx.interaction.options.getString('message', true);
+  options: [
+    {
+      name: 'time',
+      description: 'The time to remind after. Eg: 6h, 10m, 1d',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+    {
+      name: 'message',
+      description: 'The message to remind about.',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+  ],
+};
 
-    const delay = parseTime(timeStr);
-    const taskId = await createTask({
-      name: 'reminder',
-      data: {
-        userId: ctx.interaction.user.id,
-        message,
-      },
-      schedule: { type: 'date', value: Date.now() + delay },
-    });
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const timeStr = ctx.options.getString('time', true);
+  const message = ctx.options.getString('message', true);
 
-    // Store the task ID in your database
-    await db.reminders.create({
+  const delay = ms(timeStr as `${number}`);
+  const taskId = await createTask({
+    name: 'reminder',
+    data: {
       userId: ctx.interaction.user.id,
-      taskId,
       message,
-      scheduledFor: new Date(Date.now() + delay),
-    });
+    },
+    schedule: Date.now() + delay,
+  });
 
-    await ctx.interaction.reply(`Reminder set! Task ID: ${taskId}`);
-  },
+  // Store the task ID in your database
+  await db.reminders.create({
+    userId: ctx.interaction.user.id,
+    taskId,
+    message,
+    scheduledFor: new Date(Date.now() + delay),
+  });
+
+  await ctx.interaction.reply(`Reminder set! Task ID: ${taskId}`);
 };
 ```
 
-## Error Handling
+### Error Handling
 
 Always handle potential errors when creating dynamic tasks:
 
 ```ts
-export default {
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+import { createTask } from '@commandkit/tasks';
+
+export const command: CommandData = {
   name: 'schedule-task',
   description: 'Schedule a custom task',
-  async run(ctx) {
-    try {
-      const taskId = await createTask({
-        name: 'custom-task',
-        data: { userId: ctx.interaction.user.id },
-        schedule: { type: 'date', value: Date.now() + 60000 },
-      });
+  options: [
+    {
+      name: 'delay',
+      description: 'Delay in minutes',
+      type: ApplicationCommandOptionType.Integer,
+      required: true,
+    },
+  ],
+};
 
-      await ctx.interaction.reply(`Task scheduled successfully. ID: ${taskId}`);
-    } catch (error) {
-      console.error('Failed to schedule task:', error);
-      await ctx.interaction.reply('Failed to schedule task. Please try again.');
-    }
-  },
+export const chatInput: ChatInputCommand = async (ctx) => {
+  try {
+    const delay = ctx.options.getInteger('delay', true);
+    const taskId = await createTask({
+      name: 'custom-task',
+      data: { userId: ctx.interaction.user.id },
+      schedule: Date.now() + delay * 60 * 1000,
+    });
+
+    await ctx.interaction.reply(`Task scheduled successfully. ID: ${taskId}`);
+  } catch (error) {
+    console.error('Failed to schedule task:', error);
+    await ctx.interaction.reply('Failed to schedule task. Please try again.');
+  }
 };
 ```
 
@@ -258,76 +342,129 @@ export default {
 await createTask({
   name: 'user-reminder',
   data: { userId, message },
-  schedule: { type: 'date', value: reminderTime },
+  schedule: reminderTime,
 });
 
 // Avoid
 await createTask({
   name: 'task',
   data: { userId, message },
-  schedule: { type: 'date', value: reminderTime },
+  schedule: reminderTime,
 });
 ```
 
 ### 2. Validate Input Data
 
 ```ts
-export default {
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+import ms from 'ms';
+import { createTask } from '@commandkit/tasks';
+
+export const command: CommandData = {
   name: 'schedule-reminder',
-  async run(ctx) {
-    const timeStr = ctx.interaction.options.getString('time', true);
-    const message = ctx.interaction.options.getString('message', true);
+  description: 'Schedule a reminder',
+  options: [
+    {
+      name: 'time',
+      description: 'The time to remind after. Eg: 6h, 10m, 1d',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+    {
+      name: 'message',
+      description: 'The message to remind about.',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+  ],
+};
 
-    // Validate time format
-    const delay = parseTime(timeStr);
-    if (!delay || delay < 60000 || delay > 30 * 24 * 60 * 60 * 1000) {
-      await ctx.interaction.reply(
-        'Please specify a time between 1 minute and 30 days.',
-      );
-      return;
-    }
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const timeStr = ctx.options.getString('time', true);
+  const message = ctx.options.getString('message', true);
 
-    // Validate message length
-    if (message.length > 1000) {
-      await ctx.interaction.reply(
-        'Message too long. Please keep it under 1000 characters.',
-      );
-      return;
-    }
+  // Validate time format
+  const delay = ms(timeStr as `${number}`);
+  if (!delay || delay < 60000 || delay > 30 * 24 * 60 * 60 * 1000) {
+    await ctx.interaction.reply(
+      'Please specify a time between 1 minute and 30 days.',
+    );
+    return;
+  }
 
-    // Create task
-    await createTask({
-      name: 'reminder',
-      data: { userId: ctx.interaction.user.id, message },
-      schedule: { type: 'date', value: Date.now() + delay },
-    });
-  },
+  // Validate message length
+  if (message.length > 1000) {
+    await ctx.interaction.reply(
+      'Message too long. Please keep it under 1000 characters.',
+    );
+    return;
+  }
+
+  // Create task
+  await createTask({
+    name: 'reminder',
+    data: { userId: ctx.interaction.user.id, message },
+    schedule: Date.now() + delay,
+  });
+
+  await ctx.interaction.reply('Reminder scheduled successfully!');
 };
 ```
 
 ### 3. Handle Task Limits
 
 ```ts
-export default {
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+import { createTask } from '@commandkit/tasks';
+
+export const command: CommandData = {
   name: 'schedule-reminder',
-  async run(ctx) {
-    const userId = ctx.interaction.user.id;
+  description: 'Schedule a reminder',
+  options: [
+    {
+      name: 'time',
+      description: 'The time to remind after. Eg: 6h, 10m, 1d',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+    {
+      name: 'message',
+      description: 'The message to remind about.',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+  ],
+};
 
-    // Check existing reminders
-    const existingReminders = await db.reminders.count({
-      where: { userId, active: true },
-    });
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const userId = ctx.interaction.user.id;
 
-    if (existingReminders >= 10) {
-      await ctx.interaction.reply(
-        'You already have 10 active reminders. Please cancel some first.',
-      );
-      return;
-    }
+  // Check existing reminders
+  const existingReminders = await db.reminders.count({
+    where: { userId, active: true },
+  });
 
-    // Create new reminder
-    // ...
-  },
+  if (existingReminders >= 10) {
+    await ctx.interaction.reply(
+      'You already have 10 active reminders. Please cancel some first.',
+    );
+    return;
+  }
+
+  // Create new reminder
+  const timeStr = ctx.options.getString('time', true);
+  const message = ctx.options.getString('message', true);
+  const delay = ms(timeStr as `${number}`);
+
+  await createTask({
+    name: 'reminder',
+    data: { userId, message },
+    schedule: Date.now() + delay,
+  });
+
+  await ctx.interaction.reply('Reminder scheduled successfully!');
 };
 ```
 

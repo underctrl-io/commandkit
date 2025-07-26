@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## TaskDriverManager
 
-<GenerationInfo sourceFile="packages/tasks/src/driver-manager.ts" sourceLine="27" packageName="@commandkit/tasks" />
+<GenerationInfo sourceFile="packages/tasks/src/driver-manager.ts" sourceLine="26" packageName="@commandkit/tasks" />
 
 Manages the active task driver and provides a unified interface for task operations.
 
@@ -27,10 +27,9 @@ any operations are performed.
 
 ```ts
 import { TaskDriverManager } from '@commandkit/tasks';
-import { HyperCronDriver } from '@commandkit/tasks/hypercron';
 
 const manager = new TaskDriverManager();
-manager.setDriver(new HyperCronDriver());
+// Set your preferred driver here
 
 // Now you can create and manage tasks
 const taskId = await manager.createTask({

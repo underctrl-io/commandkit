@@ -64,7 +64,7 @@ export class Task<T extends Record<string, any> = Record<string, any>> {
    * @returns true if the task has a cron schedule
    */
   public isCron(): boolean {
-    return this.schedule?.type === 'cron';
+    return typeof this.schedule === 'string';
   }
 
   /**
@@ -73,7 +73,16 @@ export class Task<T extends Record<string, any> = Record<string, any>> {
    * @returns true if the task has a date schedule
    */
   public isDate(): boolean {
-    return this.schedule?.type === 'date';
+    if (this.schedule == null) return false;
+    return this.schedule instanceof Date || typeof this.schedule === 'number';
+  }
+
+  /**
+   * The timezone for the task schedule.
+   * Returns undefined if no timezone is defined.
+   */
+  public get timezone(): string | undefined {
+    return this.data.timezone ?? undefined;
   }
 
   /**

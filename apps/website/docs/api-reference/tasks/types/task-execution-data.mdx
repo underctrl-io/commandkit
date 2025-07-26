@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## TaskExecutionData
 
-<GenerationInfo sourceFile="packages/tasks/src/types.ts" sourceLine="85" packageName="@commandkit/tasks" />
+<GenerationInfo sourceFile="packages/tasks/src/types.ts" sourceLine="73" packageName="@commandkit/tasks" />
 
 Data structure passed to task execution handlers.
 
@@ -21,7 +21,10 @@ This includes the task metadata and execution timestamp, but excludes
 scheduling information since the task is already being executed.
 
 ```ts title="Signature"
-type TaskExecutionData = Omit<TaskData, 'schedule' | 'immediate'> & {
+type TaskExecutionData = Omit<
+  TaskData,
+  'schedule' | 'immediate' | 'timezone'
+> & {
   /** Unix timestamp when the task execution started */
   timestamp: number;
 }

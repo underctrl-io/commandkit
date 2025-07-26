@@ -51,6 +51,7 @@ class Task<T extends Record<string, any> = Record<string, any>> {
     schedule: TaskSchedule | null
     isCron() => boolean;
     isDate() => boolean;
+    timezone: string | undefined
     prepare(ctx: TaskContext<T>) => Promise<boolean>;
     execute(ctx: TaskContext<T>) => Promise<void>;
 }
@@ -90,6 +91,12 @@ Checks if this task uses cron-based scheduling.
 <MemberInfo kind="method" type={`() => boolean`}   />
 
 Checks if this task uses date-based scheduling.
+### timezone
+
+<MemberInfo kind="property" type={`string | undefined`}   />
+
+The timezone for the task schedule.
+Returns undefined if no timezone is defined.
 ### prepare
 
 <MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) => Promise&#60;boolean&#62;`}   />

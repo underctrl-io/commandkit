@@ -83,19 +83,19 @@ export class BullMQDriver implements TaskDriver {
     const jobId = crypto.randomUUID();
     const job = await this.queue.add(task.name, task.data, {
       jobId,
-      ...(task.schedule.type === 'cron'
+      ...(typeof task.schedule === 'string'
         ? {
             repeat: {
-              pattern: task.schedule.value,
-              tz: task.schedule.timezone,
+              pattern: task.schedule,
+              tz: task.timezone,
               immediately: !!task.immediate,
             },
           }
         : {
             delay:
-              (task.schedule.value instanceof Date
-                ? task.schedule.value.getTime()
-                : task.schedule.value) - Date.now(),
+              (task.schedule instanceof Date
+                ? task.schedule.getTime()
+                : task.schedule) - Date.now(),
           }),
     });
 
