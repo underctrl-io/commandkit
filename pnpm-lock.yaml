@@ -543,7 +543,7 @@ importers:
         specifier: ^8.24.1
         version: 8.38.0(eslint@9.32.0(jiti@2.4.2))(typescript@5.8.3)
       vite:
-        specifier: '>=6.2.6'
+        specifier: ^7.0.1
         version: 7.0.1(@types/node@24.0.15)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2)(tsx@4.20.3)(yaml@2.8.0)
 
   packages/i18n:
