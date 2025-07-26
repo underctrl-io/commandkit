@@ -6,23 +6,7 @@ import { TaskContext } from './context';
  * Tasks can be scheduled using either cron expressions or specific dates/timestamps.
  * The timezone is optional and defaults to the system timezone.
  */
-export type TaskSchedule =
-  | {
-      /** Schedule type using cron expressions */
-      type: 'cron';
-      /** Optional timezone for the cron schedule (e.g., 'UTC', 'America/New_York') */
-      timezone?: string;
-      /** Cron expression (e.g., '0 0 * * *' for daily at midnight) */
-      value: string;
-    }
-  | {
-      /** Schedule type using a specific date or timestamp */
-      type: 'date';
-      /** Optional timezone for the date schedule */
-      timezone?: string;
-      /** Date object or Unix timestamp in milliseconds */
-      value: Date | number;
-    };
+export type TaskSchedule = string | Date | number;
 
 /**
  * Defines a task with its execution logic and scheduling.
@@ -37,6 +21,8 @@ export interface TaskDefinition<
   name: string;
   /** Optional schedule configuration for recurring or delayed execution */
   schedule?: TaskSchedule;
+  /** Optional timezone for the schedule */
+  timezone?: string;
   /** Whether the task should run immediately when created (only for cron tasks) */
   immediate?: boolean;
   /**
@@ -63,6 +49,8 @@ export interface TaskData<T extends Record<string, any> = Record<string, any>> {
   data: T;
   /** Schedule configuration for when the task should run */
   schedule: TaskSchedule;
+  /** Optional timezone for the schedule */
+  timezone?: string;
   /** Whether the task should run immediately when created */
   immediate?: boolean;
 }
@@ -82,7 +70,10 @@ export type PartialTaskData<
  * This includes the task metadata and execution timestamp, but excludes
  * scheduling information since the task is already being executed.
  */
-export type TaskExecutionData = Omit<TaskData, 'schedule' | 'immediate'> & {
+export type TaskExecutionData = Omit<
+  TaskData,
+  'schedule' | 'immediate' | 'timezone'
+> & {
   /** Unix timestamp when the task execution started */
   timestamp: number;
 };

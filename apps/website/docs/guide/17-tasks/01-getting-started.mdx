@@ -20,12 +20,27 @@ npm install @commandkit/tasks
 Add the tasks plugin to your CommandKit configuration:
 
 ```ts
+import { defineConfig } from 'commandkit/config';
 import { tasks } from '@commandkit/tasks';
-import { defineConfig } from 'commandkit/config'
 
 export default defineConfig({
   plugins: [tasks()],
 });
+```
+
+## Setting Up a Driver
+
+Configure a driver before the tasks plugin loads:
+
+```ts
+import { setDriver } from '@commandkit/tasks';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+
+// For development
+setDriver(new SQLiteDriver('./tasks.db'));
+
+// For production, use BullMQ with Redis
+// setDriver(new BullMQDriver({ host: 'localhost', port: 6379 }));
 ```
 
 ## Creating Your First Task
@@ -37,7 +52,7 @@ import { task } from '@commandkit/tasks';
 
 export const dailyBackup = task({
   name: 'daily-backup',
-  schedule: { type: 'cron', value: '0 0 * * *' }, // Daily at midnight
+  schedule: '0 0 * * *', // Daily at midnight (cron string)
   async execute(ctx) {
     // Your task logic here
     await performBackup();
@@ -64,7 +79,7 @@ Use cron expressions for recurring tasks:
 ```ts
 export const hourlyTask = task({
   name: 'hourly-task',
-  schedule: { type: 'cron', value: '0 * * * *' }, // Every hour
+  schedule: '0 * * * *', // Every hour
   async execute(ctx) {
     // Task logic
   },
@@ -78,27 +93,18 @@ Schedule tasks for specific times:
 ```ts
 export const reminderTask = task({
   name: 'reminder',
-  schedule: { type: 'date', value: new Date('2024-01-01T12:00:00Z') },
+  schedule: new Date('2024-01-01T12:00:00Z'), // Specific date
   async execute(ctx) {
     // Send reminder
   },
 });
-```
 
-### Timezone Support
-
-Specify timezones for your schedules:
-
-```ts
-export const timezoneTask = task({
-  name: 'timezone-task',
-  schedule: {
-    type: 'cron',
-    value: '0 9 * * *',
-    timezone: 'America/New_York',
-  },
+// Or use timestamps
+export const timestampTask = task({
+  name: 'timestamp-task',
+  schedule: Date.now() + 60000, // 1 minute from now
   async execute(ctx) {
-    // Runs at 9 AM Eastern Time
+    // Task logic
   },
 });
 ```
@@ -110,7 +116,7 @@ The `execute` function receives a context object with useful properties:
 ```ts
 export const contextExample = task({
   name: 'context-example',
-  schedule: { type: 'cron', value: '0 */6 * * *' },
+  schedule: '0 */6 * * *', // Every 6 hours
   async execute(ctx) {
     // Access the Discord.js client
     const client = ctx.commandkit.client;
@@ -137,7 +143,7 @@ Use the `prepare` function to conditionally execute tasks:
 ```ts
 export const conditionalTask = task({
   name: 'conditional-task',
-  schedule: { type: 'cron', value: '0 */2 * * *' }, // Every 2 hours
+  schedule: '0 */2 * * *', // Every 2 hours
   async prepare(ctx) {
     // Only run if maintenance mode is not enabled
     return !ctx.commandkit.store.get('maintenance-mode');

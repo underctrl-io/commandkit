@@ -21,20 +21,5 @@ Tasks can be scheduled using either cron expressions or specific dates/timestamp
 The timezone is optional and defaults to the system timezone.
 
 ```ts title="Signature"
-type TaskSchedule = | {
-      /** Schedule type using cron expressions */
-      type: 'cron';
-      /** Optional timezone for the cron schedule (e.g., 'UTC', 'America/New_York') */
-      timezone?: string;
-      /** Cron expression (e.g., '0 0 * * *' for daily at midnight) */
-      value: string;
-    }
-  | {
-      /** Schedule type using a specific date or timestamp */
-      type: 'date';
-      /** Optional timezone for the date schedule */
-      timezone?: string;
-      /** Date object or Unix timestamp in milliseconds */
-      value: Date | number;
-    }
+type TaskSchedule = string | Date | number
 ```

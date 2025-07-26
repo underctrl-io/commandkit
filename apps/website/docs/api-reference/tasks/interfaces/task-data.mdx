@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## TaskData
 
-<GenerationInfo sourceFile="packages/tasks/src/types.ts" sourceLine="59" packageName="@commandkit/tasks" />
+<GenerationInfo sourceFile="packages/tasks/src/types.ts" sourceLine="45" packageName="@commandkit/tasks" />
 
 Represents the data structure for a task instance.
 
@@ -24,6 +24,7 @@ interface TaskData<T extends Record<string, any> = Record<string, any>> {
     name: string;
     data: T;
     schedule: TaskSchedule;
+    timezone?: string;
     immediate?: boolean;
 }
 ```
@@ -45,6 +46,11 @@ Custom data passed to the task execution context
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/types/task-schedule#taskschedule'>TaskSchedule</a>`}   />
 
 Schedule configuration for when the task should run
+### timezone
+
+<MemberInfo kind="property" type={`string`}   />
+
+Optional timezone for the schedule
 ### immediate
 
 <MemberInfo kind="property" type={`boolean`}   />

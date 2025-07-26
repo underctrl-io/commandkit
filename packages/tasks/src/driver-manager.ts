@@ -11,10 +11,9 @@ import { PartialTaskData, TaskData } from './types';
  * @example
  * ```ts
  * import { TaskDriverManager } from '@commandkit/tasks';
- * import { HyperCronDriver } from '@commandkit/tasks/hypercron';
  *
  * const manager = new TaskDriverManager();
- * manager.setDriver(new HyperCronDriver());
+ * // Set your preferred driver here
  *
  * // Now you can create and manage tasks
  * const taskId = await manager.createTask({
@@ -104,9 +103,9 @@ export const taskDriverManager = new TaskDriverManager();
  * @example
  * ```ts
  * import { setDriver } from '@commandkit/tasks';
- * import { HyperCronDriver } from '@commandkit/tasks/hypercron';
+ * import { SQLiteDriver } from '@commandkit/tasks/sqlite';
  *
- * setDriver(new HyperCronDriver());
+ * setDriver(new SQLiteDriver('./tasks.db'));
  * ```
  */
 export function setDriver(driver: TaskDriver): void {

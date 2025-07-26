@@ -1,7 +1,7 @@
 import { Client } from 'discord.js';
 import { Logger, commandkit } from 'commandkit';
 import { setDriver } from '@commandkit/tasks';
-import { HyperCronDriver } from '@commandkit/tasks/hypercron';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
 import './ai.ts';
 
 const client = new Client({
@@ -14,7 +14,7 @@ const client = new Client({
   ],
 });
 
-setDriver(new HyperCronDriver());
+setDriver(new SQLiteDriver('./tasks.db'));
 
 Logger.log('Application bootstrapped successfully!');
 
