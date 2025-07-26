@@ -15,7 +15,7 @@ Organize related tasks to create complex workflows:
 // src/app/tasks/data-processing.ts
 import { task } from '@commandkit/tasks';
 
-export const dataProcessing = task({
+export default task({
   name: 'data-processing',
   schedule: '0 2 * * *', // Daily at 2 AM
   async execute(ctx) {
@@ -43,7 +43,7 @@ Implement custom retry logic for failed tasks:
 // src/app/tasks/retry-example.ts
 import { task } from '@commandkit/tasks';
 
-export const retryTask = task({
+export default task({
   name: 'retry-task',
   async execute(ctx) {
     const { attempt = 1, maxAttempts = 3 } = ctx.data;
@@ -87,7 +87,7 @@ Manage tasks that depend on other conditions:
 // src/app/tasks/dependency-example.ts
 import { task } from '@commandkit/tasks';
 
-export const dependencyTask = task({
+export default task({
   name: 'dependency-task',
   async execute(ctx) {
     const { requiredData } = ctx.data;
@@ -114,7 +114,7 @@ Process multiple items in batches:
 // src/app/tasks/batch-processing.ts
 import { task } from '@commandkit/tasks';
 
-export const batchProcessor = task({
+export default task({
   name: 'batch-processor',
   schedule: '0 */6 * * *', // Every 6 hours
   async execute(ctx) {
@@ -156,7 +156,7 @@ Track task execution metrics:
 // src/app/tasks/metrics.ts
 import { task } from '@commandkit/tasks';
 
-export const metricsTask = task({
+export default task({
   name: 'metrics-task',
   schedule: '0 * * * *', // Every hour
   async execute(ctx) {
@@ -197,7 +197,7 @@ Use the context store to manage state across task executions:
 // src/app/tasks/state-management.ts
 import { task } from '@commandkit/tasks';
 
-export const statefulTask = task({
+export default task({
   name: 'stateful-task',
   schedule: '0 */2 * * *', // Every 2 hours
   async prepare(ctx) {
@@ -235,7 +235,7 @@ Implement cleanup tasks for resource management:
 // src/app/tasks/cleanup.ts
 import { task } from '@commandkit/tasks';
 
-export const cleanupTask = task({
+export default task({
   name: 'cleanup',
   schedule: '0 3 * * *', // Daily at 3 AM
   async execute(ctx) {
@@ -263,7 +263,7 @@ Implement robust error recovery mechanisms:
 // src/app/tasks/error-recovery.ts
 import { task } from '@commandkit/tasks';
 
-export const resilientTask = task({
+export default task({
   name: 'resilient-task',
   async execute(ctx) {
     const { operation, fallbackOperation } = ctx.data;
@@ -303,7 +303,7 @@ export const resilientTask = task({
 // src/app/tasks/rolling-window.ts
 import { task } from '@commandkit/tasks';
 
-export const rollingWindowTask = task({
+export default task({
   name: 'rolling-window',
   schedule: '*/15 * * * *', // Every 15 minutes
   async execute(ctx) {
@@ -325,7 +325,7 @@ export const rollingWindowTask = task({
 // src/app/tasks/adaptive-processing.ts
 import { task } from '@commandkit/tasks';
 
-export const adaptiveTask = task({
+export default task({
   name: 'adaptive-task',
   schedule: '*/5 * * * *', // Every 5 minutes
   async execute(ctx) {

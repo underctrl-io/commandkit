@@ -21,13 +21,12 @@ npm install @commandkit/tasks
 ### 1. Add the plugin to your CommandKit configuration
 
 ```ts
+import { defineConfig } from 'commandkit/config';
 import { tasks } from '@commandkit/tasks';
 
-export default {
-  plugins: [
-    tasks(),
-  ],
-};
+export default defineConfig({
+  plugins: [tasks()],
+});
 ```
 
 ### 2. Set up a driver
@@ -46,7 +45,7 @@ Create a file in `src/app/tasks/`:
 ```ts
 import { task } from '@commandkit/tasks';
 
-export const refreshExchangeRate = task({
+export default task({
   name: 'refresh-exchange-rate',
   schedule: { type: 'cron', value: '0 0 * * *' }, // daily at midnight
   async execute(ctx) {
