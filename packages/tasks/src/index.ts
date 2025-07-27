@@ -27,7 +27,10 @@ import { TasksPlugin, TasksPluginOptions } from './plugin';
  * @returns A configured tasks plugin instance
  */
 export function tasks(options?: TasksPluginOptions) {
-  return new TasksPlugin(options ?? {});
+  return new TasksPlugin({
+    initializeDefaultDriver: true,
+    ...options,
+  });
 }
 
 export * from './plugin';

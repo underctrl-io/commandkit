@@ -24,7 +24,7 @@ import { PartialTaskData, TaskData } from './types';
  * ```
  */
 export class TaskDriverManager {
-  private driver: TaskDriver | null = null;
+  public driver: TaskDriver | null = null;
 
   /**
    * Sets the active task driver.

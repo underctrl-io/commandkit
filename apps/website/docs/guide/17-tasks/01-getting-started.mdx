@@ -28,9 +28,10 @@ export default defineConfig({
 });
 ```
 
-## Setting Up a Driver
+## Setting Up a Driver (optional)
 
-Configure a driver before the tasks plugin loads:
+By default, the plugin will initialize the sqlite driver. You can set up a different driver by calling `setDriver` function from the `@commandkit/tasks` package.
+If you want to disable the default driver initialization behavior, you can pass `initializeDefaultDriver: false` to the `tasks()` options in your commandkit config.
 
 ```ts
 import { setDriver } from '@commandkit/tasks';
