@@ -1,2 +1,2 @@
 [build]
-ignore = 'node ignore_build.js'
+ignore = 'node ./apps/website/ignore_build.js'
