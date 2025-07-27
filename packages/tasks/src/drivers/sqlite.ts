@@ -1,6 +1,6 @@
 import { TaskDriver, TaskRunner } from '../driver';
 import { TaskData } from '../types';
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync, StatementSync } from 'node:sqlite';
 import cronParser from 'cron-parser';
 
 /**
@@ -21,6 +21,14 @@ export class SQLiteDriver implements TaskDriver {
   private runner: TaskRunner | null = null;
   private db: DatabaseSync;
   private interval: NodeJS.Timeout | null = null;
+  private statements!: {
+    count: StatementSync;
+    select: StatementSync;
+    insert: StatementSync;
+    delete: StatementSync;
+    updateNextRun: StatementSync;
+    updateCompleted: StatementSync;
+  };
 
   /**
    * Create a new SQLiteDriver instance.
@@ -43,7 +51,7 @@ export class SQLiteDriver implements TaskDriver {
    * Initialize the jobs table and start the polling loop.
    */
   private init() {
-    this.db.exec(`CREATE TABLE IF NOT EXISTS jobs (
+    this.db.exec(/* sql */ `CREATE TABLE IF NOT EXISTS jobs (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       data TEXT,
@@ -55,6 +63,26 @@ export class SQLiteDriver implements TaskDriver {
       created_at INTEGER NOT NULL,
       last_run INTEGER
     )`);
+
+    this.statements = {
+      count: this.db.prepare(
+        /* sql */ `SELECT COUNT(*) as count FROM jobs WHERE status = 'pending' AND next_run <= ?`,
+      ),
+      select: this.db.prepare(
+        /* sql */ `SELECT * FROM jobs WHERE status = 'pending' AND next_run <= ? ORDER BY next_run ASC LIMIT ? OFFSET ?`,
+      ),
+      insert: this.db.prepare(
+        /* sql */ `INSERT INTO jobs (name, data, schedule_type, schedule_value, timezone, next_run, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)`,
+      ),
+      delete: this.db.prepare(/* sql */ `DELETE FROM jobs WHERE id = ?`),
+      updateNextRun: this.db.prepare(
+        /* sql */ `UPDATE jobs SET next_run = ?, last_run = ? WHERE id = ?`,
+      ),
+      updateCompleted: this.db.prepare(
+        /* sql */ `UPDATE jobs SET status = 'completed', last_run = ? WHERE id = ?`,
+      ),
+    };
+
     this.startPolling();
   }
 
@@ -82,10 +110,7 @@ export class SQLiteDriver implements TaskDriver {
       nextRun = typeof schedule === 'number' ? schedule : schedule.getTime();
     }
 
-    const stmt = this.db.prepare(
-      `INSERT INTO jobs (name, data, schedule_type, schedule_value, timezone, next_run, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)`,
-    );
-    const result = stmt.run(
+    const result = this.statements.insert.run(
       name,
       JSON.stringify(data ?? {}),
       scheduleType,
@@ -111,8 +136,7 @@ export class SQLiteDriver implements TaskDriver {
    * @param identifier Job ID
    */
   async delete(identifier: string): Promise<void> {
-    const stmt = this.db.prepare(`DELETE FROM jobs WHERE id = ?`);
-    stmt.run(identifier);
+    this.statements.delete.run(identifier);
   }
 
   /**
@@ -129,7 +153,7 @@ export class SQLiteDriver implements TaskDriver {
    */
   private startPolling() {
     if (this.interval) clearInterval(this.interval);
-    this.interval = setInterval(() => this.pollJobs(), 1000);
+    this.interval = setInterval(() => this.pollJobs(), 1000).unref();
     // Run immediately on startup
     this.pollJobs();
   }
@@ -140,24 +164,30 @@ export class SQLiteDriver implements TaskDriver {
   private pollJobs() {
     if (!this.runner) return;
     const now = Date.now();
-    const stmt = this.db.prepare(
-      `SELECT * FROM jobs WHERE status = 'pending' AND next_run <= ?`,
-    );
-    const rows = stmt.all(now) as Array<{
-      id: number;
-      name: string;
-      data: string;
-      schedule_type: string;
-      schedule_value: string;
-      timezone: string | null;
-      next_run: number;
-      status: string;
-      created_at: number;
-      last_run: number | null;
-    }>;
+    const chunkSize = 10;
 
-    for (const job of rows) {
-      this.executeJob(job);
+    const countResult = this.statements.count.get(now) as { count: number };
+    const totalJobs = countResult.count;
+
+    if (totalJobs === 0) return;
+
+    for (let offset = 0; offset < totalJobs; offset += chunkSize) {
+      const rows = this.statements.select.all(now, chunkSize, offset) as Array<{
+        id: number;
+        name: string;
+        data: string;
+        schedule_type: string;
+        schedule_value: string;
+        timezone: string | null;
+        next_run: number;
+        status: string;
+        created_at: number;
+        last_run: number | null;
+      }>;
+
+      for (const job of rows) {
+        this.executeJob(job);
+      }
     }
   }
 
@@ -202,21 +232,12 @@ export class SQLiteDriver implements TaskDriver {
         nextRun = null;
       }
       if (nextRun) {
-        const stmt = this.db.prepare(
-          `UPDATE jobs SET next_run = ?, last_run = ? WHERE id = ?`,
-        );
-        stmt.run(nextRun, now, job.id);
+        this.statements.updateNextRun.run(nextRun, now, job.id);
       } else {
-        const stmt = this.db.prepare(
-          `UPDATE jobs SET status = 'completed', last_run = ? WHERE id = ?`,
-        );
-        stmt.run(now, job.id);
+        this.statements.updateCompleted.run(now, job.id);
       }
     } else {
-      const stmt = this.db.prepare(
-        `UPDATE jobs SET status = 'completed', last_run = ? WHERE id = ?`,
-      );
-      stmt.run(now, job.id);
+      this.statements.updateCompleted.run(now, job.id);
     }
   }
 }

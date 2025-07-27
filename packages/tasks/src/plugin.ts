@@ -1,5 +1,4 @@
 import {
-  CommandKit,
   CommandKitPluginRuntime,
   Logger,
   RuntimePlugin,
@@ -23,9 +22,15 @@ import { existsSync } from 'node:fs';
  * Future versions may support customizing the tasks directory path and HMR behavior.
  */
 export interface TasksPluginOptions {
-  // Future options may include:
-  // tasksPath?: string;
-  // enableHMR?: boolean;
+  /**
+   * Whether to initialize the default driver.
+   *
+   * If true, the plugin will initialize the default driver.
+   * If false, the plugin will not initialize the default driver.
+   *
+   * @default true
+   */
+  initializeDefaultDriver?: boolean;
 }
 
 /**
@@ -64,6 +69,19 @@ export class TasksPlugin extends RuntimePlugin<TasksPluginOptions> {
    * @param ctx - The CommandKit plugin runtime context
    */
   public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
+    if (this.options.initializeDefaultDriver && !taskDriverManager.driver) {
+      try {
+        const { SQLiteDriver } =
+          require('./drivers/sqlite') as typeof import('./drivers/sqlite');
+
+        taskDriverManager.setDriver(new SQLiteDriver());
+      } catch (e: any) {
+        Logger.error(
+          `Failed to initialize the default driver for tasks plugin: ${e?.stack || e}`,
+        );
+      }
+    }
+
     taskDriverManager.setTaskRunner(async (task) => {
       try {
         const taskInstance = this.tasks.get(task.name);

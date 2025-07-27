@@ -41,6 +41,7 @@ const taskId = await manager.createTask({
 
 ```ts title="Signature"
 class TaskDriverManager {
+    public driver: TaskDriver | null = null;
     setDriver(driver: TaskDriver) => void;
     createTask(task: TaskData) => Promise<string>;
     deleteTask(identifier: string) => Promise<void>;
@@ -49,6 +50,11 @@ class TaskDriverManager {
 ```
 
 <div className="members-wrapper">
+
+### driver
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a> | null`}   />
+
 
 ### setDriver
 

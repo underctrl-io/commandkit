@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## TasksPluginOptions
 
-<GenerationInfo sourceFile="packages/tasks/src/plugin.ts" sourceLine="25" packageName="@commandkit/tasks" />
+<GenerationInfo sourceFile="packages/tasks/src/plugin.ts" sourceLine="24" packageName="@commandkit/tasks" />
 
 Configuration options for the tasks plugin.
 
@@ -22,6 +22,20 @@ Future versions may support customizing the tasks directory path and HMR behavio
 
 ```ts title="Signature"
 interface TasksPluginOptions {
-
+    initializeDefaultDriver?: boolean;
 }
 ```
+
+<div className="members-wrapper">
+
+### initializeDefaultDriver
+
+<MemberInfo kind="property" type={`boolean`} default={`true`}   />
+
+Whether to initialize the default driver.
+
+If true, the plugin will initialize the default driver.
+If false, the plugin will not initialize the default driver.
+
+
+</div>

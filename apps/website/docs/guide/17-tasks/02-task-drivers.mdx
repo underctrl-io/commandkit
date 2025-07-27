@@ -173,6 +173,10 @@ class CustomDriver implements TaskDriver {
   async create(task: TaskData): Promise<string> {
     // Implement your scheduling logic
     const id = await this.scheduler.schedule(task);
+
+    // invoke the runner function to execute the task (normally, this would be invoked by the scheduler)
+    await this.runner?.(task);
+
     return id;
   }
 
