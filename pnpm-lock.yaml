@@ -461,8 +461,8 @@ importers:
         specifier: ^1.11.13
         version: 1.11.13
       lucide-react:
-        specifier: 0.533.0
-        version: 0.533.0(react@19.1.1)
+        specifier: 0.534.0
+        version: 0.534.0(react@19.1.1)
       next-themes:
         specifier: 0.4.6
         version: 0.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -6367,8 +6367,8 @@ packages:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
 
-  lucide-react@0.533.0:
-    resolution: {integrity: sha512-XwRo6CQowPRe1cfBJITmHytjR3XS4AZpV6rrBFEzoghARgyU2RK3yNRSnRkSFFSQJWFdQ8f4Wk1awgLLSy1NCQ==}
+  lucide-react@0.534.0:
+    resolution: {integrity: sha512-4Bz7rujQ/mXHqCwjx09ih/Q9SCizz9CjBV5repw9YSHZZZaop9/Oj0RgCDt6WdEaeAPfbcZ8l2b4jzApStqgNw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -10970,7 +10970,7 @@ snapshots:
 
   '@docusaurus/react-loadable@6.0.0(react@19.1.1)':
     dependencies:
-      '@types/react': 19.1.8
+      '@types/react': 19.1.9
       react: 19.1.1
 
   '@docusaurus/remark-plugin-npm2yarn@3.8.1':
@@ -12963,7 +12963,7 @@ snapshots:
   '@types/react-router@5.1.20':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.1.8
+      '@types/react': 19.1.9
 
   '@types/react@19.1.8':
     dependencies:
@@ -16047,7 +16047,7 @@ snapshots:
 
   lru-cache@7.18.3: {}
 
-  lucide-react@0.533.0(react@19.1.1):
+  lucide-react@0.534.0(react@19.1.1):
     dependencies:
       react: 19.1.1
 
