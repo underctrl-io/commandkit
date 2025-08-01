@@ -599,7 +599,7 @@ importers:
     dependencies:
       ioredis:
         specifier: ^5.4.2
-        version: 5.6.1
+        version: 5.7.0
     devDependencies:
       '@commandkit/cache':
         specifier: workspace:*
