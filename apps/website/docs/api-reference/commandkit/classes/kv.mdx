@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## KV
 
-<GenerationInfo sourceFile="packages/commandkit/src/kv/kv.ts" sourceLine="42" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/kv/kv.ts" sourceLine="47" packageName="commandkit" />
 
 A key-value store implementation using SQLite
 
@@ -56,6 +56,7 @@ class KV implements Disposable, AsyncDisposable {
     get(key: string) => T | undefined;
     set(key: string, value: any) => void;
     setex(key: string, value: any, ttl: number) => void;
+    math(key: string, operator: KvMathOperator, value: number | bigint) => number | bigint;
     expire(key: string, ttl: number) => boolean;
     ttl(key: string) => number;
     delete(key: string) => void;
@@ -185,6 +186,34 @@ kv.setex('temp:data', { cached: true, timestamp: Date.now() }, 5 * 60 * 1000);
 
 // Use dot notation with expiration
 kv.setex('user:123.temp_settings', { theme: 'light' }, 30 * 60 * 1000);
+```
+### math
+
+<MemberInfo kind="method" type={`(key: string, operator: <a href='/docs/next/api-reference/commandkit/types/kv-math-operator#kvmathoperator'>KvMathOperator</a>, value: number | bigint) => number | bigint`}   />
+
+Performs mathematical operations on numeric values in the KV store
+
+
+
+*Example*
+
+```typescript
+// Initialize a counter
+kv.set('counter', 10);
+
+// Increment by 5
+const result1 = kv.math('counter', '+', 5); // 15
+
+// Multiply by 2
+const result2 = kv.math('counter', '*', 2); // 30
+
+// Use with bigint
+kv.set('big_counter', BigInt(1000));
+const result3 = kv.math('big_counter', '+', BigInt(500)); // 1500n
+
+// Use with dot notation
+kv.set('user:123', { score: 100, level: 5 });
+const result4 = kv.math('user:123.score', '+', 50); // 150
 ```
 ### expire
 
