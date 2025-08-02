@@ -5,6 +5,11 @@ import { getNestedValue, setNestedValue } from './dotprops';
 export type { SerializedValue } from './serde';
 
 /**
+ * Mathematical operators supported by the KV math method
+ */
+export type KvMathOperator = '+' | '-' | '*' | '/' | '^' | '%';
+
+/**
  * Configuration options for the KV store
  */
 export interface KvOptions {
@@ -307,6 +312,112 @@ export class KV implements Disposable, AsyncDisposable {
 
       this.statements.setex.run(key, serializedValue, expiresAt);
     }
+  }
+
+  /**
+   * Performs mathematical operations on numeric values in the KV store
+   *
+   * @param key - The key to perform math operation on (supports dot notation for nested properties)
+   * @param operator - The mathematical operator to apply
+   * @param value - The value to use in the operation
+   * @returns The updated value after the mathematical operation
+   * @throws Error if the existing value is not numeric or if the operation is invalid
+   *
+   * @example
+   * ```typescript
+   * // Initialize a counter
+   * kv.set('counter', 10);
+   *
+   * // Increment by 5
+   * const result1 = kv.math('counter', '+', 5); // 15
+   *
+   * // Multiply by 2
+   * const result2 = kv.math('counter', '*', 2); // 30
+   *
+   * // Use with bigint
+   * kv.set('big_counter', BigInt(1000));
+   * const result3 = kv.math('big_counter', '+', BigInt(500)); // 1500n
+   *
+   * // Use with dot notation
+   * kv.set('user:123', { score: 100, level: 5 });
+   * const result4 = kv.math('user:123.score', '+', 50); // 150
+   * ```
+   */
+  public math(
+    key: string,
+    operator: KvMathOperator,
+    value: number | bigint,
+  ): number | bigint {
+    const existingValue = this.get(key);
+
+    if (existingValue === undefined) {
+      throw new Error(`Key '${key}' does not exist`);
+    }
+
+    if (
+      typeof existingValue !== 'number' &&
+      typeof existingValue !== 'bigint'
+    ) {
+      throw new Error(
+        `Value at key '${key}' is not numeric. Expected number or bigint, got ${typeof existingValue}`,
+      );
+    }
+
+    // Handle mixed number/bigint operations by converting to bigint
+    const isBigIntOperation =
+      typeof existingValue === 'bigint' || typeof value === 'bigint';
+
+    const existing = isBigIntOperation
+      ? typeof existingValue === 'bigint'
+        ? existingValue
+        : BigInt(existingValue)
+      : (existingValue as number);
+    const operand = isBigIntOperation
+      ? typeof value === 'bigint'
+        ? value
+        : BigInt(value)
+      : (value as number);
+
+    let result: number | bigint;
+
+    switch (operator) {
+      case '+':
+        result = (existing as any) + (operand as any);
+        break;
+      case '-':
+        result = (existing as any) - (operand as any);
+        break;
+      case '*':
+        result = (existing as any) * (operand as any);
+        break;
+      case '/':
+        if (operand === 0 || operand === 0n) {
+          throw new Error('Division by zero');
+        }
+        result = (existing as any) / (operand as any);
+        break;
+      case '^':
+        if (isBigIntOperation && operand < 0n) {
+          throw new Error(
+            'Exponentiation with negative exponent is not supported for bigint',
+          );
+        }
+        result = (existing as any) ** (operand as any);
+        break;
+      case '%':
+        if (operand === 0 || operand === 0n) {
+          throw new Error('Modulo by zero');
+        }
+        result = (existing as any) % (operand as any);
+        break;
+      default:
+        throw new Error(`Invalid operator: ${operator}`);
+    }
+
+    // Update the value in the store
+    this.set(key, result);
+
+    return result;
   }
 
   /**

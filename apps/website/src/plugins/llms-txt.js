@@ -29,7 +29,8 @@ module.exports = function (context) {
             entry.name.endsWith('.md')
           ) {
             const content = await fs.promises.readFile(fullPath, 'utf8');
-            const { data: frontmatter, content: markdownContent } = matter(content);
+            const { data: frontmatter, content: markdownContent } =
+              matter(content);
 
             // Get relative path from guide directory
             const relativePath = path
