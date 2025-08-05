@@ -46,7 +46,7 @@ importers:
         version: 2.5.5(@swc/core@1.13.0)(@types/node@22.17.0)(typescript@5.9.2)
       fs-extra:
         specifier: ^11.3.0
-        version: 11.3.0
+        version: 11.3.1
       klaw-sync:
         specifier: ^7.0.0
         version: 7.0.0
@@ -313,7 +313,7 @@ importers:
         version: 0.11.0
       fs-extra:
         specifier: ^11.1.1
-        version: 11.3.0
+        version: 11.3.1
       gradient-string:
         specifier: ^3.0.0
         version: 3.0.0
@@ -5428,8 +5428,8 @@ packages:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
     engines: {node: '>=12'}
 
-  fs-extra@11.3.0:
-    resolution: {integrity: sha512-Z4XaCL6dUDHfP/jT25jJKMmtxvuwbkrD1vNSMFlo9lNLY2c5FHYSQgHPRZUjAB26TpDEoW9HCOgplrdbaPV/ew==}
+  fs-extra@11.3.1:
+    resolution: {integrity: sha512-eXvGGwZ5CL17ZSwHWd3bbgk7UUpF6IFHtP57NYYakPvHOs8GDgDe5KJI36jIJzDkJ6eJjuzRA8eBQb6SkKue0g==}
     engines: {node: '>=14.14'}
 
   fs.realpath@1.0.0:
@@ -10436,7 +10436,7 @@ snapshots:
       '@docusaurus/logger': 3.8.1
       '@docusaurus/utils': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       babel-plugin-dynamic-import-node: 2.3.3
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@swc/core'
@@ -10512,7 +10512,7 @@ snapshots:
       eta: 2.2.0
       eval: 0.1.8
       execa: 5.1.1
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       html-tags: 3.3.1
       html-webpack-plugin: 5.6.3(webpack@5.99.9(@swc/core@1.13.0))
       leven: 3.1.0
@@ -10577,7 +10577,7 @@ snapshots:
       escape-html: 1.0.3
       estree-util-value-to-estree: 3.4.0
       file-loader: 6.2.0(webpack@5.99.9(@swc/core@1.13.0))
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       image-size: 2.0.2
       mdast-util-mdx: 3.0.0
       mdast-util-to-string: 4.0.0
@@ -10635,7 +10635,7 @@ snapshots:
       '@docusaurus/utils-validation': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       cheerio: 1.0.0-rc.12
       feed: 4.2.2
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       lodash: 4.17.21
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
@@ -10677,7 +10677,7 @@ snapshots:
       '@docusaurus/utils-validation': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@types/react-router-config': 5.0.11
       combine-promises: 1.2.0
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       js-yaml: 4.1.0
       lodash: 4.17.21
       react: 19.1.1
@@ -10712,7 +10712,7 @@ snapshots:
       '@docusaurus/types': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@docusaurus/utils': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@docusaurus/utils-validation': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       tslib: 2.8.1
@@ -10769,7 +10769,7 @@ snapshots:
       '@docusaurus/core': 3.8.1(@mdx-js/react@3.1.0(@types/react@19.1.9)(react@19.1.1))(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2)
       '@docusaurus/types': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@docusaurus/utils': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       react-json-view-lite: 2.4.1(react@19.1.1)
@@ -10883,7 +10883,7 @@ snapshots:
       '@docusaurus/utils': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@docusaurus/utils-common': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@docusaurus/utils-validation': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       sitemap: 7.1.2
@@ -11113,7 +11113,7 @@ snapshots:
       algoliasearch-helper: 3.22.6(algoliasearch@5.19.0)
       clsx: 2.1.1
       eta: 2.2.0
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       lodash: 4.17.21
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
@@ -11143,7 +11143,7 @@ snapshots:
 
   '@docusaurus/theme-translations@3.8.1':
     dependencies:
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       tslib: 2.8.1
 
   '@docusaurus/tsconfig@3.8.1': {}
@@ -11188,7 +11188,7 @@ snapshots:
       '@docusaurus/logger': 3.8.1
       '@docusaurus/utils': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@docusaurus/utils-common': 3.8.1(@swc/core@1.13.0)(acorn@8.15.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       joi: 17.13.3
       js-yaml: 4.1.0
       lodash: 4.17.21
@@ -11211,7 +11211,7 @@ snapshots:
       escape-string-regexp: 4.0.0
       execa: 5.1.1
       file-loader: 6.2.0(webpack@5.99.9(@swc/core@1.13.0))
-      fs-extra: 11.3.0
+      fs-extra: 11.3.1
       github-slugger: 1.5.0
       globby: 11.1.0
       gray-matter: 4.0.3
@@ -15062,7 +15062,7 @@ snapshots:
       jsonfile: 6.1.0
       universalify: 2.0.1
 
-  fs-extra@11.3.0:
+  fs-extra@11.3.1:
     dependencies:
       graceful-fs: 4.2.11
       jsonfile: 6.1.0
