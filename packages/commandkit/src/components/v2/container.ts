@@ -1,10 +1,12 @@
 import {
   ActionRowBuilder,
+  ColorResolvable,
   ComponentBuilder,
   ContainerBuilder,
   ContainerComponentData,
   FileBuilder,
   MediaGalleryBuilder,
+  resolveColor,
   SectionBuilder,
   SeparatorBuilder,
   TextDisplayBuilder,
@@ -15,7 +17,8 @@ import { applyId } from './common';
  * Represents the properties for a container component.
  */
 export interface ContainerProps
-  extends Omit<ContainerComponentData, 'type' | 'components'> {
+  extends Omit<ContainerComponentData, 'type' | 'components' | 'accentColor'> {
+  accentColor?: ColorResolvable;
   children?: ComponentBuilder[];
 }
 
@@ -35,7 +38,7 @@ export function Container(props: ContainerProps): ContainerBuilder {
   applyId(props, container);
 
   if (typeof props.accentColor != null) {
-    container.setAccentColor(props.accentColor);
+    container.setAccentColor(resolveColor(props.accentColor!));
   }
 
   if (props.spoiler != null) {
