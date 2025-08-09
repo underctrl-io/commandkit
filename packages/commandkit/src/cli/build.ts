@@ -139,7 +139,9 @@ export async function buildApplication({
               ...(config.entrypoints ?? []),
             ]),
           ),
-          unbundle: !!isDev,
+          unbundle: isDev
+            ? true
+            : (config.compilerOptions?.disableChunking ?? false),
         } satisfies Options,
         config.compilerOptions?.tsdown,
       ),
