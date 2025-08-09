@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKitConfig
 
-<GenerationInfo sourceFile="packages/commandkit/src/config/types.ts" sourceLine="4" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/config/types.ts" sourceLine="28" packageName="commandkit" />
 
 
 
@@ -21,18 +21,8 @@ import MemberDescription from '@site/src/components/MemberDescription';
 interface CommandKitConfig {
     plugins?: MaybeArray<CommandKitPlugin>[] | Array<CommandKitPlugin>;
     rolldownPlugins?: any[];
-    compilerOptions?: {
-    /**
-     * Macro compiler configuration.
-     */
-    macro?: {
-      /**
-       * Whether to enable macro function compilation in development mode.
-       * @default false
-       */
-      development?: boolean;
-    };
-  };
+    entrypoints?: string[];
+    compilerOptions?: CommandKitCompilerOptions;
     typescript?: {
     /**
      * Whether to ignore type checking during builds.
@@ -42,6 +32,18 @@ interface CommandKitConfig {
     static?: boolean;
     env?: Record<string, string>;
     distDir?: string;
+    antiCrashScript?: {
+    /**
+     * Whether to enable the anti-crash script in development mode.
+     * @default true
+     */
+    development?: boolean;
+    /**
+     * Whether to enable the anti-crash script in production mode. Usually, you should use other means to handle errors.
+     * @default false
+     */
+    production?: boolean;
+  };
     sourceMap?: {
     /**
      * Whether to enable source map generation in development mode.
@@ -71,9 +73,15 @@ Can be a single plugin, an array of plugins, or a nested array of plugins.
 <MemberInfo kind="property" type={`any[]`}   />
 
 The rolldown plugins to use with CommandKit.
+### entrypoints
+
+<MemberInfo kind="property" type={`string[]`}   />
+
+The list of additional entrypoints to compile. Eg, `dir` or `dir/index.ts` or `dir/*.ts`, etc.
+Similarly, negative patterns can be used to exclude files. Eg, `!dir/index.ts` or `!dir/*.ts`, etc.
 ### compilerOptions
 
-<MemberInfo kind="property" type={`{     /**      * Macro compiler configuration.      */     macro?: {       /**        * Whether to enable macro function compilation in development mode.        * @default false        */       development?: boolean;     };   }`}   />
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/command-kit-compiler-options#commandkitcompileroptions'>CommandKitCompilerOptions</a>`}   />
 
 The compiler options to use with CommandKit.
 ### typescript
@@ -96,6 +104,11 @@ Statically define the environment variables to use.
 <MemberInfo kind="property" type={`string`} default={`\`dist\``}   />
 
 The custom build directory name to use.
+### antiCrashScript
+
+<MemberInfo kind="property" type={`{     /**      * Whether to enable the anti-crash script in development mode.      * @default true      */     development?: boolean;     /**      * Whether to enable the anti-crash script in production mode. Usually, you should use other means to handle errors.      * @default false      */     production?: boolean;   }`}   />
+
+The anti-crash script configuration.
 ### sourceMap
 
 <MemberInfo kind="property" type={`{     /**      * Whether to enable source map generation in development mode.      */     development?: boolean;     /**      * Whether to enable source map generation in production mode.      */     production?: boolean;   }`}   />

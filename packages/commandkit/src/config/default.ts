@@ -12,7 +12,10 @@ export const defaultConfig: ResolvedCommandKitConfig = {
     macro: {
       development: false,
     },
+    tsdown: {},
+    disableChunking: false,
   },
+  entrypoints: [],
   static: true,
   typescript: {
     ignoreBuildErrors: false,
@@ -26,4 +29,8 @@ export const defaultConfig: ResolvedCommandKitConfig = {
   typedCommands: true,
   disablePrefixCommands: false,
   showUnknownPrefixCommandsWarning: true,
+  antiCrashScript: {
+    development: true,
+    production: false,
+  },
 };
