@@ -2,7 +2,7 @@ import { MaybeArray } from '../components';
 import { CommandKitPlugin } from '../plugins';
 import { defaultConfig } from './default';
 import { CommandKitConfig } from './types';
-import { ResolvedCommandKitConfig } from './utils';
+import { mergeDeep, ResolvedCommandKitConfig } from './utils';
 
 let defined: ResolvedCommandKitConfig = defaultConfig;
 
@@ -20,10 +20,10 @@ export function getConfig(): ResolvedCommandKitConfig {
 export function defineConfig(
   config: Partial<CommandKitConfig> = {},
 ): ResolvedCommandKitConfig {
-  // defined = mergeDeep(
-  //   config as ResolvedCommandKitConfig,
-  //   mergeDeep({} as ResolvedCommandKitConfig, defaultConfig),
-  // );
+  defined = mergeDeep(
+    config as ResolvedCommandKitConfig,
+    mergeDeep({} as ResolvedCommandKitConfig, defaultConfig),
+  );
 
   defined = {
     compilerOptions: {
@@ -31,7 +31,18 @@ export function defineConfig(
         ...defaultConfig.compilerOptions.macro,
         ...config.compilerOptions?.macro,
       },
+      tsdown: {
+        ...defaultConfig.compilerOptions.tsdown,
+        ...config.compilerOptions?.tsdown,
+      },
+      disableChunking:
+        config.compilerOptions?.disableChunking ??
+        defaultConfig.compilerOptions.disableChunking,
     },
+    entrypoints: [
+      ...(config.entrypoints ?? []),
+      ...(defaultConfig.entrypoints ?? []),
+    ],
     distDir: config.distDir ?? defaultConfig.distDir,
     env: {
       ...defaultConfig.env,
@@ -59,6 +70,10 @@ export function defineConfig(
     showUnknownPrefixCommandsWarning:
       config.showUnknownPrefixCommandsWarning ??
       defaultConfig.showUnknownPrefixCommandsWarning,
+    antiCrashScript: {
+      ...defaultConfig.antiCrashScript,
+      ...config.antiCrashScript,
+    },
   };
 
   return defined;
