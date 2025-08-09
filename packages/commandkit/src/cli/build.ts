@@ -129,13 +129,16 @@ export async function buildApplication({
           target: 'node16',
           outDir: dest,
           env: mergeDefinitionsIfNeeded(config.env || {}, !!isDev),
-          entry: [
-            'src',
-            `!${config.distDir}`,
-            '!.commandkit',
-            '!**/*.test.*',
-            '!**/*.spec.*',
-          ],
+          entry: Array.from(
+            new Set([
+              'src',
+              `!${config.distDir}`,
+              '!.commandkit',
+              '!**/*.test.*',
+              '!**/*.spec.*',
+              ...(config.entrypoints ?? []),
+            ]),
+          ),
           unbundle: !!isDev,
         } satisfies Options,
         config.compilerOptions?.tsdown,
