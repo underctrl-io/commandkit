@@ -276,8 +276,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.1
       tsdown:
-        specifier: ^0.13.1
-        version: 0.13.4(typescript@5.9.2)
+        specifier: ^0.14.0
+        version: 0.14.0(typescript@5.9.2)
       use-macro:
         specifier: ^1.1.0
         version: 1.1.0
@@ -8620,8 +8620,8 @@ packages:
       '@swc/wasm':
         optional: true
 
-  tsdown@0.13.4:
-    resolution: {integrity: sha512-2uf0Xo170gmxwJEOgfb7V9y3k+Uq/dQJx4xfXYova7pqqTw9ZjxSvEeq7Y6l+Ys54GlBrRKvxKoEyNhuUcoCTg==}
+  tsdown@0.14.0:
+    resolution: {integrity: sha512-3zBEDUC1XPnVE5rwfsm1y8REh58CJsDT319hkRwBgIpN9eMClE30dqF4HkK8zPKoczNNqFrQ2cKGrjE50WprIw==}
     engines: {node: '>=20.19.0'}
     hasBin: true
     peerDependencies:
@@ -13177,7 +13177,7 @@ snapshots:
   '@types/react-router@5.1.20':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.1.8
+      '@types/react': 19.1.9
 
   '@types/react@19.1.8':
     dependencies:
@@ -19019,7 +19019,7 @@ snapshots:
       '@swc/core': 1.13.0
     optional: true
 
-  tsdown@0.13.4(typescript@5.9.2):
+  tsdown@0.14.0(typescript@5.9.2):
     dependencies:
       ansis: 4.1.0
       cac: 6.7.14
