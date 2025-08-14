@@ -1,11 +1,16 @@
 ---
 title: Getting Started with Tasks
-description: Learn how to set up and use the tasks plugin for scheduling background tasks in your CommandKit bot.
+description:
+  Learn how to set up and use the tasks plugin for scheduling
+  background tasks in your CommandKit bot.
 ---
 
 # Getting Started with Tasks
 
-The tasks plugin provides a powerful way to schedule and manage background tasks in your CommandKit bot. Whether you need to run periodic maintenance, send scheduled reminders, or perform data cleanup, the tasks plugin has you covered.
+The tasks plugin provides a powerful way to schedule and manage
+background tasks in your CommandKit bot. Whether you need to run
+periodic maintenance, send scheduled reminders, or perform data
+cleanup, the tasks plugin has you covered.
 
 ## Installation
 
@@ -30,8 +35,11 @@ export default defineConfig({
 
 ## Setting Up a Driver (optional)
 
-By default, the plugin will initialize the sqlite driver. You can set up a different driver by calling `setDriver` function from the `@commandkit/tasks` package.
-If you want to disable the default driver initialization behavior, you can pass `initializeDefaultDriver: false` to the `tasks()` options in your commandkit config.
+By default, the plugin will initialize the sqlite driver. You can set
+up a different driver by calling `setDriver` function from the
+`@commandkit/tasks` package. If you want to disable the default driver
+initialization behavior, you can pass `initializeDefaultDriver: false`
+to the `tasks()` options in your commandkit config.
 
 ```ts
 import { setDriver } from '@commandkit/tasks';
@@ -67,7 +75,8 @@ export default task({
 Every task has the following components:
 
 - **name**: A unique identifier for the task
-- **schedule**: When the task should run (optional for manual execution)
+- **schedule**: When the task should run (optional for manual
+  execution)
 - **execute**: The main function that performs the task work
 - **prepare**: Optional function to determine if the task should run
 
@@ -112,7 +121,8 @@ export default task({
 
 ## Task Context
 
-The `execute` function receives a context object with useful properties:
+The `execute` function receives a context object with useful
+properties:
 
 ```ts
 export default task({
@@ -159,6 +169,9 @@ export default task({
 
 Now that you have the basics, explore:
 
-- [Task Drivers](./02-task-drivers) - Learn about different persistence options
-- [Dynamic Tasks](./03-dynamic-tasks) - Create tasks on-demand from commands
-- [Advanced Patterns](./04-advanced-patterns) - Best practices and advanced usage
+- [Task Drivers](./02-task-drivers) - Learn about different
+  persistence options
+- [Dynamic Tasks](./03-dynamic-tasks) - Create tasks on-demand from
+  commands
+- [Advanced Patterns](./04-advanced-patterns) - Best practices and
+  advanced usage

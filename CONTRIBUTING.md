@@ -49,6 +49,7 @@ git checkout -b your-feature-or-bugfix
 3. Ensure that your changes don't break any existing functionality.
    You can test the functionality of your code depending on where
    you've made changes:
+
    1. If you've made changes to the CommandKit package, you can use
       the "apps/test-bot" project to test your own bot. Just make sure
       to create a new `.env` file with the template from the

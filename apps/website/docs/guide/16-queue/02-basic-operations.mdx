@@ -1,15 +1,19 @@
 ---
 title: Basic Operations
-description: Learn how to send and receive messages using CommandKit's queue system.
+description:
+  Learn how to send and receive messages using CommandKit's queue
+  system.
 ---
 
 # Basic Operations
 
-This guide covers the fundamental operations of the CommandKit Queue system: sending and receiving messages.
+This guide covers the fundamental operations of the CommandKit Queue
+system: sending and receiving messages.
 
 ## Setting Up the Driver
 
-Before you can send or receive messages, you need to set up a driver. The driver handles the actual message queue backend.
+Before you can send or receive messages, you need to set up a driver.
+The driver handles the actual message queue backend.
 
 ```typescript
 import { setDriver } from '@commandkit/queue';
@@ -86,7 +90,8 @@ await receive('analytics', async (message) => {
 
 ## Type Safety
 
-You can define types for your messages to get better TypeScript support.
+You can define types for your messages to get better TypeScript
+support.
 
 ```typescript
 interface UserEvent {
@@ -121,7 +126,9 @@ You can have multiple subscribers listening to the same topic.
 ```typescript
 // Subscriber 1: Log all user events
 await receive('user-events', (message) => {
-  console.log(`[LOG] User event: ${message.userId} - ${message.action}`);
+  console.log(
+    `[LOG] User event: ${message.userId} - ${message.action}`,
+  );
 });
 
 // Subscriber 2: Update user analytics
@@ -199,7 +206,10 @@ await receive('user-events', async (message) => {
     console.log(`Processed event for user ${message.userId}`);
   } catch (error) {
     // Log error but don't crash
-    console.error(`Failed to process event for user ${message.userId}:`, error);
+    console.error(
+      `Failed to process event for user ${message.userId}:`,
+      error,
+    );
 
     // Optionally retry or send to dead letter queue
     await handleFailedMessage(message, error);
@@ -230,5 +240,7 @@ await send('user-profile-updates', {
 
 ## Next Steps
 
-- [Discord.js Integration](./03-discordjs-integration.md) - Learn how to set up Redis PubSub with Discord.js
-- [Advanced Features](./04-advanced-features.md) - Custom drivers, error handling, and more
+- [Discord.js Integration](./03-discordjs-integration.md) - Learn how
+  to set up Redis PubSub with Discord.js
+- [Advanced Features](./04-advanced-features.md) - Custom drivers,
+  error handling, and more

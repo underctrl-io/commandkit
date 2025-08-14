@@ -1,15 +1,20 @@
 ---
 title: Advanced Features
-description: Learn about custom drivers, error handling, and advanced queue features.
+description:
+  Learn about custom drivers, error handling, and advanced queue
+  features.
 ---
 
 # Advanced Features
 
-This guide covers advanced features of the CommandKit Queue system, including custom drivers, error handling, and performance optimizations.
+This guide covers advanced features of the CommandKit Queue system,
+including custom drivers, error handling, and performance
+optimizations.
 
 ## Custom Drivers
 
-You can create custom drivers to work with any message queue backend. A driver must implement the `MessageQueue` interface.
+You can create custom drivers to work with any message queue backend.
+A driver must implement the `MessageQueue` interface.
 
 ### Creating a Custom Driver
 
@@ -51,7 +56,10 @@ class CustomQueueDriver implements MessageQueue {
     await this.cleanup();
   }
 
-  private async sendToBackend(topic: string, message: any): Promise<void> {
+  private async sendToBackend(
+    topic: string,
+    message: any,
+  ): Promise<void> {
     // Implement your backend communication
     // This could be RabbitMQ, Apache Kafka, AWS SQS, etc.
   }
@@ -88,8 +96,14 @@ class RabbitMQDriver implements MessageQueue {
       throw new Error('Driver not initialized');
     }
 
-    await this.channel.assertExchange(topic, 'fanout', { durable: false });
-    this.channel.publish(topic, '', Buffer.from(JSON.stringify(message)));
+    await this.channel.assertExchange(topic, 'fanout', {
+      durable: false,
+    });
+    this.channel.publish(
+      topic,
+      '',
+      Buffer.from(JSON.stringify(message)),
+    );
   }
 
   async receive(
@@ -100,8 +114,12 @@ class RabbitMQDriver implements MessageQueue {
       throw new Error('Driver not initialized');
     }
 
-    await this.channel.assertExchange(topic, 'fanout', { durable: false });
-    const queue = await this.channel.assertQueue('', { exclusive: true });
+    await this.channel.assertExchange(topic, 'fanout', {
+      durable: false,
+    });
+    const queue = await this.channel.assertQueue('', {
+      exclusive: true,
+    });
 
     await this.channel.bindQueue(queue.queue, topic, '');
 
@@ -259,7 +277,9 @@ async function withRetry<T>(
       }
 
       // Exponential backoff
-      await new Promise((resolve) => setTimeout(resolve, delay * attempt));
+      await new Promise((resolve) =>
+        setTimeout(resolve, delay * attempt),
+      );
     }
   }
 
@@ -305,7 +325,11 @@ await receive('user-events', async (message) => {
 
 // Process dead letter queue
 await receive('dead-letter-queue', async (message) => {
-  const { originalTopic, message: originalMessage, retryCount } = message;
+  const {
+    originalTopic,
+    message: originalMessage,
+    retryCount,
+  } = message;
 
   if (retryCount < 3) {
     // Retry processing
@@ -602,7 +626,10 @@ class MockDriver implements MessageQueue {
     }
   }
 
-  async receive(topic: string, handler: (message: any) => void): Promise<void> {
+  async receive(
+    topic: string,
+    handler: (message: any) => void,
+  ): Promise<void> {
     this.handlers.set(topic, handler);
   }
 
@@ -640,7 +667,8 @@ describe('Queue', () => {
 
 ## Next Steps
 
-You now have a comprehensive understanding of CommandKit Queue's advanced features. You can:
+You now have a comprehensive understanding of CommandKit Queue's
+advanced features. You can:
 
 - Create custom drivers for your specific message queue backend
 - Implement robust error handling with retries and dead letter queues

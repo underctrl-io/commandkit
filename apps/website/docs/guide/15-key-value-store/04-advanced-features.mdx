@@ -1,30 +1,51 @@
 ---
 title: Advanced Features
-description: Learn about advanced KV store features like iteration, resource management, and database access.
+description:
+  Learn about advanced KV store features like iteration, resource
+  management, and database access.
 ---
 
 # Advanced Features
 
-This guide covers advanced features of the CommandKit KV store, including expiration, transactions, and best practices for complex use cases.
+This guide covers advanced features of the CommandKit KV store,
+including expiration, transactions, and best practices for complex use
+cases.
 
 ## Expiration Support
 
-The KV store supports automatic expiration of data, similar to Redis. This is useful for caching, sessions, and temporary data.
+The KV store supports automatic expiration of data, similar to Redis.
+This is useful for caching, sessions, and temporary data.
 
 ### Setting Data with Expiration
 
 ```typescript
 // Set data with expiration (1 hour)
-kv.setex('session:123', { userId: 123, token: 'abc123' }, 60 * 60 * 1000);
+kv.setex(
+  'session:123',
+  { userId: 123, token: 'abc123' },
+  60 * 60 * 1000,
+);
 
 // Set data with 5 minutes expiration
-kv.setex('temp:data', { cached: true, timestamp: Date.now() }, 5 * 60 * 1000);
+kv.setex(
+  'temp:data',
+  { cached: true, timestamp: Date.now() },
+  5 * 60 * 1000,
+);
 
 // Set data with 1 day expiration
-kv.setex('daily:stats', { count: 100, date: new Date() }, 24 * 60 * 60 * 1000);
+kv.setex(
+  'daily:stats',
+  { count: 100, date: new Date() },
+  24 * 60 * 60 * 1000,
+);
 
 // Use dot notation with expiration
-kv.setex('user:123.temp_settings', { theme: 'light' }, 30 * 60 * 1000);
+kv.setex(
+  'user:123.temp_settings',
+  { theme: 'light' },
+  30 * 60 * 1000,
+);
 ```
 
 ### Setting Expiration for Existing Keys
@@ -73,7 +94,8 @@ setTimeout(() => {
 
 ## Transactions
 
-Transactions allow you to execute multiple operations atomically. If any operation fails, all changes are rolled back.
+Transactions allow you to execute multiple operations atomically. If
+any operation fails, all changes are rolled back.
 
 ### Basic Transaction Usage
 
@@ -172,7 +194,8 @@ try {
 
 ## Resource Management
 
-The KV store implements disposable patterns for automatic resource cleanup.
+The KV store implements disposable patterns for automatic resource
+cleanup.
 
 ### Using with Statement
 
@@ -194,9 +217,9 @@ kv.set('key', 'value');
 // kv is automatically closed when the block ends
 ```
 
-:::note Async Disposal
-The `async using` statement is just a fake promise wrapper around the synchronous `using` statement. The disposal is still synchronous.
-:::
+:::note Async Disposal The `async using` statement is just a fake
+promise wrapper around the synchronous `using` statement. The disposal
+is still synchronous. :::
 
 ### Manual Resource Management
 
@@ -317,7 +340,8 @@ function validateUser(data: any): data is User {
     typeof data.name === 'string' &&
     typeof data.email === 'string' &&
     typeof data.settings === 'object' &&
-    (data.settings.theme === 'light' || data.settings.theme === 'dark') &&
+    (data.settings.theme === 'light' ||
+      data.settings.theme === 'dark') &&
     typeof data.settings.notifications === 'boolean'
   );
 }
@@ -388,11 +412,18 @@ console.log(`Operation took ${duration.toFixed(2)}ms`);
 
 ## Best Practices Summary
 
-1. **Use Transactions for Related Operations**: Group related operations in transactions for consistency
-2. **Handle Expiration Gracefully**: Always check TTL and handle expired data appropriately
-3. **Validate Data**: Implement proper validation for complex data structures
-4. **Monitor Performance**: Use health checks and performance monitoring
+1. **Use Transactions for Related Operations**: Group related
+   operations in transactions for consistency
+2. **Handle Expiration Gracefully**: Always check TTL and handle
+   expired data appropriately
+3. **Validate Data**: Implement proper validation for complex data
+   structures
+4. **Monitor Performance**: Use health checks and performance
+   monitoring
 5. **Clean Up Resources**: Always close database connections properly
-6. **Use Meaningful Keys**: Choose descriptive key names and use consistent patterns
-7. **Handle Errors**: Implement comprehensive error handling for all operations
-8. **Optimize for Your Use Case**: Use appropriate features like WAL and batch operations
+6. **Use Meaningful Keys**: Choose descriptive key names and use
+   consistent patterns
+7. **Handle Errors**: Implement comprehensive error handling for all
+   operations
+8. **Optimize for Your Use Case**: Use appropriate features like WAL
+   and batch operations
