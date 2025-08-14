@@ -1,17 +1,20 @@
 ---
 title: AI Best Practices & Examples
-description: Best practices and real-world examples for AI-powered Discord bots.
+description:
+  Best practices and real-world examples for AI-powered Discord bots.
 ---
 
 # AI Best Practices & Examples
 
-This guide covers best practices for implementing AI-powered Discord bots and provides real-world examples.
+This guide covers best practices for implementing AI-powered Discord
+bots and provides real-world examples.
 
 ## Security Best Practices
 
 ### Permission Validation
 
-Always validate user permissions before executing sensitive operations:
+Always validate user permissions before executing sensitive
+operations:
 
 ```ts
 export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
@@ -26,12 +29,14 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   }
 
   // Additional role-based checks
-  const hasModeratorRole = ctx.message.member.roles.cache.some((role) =>
-    role.name.toLowerCase().includes('moderator'),
+  const hasModeratorRole = ctx.message.member.roles.cache.some(
+    (role) => role.name.toLowerCase().includes('moderator'),
   );
 
   if (action === 'ban' && !hasModeratorRole) {
-    await ctx.message.reply('❌ Only moderators can perform ban actions.');
+    await ctx.message.reply(
+      '❌ Only moderators can perform ban actions.',
+    );
     return;
   }
 
@@ -56,7 +61,9 @@ export const aiConfig = {
         (text) => !containsProfanity(text),
         'Message contains inappropriate content',
       ),
-    userId: z.string().regex(/^\d{17,19}$/, 'Invalid Discord user ID format'),
+    userId: z
+      .string()
+      .regex(/^\d{17,19}$/, 'Invalid Discord user ID format'),
   }),
 } satisfies AiConfig;
 
@@ -65,7 +72,9 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
   // Additional runtime validation
   const sanitizedMessage = sanitizeHtml(message);
-  const isValidUser = await ctx.client.users.fetch(userId).catch(() => null);
+  const isValidUser = await ctx.client.users
+    .fetch(userId)
+    .catch(() => null);
 
   if (!isValidUser) {
     await ctx.message.reply('❌ Invalid user specified.');
@@ -239,7 +248,9 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
       const track = await searchTrack(query);
       if (!track) {
-        await ctx.message.reply(`❌ No results found for "${query}".`);
+        await ctx.message.reply(
+          `❌ No results found for "${query}".`,
+        );
         return;
       }
 
@@ -275,7 +286,10 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
       const queueList = queue
         .slice(0, 10)
-        .map((track, i) => `${i + 1}. **${track.title}** by ${track.artist}`)
+        .map(
+          (track, i) =>
+            `${i + 1}. **${track.title}** by ${track.artist}`,
+        )
         .join('\n');
 
       await ctx.message.reply(`🎵 **Queue:**\n${queueList}`);
@@ -300,7 +314,8 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
 ```ts title="src/commands/server-admin.ts"
 export const aiConfig = {
-  description: 'Manage server settings, roles, and channels (admin only)',
+  description:
+    'Manage server settings, roles, and channels (admin only)',
   parameters: z.object({
     action: z.enum([
       'create-channel',
@@ -341,7 +356,9 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   switch (action) {
     case 'create-channel':
       if (!channelName || !channelType) {
-        await ctx.message.reply('❌ Channel name and type are required.');
+        await ctx.message.reply(
+          '❌ Channel name and type are required.',
+        );
         return;
       }
 
@@ -356,7 +373,9 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
         type: channelTypeMap[channelType],
       });
 
-      await ctx.message.reply(`✅ Created ${channelType} channel: ${channel}`);
+      await ctx.message.reply(
+        `✅ Created ${channelType} channel: ${channel}`,
+      );
       break;
 
     case 'create-role':
@@ -376,12 +395,16 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
     case 'update-settings':
       if (!setting || value === undefined) {
-        await ctx.message.reply('❌ Setting name and value are required.');
+        await ctx.message.reply(
+          '❌ Setting name and value are required.',
+        );
         return;
       }
 
       await updateGuildSetting(guild.id, setting, value);
-      await ctx.message.reply(`✅ Updated setting "${setting}" to "${value}"`);
+      await ctx.message.reply(
+        `✅ Updated setting "${setting}" to "${value}"`,
+      );
       break;
 
     case 'cleanup':
@@ -398,15 +421,30 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
 ```ts title="src/commands/economy.ts"
 export const aiConfig = {
-  description: 'Manage user economy - check balance, transfer money, shop',
+  description:
+    'Manage user economy - check balance, transfer money, shop',
   parameters: z.object({
-    action: z.enum(['balance', 'transfer', 'shop', 'buy', 'work', 'daily']),
+    action: z.enum([
+      'balance',
+      'transfer',
+      'shop',
+      'buy',
+      'work',
+      'daily',
+    ]),
     targetUser: z
       .string()
       .optional()
       .describe('User ID for balance check or transfer'),
-    amount: z.number().min(1).optional().describe('Amount to transfer'),
-    item: z.string().optional().describe('Item name to buy from shop'),
+    amount: z
+      .number()
+      .min(1)
+      .optional()
+      .describe('Amount to transfer'),
+    item: z
+      .string()
+      .optional()
+      .describe('Item name to buy from shop'),
   }),
 } satisfies AiConfig;
 
@@ -420,12 +458,15 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
       const user = await getEconomyUser(checkUserId);
 
       if (targetUser && targetUser !== userId) {
-        const targetUserObj = await ctx.client.users.fetch(targetUser);
+        const targetUserObj =
+          await ctx.client.users.fetch(targetUser);
         await ctx.message.reply(
           `💰 ${targetUserObj.username}'s balance: ${user.balance} coins`,
         );
       } else {
-        await ctx.message.reply(`💰 Your balance: ${user.balance} coins`);
+        await ctx.message.reply(
+          `💰 Your balance: ${user.balance} coins`,
+        );
       }
       break;
 
@@ -438,13 +479,17 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
       }
 
       if (targetUser === userId) {
-        await ctx.message.reply('❌ You cannot transfer money to yourself.');
+        await ctx.message.reply(
+          '❌ You cannot transfer money to yourself.',
+        );
         return;
       }
 
       const sender = await getEconomyUser(userId);
       if (sender.balance < amount) {
-        await ctx.message.reply('❌ Insufficient balance for this transfer.');
+        await ctx.message.reply(
+          '❌ Insufficient balance for this transfer.',
+        );
         return;
       }
 
@@ -470,7 +515,9 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
     case 'buy':
       if (!item) {
-        await ctx.message.reply('❌ Item name is required for purchases.');
+        await ctx.message.reply(
+          '❌ Item name is required for purchases.',
+        );
         return;
       }
 
@@ -525,7 +572,9 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
     try {
       // Fallback functionality
       const fallbackResult = await fallbackOperation(ctx.ai.params);
-      await ctx.message.reply(`⚠️ Used fallback method: ${fallbackResult}`);
+      await ctx.message.reply(
+        `⚠️ Used fallback method: ${fallbackResult}`,
+      );
     } catch (fallbackError) {
       console.error('Fallback also failed:', fallbackError.message);
       await ctx.message.reply(
@@ -545,7 +594,8 @@ function getErrorMessage(error: Error): string {
       "❌ You don't have permission to perform this action.",
     USER_NOT_FOUND: '❌ The specified user was not found.',
     CHANNEL_NOT_FOUND: '❌ The specified channel was not found.',
-    RATE_LIMITED: "⏰ You're doing that too quickly. Please wait a moment.",
+    RATE_LIMITED:
+      "⏰ You're doing that too quickly. Please wait a moment.",
     NETWORK_ERROR:
       '🌐 Network error. Please check your connection and try again.',
     DATABASE_ERROR:
@@ -589,7 +639,11 @@ describe('Economy AI Command', () => {
 
   it('should handle insufficient balance for transfers', async () => {
     const mockContext = {
-      params: { action: 'transfer', targetUser: '987654321', amount: 150 },
+      params: {
+        action: 'transfer',
+        targetUser: '987654321',
+        amount: 150,
+      },
       message: { author: { id: '123456789' } },
     } as unknown as AiContext;
 

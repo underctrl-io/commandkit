@@ -1,16 +1,24 @@
 ---
 title: ModalKit
-description: ModalKit is an enhanced version of the native Discord.js ModalBuilder, designed to simplify the process of creating and handling modal submissions in your Discord bot.
+description:
+  ModalKit is an enhanced version of the native Discord.js
+  ModalBuilder, designed to simplify the process of creating and
+  handling modal submissions in your Discord bot.
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-ModalKit is an enhanced version of the native Discord.js [`ModalBuilder`](https://discord.js.org/docs/packages/builders/1.9.0/ModalBuilder:Class), designed to simplify the process of creating and handling modal submissions in your Discord bot.
+ModalKit is an enhanced version of the native Discord.js
+[`ModalBuilder`](https://discord.js.org/docs/packages/builders/1.9.0/ModalBuilder:Class),
+designed to simplify the process of creating and handling modal
+submissions in your Discord bot.
 
-:::info
-CommandKit provides JSX version of ModalKit as an alternative syntax to the standard Discord.js builders. This is not required, but can be useful for those who prefer a more declarative style. See [`<Modal/>`](../03-jsx-components/components-v1/04-modal.mdx) for more details.
-:::
+:::info CommandKit provides JSX version of ModalKit as an alternative
+syntax to the standard Discord.js builders. This is not required, but
+can be useful for those who prefer a more declarative style. See
+[`<Modal/>`](../03-jsx-components/components-v1/04-modal.mdx) for more
+details. :::
 
 ## Creating and handling modals
 
@@ -132,15 +140,15 @@ CommandKit provides JSX version of ModalKit as an alternative syntax to the stan
 
 </Tabs>
 
-:::warning
-ModalKit requires a custom ID. Always provide one when creating a modal using `setCustomId()`.
-:::
+:::warning ModalKit requires a custom ID. Always provide one when
+creating a modal using `setCustomId()`. :::
 
 ## ModalKit Options
 
 ### Using `onSubmit()`
 
-The `onSubmit()` method requires a handler function and accepts an optional options object:
+The `onSubmit()` method requires a handler function and accepts an
+optional options object:
 
 ```js
 modal.onSubmit(
@@ -165,7 +173,8 @@ modal.onSubmit(
 | `autoReset` | boolean | false    | Whether to reset the timer on submission           |
 | `once`      | boolean | true     | Listen for only one submission                     |
 
-You can also use any valid [Discord.js InteractionCollectorOptions](https://discord.js.org/docs/packages/discord.js/14.16.3/InteractionCollectorOptions:Interface).
+You can also use any valid
+[Discord.js InteractionCollectorOptions](https://discord.js.org/docs/packages/discord.js/14.16.3/InteractionCollectorOptions:Interface).
 
 ### Handling Collector End
 

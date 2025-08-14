@@ -1,15 +1,19 @@
 ---
 title: Usage with Legacy Plugin
-description: Learn how to use the i18n plugin with legacy commands in CommandKit.
+description:
+  Learn how to use the i18n plugin with legacy commands in CommandKit.
 ---
 
 # Usage with Legacy Plugin
 
-The i18n plugin is fully compatible with CommandKit's legacy command system, allowing you to add internationalization to existing projects without major refactoring.
+The i18n plugin is fully compatible with CommandKit's legacy command
+system, allowing you to add internationalization to existing projects
+without major refactoring.
 
 ## Translations in Legacy Commands
 
-For legacy commands, import the `locale` function directly from the i18n plugin:
+For legacy commands, import the `locale` function directly from the
+i18n plugin:
 
 ```ts title="src/app/commands/legacy/ping.js"
 import { locale } from '@commandkit/i18n';
@@ -52,7 +56,8 @@ export async function run({ interaction, client }) {
 
 ## Legacy Command Translation Files
 
-Translation files for legacy commands work the same way as modern commands:
+Translation files for legacy commands work the same way as modern
+commands:
 
 ```json title="src/app/locales/en-US/ping.json"
 {
@@ -76,7 +81,8 @@ Here's how to migrate an existing legacy command to use i18n:
 
 ```ts title="src/app/commands/legacy/userinfo.js"
 export async function run({ interaction }) {
-  const user = interaction.options.getUser('user') || interaction.user;
+  const user =
+    interaction.options.getUser('user') || interaction.user;
   const member = interaction.guild?.members.cache.get(user.id);
 
   const embed = {
@@ -133,13 +139,18 @@ import { locale } from '@commandkit/i18n';
 export async function run({ interaction }) {
   const { t } = locale();
 
-  const user = interaction.options.getUser('user') || interaction.user;
+  const user =
+    interaction.options.getUser('user') || interaction.user;
   const member = interaction.guild?.members.cache.get(user.id);
 
   const embed = {
     title: t('embed.title', { username: user.username }),
     fields: [
-      { name: t('embed.fields.username'), value: user.username, inline: true },
+      {
+        name: t('embed.fields.username'),
+        value: user.username,
+        inline: true,
+      },
       { name: t('embed.fields.id'), value: user.id, inline: true },
       {
         name: t('embed.fields.created'),
@@ -216,14 +227,19 @@ export const data = {
 
 ## Best Practices for Legacy Commands
 
-1. **Gradual Migration**: You can migrate commands one at a time without affecting others
-2. **Consistent Naming**: Use the same translation keys across legacy and modern commands when possible
-3. **Error Handling**: Always provide fallback text for missing translations
-4. **Testing**: Test legacy commands with different locales to ensure compatibility
+1. **Gradual Migration**: You can migrate commands one at a time
+   without affecting others
+2. **Consistent Naming**: Use the same translation keys across legacy
+   and modern commands when possible
+3. **Error Handling**: Always provide fallback text for missing
+   translations
+4. **Testing**: Test legacy commands with different locales to ensure
+   compatibility
 
 ## Mixed Command Types
 
-You can use both legacy and modern commands with i18n in the same project:
+You can use both legacy and modern commands with i18n in the same
+project:
 
 ```ts title="commandkit.config.ts"
 import { defineConfig } from 'commandkit';

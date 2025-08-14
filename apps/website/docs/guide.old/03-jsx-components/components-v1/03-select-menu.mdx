@@ -1,15 +1,20 @@
 ---
 title: Select Menu
-description: Learn how to use various Select Menu components to create interactive dropdowns
+description:
+  Learn how to use various Select Menu components to create
+  interactive dropdowns
 ---
 
 # Select Menu
 
-CommandKit provides several types of select menus for different use cases. Each type allows users to select from a list of options in a dropdown menu.
+CommandKit provides several types of select menus for different use
+cases. Each type allows users to select from a list of options in a
+dropdown menu.
 
 ## String Select Menu
 
-The most common type of select menu that allows users to select from predefined string options.
+The most common type of select menu that allows users to select from
+predefined string options.
 
 ```tsx
 import {
@@ -50,7 +55,10 @@ const select = (
 Allows users to select a channel from the server.
 
 ```tsx
-import { ChannelSelectMenu, OnChannelSelectMenuKitSubmit } from 'commandkit';
+import {
+  ChannelSelectMenu,
+  OnChannelSelectMenuKitSubmit,
+} from 'commandkit';
 
 const handleSelect: OnChannelSelectMenuKitSubmit = async (
   interaction,
@@ -69,7 +77,10 @@ const select = <ChannelSelectMenu onSelect={handleSelect} />;
 Allows users to select a role from the server.
 
 ```tsx
-import { RoleSelectMenu, OnRoleSelectMenuKitSubmit } from 'commandkit';
+import {
+  RoleSelectMenu,
+  OnRoleSelectMenuKitSubmit,
+} from 'commandkit';
 
 const handleSelect: OnRoleSelectMenuKitSubmit = async (
   interaction,
@@ -88,7 +99,10 @@ const select = <RoleSelectMenu onSelect={handleSelect} />;
 Allows users to select a user from the server.
 
 ```tsx
-import { UserSelectMenu, OnUserSelectMenuKitSubmit } from 'commandkit';
+import {
+  UserSelectMenu,
+  OnUserSelectMenuKitSubmit,
+} from 'commandkit';
 
 const handleSelect: OnUserSelectMenuKitSubmit = async (
   interaction,
@@ -129,7 +143,8 @@ const select = <MentionableSelectMenu onSelect={handleSelect} />;
 - All select menus must be placed inside an ActionRow
 - You can have only one select menu per row
 - String select menus can have up to 25 options
-- Other select menus (channel, role, user, mentionable) don't need options as they are populated automatically
+- Other select menus (channel, role, user, mentionable) don't need
+  options as they are populated automatically
 - Select menus can be disabled using the `disabled` prop
 - Custom IDs are automatically generated if not provided
 - For string select menus, each option must have a unique value

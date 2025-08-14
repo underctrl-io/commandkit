@@ -1,11 +1,16 @@
 ---
 title: cleanup Function
-description: Learn how to use the cleanup function to manage stale cache entries and optimize memory usage.
+description:
+  Learn how to use the cleanup function to manage stale cache entries
+  and optimize memory usage.
 ---
 
 # cleanup Function
 
-The `cleanup` function allows you to manually remove stale cache entries that haven't been accessed for a specified period. This is useful for managing memory usage and ensuring your cache doesn't grow indefinitely.
+The `cleanup` function allows you to manually remove stale cache
+entries that haven't been accessed for a specified period. This is
+useful for managing memory usage and ensuring your cache doesn't grow
+indefinitely.
 
 ## Basic Usage
 
@@ -21,7 +26,8 @@ await cleanup(24 * 60 * 60 * 1000);
 When you call `cleanup`:
 
 1. It scans all cache entries
-2. Identifies entries that haven't been accessed within the specified time period
+2. Identifies entries that haven't been accessed within the specified
+   time period
 3. Removes those entries from the cache
 4. Frees up memory for new cache entries
 

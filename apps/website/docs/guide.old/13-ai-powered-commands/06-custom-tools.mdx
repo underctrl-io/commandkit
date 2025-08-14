@@ -1,16 +1,27 @@
 ---
 title: Custom AI Tools
-description: Learn how to create custom tools for AI models to extend functionality.
+description:
+  Learn how to create custom tools for AI models to extend
+  functionality.
 ---
 
 # Custom AI Tools
 
-CommandKit allows you to create custom tools that AI models can use to extend their capabilities beyond built-in Discord functions. You can define tools in two ways,
+CommandKit allows you to create custom tools that AI models can use to
+extend their capabilities beyond built-in Discord functions. You can
+define tools in two ways,
 
-- one with the `createTool` function, which is a simple way to create tools that can be used by AI models. This is a wrapper around the `tool` function of `ai-sdk` which enables the tool to receive context (`AiContext` which contains client and message objects) and parameters.
-- another with the `tool` function directly, which does not provide context argument. You may use the `useAIContext` hook to access the context in the tool function if needed.
+- one with the `createTool` function, which is a simple way to create
+  tools that can be used by AI models. This is a wrapper around the
+  `tool` function of `ai-sdk` which enables the tool to receive
+  context (`AiContext` which contains client and message objects) and
+  parameters.
+- another with the `tool` function directly, which does not provide
+  context argument. You may use the `useAIContext` hook to access the
+  context in the tool function if needed.
 
-This guide will walk you through creating custom tools, validating parameters, and integrating with external APIs.
+This guide will walk you through creating custom tools, validating
+parameters, and integrating with external APIs.
 
 ## Creating Basic Tools
 
@@ -53,7 +64,8 @@ export const calculator = createTool({
 });
 ```
 
-See the [Tool Registration](#tool-registration) section to learn how to register this tool with your AI model.
+See the [Tool Registration](#tool-registration) section to learn how
+to register this tool with your AI model.
 
 ## Parameter Validation
 
@@ -215,7 +227,10 @@ export const searchGitHubRepos = createTool({
   description: 'Search for GitHub repositories',
   parameters: z.object({
     query: z.string().describe('Search query for repositories'),
-    language: z.string().optional().describe('Filter by programming language'),
+    language: z
+      .string()
+      .optional()
+      .describe('Filter by programming language'),
     sort: z.enum(['stars', 'forks', 'updated']).default('stars'),
     limit: z.number().min(1).max(20).default(5),
   }),
@@ -223,7 +238,9 @@ export const searchGitHubRepos = createTool({
     const { query, language, sort, limit } = params;
 
     try {
-      const searchQuery = language ? `${query} language:${language}` : query;
+      const searchQuery = language
+        ? `${query} language:${language}`
+        : query;
 
       const response = await fetch(
         `https://api.github.com/search/repositories?q=${encodeURIComponent(searchQuery)}&sort=${sort}&per_page=${limit}`,
@@ -297,9 +314,13 @@ export const listFiles = createTool({
         throw new Error('Invalid directory path');
       }
 
-      const entries = await fs.readdir(safePath, { withFileTypes: true });
+      const entries = await fs.readdir(safePath, {
+        withFileTypes: true,
+      });
       const files = entries
-        .filter((entry) => includeHidden || !entry.name.startsWith('.'))
+        .filter(
+          (entry) => includeHidden || !entry.name.startsWith('.'),
+        )
         .map((entry) => ({
           name: entry.name,
           type: entry.isDirectory() ? 'directory' : 'file',
@@ -369,7 +390,9 @@ export const moderateContent = createTool({
     }
 
     return {
-      content: content.substring(0, 100) + (content.length > 100 ? '...' : ''),
+      content:
+        content.substring(0, 100) +
+        (content.length > 100 ? '...' : ''),
       violations,
       isClean: violations.length === 0,
       severity:
@@ -401,7 +424,8 @@ export const timeoutUser = createTool({
     // Permission check
     if (!ctx.message.member?.permissions.has('ModerateMembers')) {
       return {
-        error: 'You need Moderate Members permission to use this command',
+        error:
+          'You need Moderate Members permission to use this command',
       };
     }
 
@@ -414,7 +438,10 @@ export const timeoutUser = createTool({
         };
       }
 
-      await member.timeout(duration * 1000, reason || 'No reason provided');
+      await member.timeout(
+        duration * 1000,
+        reason || 'No reason provided',
+      );
 
       return {
         success: true,
@@ -541,7 +568,8 @@ export const shortenUrl = createTool({
 
 ## Tool Registration
 
-Register your custom tools by adding them to the AI model configuration:
+Register your custom tools by adding them to the AI model
+configuration:
 
 ```ts title="src/ai.ts"
 import { configureAI } from '@commandkit/ai';
@@ -565,11 +593,15 @@ configureAI({
 
 ## Best Practices
 
-1. **Security**: Always validate user permissions for sensitive operations
-2. **Error Handling**: Return structured error information instead of throwing
+1. **Security**: Always validate user permissions for sensitive
+   operations
+2. **Error Handling**: Return structured error information instead of
+   throwing
 3. **Rate Limiting**: Implement rate limiting for API calls
-4. **Validation**: Use Zod schemas for comprehensive parameter validation
-5. **Documentation**: Provide clear descriptions for tools and parameters
+4. **Validation**: Use Zod schemas for comprehensive parameter
+   validation
+5. **Documentation**: Provide clear descriptions for tools and
+   parameters
 6. **Testing**: Test tools independently before integration
 
 ```ts

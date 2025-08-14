@@ -5,15 +5,19 @@ description: Use JSX to declare Discord message components
 
 # Using JSX
 
-CommandKit provides first-class JSX support for both TypeScript and JavaScript projects. This allows you to write Discord message components using a familiar and intuitive syntax.
+CommandKit provides first-class JSX support for both TypeScript and
+JavaScript projects. This allows you to write Discord message
+components using a familiar and intuitive syntax.
 
 ## Why Use JSX Instead of Builders?
 
-Using JSX for Discord message components offers several advantages over traditional builder patterns:
+Using JSX for Discord message components offers several advantages
+over traditional builder patterns:
 
 ### Cleaner and More Readable
 
-JSX makes your code significantly more readable by providing a declarative structure that resembles the final output:
+JSX makes your code significantly more readable by providing a
+declarative structure that resembles the final output:
 
 ```tsx
 // JSX approach - clean and intuitive
@@ -73,7 +77,8 @@ const response = await interaction.reply({
   withResponse: true,
 });
 
-const confirmation = await response.resource.message.awaitMessageComponent();
+const confirmation =
+  await response.resource.message.awaitMessageComponent();
 
 if (confirmation.customId === 'confirm') {
   await confirmation.reply({
@@ -90,7 +95,8 @@ if (confirmation.customId === 'confirm') {
 
 ### Less Boilerplate
 
-JSX reduces the amount of code you need to write. No more chaining multiple method calls or creating separate builder instances:
+JSX reduces the amount of code you need to write. No more chaining
+multiple method calls or creating separate builder instances:
 
 - No repetitive `.addComponents()` calls
 - No need to explicitly create builder instances
@@ -104,7 +110,9 @@ JSX reduces the amount of code you need to write. No more chaining multiple meth
 
 ### Familiar Syntax
 
-If you've worked with React or other modern frameworks, JSX will feel immediately familiar, reducing the learning curve for building Discord interfaces.
+If you've worked with React or other modern frameworks, JSX will feel
+immediately familiar, reducing the learning curve for building Discord
+interfaces.
 
 ### Maintainability
 
@@ -116,7 +124,9 @@ JSX makes your code more maintainable:
 
 ## Setup
 
-CommandKit automatically configures JSX support in your project. If you are doing a manual setup, ensure you have the following in your `tsconfig.json` or `jsconfig.json`:
+CommandKit automatically configures JSX support in your project. If
+you are doing a manual setup, ensure you have the following in your
+`tsconfig.json` or `jsconfig.json`:
 
 ```json
 {
@@ -167,12 +177,17 @@ const message = (
 
 ## TypeScript Support
 
-CommandKit provides full TypeScript support for JSX components. All components are properly typed, providing autocomplete and type checking:
+CommandKit provides full TypeScript support for JSX components. All
+components are properly typed, providing autocomplete and type
+checking:
 
 ```tsx
 import { Button, OnButtonKitClick } from 'commandkit';
 
-const handleClick: OnButtonKitClick = async (interaction, context) => {
+const handleClick: OnButtonKitClick = async (
+  interaction,
+  context,
+) => {
   await interaction.reply('Button clicked!');
   context.dispose();
 };
@@ -182,7 +197,9 @@ const button = <Button onClick={handleClick}>Click me!</Button>;
 
 ## Custom Components
 
-You can create your own JSX components by defining functions that return Discord.js objects. These components can be used anywhere in your code:
+You can create your own JSX components by defining functions that
+return Discord.js objects. These components can be used anywhere in
+your code:
 
 ```tsx
 import { Client, ClientOptions } from 'discord.js';
@@ -196,7 +213,8 @@ const client = <Bot options={{ intents: ['Guilds'] }} />;
 
 ## JSX Fragments
 
-CommandKit fully supports JSX fragments for grouping multiple elements without adding extra nodes:
+CommandKit fully supports JSX fragments for grouping multiple elements
+without adding extra nodes:
 
 ```tsx
 const elements = (
@@ -216,7 +234,8 @@ The CommandKit compiler automatically configures:
 - Component type definitions
 - Build pipeline optimizations
 
-No additional configuration is needed to use JSX in your CommandKit project.
+No additional configuration is needed to use JSX in your CommandKit
+project.
 
 ## Best Practices
 
@@ -256,7 +275,9 @@ function CustomEmbed({
   title: string;
   description: string;
 }) {
-  return new EmbedBuilder().setTitle(title).setDescription(description);
+  return new EmbedBuilder()
+    .setTitle(title)
+    .setDescription(description);
 }
 
 const embed = <CustomEmbed title="Hello" description="World" />;

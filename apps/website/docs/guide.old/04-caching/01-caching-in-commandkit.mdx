@@ -1,11 +1,15 @@
 ---
 title: Caching in CommandKit
-description: Learn how to use caching to improve your bot's performance and reduce API calls.
+description:
+  Learn how to use caching to improve your bot's performance and
+  reduce API calls.
 ---
 
 # Caching in CommandKit
 
-CommandKit provides a powerful caching system that helps you optimize your bot's performance by storing frequently accessed data in memory. This guide will show you how to use caching effectively in your bot.
+CommandKit provides a powerful caching system that helps you optimize
+your bot's performance by storing frequently accessed data in memory.
+This guide will show you how to use caching effectively in your bot.
 
 ## Installation
 
@@ -29,7 +33,8 @@ export default defineConfig({
 
 ### Optional: Custom Cache Provider
 
-You can set up a custom cache provider (like Redis) for distributed caching:
+You can set up a custom cache provider (like Redis) for distributed
+caching:
 
 ```ts
 import { setCacheProvider } from '@commandkit/cache';
@@ -65,13 +70,16 @@ async function fetchUserData(userId: string) {
 }
 ```
 
-When you call this function multiple times with the same `userId`, it will only perform the database query once and return the cached result for subsequent calls.
+When you call this function multiple times with the same `userId`, it
+will only perform the database query once and return the cached result
+for subsequent calls.
 
 ## How Caching Works
 
 CommandKit's caching system works by:
 
-1. **Generating a Cache Key**: Each cached function call generates a unique key based on:
+1. **Generating a Cache Key**: Each cached function call generates a
+   unique key based on:
 
    - The function's identity
    - The arguments passed to the function
@@ -79,8 +87,10 @@ CommandKit's caching system works by:
 
 2. **Storing Results**: When a function is called:
 
-   - If the result isn't cached, the function executes and stores its result
-   - If the result is cached, it's returned immediately without executing the function
+   - If the result isn't cached, the function executes and stores its
+     result
+   - If the result is cached, it's returned immediately without
+     executing the function
 
 3. **Automatic Cleanup**: The cache system automatically:
    - Removes stale entries
@@ -89,7 +99,8 @@ CommandKit's caching system works by:
 
 ## Cache Configuration
 
-You can configure caching behavior using the `cacheTag` and `cacheLife` functions:
+You can configure caching behavior using the `cacheTag` and
+`cacheLife` functions:
 
 ```ts
 async function fetchUserData(userId: string) {
@@ -181,7 +192,8 @@ async function calculateUserStats(userId: string) {
 
 ### Custom Cache Provider
 
-You can create a custom cache provider by extending the `CacheProvider` class:
+You can create a custom cache provider by extending the
+`CacheProvider` class:
 
 ```ts
 import { CacheProvider } from '@commandkit/cache';
@@ -217,6 +229,9 @@ await cleanup(24 * 60 * 60 * 1000);
 
 ## Next Steps
 
-- Learn about [cacheTag](./02-cacheTag-function.mdx) for tag-based cache management
-- Discover [cacheLife](./03-cacheLife-function.mdx) for controlling cache duration
-- Master [revalidateTag](./05-revalidateTag-function.mdx) for cache invalidation
+- Learn about [cacheTag](./02-cacheTag-function.mdx) for tag-based
+  cache management
+- Discover [cacheLife](./03-cacheLife-function.mdx) for controlling
+  cache duration
+- Master [revalidateTag](./05-revalidateTag-function.mdx) for cache
+  invalidation

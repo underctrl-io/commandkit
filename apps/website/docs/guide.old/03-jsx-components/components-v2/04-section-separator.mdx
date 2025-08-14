@@ -3,7 +3,8 @@ title: Section and Separator
 description: Organize your content with Sections and Separators
 ---
 
-The `Section` and `Separator` components help you organize and structure your message content in a clear and visually appealing way.
+The `Section` and `Separator` components help you organize and
+structure your message content in a clear and visually appealing way.
 
 ## Section Component
 
@@ -38,7 +39,8 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 ## Separator Component
 
-The `Separator` component creates visual spacing between sections. It supports different spacing sizes and can include a divider line.
+The `Separator` component creates visual spacing between sections. It
+supports different spacing sizes and can include a divider line.
 
 ```tsx title="src/app/commands/separator-example.tsx"
 import {
@@ -48,7 +50,11 @@ import {
   Separator,
   TextDisplay,
 } from 'commandkit';
-import { Colors, MessageFlags, SeparatorSpacingSize } from 'discord.js';
+import {
+  Colors,
+  MessageFlags,
+  SeparatorSpacingSize,
+} from 'discord.js';
 
 export const chatInput: ChatInputCommand = async (ctx) => {
   const container = (
@@ -80,7 +86,8 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 ## Combining Sections and Separators
 
-Here's an example of how to combine both components for a well-structured message:
+Here's an example of how to combine both components for a
+well-structured message:
 
 ```tsx title="src/app/commands/combined-example.tsx"
 import {
@@ -147,5 +154,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 1. **Organization**: Use sections to group related content
 2. **Visual Hierarchy**: Use separators to create clear visual breaks
-3. **Consistency**: Maintain consistent spacing throughout your message
-4. **Readability**: Don't overuse separators - use them to enhance readability
+3. **Consistency**: Maintain consistent spacing throughout your
+   message
+4. **Readability**: Don't overuse separators - use them to enhance
+   readability

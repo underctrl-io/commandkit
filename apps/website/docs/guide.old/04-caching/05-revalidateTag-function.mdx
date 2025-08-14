@@ -1,11 +1,15 @@
 ---
 title: revalidateTag Function
-description: Learn how to use revalidateTag to invalidate cache entries by their tags.
+description:
+  Learn how to use revalidateTag to invalidate cache entries by their
+  tags.
 ---
 
 # revalidateTag Function
 
-The `revalidateTag` function allows you to invalidate cache entries that are tagged with a specific tag. This is useful for refreshing data when it changes or when you need to force a cache update.
+The `revalidateTag` function allows you to invalidate cache entries
+that are tagged with a specific tag. This is useful for refreshing
+data when it changes or when you need to force a cache update.
 
 ## Basic Usage
 
@@ -41,7 +45,10 @@ async function updateUserProfile(userId: string, data: UserData) {
 ### Bulk Updates
 
 ```ts
-async function updateGuildSettings(guildId: string, settings: GuildSettings) {
+async function updateGuildSettings(
+  guildId: string,
+  settings: GuildSettings,
+) {
   // Update multiple settings
   await db.guilds.update(guildId, settings);
 

@@ -1,13 +1,18 @@
 ---
 title: Custom command prefixes
-description: Learn how to implement and manage custom prefixes for message commands in your Discord bot
+description:
+  Learn how to implement and manage custom prefixes for message
+  commands in your Discord bot
 ---
 
-Message commands in Discord bots traditionally use prefixes to distinguish commands from regular messages. CommandKit allows you to customize these prefixes to suit your bot's needs.
+Message commands in Discord bots traditionally use prefixes to
+distinguish commands from regular messages. CommandKit allows you to
+customize these prefixes to suit your bot's needs.
 
 ## Basic Usage
 
-The simplest way to set a custom prefix is using the `setPrefixResolver` method:
+The simplest way to set a custom prefix is using the
+`setPrefixResolver` method:
 
 ```ts title="src/app.ts"
 import { commandkit } from 'commandkit';
@@ -17,10 +22,11 @@ commandkit.setPrefixResolver(async (message) => {
 });
 ```
 
-This sets a global prefix of `?` for all message commands. Your bot will now respond to commands like `?help` or `?ping`.
+This sets a global prefix of `?` for all message commands. Your bot
+will now respond to commands like `?help` or `?ping`.
 
-:::tip
-You can return an array of strings to support multiple prefixes simultaneously:
+:::tip You can return an array of strings to support multiple prefixes
+simultaneously:
 
 ```ts
 return ['?', '!', '>'];
@@ -32,7 +38,8 @@ return ['?', '!', '>'];
 
 ### Guild-Specific Prefixes
 
-For more complex applications, you might want different prefixes for different servers. Here's how to implement that:
+For more complex applications, you might want different prefixes for
+different servers. Here's how to implement that:
 
 ```ts title="src/app.ts"
 import { onApplicationBootstrap, cacheTag } from 'commandkit';
@@ -59,16 +66,20 @@ onApplicationBootstrap((commandkit) => {
 });
 ```
 
-:::info
-The `"use cache"` directive is a custom directive that tells CommandKit to cache the result of the function automatically. See the [Caching in CommandKit](../04-caching/01-caching-in-commandkit.mdx) guide for more details.
-:::
+:::info The `"use cache"` directive is a custom directive that tells
+CommandKit to cache the result of the function automatically. See the
+[Caching in CommandKit](../04-caching/01-caching-in-commandkit.mdx)
+guide for more details. :::
 
 ### Best Practices
 
-1. **Caching**: Use CommandKit's built-in caching system to reduce database queries
+1. **Caching**: Use CommandKit's built-in caching system to reduce
+   database queries
 2. **Fallback**: Always provide a default prefix as fallback
-3. **Validation**: Consider adding prefix validation to prevent conflicts
-4. **Performance**: Cache frequently used prefixes to improve response time
+3. **Validation**: Consider adding prefix validation to prevent
+   conflicts
+4. **Performance**: Cache frequently used prefixes to improve response
+   time
 
 ### Example with Validation
 
@@ -105,10 +116,10 @@ commandkit.setPrefixResolver((message) => {
 });
 ```
 
-:::note
-The prefix resolver is called for every message, so ensure your implementation is efficient and properly cached when possible.
+:::note The prefix resolver is called for every message, so ensure
+your implementation is efficient and properly cached when possible.
 :::
 
-:::warning
-Avoid using prefixes that might conflict with other bots or common Discord features. For example, `/` is reserved for slash commands.
-:::
+:::warning Avoid using prefixes that might conflict with other bots or
+common Discord features. For example, `/` is reserved for slash
+commands. :::

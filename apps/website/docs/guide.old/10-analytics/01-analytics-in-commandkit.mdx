@@ -1,19 +1,26 @@
 ---
 title: Analytics in CommandKit
-description: Learn how to use the analytics plugin in CommandKit to track events and metrics.
+description:
+  Learn how to use the analytics plugin in CommandKit to track events
+  and metrics.
 ---
 
 # Analytics in CommandKit
 
-The analytics plugin for CommandKit enables analytics in your project. It provides a simple and efficient way to track events and metrics. CommandKit itself does not store any analytics data - it acts as a bridge between your application and your chosen analytics provider.
+The analytics plugin for CommandKit enables analytics in your project.
+It provides a simple and efficient way to track events and metrics.
+CommandKit itself does not store any analytics data - it acts as a
+bridge between your application and your chosen analytics provider.
 
 ## How it Works
 
-CommandKit's analytics system is designed to be provider-agnostic. This means:
+CommandKit's analytics system is designed to be provider-agnostic.
+This means:
 
 1. CommandKit doesn't store any analytics data itself
 2. All data is sent directly to your configured analytics provider
-3. You can easily switch between different providers or use multiple providers
+3. You can easily switch between different providers or use multiple
+   providers
 4. The system is extensible, allowing you to create custom providers
 
 ## Automatic Tracking
@@ -83,18 +90,23 @@ analytics.setFilter((engine, event) => {
 
 ## Available Providers
 
-CommandKit comes with built-in support for popular analytics providers:
+CommandKit comes with built-in support for popular analytics
+providers:
 
 - [PostHog](./02-posthog.mdx)
 - [Umami](./03-umami.mdx)
 
 ## Creating Custom Providers
 
-You can create your own analytics provider by implementing the `AnalyticsProvider` interface. See our [Custom Providers](./04-custom-providers.mdx) guide for detailed instructions.
+You can create your own analytics provider by implementing the
+`AnalyticsProvider` interface. See our
+[Custom Providers](./04-custom-providers.mdx) guide for detailed
+instructions.
 
 ## Disabling Analytics
 
-You can disable analytics for specific requests (i.e. command or event scoped) using the `noAnalytics` function:
+You can disable analytics for specific requests (i.e. command or event
+scoped) using the `noAnalytics` function:
 
 ```ts
 import { noAnalytics } from 'commandkit/analytics';

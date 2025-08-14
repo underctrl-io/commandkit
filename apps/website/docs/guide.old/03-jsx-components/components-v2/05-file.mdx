@@ -1,9 +1,12 @@
 ---
 title: File
-description: Display file attachments in your messages using the File component
+description:
+  Display file attachments in your messages using the File component
 ---
 
-The `File` component allows you to display file attachments in your Discord messages. This is useful for sharing text files, markdown files, or other file types.
+The `File` component allows you to display file attachments in your
+Discord messages. This is useful for sharing text files, markdown
+files, or other file types.
 
 ## Basic Usage
 
@@ -91,13 +94,15 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 2. **File Types**: Ensure the file type matches the content
 3. **File Size**: Keep files small to avoid Discord's size limits
 4. **Organization**: Group related files together
-5. **Context**: Provide context about the files using TextDisplay components
+5. **Context**: Provide context about the files using TextDisplay
+   components
 
 ## Available Props
 
 ### File
 
-- `url`: The URL of the file attachment (must start with "attachment://")
+- `url`: The URL of the file attachment (must start with
+  "attachment://")
 
 ## Common Use Cases
 

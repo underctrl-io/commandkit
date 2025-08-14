@@ -1,15 +1,19 @@
 ---
 title: Events Localization
-description: Learn how to localize events using the i18n plugin in CommandKit.
+description:
+  Learn how to localize events using the i18n plugin in CommandKit.
 ---
 
 # Events Localization
 
-Event handlers in CommandKit can also benefit from localization, allowing you to create multilingual responses and messages for various Discord events like message creation, member joins, and more.
+Event handlers in CommandKit can also benefit from localization,
+allowing you to create multilingual responses and messages for various
+Discord events like message creation, member joins, and more.
 
 ## Using Translations in Event Handlers
 
-Since event handlers don't have the same context as commands, you need to import the `locale` function directly from the i18n plugin:
+Since event handlers don't have the same context as commands, you need
+to import the `locale` function directly from the i18n plugin:
 
 ```ts title="src/app/events/messageCreate/handler.ts"
 import { locale } from '@commandkit/i18n';
@@ -23,7 +27,9 @@ export default async function onMessageCreate(message: Message) {
   const { t } = locale(message.guild?.preferredLocale);
 
   if (message.content.toLowerCase() === 'hello') {
-    await message.reply(t('greeting', { user: message.author.displayName }));
+    await message.reply(
+      t('greeting', { user: message.author.displayName }),
+    );
   }
 
   if (message.content.toLowerCase() === 'help') {
@@ -128,7 +134,8 @@ export default async function onGuildMemberAdd(member: GuildMember) {
 
 ### Locale Detection Strategies
 
-When working with events, you have several options for determining the appropriate locale:
+When working with events, you have several options for determining the
+appropriate locale:
 
 #### 1. Guild Preferred Locale (Recommended)
 
@@ -228,8 +235,13 @@ export default async function autoModerator(message: Message) {
 
 ## Best Practices for Event Localization
 
-1. **Always provide fallbacks**: Event handlers should gracefully handle missing translations
-2. **Use appropriate locale sources**: Choose between guild, user, or custom locale detection based on context
-3. **Keep translations consistent**: Use the same tone and style across events and commands
-4. **Test with different locales**: Ensure your events work correctly with various language settings
-5. **Cache translations when possible**: For high-frequency events, consider caching translation functions
+1. **Always provide fallbacks**: Event handlers should gracefully
+   handle missing translations
+2. **Use appropriate locale sources**: Choose between guild, user, or
+   custom locale detection based on context
+3. **Keep translations consistent**: Use the same tone and style
+   across events and commands
+4. **Test with different locales**: Ensure your events work correctly
+   with various language settings
+5. **Cache translations when possible**: For high-frequency events,
+   consider caching translation functions

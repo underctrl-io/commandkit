@@ -1,13 +1,19 @@
 ---
 title: Creating AI Commands
-description: Learn how to create commands that can be executed by AI models.
+description:
+  Learn how to create commands that can be executed by AI models.
 ---
 
 ## Creating AI commands
 
-AI commands can be created by exporting a function called `ai` from your regular command file. You can also export `aiConfig` object along with the `ai` function to specify the parameters for the command.
+AI commands can be created by exporting a function called `ai` from
+your regular command file. You can also export `aiConfig` object along
+with the `ai` function to specify the parameters for the command.
 
-The `ai` function behaves similar to a `message` command, but it receives an additional `ctx.ai` property (which is an instance of [`AiContext`](../../api-reference/ai/classes/ai-context.mdx)) that contains the parameters passed by the AI model.
+The `ai` function behaves similar to a `message` command, but it
+receives an additional `ctx.ai` property (which is an instance of
+[`AiContext`](../../api-reference/ai/classes/ai-context.mdx)) that
+contains the parameters passed by the AI model.
 
 ```typescript title="src/app/commands/balance.ts"
 import { ApplicationCommandOptionType } from 'discord.js';
@@ -29,7 +35,9 @@ export const command: CommandData = {
 
 export const aiConfig: AiConfig = {
   parameters: z.object({
-    userId: z.string().describe('The ID of the user to get the balance of'),
+    userId: z
+      .string()
+      .describe('The ID of the user to get the balance of'),
   }),
 };
 
@@ -56,7 +64,8 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 };
 ```
 
-Now, you can simply mention the bot in a message to get the balance of the user. Eg:
+Now, you can simply mention the bot in a message to get the balance of
+the user. Eg:
 
 ```text
 @bot what is the balance of @user?
@@ -68,10 +77,12 @@ AI can also call multiple commands in a single message. Eg:
 @bot show me the basic details of the user @user and also include the balance of that user.
 ```
 
-The above prompt will call the built-in `getUserInfo` tool and the `balance` command.
+The above prompt will call the built-in `getUserInfo` tool and the
+`balance` command.
 
 ## Example of AI creating a poll
 
-This is an example of how AI can create a poll using the `createPoll` command. The AI will generate a poll based on the user's input.
+This is an example of how AI can create a poll using the `createPoll`
+command. The AI will generate a poll based on the user's input.
 
 ![ai poll example](/img/ai-poll-example.png)

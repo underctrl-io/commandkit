@@ -1,24 +1,29 @@
 ---
 title: Migrating from CommandKit v0
-description: Learn how to migrate your CommandKit version from v0 to v1
+description:
+  Learn how to migrate your CommandKit version from v0 to v1
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This comprehensive guide will walk you through migrating your Discord bot from CommandKit v0 to v1. CommandKit v1 introduces significant architectural improvements, including a framework-based approach with enhanced developer experience features.
+This comprehensive guide will walk you through migrating your Discord
+bot from CommandKit v0 to v1. CommandKit v1 introduces significant
+architectural improvements, including a framework-based approach with
+enhanced developer experience features.
 
-:::info
-This guide uses TypeScript examples, but all concepts apply to JavaScript projects as well. Simply use the corresponding JavaScript file extensions (e.g., `app.js`, `commandkit.config.js`).
-:::
+:::info This guide uses TypeScript examples, but all concepts apply to
+JavaScript projects as well. Simply use the corresponding JavaScript
+file extensions (e.g., `app.js`, `commandkit.config.js`). :::
 
-:::warning
-**Minimum Requirements**: CommandKit v1 requires Node.js version 22 or higher. Please ensure your environment meets this requirement before proceeding.
-:::
+:::warning **Minimum Requirements**: CommandKit v1 requires Node.js
+version 22 or higher. Please ensure your environment meets this
+requirement before proceeding. :::
 
-:::warning
-**Migration Focus**: This guide specifically covers converting existing v0 code to v1. For information about new v1 features and capabilities, please refer to the rest of the documentation after completing your migration.
-:::
+:::warning **Migration Focus**: This guide specifically covers
+converting existing v0 code to v1. For information about new v1
+features and capabilities, please refer to the rest of the
+documentation after completing your migration. :::
 
 ## Updating CommandKit
 
@@ -28,11 +33,15 @@ Begin your migration by updating to the latest version of CommandKit:
 npm install commandkit@dev
 ```
 
-This command will install CommandKit v1 and update your `package.json` with the latest version.
+This command will install CommandKit v1 and update your `package.json`
+with the latest version.
 
 ## Project Structure Migration
 
-CommandKit v1 adopts a framework-based approach with a structured `app` directory that serves as the primary location for your bot's functionality. This new structure provides better organization and enables advanced features like automatic route discovery.
+CommandKit v1 adopts a framework-based approach with a structured
+`app` directory that serves as the primary location for your bot's
+functionality. This new structure provides better organization and
+enables advanced features like automatic route discovery.
 
 <Tabs>
   <TabItem value="v1" label="v1 (New Structure) ✅" default>
@@ -74,7 +83,10 @@ CommandKit v1 adopts a framework-based approach with a structured `app` director
 
 ## Configuration File Updates
 
-CommandKit v1 significantly simplifies configuration by automatically detecting your project structure and entry points. The framework now supports a standardized set of configuration file names for consistency.
+CommandKit v1 significantly simplifies configuration by automatically
+detecting your project structure and entry points. The framework now
+supports a standardized set of configuration file names for
+consistency.
 
 **Supported Configuration Files:**
 
@@ -109,13 +121,16 @@ CommandKit v1 significantly simplifies configuration by automatically detecting 
   </TabItem>
 </Tabs>
 
-:::info
-The CommandKit CLI commands (`commandkit dev`, `commandkit build`, `commandkit start`) continue to work seamlessly with the new configuration system.
-:::
+:::info The CommandKit CLI commands (`commandkit dev`,
+`commandkit build`, `commandkit start`) continue to work seamlessly
+with the new configuration system. :::
 
 ## Entry Point Transformation
 
-CommandKit v1 introduces a dramatically simplified entry point system. Instead of manually managing the CommandKit instance, bot login, and path configurations, you now simply export a configured Discord.js client.
+CommandKit v1 introduces a dramatically simplified entry point system.
+Instead of manually managing the CommandKit instance, bot login, and
+path configurations, you now simply export a configured Discord.js
+client.
 
 <Tabs>
   <TabItem value="v1" label="v1 (Streamlined Entry) ✅" default>
@@ -168,7 +183,10 @@ CommandKit v1 introduces a dramatically simplified entry point system. Instead o
 
 ## Command File Structure
 
-CommandKit v1 modernizes the command API with more intuitive naming and cleaner type definitions. The new structure separates command metadata from execution logic more clearly, while introducing room for new APIs such as message (legacy) commands.
+CommandKit v1 modernizes the command API with more intuitive naming
+and cleaner type definitions. The new structure separates command
+metadata from execution logic more clearly, while introducing room for
+new APIs such as message (legacy) commands.
 
 <Tabs>
   <TabItem value="v1" label="v1 (Modern API) ✅" default>
@@ -205,7 +223,10 @@ CommandKit v1 modernizes the command API with more intuitive naming and cleaner 
 
 ## Middleware System (Formerly Validations)
 
-CommandKit v1 renames and enhances the validation system to "middleware," which better reflects its purpose and capabilities. Middleware can now run in various contexts and provides more granular control over command execution.
+CommandKit v1 renames and enhances the validation system to
+"middleware," which better reflects its purpose and capabilities.
+Middleware can now run in various contexts and provides more granular
+control over command execution.
 
 <Tabs>
   <TabItem value="v1" label="v1 (Middleware System) ✅" default>
@@ -238,11 +259,16 @@ CommandKit v1 renames and enhances the validation system to "middleware," which 
   </TabItem>
 </Tabs>
 
-For comprehensive middleware documentation, including command-specific and conditional middleware, refer to the [middleware documentation](../07-file-system-conventions/02-+middleware.ts.mdx).
+For comprehensive middleware documentation, including command-specific
+and conditional middleware, refer to the
+[middleware documentation](../07-file-system-conventions/02-+middleware.ts.mdx).
 
 ## Development Environment
 
-CommandKit v1 introduces advanced development features that require using the CommandKit CLI. The development server provides Hot Module Replacement (HMR) for rapid iteration and supports modern features like JSX components.
+CommandKit v1 introduces advanced development features that require
+using the CommandKit CLI. The development server provides Hot Module
+Replacement (HMR) for rapid iteration and supports modern features
+like JSX components.
 
 ### Starting Development Server
 
@@ -250,8 +276,9 @@ CommandKit v1 introduces advanced development features that require using the Co
 npx commandkit dev
 ```
 
-:::warning
-**Generated Files**: The development server creates a `.commandkit` directory for temporary files. Add this to your `.gitignore` to prevent committing generated files:
+:::warning **Generated Files**: The development server creates a
+`.commandkit` directory for temporary files. Add this to your
+`.gitignore` to prevent committing generated files:
 
 ```gitignore
 .commandkit/
@@ -281,8 +308,9 @@ Option 2 - Direct Node.js execution:
 node dist/index.js
 ```
 
-:::warning
-**Generated Build Files**: The build process creates a `dist` directory. Add this to your `.gitignore` to prevent committing build artifacts:
+:::warning **Generated Build Files**: The build process creates a
+`dist` directory. Add this to your `.gitignore` to prevent committing
+build artifacts:
 
 ```gitignore
 dist/

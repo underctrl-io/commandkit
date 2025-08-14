@@ -1,16 +1,25 @@
 ---
 title: ButtonKit
-description: ButtonKit is an enhanced version of the native Discord.js ButtonBuilder, designed to simplify the process of creating and handling button interactions in your Discord bot.
+description:
+  ButtonKit is an enhanced version of the native Discord.js
+  ButtonBuilder, designed to simplify the process of creating and
+  handling button interactions in your Discord bot.
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-ButtonKit extends Discord.js's [`ButtonBuilder`](https://discord.js.org/docs/packages/builders/1.9.0/ButtonBuilder:Class) to provide a simpler way to handle button interactions. It adds methods like `onClick()` to handle button clicks without manually setting up collectors.
+ButtonKit extends Discord.js's
+[`ButtonBuilder`](https://discord.js.org/docs/packages/builders/1.9.0/ButtonBuilder:Class)
+to provide a simpler way to handle button interactions. It adds
+methods like `onClick()` to handle button clicks without manually
+setting up collectors.
 
-:::info
-CommandKit provides JSX version of ButtonKit as an alternative syntax to the standard Discord.js builders. This is not required, but can be useful for those who prefer a more declarative style. See [`<Button/>`](../03-jsx-components/components-v1/02-button.mdx) for more details.
-:::
+:::info CommandKit provides JSX version of ButtonKit as an alternative
+syntax to the standard Discord.js builders. This is not required, but
+can be useful for those who prefer a more declarative style. See
+[`<Button/>`](../03-jsx-components/components-v1/02-button.mdx) for
+more details. :::
 
 ## Basic Usage
 
@@ -72,9 +81,8 @@ CommandKit provides JSX version of ButtonKit as an alternative syntax to the sta
   </TabItem>
 </Tabs>
 
-:::warning Important
-Always set a `customId` when using ButtonKit. This is required to track button interactions.
-:::
+:::warning Important Always set a `customId` when using ButtonKit.
+This is required to track button interactions. :::
 
 ## Configuration Options
 
@@ -133,7 +141,8 @@ button
 
 ## Manually Stopping the Collector
 
-Use `dispose()` to manually stop the collector. This will trigger the `onEnd` handler if one exists.
+Use `dispose()` to manually stop the collector. This will trigger the
+`onEnd` handler if one exists.
 
 ```js
 // Stop listening for clicks

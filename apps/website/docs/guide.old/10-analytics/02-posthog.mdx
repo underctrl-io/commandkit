@@ -1,11 +1,14 @@
 ---
 title: PostHog Analytics
-description: Learn how to set up and use PostHog analytics with CommandKit.
+description:
+  Learn how to set up and use PostHog analytics with CommandKit.
 ---
 
 # PostHog Analytics
 
-PostHog is an open-source product analytics platform that helps you understand user behavior. CommandKit provides a simple way to integrate PostHog into your Discord bot.
+PostHog is an open-source product analytics platform that helps you
+understand user behavior. CommandKit provides a simple way to
+integrate PostHog into your Discord bot.
 
 ## Setup
 
@@ -33,7 +36,8 @@ export default defineConfig({
 
 ## Usage
 
-Once configured, you can track anonymous events using the `track` function:
+Once configured, you can track anonymous events using the `track`
+function:
 
 ```ts
 import { track } from 'commandkit/analytics';
@@ -54,7 +58,8 @@ await track({
 
 ## Identifying Anonymous Sessions
 
-You can identify anonymous sessions in PostHog using the `identify` function:
+You can identify anonymous sessions in PostHog using the `identify`
+function:
 
 ```ts
 import { useAnalytics } from 'commandkit/analytics';
@@ -74,7 +79,8 @@ await analytics.identify({
 
 ## Automatic Events
 
-CommandKit automatically tracks the following anonymous events in PostHog:
+CommandKit automatically tracks the following anonymous events in
+PostHog:
 
 - `command_execution`: Command execution events
 - `cache_hit`: Cache hit events

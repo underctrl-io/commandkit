@@ -1,15 +1,19 @@
 ---
 title: AI Context and Hooks
-description: Learn about AI context, built-in tools, and custom hooks for AI commands.
+description:
+  Learn about AI context, built-in tools, and custom hooks for AI
+  commands.
 ---
 
 # AI Context and Hooks
 
-CommandKit's AI system provides powerful context management and built-in tools to enhance your AI-powered commands.
+CommandKit's AI system provides powerful context management and
+built-in tools to enhance your AI-powered commands.
 
 ## AI Context
 
-The `AiContext` class provides comprehensive access to the AI execution environment:
+The `AiContext` class provides comprehensive access to the AI
+execution environment:
 
 ### Context Properties
 
@@ -96,7 +100,8 @@ async function executeAICommand(message: Message) {
 
 ## Built-in AI Tools
 
-CommandKit provides several built-in tools that the AI can use to gather information:
+CommandKit provides several built-in tools that the AI can use to
+gather information:
 
 ### Available Tools
 
@@ -108,7 +113,9 @@ CommandKit provides several built-in tools that the AI can use to gather informa
 
 ### Example Tool Usage
 
-The AI can automatically use these tools. For example, if a user asks "What commands are available?", the AI will use the `getAvailableCommands` tool:
+The AI can automatically use these tools. For example, if a user asks
+"What commands are available?", the AI will use the
+`getAvailableCommands` tool:
 
 ```ts
 // This happens automatically when the AI needs command information
@@ -133,7 +140,9 @@ export const getWeather = createTool({
   name: 'getWeather',
   description: 'Get current weather information for a location',
   parameters: z.object({
-    location: z.string().describe('The city or location to get weather for'),
+    location: z
+      .string()
+      .describe('The city or location to get weather for'),
     units: z.enum(['celsius', 'fahrenheit']).default('celsius'),
   }),
   async execute(ctx, params) {
@@ -144,7 +153,8 @@ export const getWeather = createTool({
 
     return {
       location,
-      temperature: units === 'celsius' ? weatherData.tempC : weatherData.tempF,
+      temperature:
+        units === 'celsius' ? weatherData.tempC : weatherData.tempF,
       condition: weatherData.condition,
       humidity: weatherData.humidity,
       windSpeed: weatherData.windSpeed,
@@ -229,7 +239,9 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
     const { userId } = ctx.ai.params;
 
     // Attempt to fetch user
-    const user = await ctx.client.users.fetch(userId).catch(() => null);
+    const user = await ctx.client.users
+      .fetch(userId)
+      .catch(() => null);
 
     if (!user) {
       await ctx.message.reply('❌ User not found.');
@@ -254,7 +266,8 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
 ## Context Lifecycle
 
-Understanding the AI context lifecycle helps with proper resource management:
+Understanding the AI context lifecycle helps with proper resource
+management:
 
 ```ts
 export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
@@ -274,9 +287,12 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
 ## Best Practices
 
-1. **Resource Cleanup**: The context store is automatically cleared, but clean up external resources manually
-2. **Error Boundaries**: Always wrap potentially failing operations in try-catch blocks
-3. **Validation**: Validate AI-generated parameters even with Zod schemas
+1. **Resource Cleanup**: The context store is automatically cleared,
+   but clean up external resources manually
+2. **Error Boundaries**: Always wrap potentially failing operations in
+   try-catch blocks
+3. **Validation**: Validate AI-generated parameters even with Zod
+   schemas
 4. **Logging**: Use the context information for detailed logging
 5. **Performance**: Avoid storing large objects in the context store
 
@@ -297,10 +313,14 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
   // Good: Handle external API failures
   try {
     const result = await processPayment(amount);
-    await ctx.message.reply(`✅ Payment processed: ${result.transactionId}`);
+    await ctx.message.reply(
+      `✅ Payment processed: ${result.transactionId}`,
+    );
   } catch (error) {
     console.error('Payment failed:', error);
-    await ctx.message.reply('❌ Payment processing failed. Please try again.');
+    await ctx.message.reply(
+      '❌ Payment processing failed. Please try again.',
+    );
   }
 };
 ```

@@ -12,8 +12,9 @@
     "build": "turbo run --filter=\"./packages/*\" build",
     "publish-package": "pnpm publish-package",
     "build-docs": "pnpm run --filter=\"./apps/website\" build",
-    "docgen": "tsx ./scripts/docs/generate-typescript-docs.ts && pnpm format",
-    "format": "prettier --write ./ --ignore-path=.prettierignore"
+    "docgen": "tsx ./scripts/docs/generate-typescript-docs.ts && pnpm prettier:format",
+    "prettier:check": "prettier --check . --ignore-path=.prettierignore",
+    "prettier:format": "prettier --write . --ignore-path=.prettierignore"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

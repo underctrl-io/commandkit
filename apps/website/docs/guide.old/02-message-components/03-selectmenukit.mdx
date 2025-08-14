@@ -1,24 +1,34 @@
 ---
 title: SelectMenuKit
-description: SelectMenuKit is a set of enhanced versions of Discord.js select menu builders, designed to simplify the process of creating and handling select menu interactions in your Discord bot.
+description:
+  SelectMenuKit is a set of enhanced versions of Discord.js select
+  menu builders, designed to simplify the process of creating and
+  handling select menu interactions in your Discord bot.
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-SelectMenuKit consists of several enhanced versions of Discord.js select menu builders:
+SelectMenuKit consists of several enhanced versions of Discord.js
+select menu builders:
 
 - `StringSelectMenuKit` - For text-based selection
 - `UserSelectMenuKit` - For selecting Discord users
 - `RoleSelectMenuKit` - For selecting Discord roles
 - `ChannelSelectMenuKit` - For selecting Discord channels
-- `MentionableSelectMenuKit` - For selecting mentionable Discord entities
+- `MentionableSelectMenuKit` - For selecting mentionable Discord
+  entities
 
-Each extends its respective Discord.js counterpart while adding methods like `onSelect()` to handle selections without manually setting up collectors.
+Each extends its respective Discord.js counterpart while adding
+methods like `onSelect()` to handle selections without manually
+setting up collectors.
 
-:::info
-CommandKit provides JSX version of SelectMenuKit as an alternative syntax to the standard Discord.js builders. This is not required, but can be useful for those who prefer a more declarative style. See [`<SelectMenu/>`](../03-jsx-components/components-v1/03-select-menu.mdx) for more details.
-:::
+:::info CommandKit provides JSX version of SelectMenuKit as an
+alternative syntax to the standard Discord.js builders. This is not
+required, but can be useful for those who prefer a more declarative
+style. See
+[`<SelectMenu/>`](../03-jsx-components/components-v1/03-select-menu.mdx)
+for more details. :::
 
 ## Basic Usage
 
@@ -170,9 +180,8 @@ CommandKit provides JSX version of SelectMenuKit as an alternative syntax to the
   </TabItem>
 </Tabs>
 
-:::warning Important
-Always set a `customId` when using any SelectMenuKit. This is required to track select menu interactions.
-:::
+:::warning Important Always set a `customId` when using any
+SelectMenuKit. This is required to track select menu interactions. :::
 
 ## Other Select Menu Types
 
@@ -259,7 +268,9 @@ Example with options:
 ```js
 selectMenu.onSelect(
   (interaction) => {
-    interaction.reply(`You selected ${interaction.values.join(', ')}!`);
+    interaction.reply(
+      `You selected ${interaction.values.join(', ')}!`,
+    );
   },
   {
     time: 120000, // 2 minutes
@@ -277,7 +288,9 @@ Use `filter()` to only process selections that meet specific criteria:
 
 ```js
 selectMenu
-  .filter((interaction) => interaction.user.id === '123456789012345678')
+  .filter(
+    (interaction) => interaction.user.id === '123456789012345678',
+  )
   .onSelect((interaction) => {
     interaction.reply('Only a specific user can use this menu!');
   });
@@ -301,7 +314,8 @@ selectMenu
 
 ### Error Handling
 
-Use `onError()` to handle any errors that occur during the interaction:
+Use `onError()` to handle any errors that occur during the
+interaction:
 
 ```js
 selectMenu
@@ -315,7 +329,8 @@ selectMenu
 
 ### Manually Stopping the Collector
 
-Use `dispose()` to manually stop the collector. This will trigger the `onEnd` handler if one exists.
+Use `dispose()` to manually stop the collector. This will trigger the
+`onEnd` handler if one exists.
 
 ```js
 // Stop listening for selections

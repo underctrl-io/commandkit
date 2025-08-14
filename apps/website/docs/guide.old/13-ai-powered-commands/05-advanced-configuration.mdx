@@ -1,21 +1,26 @@
 ---
 title: Advanced AI Configuration
-description: Deep dive into advanced AI configuration options and customization.
+description:
+  Deep dive into advanced AI configuration options and customization.
 ---
 
 # Advanced AI Configuration
 
-CommandKit provides extensive configuration options to customize the AI behavior, from system prompts to error handling.
+CommandKit provides extensive configuration options to customize the
+AI behavior, from system prompts to error handling.
 
 ## Complete Configuration Options
 
-The `configureAI` function accepts a comprehensive configuration object:
+The `configureAI` function accepts a comprehensive configuration
+object:
 
 ```ts title="src/ai.ts"
 import { configureAI } from '@commandkit/ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 
-const google = createGoogleGenerativeAI({ apiKey: process.env.GOOGLE_API_KEY });
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_API_KEY,
+});
 
 configureAI({
   // Required: Select which AI model to use
@@ -145,18 +150,28 @@ messageFilter: async (commandkit, message) => {
 
   // Only process in specific channels
   const allowedChannels = ['ai-chat', 'bot-commands'];
-  if (message.inGuild() && !allowedChannels.includes(message.channel.name)) {
+  if (
+    message.inGuild() &&
+    !allowedChannels.includes(message.channel.name)
+  ) {
     return false;
   }
 
   // Check user permissions
-  if (message.inGuild() && !message.member?.permissions.has('SendMessages')) {
+  if (
+    message.inGuild() &&
+    !message.member?.permissions.has('SendMessages')
+  ) {
     return false;
   }
 
   // Check for mentions or specific keywords
-  const hasMention = message.mentions.users.has(message.client.user.id);
-  const hasKeyword = /\b(hey bot|help me|ai)\b/i.test(message.content);
+  const hasMention = message.mentions.users.has(
+    message.client.user.id,
+  );
+  const hasKeyword = /\b(hey bot|help me|ai)\b/i.test(
+    message.content,
+  );
 
   return hasMention || hasKeyword;
 };
@@ -171,7 +186,9 @@ messageFilter: async (commandkit, message) => {
   const member = message.member;
   const allowedRoles = ['Premium', 'Moderator', 'AI User'];
 
-  return member.roles.cache.some((role) => allowedRoles.includes(role.name));
+  return member.roles.cache.some((role) =>
+    allowedRoles.includes(role.name),
+  );
 };
 ```
 
@@ -198,7 +215,10 @@ prepareSystemPrompt: async (ctx, message) => {
 ${ctx.commandkit.commandHandler
   .getCommandsArray()
   .filter((cmd) => 'ai' in cmd.data)
-  .map((cmd) => `- ${cmd.data.command.name}: ${cmd.data.command.description}`)
+  .map(
+    (cmd) =>
+      `- ${cmd.data.command.name}: ${cmd.data.command.description}`,
+  )
   .join('\n')}
 
 Keep responses under 2000 characters and be helpful!`;
@@ -220,7 +240,9 @@ prepareSystemPrompt: async (ctx, message) => {
         ? 'Good afternoon'
         : 'Good evening';
 
-  const userHistory = await getUserInteractionHistory(message.author.id);
+  const userHistory = await getUserInteractionHistory(
+    message.author.id,
+  );
   const personalizedNote =
     userHistory.length > 0
       ? `You've helped this user ${userHistory.length} times before.`
@@ -290,7 +312,10 @@ preparePrompt: async (ctx, message) => {
 
   const conversation: AiMessage = recentMessages
     // Filter out non-text messages and other bots
-    .filter((msg) => msg.content && (!msg.author.bot || isMe(msg.author.id)))
+    .filter(
+      (msg) =>
+        msg.content && (!msg.author.bot || isMe(msg.author.id)),
+    )
     .reverse()
     .map((msg) => ({
       role: isMe(msg.author.id) ? 'assistant' : 'user',
@@ -362,7 +387,9 @@ onResult: async (ctx, message, result) => {
   console.log(`Tokens used: ${usage?.totalTokens || 'unknown'}`);
 
   if (!text?.trim()) {
-    await message.reply('I processed your request but have nothing to say.');
+    await message.reply(
+      'I processed your request but have nothing to say.',
+    );
     return;
   }
 
@@ -490,7 +517,9 @@ configureAI({
       console.error(error.stack);
     } else {
       // Generic error in production
-      await message.reply('An error occurred while processing your request.');
+      await message.reply(
+        'An error occurred while processing your request.',
+      );
       // Log to production monitoring
       logProductionError(error, ctx, message);
     }

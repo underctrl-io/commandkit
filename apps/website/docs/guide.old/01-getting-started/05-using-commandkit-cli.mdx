@@ -1,13 +1,20 @@
 ---
 title: Using CommandKit CLI
-description: Learn how to use CommandKit CLI to start, build, and manage your Discord bot application with comprehensive examples and best practices.
+description:
+  Learn how to use CommandKit CLI to start, build, and manage your
+  Discord bot application with comprehensive examples and best
+  practices.
 ---
 
-CommandKit CLI is a powerful tool that streamlines the development and deployment of your Discord bot application. It provides essential features like Hot Module Replacement (HMR), automatic crash recovery, and TypeScript support out of the box.
+CommandKit CLI is a powerful tool that streamlines the development and
+deployment of your Discord bot application. It provides essential
+features like Hot Module Replacement (HMR), automatic crash recovery,
+and TypeScript support out of the box.
 
 ## Getting Started
 
-To view all available CLI commands, run the following in your project directory:
+To view all available CLI commands, run the following in your project
+directory:
 
 ```sh
 npx commandkit --help
@@ -33,10 +40,13 @@ Commands:
 
 ### Development Mode (`commandkit dev`)
 
-The development mode is optimized for local development with features like:
+The development mode is optimized for local development with features
+like:
 
-- **Hot Module Replacement (HMR)**: Automatically reloads your bot when you make changes to commands or events
-- **TypeScript Support**: Built-in TypeScript compilation and type checking
+- **Hot Module Replacement (HMR)**: Automatically reloads your bot
+  when you make changes to commands or events
+- **TypeScript Support**: Built-in TypeScript compilation and type
+  checking
 - **Environment Variables**: Automatic loading of `.env` files
 - **Error Handling**: Detailed error messages and stack traces
 
@@ -113,11 +123,17 @@ npx commandkit create event ready
 
 Common issues and solutions:
 
-- **Build Errors**: Check TypeScript configuration and type definitions
-- **Environment Variables**: Ensure `.env` file exists and contains required variables
-- **Hot Reload Issues**: Verify file paths and module exports. Hot reload only works for commands, events and the paths supported by the active plugins. Changes made to other paths will trigger full reload.
+- **Build Errors**: Check TypeScript configuration and type
+  definitions
+- **Environment Variables**: Ensure `.env` file exists and contains
+  required variables
+- **Hot Reload Issues**: Verify file paths and module exports. Hot
+  reload only works for commands, events and the paths supported by
+  the active plugins. Changes made to other paths will trigger full
+  reload.
 
-For more detailed information about specific commands and options, use:
+For more detailed information about specific commands and options,
+use:
 
 ```sh
 npx commandkit help <command>

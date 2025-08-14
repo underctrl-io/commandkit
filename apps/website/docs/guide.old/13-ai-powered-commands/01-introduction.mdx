@@ -1,14 +1,17 @@
 ---
 title: AI System Overview
-description: Complete overview of CommandKit's AI system architecture and capabilities.
+description:
+  Complete overview of CommandKit's AI system architecture and
+  capabilities.
 ---
 
 # AI System Overview
 
-CommandKit's `@commandkit/ai` plugin allows you to execute your bot commands using large language models. This enables you to use your bot's features entirely through natural language.
+CommandKit's `@commandkit/ai` plugin allows you to execute your bot
+commands using large language models. This enables you to use your
+bot's features entirely through natural language.
 
-:::warning
-This is an experimental feature and is subject to change.
+:::warning This is an experimental feature and is subject to change.
 :::
 
 ## Installation
@@ -17,13 +20,16 @@ This is an experimental feature and is subject to change.
 npm install @commandkit/ai
 ```
 
-You also need to install the AI SDK for the model you want to use. For example, if you want to use Google Gemini, you can install the `@ai-sdk/google` package:
+You also need to install the AI SDK for the model you want to use. For
+example, if you want to use Google Gemini, you can install the
+`@ai-sdk/google` package:
 
 ```bash
 npm install @ai-sdk/google
 ```
 
-Refer to the [AI SDKs documentation](https://ai-sdk.dev) for more information on how to set up the AI SDK for your model.
+Refer to the [AI SDKs documentation](https://ai-sdk.dev) for more
+information on how to set up the AI SDK for your model.
 
 ## Usage
 
@@ -57,17 +63,22 @@ graph TD
 
 ### Core Components
 
-1. **AI Plugin** - Manages the AI system lifecycle and message processing
-2. **Configuration System** - Handles AI model selection and behavior customization
-3. **Context Management** - Provides request context and state management
+1. **AI Plugin** - Manages the AI system lifecycle and message
+   processing
+2. **Configuration System** - Handles AI model selection and behavior
+   customization
+3. **Context Management** - Provides request context and state
+   management
 4. **Tool System** - Enables AI to execute functions and commands
-5. **Command Integration** - Allows existing commands to be AI-accessible
+5. **Command Integration** - Allows existing commands to be
+   AI-accessible
 
 ## Key Features
 
 ### Natural Language Processing
 
-The AI system can understand natural language requests and map them to specific commands:
+The AI system can understand natural language requests and map them to
+specific commands:
 
 ```
 User: "Can you ban @user for spamming?"
@@ -229,12 +240,13 @@ const rateLimiter = new RateLimiter(5, 60000); // 5 requests per minute
 
 ```ts
 const cache = new Map();
-const cachedResult = cache.get(cacheKey) || (await expensiveOperation());
+const cachedResult =
+  cache.get(cacheKey) || (await expensiveOperation());
 ```
 
-:::info
-For a better cache management solution, check out the [@commandkit/cache](../04-caching/01-caching-in-commandkit.mdx) plugin guide.
-:::
+:::info For a better cache management solution, check out the
+[@commandkit/cache](../04-caching/01-caching-in-commandkit.mdx) plugin
+guide. :::
 
 ### Async Processing
 
@@ -278,7 +290,8 @@ catch (error) {
 
 ## Best Practices
 
-1. **Always validate permissions** before executing sensitive operations
+1. **Always validate permissions** before executing sensitive
+   operations
 2. **Sanitize user inputs** to prevent injection attacks
 3. **Implement rate limiting** to prevent abuse
 4. **Use structured error handling** for better user experience
@@ -310,13 +323,17 @@ catch (error) {
 
 1. **Install the AI package**: `npm install @commandkit/ai`
 2. **Configure your AI model** in `src/ai.ts`
-3. **Create AI-compatible commands** with `aiConfig` and `ai` functions
+3. **Create AI-compatible commands** with `aiConfig` and `ai`
+   functions
 4. **Test your setup** with simple commands
 5. **Gradually add more complex functionality**
 
 ## Next Steps
 
-- [AI Configuration](./02-ai-configuration.mdx) - Set up your AI models
-- [Creating AI Commands](./03-creating-ai-commands.mdx) - Make commands AI-accessible
+- [AI Configuration](./02-ai-configuration.mdx) - Set up your AI
+  models
+- [Creating AI Commands](./03-creating-ai-commands.mdx) - Make
+  commands AI-accessible
 - [Custom Tools](./06-custom-tools.mdx) - Extend AI capabilities
-- [Best Practices](./07-best-practices.mdx) - Production-ready implementations
+- [Best Practices](./07-best-practices.mdx) - Production-ready
+  implementations

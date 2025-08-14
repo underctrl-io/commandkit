@@ -1,11 +1,14 @@
 ---
 title: AI Troubleshooting
-description: Common issues and solutions when working with CommandKit's AI system.
+description:
+  Common issues and solutions when working with CommandKit's AI
+  system.
 ---
 
 # AI Troubleshooting
 
-This guide covers common issues you might encounter when working with CommandKit's AI system and how to resolve them.
+This guide covers common issues you might encounter when working with
+CommandKit's AI system and how to resolve them.
 
 ## Common Issues
 
@@ -31,7 +34,9 @@ This guide covers common issues you might encounter when working with CommandKit
    // Check your message filter
    messageFilter: async (commandkit, message) => {
      console.log('Filtering message:', message.content);
-     const shouldProcess = message.mentions.users.has(message.client.user.id);
+     const shouldProcess = message.mentions.users.has(
+       message.client.user.id,
+     );
      console.log('Should process:', shouldProcess);
      return shouldProcess;
    };
@@ -70,7 +75,9 @@ This guide covers common issues you might encounter when working with CommandKit
      selectAiModel: async (ctx, message) => {
        // Make sure this function is defined and returns a model
        if (!process.env.GOOGLE_API_KEY) {
-         throw new Error('GOOGLE_API_KEY environment variable not set');
+         throw new Error(
+           'GOOGLE_API_KEY environment variable not set',
+         );
        }
 
        return {
@@ -107,7 +114,10 @@ This guide covers common issues you might encounter when working with CommandKit
      parameters: z.object({
        // Make sure parameter names match what the AI should provide
        username: z.string().describe('The username to greet'),
-       message: z.string().optional().describe('Optional greeting message'),
+       message: z
+         .string()
+         .optional()
+         .describe('Optional greeting message'),
      }),
    } satisfies AiConfig;
    ```
@@ -134,11 +144,16 @@ This guide covers common issues you might encounter when working with CommandKit
    parameters: z.object({
      userId: z
        .string()
-       .describe('Discord user ID (numbers only, like 123456789012345678)'),
+       .describe(
+         'Discord user ID (numbers only, like 123456789012345678)',
+       ),
      duration: z
        .number()
        .describe('Duration in minutes (e.g., 30 for 30 minutes)'),
-     reason: z.string().optional().describe('Optional reason for the action'),
+     reason: z
+       .string()
+       .optional()
+       .describe('Optional reason for the action'),
    });
    ```
 
@@ -336,7 +351,9 @@ if (process.env.NODE_ENV === 'production') {
       });
 
       // Send generic error to user
-      await message.reply('An error occurred. Please try again later.');
+      await message.reply(
+        'An error occurred. Please try again later.',
+      );
     },
   });
 }
@@ -371,7 +388,10 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 messageFilter: async (commandkit, message) => {
   // Check if bot can send messages in the channel
   if (!message.channel.isSendable()) {
-    console.log('Cannot send messages in channel:', message.channelId);
+    console.log(
+      'Cannot send messages in channel:',
+      message.channelId,
+    );
     return false;
   }
 

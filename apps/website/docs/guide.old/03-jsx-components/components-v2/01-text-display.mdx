@@ -1,9 +1,13 @@
 ---
 title: Text Display
-description: Display text content in your Discord messages using the TextDisplay component
+description:
+  Display text content in your Discord messages using the TextDisplay
+  component
 ---
 
-The `TextDisplay` component is the most basic component in CommandKit that allows you to show text content in your Discord messages. It supports Discord's markdown syntax for rich text formatting.
+The `TextDisplay` component is the most basic component in CommandKit
+that allows you to show text content in your Discord messages. It
+supports Discord's markdown syntax for rich text formatting.
 
 ## Basic Usage
 
@@ -23,7 +27,8 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 ## Text Formatting
 
-The `TextDisplay` component supports Discord's markdown syntax. Here are some examples:
+The `TextDisplay` component supports Discord's markdown syntax. Here
+are some examples:
 
 ```tsx title="src/app/commands/formatting.tsx"
 import { type ChatInputCommand, TextDisplay } from 'commandkit';
@@ -60,5 +65,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 - Always wrap your text content in the `TextDisplay` component
 - Use Discord's markdown syntax for rich text formatting
-- For multi-line text, use template literals (\`\`) for better readability
-- Remember to include the `MessageFlags.IsComponentsV2` flag in your reply
+- For multi-line text, use template literals (\`\`) for better
+  readability
+- Remember to include the `MessageFlags.IsComponentsV2` flag in your
+  reply

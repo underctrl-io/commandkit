@@ -1,16 +1,21 @@
 ---
 title: CommandKit Configuration
-description: Learn how to configure CommandKit CLI for your project with detailed examples and best practices.
+description:
+  Learn how to configure CommandKit CLI for your project with detailed
+  examples and best practices.
 ---
 
-CommandKit CLI can be configured using a `commandkit.config` file in the root of your project directory (typically alongside `package.json`). You can use any of the following file formats:
+CommandKit CLI can be configured using a `commandkit.config` file in
+the root of your project directory (typically alongside
+`package.json`). You can use any of the following file formats:
 
 - `commandkit.config.js`
 - `commandkit.config.mjs`
 - `commandkit.config.cjs`
 - `commandkit.config.ts`
 
-Throughout this guide, we'll be using `commandkit.config.ts` as an example.
+Throughout this guide, we'll be using `commandkit.config.ts` as an
+example.
 
 ## Basic Configuration
 
@@ -26,7 +31,8 @@ export default defineConfig({});
 
 ### Plugins
 
-The `plugins` array allows you to extend CommandKit's functionality with additional features:
+The `plugins` array allows you to extend CommandKit's functionality
+with additional features:
 
 ```ts title="commandkit.config.ts"
 import { defineConfig } from 'commandkit';
@@ -106,12 +112,15 @@ export default defineConfig({
 
 ## Best Practices
 
-1. **Type Safety**: Always use `commandkit.config.ts` for better type checking and IDE support.
-2. **Security**: Always store sensitive information in `.env` file and make sure it is not committed to your version control system.
+1. **Type Safety**: Always use `commandkit.config.ts` for better type
+   checking and IDE support.
+2. **Security**: Always store sensitive information in `.env` file and
+   make sure it is not committed to your version control system.
 3. **Plugin Management**:
 
    - Only include necessary plugins to keep build times fast
-   - Plugins have full access to your discord bot. So always be careful when installing the plugins.
+   - Plugins have full access to your discord bot. So always be
+     careful when installing the plugins.
 
 ## Complete Example
 

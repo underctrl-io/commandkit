@@ -1,6 +1,9 @@
 ---
 title: i18n Plugin
-description: The i18n plugin for CommandKit enables internationalization (i18n) for CommandKit using i18next. It allows you to translate your application into different languages.
+description:
+  The i18n plugin for CommandKit enables internationalization (i18n)
+  for CommandKit using i18next. It allows you to translate your
+  application into different languages.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -8,16 +11,24 @@ import TabItem from '@theme/TabItem';
 
 # i18n Plugin
 
-The i18n plugin integrates [i18next](https://www.i18next.com/) into CommandKit, enabling you to create multilingual Discord bots that can automatically adapt to your users' preferred languages. This plugin provides seamless internationalization support for commands, events, and all bot interactions.
+The i18n plugin integrates [i18next](https://www.i18next.com/) into
+CommandKit, enabling you to create multilingual Discord bots that can
+automatically adapt to your users' preferred languages. This plugin
+provides seamless internationalization support for commands, events,
+and all bot interactions.
 
 ## Features
 
-- 🌍 **Automatic locale detection** - Automatically uses Discord's guild preferred locale
+- 🌍 **Automatic locale detection** - Automatically uses Discord's
+  guild preferred locale
 - 🔧 **Easy setup** - Simple configuration with sensible defaults
 - 📁 **File-based translations** - Organize translations in JSON files
-- 🎯 **Context-aware** - Access translations in commands, events, and legacy handlers
-- 🔌 **i18next ecosystem** - Full compatibility with i18next plugins and features
-- 📝 **Command metadata localization** - Localize command names, descriptions, and options
+- 🎯 **Context-aware** - Access translations in commands, events, and
+  legacy handlers
+- 🔌 **i18next ecosystem** - Full compatibility with i18next plugins
+  and features
+- 📝 **Command metadata localization** - Localize command names,
+  descriptions, and options
 
 ## Installation
 
@@ -78,7 +89,9 @@ export default defineConfig({
 
 ## Translation Files Structure
 
-Create a `locales` directory inside your `src/app` folder with subdirectories for each language. Each language directory should contain JSON files for your translations.
+Create a `locales` directory inside your `src/app` folder with
+subdirectories for each language. Each language directory should
+contain JSON files for your translations.
 
 ```
 src
@@ -100,7 +113,9 @@ src
 
 ### Supported Locales
 
-CommandKit uses Discord's locale identifiers. Please refer to [Discord's Locales documentation](https://discord.com/developers/docs/reference#locales) for a complete list.
+CommandKit uses Discord's locale identifiers. Please refer to
+[Discord's Locales documentation](https://discord.com/developers/docs/reference#locales)
+for a complete list.
 
 ## Quick Start Example
 
@@ -158,4 +173,5 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 };
 ```
 
-That's it! Your bot will now automatically respond in the user's guild preferred language.
+That's it! Your bot will now automatically respond in the user's guild
+preferred language.

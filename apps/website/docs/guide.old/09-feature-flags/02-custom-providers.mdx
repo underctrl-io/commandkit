@@ -1,13 +1,22 @@
 ---
 title: Custom Providers
-description: Learn how to integrate external feature flag management systems with CommandKit using custom providers.
+description:
+  Learn how to integrate external feature flag management systems with
+  CommandKit using custom providers.
 ---
 
-While CommandKit's built-in feature flag system is powerful for local flag management, you may want to integrate with external feature flag services like LaunchDarkly, Split, Unleash, or your own custom backend. CommandKit supports this through the provider pattern.
+While CommandKit's built-in feature flag system is powerful for local
+flag management, you may want to integrate with external feature flag
+services like LaunchDarkly, Split, Unleash, or your own custom
+backend. CommandKit supports this through the provider pattern.
 
 ## What are Flag Providers?
 
-Flag providers are adapters that allow CommandKit to fetch feature flag configurations from external systems. When a provider is configured, your local `decide` function receives additional context from the external system, giving you the flexibility to combine local logic with remote configuration.
+Flag providers are adapters that allow CommandKit to fetch feature
+flag configurations from external systems. When a provider is
+configured, your local `decide` function receives additional context
+from the external system, giving you the flexibility to combine local
+logic with remote configuration.
 
 ## Setting Up a Provider
 
@@ -28,7 +37,10 @@ export class LaunchDarklyProvider implements FlagProvider {
     console.log('LaunchDarkly provider initialized');
   }
 
-  async getFlag(key: string, context?: any): Promise<FlagConfiguration | null> {
+  async getFlag(
+    key: string,
+    context?: any,
+  ): Promise<FlagConfiguration | null> {
     try {
       // Fetch flag from LaunchDarkly
       // const variation = await this.client.variation(key, context, false);
@@ -45,7 +57,10 @@ export class LaunchDarklyProvider implements FlagProvider {
         },
       };
     } catch (error) {
-      console.error(`LaunchDarkly flag evaluation failed for ${key}:`, error);
+      console.error(
+        `LaunchDarkly flag evaluation failed for ${key}:`,
+        error,
+      );
       return null;
     }
   }
@@ -68,7 +83,9 @@ export class LaunchDarklyProvider implements FlagProvider {
 import { setFlagProvider } from 'commandkit';
 import { LaunchDarklyProvider } from './providers/LaunchDarklyProvider';
 
-const provider = new LaunchDarklyProvider(process.env.LAUNCHDARKLY_API_KEY!);
+const provider = new LaunchDarklyProvider(
+  process.env.LAUNCHDARKLY_API_KEY!,
+);
 
 // Initialize and set the global provider
 await provider.initialize();
@@ -83,10 +100,12 @@ import murmurhash from 'murmurhash';
 
 export const embedColorFlag = flag({
   key: 'embed-color-flag',
-  description: 'Show different embed colors based on external configuration',
+  description:
+    'Show different embed colors based on external configuration',
   identify(ctx) {
     const command = ctx.command;
-    const id = command?.interaction?.user.id ?? command?.message?.author.id;
+    const id =
+      command?.interaction?.user.id ?? command?.message?.author.id;
     return { id: id ?? null };
   },
   decide({ entities, provider }) {
@@ -121,7 +140,8 @@ export const embedColorFlag = flag({
 
 ## Built-in JSON Provider
 
-CommandKit includes a simple JSON-based provider for basic external configuration:
+CommandKit includes a simple JSON-based provider for basic external
+configuration:
 
 ```ts title="src/providers/config.ts"
 import { JsonFlagProvider, setFlagProvider } from 'commandkit';
@@ -192,7 +212,10 @@ import { FlagProvider, FlagConfiguration } from 'commandkit';
 export class MultiProvider implements FlagProvider {
   constructor(private providers: FlagProvider[]) {}
 
-  async getFlag(key: string, context?: any): Promise<FlagConfiguration | null> {
+  async getFlag(
+    key: string,
+    context?: any,
+  ): Promise<FlagConfiguration | null> {
     // Try providers in order, return first successful result
     for (const provider of this.providers) {
       try {
@@ -219,7 +242,8 @@ export class MultiProvider implements FlagProvider {
 
 ### 1. Always Provide Fallbacks
 
-Your `decide` function should handle cases where the provider is unavailable:
+Your `decide` function should handle cases where the provider is
+unavailable:
 
 ```ts
 decide({ entities, provider }) {
@@ -236,11 +260,14 @@ decide({ entities, provider }) {
 
 ### 2. Handle Provider Errors Gracefully
 
-Providers may fail due to network issues, API limits, or configuration problems. CommandKit automatically catches these errors and continues with local evaluation.
+Providers may fail due to network issues, API limits, or configuration
+problems. CommandKit automatically catches these errors and continues
+with local evaluation.
 
 ### 3. Use Provider Configuration Wisely
 
-The provider's `config` object can contain any data structure your external system provides:
+The provider's `config` object can contain any data structure your
+external system provides:
 
 ```ts
 decide({ entities, provider }) {
@@ -255,7 +282,8 @@ decide({ entities, provider }) {
 
 ### 4. Disable Analytics When Needed
 
-For high-frequency flags or privacy-sensitive scenarios, you can disable analytics:
+For high-frequency flags or privacy-sensitive scenarios, you can
+disable analytics:
 
 ```ts
 export const highFrequencyFlag = flag({
@@ -273,7 +301,10 @@ export const highFrequencyFlag = flag({
 ```ts
 interface FlagProvider {
   initialize?(): Promise<void>;
-  getFlag(key: string, context?: any): Promise<FlagConfiguration | null>;
+  getFlag(
+    key: string,
+    context?: any,
+  ): Promise<FlagConfiguration | null>;
   hasFlag(key: string): Promise<boolean>;
   destroy?(): Promise<void>;
 }
@@ -292,4 +323,7 @@ interface FlagConfiguration {
 }
 ```
 
-The provider pattern makes CommandKit's feature flags extremely flexible while maintaining the simplicity of the core API. You can start with local flags and gradually migrate to external providers as your needs grow.
+The provider pattern makes CommandKit's feature flags extremely
+flexible while maintaining the simplicity of the core API. You can
+start with local flags and gradually migrate to external providers as
+your needs grow.

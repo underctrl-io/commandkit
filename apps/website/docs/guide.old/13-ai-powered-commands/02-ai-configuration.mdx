@@ -5,22 +5,30 @@ description: Learn how to configure AI models for CommandKit.
 
 # AI Configuration
 
-CommandKit provides comprehensive AI configuration options to customize how your bot processes and responds to messages. You can configure AI models, message filters, system prompts, and processing hooks.
+CommandKit provides comprehensive AI configuration options to
+customize how your bot processes and responds to messages. You can
+configure AI models, message filters, system prompts, and processing
+hooks.
 
 ## Configuration Overview
 
 The `configureAI` function accepts several configuration options:
 
-- **`selectAiModel`** (required) - Function to choose which AI model to use
-- **`messageFilter`** (optional) - Filter which messages trigger AI processing
-- **`disableBuiltInTools`** (optional) - Disable built-in Discord tools
-- **`prepareSystemPrompt`** (optional) - Custom system prompt generation
+- **`selectAiModel`** (required) - Function to choose which AI model
+  to use
+- **`messageFilter`** (optional) - Filter which messages trigger AI
+  processing
+- **`disableBuiltInTools`** (optional) - Disable built-in Discord
+  tools
+- **`prepareSystemPrompt`** (optional) - Custom system prompt
+  generation
 - **`preparePrompt`** (optional) - Custom user prompt preparation
 - **Lifecycle hooks** - Functions called during AI processing
 
 ## Creating a Configuration File
 
-Create a dedicated configuration file, typically `src/ai.ts`, to set up your AI model and processing options:
+Create a dedicated configuration file, typically `src/ai.ts`, to set
+up your AI model and processing options:
 
 ```ts title="src/ai.ts"
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
@@ -47,7 +55,8 @@ configureAI({
   messageFilter: async (commandkit, message) => {
     // Only respond when the bot is mentioned
     return (
-      message.inGuild() && message.mentions.users.has(message.client.user.id)
+      message.inGuild() &&
+      message.mentions.users.has(message.client.user.id)
     );
   },
 
@@ -64,7 +73,8 @@ configureAI({
 
 ### Model Selection (`selectAiModel`)
 
-The `selectAiModel` function is called for each message and must return model configuration:
+The `selectAiModel` function is called for each message and must
+return model configuration:
 
 ```ts
 selectAiModel: async (ctx, message) => {
@@ -142,7 +152,9 @@ configureAI({
   // Called when AI processing starts
   onProcessingStart: async (ctx, message) => {
     await message.channel.sendTyping();
-    console.log(`AI processing started for ${message.author.username}`);
+    console.log(
+      `AI processing started for ${message.author.username}`,
+    );
   },
 
   // Called when AI processing finishes
@@ -208,7 +220,8 @@ export default client;
 
 ## Multiple AI Providers
 
-You can configure multiple AI providers and choose between them dynamically:
+You can configure multiple AI providers and choose between them
+dynamically:
 
 ```ts title="src/ai.ts"
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
@@ -216,7 +229,9 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { configureAI } from '@commandkit/ai';
 
 // Configure multiple providers
-const google = createGoogleGenerativeAI({ apiKey: process.env.GOOGLE_API_KEY });
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_API_KEY,
+});
 const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 configureAI({
@@ -267,7 +282,9 @@ configureAI({
       console.error(error.stack);
     } else {
       // Generic error in production
-      await message.reply('An error occurred while processing your request.');
+      await message.reply(
+        'An error occurred while processing your request.',
+      );
     }
   },
 });

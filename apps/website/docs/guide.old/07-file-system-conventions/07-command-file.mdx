@@ -1,18 +1,32 @@
 ---
 title: Command File
-description: The command file is used to define the commands for your application.
+description:
+  The command file is used to define the commands for your
+  application.
 ---
 
-The `src/app/commands/<command>.ts` (or `src/app/commands/<command>.js`) file is used to define the commands for your application. Each command is defined in its own file, and the file name should match the command name. For example, if you have a command called `ping`, you should create a file called `ping.ts` (or `ping.js`) in the `src/app/commands` directory.
+The `src/app/commands/<command>.ts` (or
+`src/app/commands/<command>.js`) file is used to define the commands
+for your application. Each command is defined in its own file, and the
+file name should match the command name. For example, if you have a
+command called `ping`, you should create a file called `ping.ts` (or
+`ping.js`) in the `src/app/commands` directory.
 
 The command file can export multiple handler functions, such as:
 
-- `chatInput`: This function is executed when the command is triggered by a chat input event (slash command).
-- `message`: This function is executed when the command is triggered by a message event (text command).
-- `userContextMenu`: This function is executed when the command is triggered by a user context menu event.
-- `messageContextMenu`: This function is executed when the command is triggered by a message context menu event.
+- `chatInput`: This function is executed when the command is triggered
+  by a chat input event (slash command).
+- `message`: This function is executed when the command is triggered
+  by a message event (text command).
+- `userContextMenu`: This function is executed when the command is
+  triggered by a user context menu event.
+- `messageContextMenu`: This function is executed when the command is
+  triggered by a message context menu event.
 
-When defining a command, if you export `userContextMenu` or `messageContextMenu`, CommandKit will automatically register the command as a context menu command without you having to explicitly define them as one.
+When defining a command, if you export `userContextMenu` or
+`messageContextMenu`, CommandKit will automatically register the
+command as a context menu command without you having to explicitly
+define them as one.
 
 ## Example command
 
@@ -37,7 +51,9 @@ export const command = {
   ],
 };
 
-export const userContextMenu: UserContextMenuCommand = async (ctx) => {
+export const userContextMenu: UserContextMenuCommand = async (
+  ctx,
+) => {
   const target = ctx.interaction.targetUser;
 
   await ctx.interaction.reply({
@@ -53,7 +69,9 @@ export const userContextMenu: UserContextMenuCommand = async (ctx) => {
   });
 };
 
-export const messageContextMenu: MessageContextMenuCommand = async (ctx) => {
+export const messageContextMenu: MessageContextMenuCommand = async (
+  ctx,
+) => {
   const target = ctx.interaction.targetMessage.author;
 
   await ctx.interaction.reply({

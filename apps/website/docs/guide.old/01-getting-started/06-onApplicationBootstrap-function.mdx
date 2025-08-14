@@ -1,9 +1,15 @@
 ---
 title: onApplicationBootstrap function
-description: The onApplicationBootstrap function is called when the application is ready.
+description:
+  The onApplicationBootstrap function is called when the application
+  is ready.
 ---
 
-The `onApplicationBootstrap` is a lifecycle hook in CommandKit that allows you to execute code when the application is fully initialized and ready to run. This is particularly useful for setting up things like CommandKit cache providers, message command prefix resolvers, and other application-wide settings.
+The `onApplicationBootstrap` is a lifecycle hook in CommandKit that
+allows you to execute code when the application is fully initialized
+and ready to run. This is particularly useful for setting up things
+like CommandKit cache providers, message command prefix resolvers, and
+other application-wide settings.
 
 ## Basic Usage
 
@@ -16,4 +22,5 @@ onApplicationBootstrap((commandkit) => {
 });
 ```
 
-You can register multiple `onApplicationBootstrap` hooks, and they will be called in the order they were registered.
+You can register multiple `onApplicationBootstrap` hooks, and they
+will be called in the order they were registered.

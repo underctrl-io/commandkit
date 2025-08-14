@@ -1,11 +1,14 @@
 ---
 title: Umami Analytics
-description: Learn how to set up and use Umami analytics with CommandKit.
+description:
+  Learn how to set up and use Umami analytics with CommandKit.
 ---
 
 # Umami Analytics
 
-Umami is a simple, fast, privacy-focused alternative to Google Analytics. CommandKit provides seamless integration with Umami for tracking anonymous bot metrics.
+Umami is a simple, fast, privacy-focused alternative to Google
+Analytics. CommandKit provides seamless integration with Umami for
+tracking anonymous bot metrics.
 
 ## Setup
 
@@ -37,7 +40,8 @@ export default defineConfig({
 
 ## Usage
 
-Once configured, you can track anonymous events using the `track` function:
+Once configured, you can track anonymous events using the `track`
+function:
 
 ```ts
 import { track } from 'commandkit/analytics';
@@ -58,7 +62,8 @@ await track({
 
 ## Automatic Events
 
-CommandKit automatically tracks the following anonymous events in Umami:
+CommandKit automatically tracks the following anonymous events in
+Umami:
 
 - `command_execution`: Command execution events
 - `cache_hit`: Cache hit events

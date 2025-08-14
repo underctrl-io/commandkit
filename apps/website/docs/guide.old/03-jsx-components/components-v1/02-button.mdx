@@ -1,11 +1,14 @@
 ---
 title: Button
-description: Learn how to use the Button component to create interactive buttons
+description:
+  Learn how to use the Button component to create interactive buttons
 ---
 
 # Button
 
-The Button component allows you to create interactive buttons in your Discord messages. Buttons can have different styles, labels, and emojis.
+The Button component allows you to create interactive buttons in your
+Discord messages. Buttons can have different styles, labels, and
+emojis.
 
 ## Basic Usage
 
@@ -61,7 +64,10 @@ const button = <Button disabled>Cannot Click</Button>;
 ```tsx
 import { Button, OnButtonKitClick } from 'commandkit';
 
-const handleClick: OnButtonKitClick = async (interaction, context) => {
+const handleClick: OnButtonKitClick = async (
+  interaction,
+  context,
+) => {
   await interaction.reply('Button clicked!');
   context.dispose();
 };

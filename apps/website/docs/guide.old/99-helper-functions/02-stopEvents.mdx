@@ -1,10 +1,15 @@
 ---
 title: stopEvents Function
-description: The stopEvents function is a utility function that allows you to stop the execution of events chain in CommandKit.
+description:
+  The stopEvents function is a utility function that allows you to
+  stop the execution of events chain in CommandKit.
 ---
 
-The `stopEvents()` function is a utility function that allows you to stop the execution of the events chain in CommandKit. This is useful when you want to prevent further event handlers from being executed after a certain point.
-It is typically used in the context of event handlers to control the flow of execution.
+The `stopEvents()` function is a utility function that allows you to
+stop the execution of the events chain in CommandKit. This is useful
+when you want to prevent further event handlers from being executed
+after a certain point. It is typically used in the context of event
+handlers to control the flow of execution.
 
 ## Usage
 
@@ -21,6 +26,5 @@ export default async function onMessageCreate(message: Message) {
 }
 ```
 
-:::info
-You must not call `stopEvents()` in try-catch block, otherwise it will not work as expected.
-:::
+:::info You must not call `stopEvents()` in try-catch block, otherwise
+it will not work as expected. :::

@@ -1,11 +1,14 @@
 ---
 title: Modal
-description: Learn how to use the Modal component to create interactive forms
+description:
+  Learn how to use the Modal component to create interactive forms
 ---
 
 # Modal
 
-The Modal component allows you to create interactive forms that appear as popups in Discord. Modals are useful for collecting user input in a structured way.
+The Modal component allows you to create interactive forms that appear
+as popups in Discord. Modals are useful for collecting user input in a
+structured way.
 
 ## Basic Usage
 
@@ -17,9 +20,13 @@ import {
   OnModalKitSubmit,
 } from 'commandkit';
 
-const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
+const handleSubmit: OnModalKitSubmit = async (
+  interaction,
+  context,
+) => {
   const name = interaction.fields.getTextInputValue('name');
-  const description = interaction.fields.getTextInputValue('description');
+  const description =
+    interaction.fields.getTextInputValue('description');
 
   await interaction.reply({
     content: `Name: ${name}\nDescription: ${description}`,

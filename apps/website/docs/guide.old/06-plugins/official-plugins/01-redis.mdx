@@ -1,6 +1,8 @@
 ---
 title: Redis Plugin
-description: The Redis plugin for CommandKit registers a redis cache provider for CommandKit. It allows you to store cached data in redis.
+description:
+  The Redis plugin for CommandKit registers a redis cache provider for
+  CommandKit. It allows you to store cached data in redis.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -8,7 +10,8 @@ import TabItem from '@theme/TabItem';
 
 # Redis Plugin
 
-The Redis plugin provides a cache provider for CommandKit that allows you to store cached data in Redis.
+The Redis plugin provides a cache provider for CommandKit that allows
+you to store cached data in Redis.
 
 ## Installation
 
@@ -38,7 +41,8 @@ pnpm add @commandkit/redis
 
 ## Usage
 
-This plugin automatically registers the Redis cache provider with your CommandKit instance.
+This plugin automatically registers the Redis cache provider with your
+CommandKit instance.
 
 ```js
 import { defineConfig } from 'commandkit';
@@ -49,7 +53,8 @@ export default defineConfig({
 });
 ```
 
-With this plugin configured, your cache functions will automatically use Redis as the storage backend:
+With this plugin configured, your cache functions will automatically
+use Redis as the storage backend:
 
 ```ts
 async function getCachedData() {
@@ -64,7 +69,8 @@ async function getCachedData() {
 
 ## Manual Configuration
 
-If you need more control over the Redis client configuration, you can set up the cache provider manually instead of using the plugin:
+If you need more control over the Redis client configuration, you can
+set up the cache provider manually instead of using the plugin:
 
 ```ts
 import { setCacheProvider } from '@commandkit/cache';
@@ -84,4 +90,6 @@ const redisProvider = new RedisCacheProvider(redis);
 setCacheProvider(redisProvider);
 ```
 
-This approach gives you full control over the Redis client configuration while still integrating with CommandKit's caching system.
+This approach gives you full control over the Redis client
+configuration while still integrating with CommandKit's caching
+system.

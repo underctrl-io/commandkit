@@ -1,19 +1,26 @@
 ---
 title: Setup CommandKit
-description: Setup a new CommandKit project manually, or using the create-commandkit CLI
+description:
+  Setup a new CommandKit project manually, or using the
+  create-commandkit CLI
 ---
 
-You can quickly setup a new CommandKit project using `create-commandkit` — a command-line utility used for creating new discord.js applications with CommandKit. To get started, run the following command:
+You can quickly setup a new CommandKit project using
+`create-commandkit` — a command-line utility used for creating new
+discord.js applications with CommandKit. To get started, run the
+following command:
 
 ```sh npm2yarn
 npm create commandkit@latest
 ```
 
-This will start the CLI in the current directory which will help you quickly setup a base CommandKit project.
+This will start the CLI in the current directory which will help you
+quickly setup a base CommandKit project.
 
 ## Project structure
 
-By using the CLI to create a base project, you should get a project structure that looks like this:
+By using the CLI to create a base project, you should get a project
+structure that looks like this:
 
 ```
 .
@@ -32,8 +39,10 @@ By using the CLI to create a base project, you should get a project structure th
 └── tsconfig.json
 ```
 
-:::info
-The `src/app.ts` file is the main entry point for your application. This file default exports the discord.js client which CommandKit loads at runtime. For example, the `src/app.ts` file looks like this:
+:::info The `src/app.ts` file is the main entry point for your
+application. This file default exports the discord.js client which
+CommandKit loads at runtime. For example, the `src/app.ts` file looks
+like this:
 
 ```ts
 import { Client } from 'discord.js';
@@ -50,22 +59,25 @@ client.token = process.env.MY_BOT_TOKEN;
 export default client;
 ```
 
-Notice how we are not calling `client.login()` in this file. This is because CommandKit will automatically call `client.login()` for you when the application starts.
+Notice how we are not calling `client.login()` in this file. This is
+because CommandKit will automatically call `client.login()` for you
+when the application starts.
 
-Also, you might have noticed that we are not using anything from CommandKit in this file. This is because CommandKit is designed to reduce boilerplate code and make it easier to build discord bot applications.
-:::
+Also, you might have noticed that we are not using anything from
+CommandKit in this file. This is because CommandKit is designed to
+reduce boilerplate code and make it easier to build discord bot
+applications. :::
 
-:::info
-The `src/app` directory is a special directory that CommandKit understands. All the commands and events in this directory will be automatically registered when the application starts.
-:::
+:::info The `src/app` directory is a special directory that CommandKit
+understands. All the commands and events in this directory will be
+automatically registered when the application starts. :::
 
 ## Development version
 
-:::warning
-The development version is likely to have bugs.
-:::
+:::warning The development version is likely to have bugs. :::
 
-If you'd like to try the latest development builds, you can use the `@dev` tag like so:
+If you'd like to try the latest development builds, you can use the
+`@dev` tag like so:
 
 ```sh npm2yarn
 npm create commandkit@dev

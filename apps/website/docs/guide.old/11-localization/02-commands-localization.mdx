@@ -1,15 +1,22 @@
 ---
 title: Commands Localization
-description: Learn how to localize your commands using the i18n plugin in CommandKit.
+description:
+  Learn how to localize your commands using the i18n plugin in
+  CommandKit.
 ---
 
 # Commands Localization
 
-CommandKit's i18n plugin provides powerful localization features for slash commands, allowing you to translate command metadata (names, descriptions, options) and responses to match your users' preferred languages.
+CommandKit's i18n plugin provides powerful localization features for
+slash commands, allowing you to translate command metadata (names,
+descriptions, options) and responses to match your users' preferred
+languages.
 
 ## Translation File Structure
 
-Translation files should be placed in your `locales` directory and named after the command they translate. For example, translations for a `ping` command should be in `ping.json`.
+Translation files should be placed in your `locales` directory and
+named after the command they translate. For example, translations for
+a `ping` command should be in `ping.json`.
 
 ### Basic Translation File
 
@@ -23,7 +30,8 @@ Translation files should be placed in your `locales` directory and named after t
 
 ### Command Metadata Localization
 
-Use the special `$command` key to localize command metadata that appears in Discord's interface:
+Use the special `$command` key to localize command metadata that
+appears in Discord's interface:
 
 ```json title="src/app/locales/en-US/ping.json"
 {
@@ -56,18 +64,22 @@ Use the special `$command` key to localize command metadata that appears in Disc
 }
 ```
 
-The `$command` object structure mirrors Discord's application command structure:
+The `$command` object structure mirrors Discord's application command
+structure:
 
 - `name`: Command name (shown in Discord's command picker)
-- `description`: Command description (shown in Discord's command picker)
+- `description`: Command description (shown in Discord's command
+  picker)
 - `options`: Array of option localizations
   - `name`: Option name
   - `description`: Option description
-  - `choices`: Array of choice localizations (for string options with predefined choices)
+  - `choices`: Array of choice localizations (for string options with
+    predefined choices)
 
 ## Using Translations in Commands
 
-The `locale()` function in your command context provides access to translations and i18next features:
+The `locale()` function in your command context provides access to
+translations and i18next features:
 
 ```ts title="src/app/commands/ping.ts"
 import type { ChatInputCommand } from 'commandkit';
@@ -88,7 +100,8 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 ### Manual Locale Override
 
-You can specify a particular locale instead of using the guild's preferred locale:
+You can specify a particular locale instead of using the guild's
+preferred locale:
 
 ```ts
 export const chatInput: ChatInputCommand = async (ctx) => {

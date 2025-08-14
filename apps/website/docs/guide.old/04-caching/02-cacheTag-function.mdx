@@ -1,11 +1,15 @@
 ---
 title: cacheTag Function
-description: Learn how to use cacheTag to manage cache entries with tags for targeted revalidation.
+description:
+  Learn how to use cacheTag to manage cache entries with tags for
+  targeted revalidation.
 ---
 
 # cacheTag Function
 
-The `cacheTag` function allows you to add tags to your cache entries, making it easier to manage and invalidate related cache entries together.
+The `cacheTag` function allows you to add tags to your cache entries,
+making it easier to manage and invalidate related cache entries
+together.
 
 ## Basic Usage
 
@@ -155,7 +159,11 @@ async function fetchSystemData() {
   cacheTag('system:stats');
   cacheTag('system:logs');
 
-  return await Promise.all([fetchConfig(), fetchStats(), fetchLogs()]);
+  return await Promise.all([
+    fetchConfig(),
+    fetchStats(),
+    fetchLogs(),
+  ]);
 }
 ```
 

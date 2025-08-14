@@ -1,6 +1,9 @@
 ---
 title: Cache Plugin
-description: The cache plugin for CommandKit enables caching APIs in your project. It provides a simple and efficient way to cache data, reducing the need for repeated database queries or API calls.
+description:
+  The cache plugin for CommandKit enables caching APIs in your
+  project. It provides a simple and efficient way to cache data,
+  reducing the need for repeated database queries or API calls.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -8,7 +11,9 @@ import TabItem from '@theme/TabItem';
 
 # Cache Plugin
 
-The cache plugin for CommandKit enables caching APIs in your project. It provides a simple and efficient way to cache data, reducing the need for repeated database queries or API calls.
+The cache plugin for CommandKit enables caching APIs in your project.
+It provides a simple and efficient way to cache data, reducing the
+need for repeated database queries or API calls.
 
 ## Installation
 
@@ -38,7 +43,8 @@ pnpm add @commandkit/cache
 
 ## Usage
 
-This plugin automatically registers the in-memory cache provider with your CommandKit instance.
+This plugin automatically registers the in-memory cache provider with
+your CommandKit instance.
 
 ```js
 import { defineConfig } from 'commandkit';
@@ -49,7 +55,8 @@ export default defineConfig({
 });
 ```
 
-Then, you can add the `"use cache"` directive to the function you want to cache. For example:
+Then, you can add the `"use cache"` directive to the function you want
+to cache. For example:
 
 ```ts
 async function getCachedData() {
@@ -62,4 +69,6 @@ async function getCachedData() {
 }
 ```
 
-To understand more about the caching system, check out the [Caching in CommandKit](../../04-caching/01-caching-in-commandkit.mdx) guide.
+To understand more about the caching system, check out the
+[Caching in CommandKit](../../04-caching/01-caching-in-commandkit.mdx)
+guide.

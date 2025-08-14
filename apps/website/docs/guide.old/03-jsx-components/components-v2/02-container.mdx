@@ -1,14 +1,23 @@
 ---
 title: Container
-description: Organize and style your message components using the Container component
+description:
+  Organize and style your message components using the Container
+  component
 ---
 
-The `Container` component is a fundamental building block in CommandKit that allows you to organize and style multiple components together. It provides a consistent layout and can be customized with an accent color.
+The `Container` component is a fundamental building block in
+CommandKit that allows you to organize and style multiple components
+together. It provides a consistent layout and can be customized with
+an accent color.
 
 ## Basic Usage
 
 ```tsx title="src/app/commands/container-example.tsx"
-import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
+import {
+  type ChatInputCommand,
+  Container,
+  TextDisplay,
+} from 'commandkit';
 import { Colors, MessageFlags } from 'discord.js';
 
 export const chatInput: ChatInputCommand = async (ctx) => {
@@ -28,10 +37,15 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 ## Styling
 
-The `Container` component accepts an `accentColor` prop that can be used to customize its appearance:
+The `Container` component accepts an `accentColor` prop that can be
+used to customize its appearance:
 
 ```tsx title="src/app/commands/container-styling.tsx"
-import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
+import {
+  type ChatInputCommand,
+  Container,
+  TextDisplay,
+} from 'commandkit';
 import { Colors, MessageFlags } from 'discord.js';
 
 export const chatInput: ChatInputCommand = async (ctx) => {
@@ -60,7 +74,11 @@ import {
   Section,
   Separator,
 } from 'commandkit';
-import { Colors, MessageFlags, SeparatorSpacingSize } from 'discord.js';
+import {
+  Colors,
+  MessageFlags,
+  SeparatorSpacingSize,
+} from 'discord.js';
 
 export const chatInput: ChatInputCommand = async (ctx) => {
   const container = (
@@ -85,10 +103,14 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 ## Best Practices
 
-1. **Organization**: Use containers to group related components together
-2. **Visual Hierarchy**: Create clear visual sections using nested components
-3. **Consistency**: Maintain consistent accent colors across related containers
-4. **Readability**: Keep container content organized and well-structured
+1. **Organization**: Use containers to group related components
+   together
+2. **Visual Hierarchy**: Create clear visual sections using nested
+   components
+3. **Consistency**: Maintain consistent accent colors across related
+   containers
+4. **Readability**: Keep container content organized and
+   well-structured
 
 ## Available Props
 
