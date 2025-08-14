@@ -1,0 +1,25 @@
+---
+title: "TaskSchedule"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TaskSchedule
+
+<GenerationInfo sourceFile="packages/tasks/src/types.ts" sourceLine="9" packageName="@commandkit/tasks" />
+
+Represents a task schedule configuration.
+
+Tasks can be scheduled using either cron expressions or specific dates/timestamps.
+The timezone is optional and defaults to the system timezone.
+
+```ts title="Signature"
+type TaskSchedule = string | Date | number
+```

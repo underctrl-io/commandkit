@@ -1,0 +1,53 @@
+---
+title: "WithMutex"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## withMutex
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/mutex.ts" sourceLine="245" packageName="commandkit" />
+
+Convenience function to execute a function with exclusive access using the default mutex.
+
+
+
+*Example*
+
+```typescript
+const controller = new AbortController();
+const result = await withMutex('shared-resource', async () => {
+  // This code runs with exclusive access
+  return await updateSharedResource();
+}, 30000, controller.signal);
+controller.abort(); // Cancels the lock acquisition
+```
+
+```ts title="Signature"
+function withMutex<T>(key: string, fn: () => Promise<T> | T, timeout?: number, signal?: AbortSignal): Promise<T>
+```
+Parameters
+
+### key
+
+<MemberInfo kind="parameter" type={`string`} />
+
+### fn
+
+<MemberInfo kind="parameter" type={`() =&#62; Promise&#60;T&#62; | T`} />
+
+### timeout
+
+<MemberInfo kind="parameter" type={`number`} />
+
+### signal
+
+<MemberInfo kind="parameter" type={`AbortSignal`} />
+

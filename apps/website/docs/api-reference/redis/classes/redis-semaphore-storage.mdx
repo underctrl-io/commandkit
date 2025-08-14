@@ -1,0 +1,103 @@
+---
+title: "RedisSemaphoreStorage"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## RedisSemaphoreStorage
+
+<GenerationInfo sourceFile="packages/redis/src/semaphore-storage.ts" sourceLine="4" packageName="@commandkit/redis" />
+
+
+
+```ts title="Signature"
+class RedisSemaphoreStorage implements SemaphoreStorage {
+    constructor(redis: Redis)
+    acquire(key: string, timeout: number = this.defaultTimeout, signal?: AbortSignal) => Promise<boolean>;
+    release(key: string) => Promise<void>;
+    getAvailablePermits(key: string) => Promise<number>;
+    getTotalPermits(key: string) => Promise<number>;
+    initialize(key: string, permits: number) => Promise<void>;
+    getSemaphoreInfo(key: string) => Promise<{
+    total: number;
+    available: number;
+    acquired: number;
+    initialized: boolean;
+  }>;
+    reset(key: string, permits?: number) => Promise<void>;
+    increasePermits(key: string, additionalPermits: number) => Promise<void>;
+    decreasePermits(key: string, permitsToRemove: number) => Promise<void>;
+    clear(key: string) => Promise<void>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/commandkit/interfaces/semaphore-storage#semaphorestorage'>SemaphoreStorage</a></code>
+
+
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(redis: Redis) => RedisSemaphoreStorage`}   />
+
+
+### acquire
+
+<MemberInfo kind="method" type={`(key: string, timeout: number = this.defaultTimeout, signal?: AbortSignal) => Promise&#60;boolean&#62;`}   />
+
+
+### release
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+
+### getAvailablePermits
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+
+### getTotalPermits
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+
+### initialize
+
+<MemberInfo kind="method" type={`(key: string, permits: number) => Promise&#60;void&#62;`}   />
+
+Initializes a semaphore with the specified number of permits
+### getSemaphoreInfo
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;{     total: number;     available: number;     acquired: number;     initialized: boolean;   }&#62;`}   />
+
+Gets detailed information about a semaphore
+### reset
+
+<MemberInfo kind="method" type={`(key: string, permits?: number) => Promise&#60;void&#62;`}   />
+
+Resets a semaphore to its initial state
+### increasePermits
+
+<MemberInfo kind="method" type={`(key: string, additionalPermits: number) => Promise&#60;void&#62;`}   />
+
+Increases the total number of permits for a semaphore
+### decreasePermits
+
+<MemberInfo kind="method" type={`(key: string, permitsToRemove: number) => Promise&#60;void&#62;`}   />
+
+Decreases the total number of permits for a semaphore
+### clear
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+Clears a semaphore completely
+
+
+</div>

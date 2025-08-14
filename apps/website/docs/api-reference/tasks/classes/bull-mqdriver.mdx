@@ -1,0 +1,109 @@
+---
+title: "BullMQDriver"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## BullMQDriver
+
+<GenerationInfo sourceFile="packages/tasks/src/drivers/bullmq.ts" sourceLine="38" packageName="@commandkit/tasks" />
+
+BullMQ-based task driver for distributed task scheduling.
+
+This driver uses BullMQ to provide robust, distributed task scheduling with Redis
+as the backend. It supports both cron expressions and date-based scheduling, with
+built-in retry mechanisms and job persistence.
+
+**Requirements**: Requires the `bullmq` package to be installed.
+
+
+
+*Example*
+
+```ts
+import { BullMQDriver } from '@commandkit/tasks/bullmq';
+import { setDriver } from '@commandkit/tasks';
+
+const driver = new BullMQDriver({
+  host: 'localhost',
+  port: 6379,
+}, 'my-tasks-queue');
+
+setDriver(driver);
+```
+
+*Example*
+
+```ts
+// With custom Redis connection options
+const driver = new BullMQDriver({
+  host: 'redis.example.com',
+  port: 6379,
+  password: 'your-password',
+  tls: true,
+});
+```
+
+```ts title="Signature"
+class BullMQDriver implements TaskDriver {
+    public readonly queue: Queue;
+    public readonly worker: Worker;
+    constructor(connection: ConnectionOptions, queueName: string = 'commandkit-tasks')
+    create(task: TaskData) => Promise<string>;
+    delete(identifier: string) => Promise<void>;
+    setTaskRunner(runner: TaskRunner) => Promise<void>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a></code>
+
+
+
+<div className="members-wrapper">
+
+### queue
+
+<MemberInfo kind="property" type={`Queue`}   />
+
+The BullMQ queue instance for managing tasks
+### worker
+
+<MemberInfo kind="property" type={`Worker`}   />
+
+The BullMQ worker instance for processing tasks
+### constructor
+
+<MemberInfo kind="method" type={`(connection: ConnectionOptions, queueName: string = 'commandkit-tasks') => BullMQDriver`}   />
+
+Creates a new BullMQ driver instance.
+### create
+
+<MemberInfo kind="method" type={`(task: <a href='/docs/next/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
+
+Creates a new scheduled task in BullMQ.
+
+For cron tasks, this creates a repeating job with the specified cron pattern.
+For date tasks, this creates a delayed job that executes at the specified time.
+### delete
+
+<MemberInfo kind="method" type={`(identifier: string) => Promise&#60;void&#62;`}   />
+
+Deletes a scheduled task from BullMQ.
+
+This removes the job and all its children (for repeating jobs) from the queue.
+### setTaskRunner
+
+<MemberInfo kind="method" type={`(runner: <a href='/docs/next/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
+
+Sets the task execution runner function.
+
+This function will be called by the BullMQ worker when a job is due for execution.
+
+
+</div>

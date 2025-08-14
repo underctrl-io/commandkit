@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: pnpm/action-setup@v4
         with:
-          version: '10.11.0'
+          version: '10.14.0'
 
       - uses: actions/checkout@v4
 
@@ -60,6 +60,8 @@ jobs:
             "@commandkit/cache:packages/cache"
             "@commandkit/analytics:packages/analytics"
             "@commandkit/ai:packages/ai"
+            "@commandkit/queue:packages/queue"
+            "@commandkit/tasks:packages/tasks"
           )
 
           for entry in "${PACKAGES[@]}"; do
@@ -82,6 +84,8 @@ jobs:
             "@commandkit/cache"
             "@commandkit/analytics"
             "@commandkit/ai"
+            "@commandkit/queue"
+            "@commandkit/tasks"
           )
 
           for pkg in "${PACKAGES[@]}"; do

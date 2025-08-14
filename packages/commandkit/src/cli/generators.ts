@@ -3,8 +3,9 @@ import { join } from 'path';
 import { panic } from './common';
 import { existsSync } from 'fs';
 import colors from '../utils/colors';
+import { COMMANDKIT_CWD } from '../utils/constants';
 
-const BASE_PATH = process.cwd();
+const BASE_PATH = COMMANDKIT_CWD;
 const COMMANDS_DIR = join(BASE_PATH, 'src/app/commands');
 const EVENTS_DIR = join(BASE_PATH, 'src/app/events');
 
@@ -13,7 +14,7 @@ const EVENTS_DIR = join(BASE_PATH, 'src/app/events');
  * @internal
  */
 const formatPath = (path: string) =>
-  path.replace(process.cwd(), '.').replace(/\\/g, '/');
+  path.replace(COMMANDKIT_CWD, '.').replace(/\\/g, '/');
 
 /**
  * @private

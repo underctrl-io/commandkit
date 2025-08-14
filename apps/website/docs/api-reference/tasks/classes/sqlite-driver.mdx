@@ -1,0 +1,78 @@
+---
+title: "SQLiteDriver"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## SQLiteDriver
+
+<GenerationInfo sourceFile="packages/tasks/src/drivers/sqlite.ts" sourceLine="20" packageName="@commandkit/tasks" />
+
+SQLite-based persistent job queue manager for CommandKit tasks.
+
+- Jobs are recoverable on restart (pending jobs from the past are run on startup)
+- Job data is persisted in SQLite
+- Supports both cron and date-based schedules (uses cron-parser for cron)
+
+
+
+*Example*
+
+```ts
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+import { setDriver } from '@commandkit/tasks';
+
+const driver = new SQLiteDriver('./tasks.db');
+setDriver(driver);
+```
+
+```ts title="Signature"
+class SQLiteDriver implements TaskDriver {
+    constructor(dbPath:  = './commandkit-tasks.db')
+    destroy() => ;
+    create(task: TaskData) => Promise<string>;
+    delete(identifier: string) => Promise<void>;
+    setTaskRunner(runner: TaskRunner) => Promise<void>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a></code>
+
+
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(dbPath:  = './commandkit-tasks.db') => SQLiteDriver`}   />
+
+Create a new SQLiteDriver instance.
+### destroy
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Destroy the SQLite driver and stop the polling loop.
+### create
+
+<MemberInfo kind="method" type={`(task: <a href='/docs/next/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
+
+Schedule a new job.
+### delete
+
+<MemberInfo kind="method" type={`(identifier: string) => Promise&#60;void&#62;`}   />
+
+Delete a scheduled job by its ID.
+### setTaskRunner
+
+<MemberInfo kind="method" type={`(runner: <a href='/docs/next/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
+
+Set the task runner function to be called when a job is due.
+
+
+</div>

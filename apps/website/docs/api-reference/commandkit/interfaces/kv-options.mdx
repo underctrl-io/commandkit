@@ -1,0 +1,41 @@
+---
+title: "KvOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## KvOptions
+
+<GenerationInfo sourceFile="packages/commandkit/src/kv/kv.ts" sourceLine="15" packageName="commandkit" />
+
+Configuration options for the KV store
+
+```ts title="Signature"
+interface KvOptions {
+    enableWAL?: boolean;
+    namespace?: string;
+}
+```
+
+<div className="members-wrapper">
+
+### enableWAL
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+Enable Write-Ahead Logging for better performance and durability
+### namespace
+
+<MemberInfo kind="property" type={`string`}   />
+
+Namespace for the key-value store table
+
+
+</div>

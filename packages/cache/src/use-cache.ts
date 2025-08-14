@@ -9,7 +9,7 @@ import { AnalyticsEvents } from 'commandkit/analytics';
 import { randomUUID } from 'node:crypto';
 import ms, { type StringValue } from 'ms';
 import { getCacheProvider } from './cache-plugin';
-import stableHash from 'stable-hash';
+import { createHash } from './utils';
 
 const cacheContext = new AsyncLocalStorage<CacheContext>();
 const fnStore = new Map<
@@ -28,13 +28,7 @@ const CACHE_FN_ID = `__cache_fn_id_${Date.now()}__${Math.random()}__`;
 const CACHED_FN_SYMBOL = Symbol('commandkit.cache.sentinel');
 
 // WeakMap to store function metadata without preventing garbage collection
-const fnMetadata = new WeakMap<
-  GenericFunction,
-  { id: string; buildId: string }
->();
-
-// Generate a stable build ID that persists across restarts
-const BUILD_ID = randomUUID();
+const fnMetadata = new WeakMap<GenericFunction, string>();
 
 /**
  * Context for managing cache operations within an async scope
@@ -88,20 +82,13 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
   // Get or create function metadata
   let metadata = fnMetadata.get(fn);
   if (!metadata) {
-    metadata = {
-      id: randomUUID(),
-      buildId: BUILD_ID,
-    };
+    metadata = randomUUID();
     fnMetadata.set(fn, metadata);
   }
 
   const memo = (async (...args) => {
     const analytics = getCommandKit()?.analytics;
-    const keyHash = await stableHash({
-      fnId: metadata.id,
-      buildId: metadata.buildId,
-      args,
-    });
+    const keyHash = createHash(metadata, args);
 
     const resolvedTTL =
       isLocal && params?.ttl != null

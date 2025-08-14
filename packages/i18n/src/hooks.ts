@@ -1,5 +1,5 @@
 import type { Locale } from 'discord.js';
-import { getI18n, type CommandLocalizationContext } from './i18n';
+import { useI18n, type CommandLocalizationContext } from './i18n';
 import {
   useEnvironment,
   eventWorkerContext,
@@ -29,8 +29,8 @@ export function locale(locale?: Locale): CommandLocalizationContext {
 
     const commandkit = context.commandkit;
 
-    const i18n = getI18n(commandkit);
-    const detectedLocale: Locale = locale || commandkit.config.defaultLocale;
+    const i18n = useI18n(commandkit);
+    const detectedLocale: Locale = locale || commandkit.appConfig.defaultLocale;
 
     return {
       t: i18n.getFixedT(detectedLocale, `${context.event}.event`),
@@ -64,5 +64,5 @@ export function fetchT(
   ns?: string | null,
   keyPrefix?: string,
 ): TFunction {
-  return locale().i18n.getFixedT(lng, ns, keyPrefix);
+  return useI18n().getFixedT(lng, ns, keyPrefix);
 }

@@ -1,0 +1,47 @@
+---
+title: "SemaphoreOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## SemaphoreOptions
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/semaphore.ts" sourceLine="49" packageName="commandkit" />
+
+Configuration options for semaphore
+
+```ts title="Signature"
+interface SemaphoreOptions {
+    permits?: number;
+    timeout?: number;
+    storage?: SemaphoreStorage;
+}
+```
+
+<div className="members-wrapper">
+
+### permits
+
+<MemberInfo kind="property" type={`number`}   />
+
+Maximum number of concurrent permits allowed. Default: 1
+### timeout
+
+<MemberInfo kind="property" type={`number`}   />
+
+Default timeout in milliseconds for permit acquisition. Default: 30000
+### storage
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/semaphore-storage#semaphorestorage'>SemaphoreStorage</a>`}   />
+
+Storage implementation for persisting semaphore data. Default: <a href='/docs/next/api-reference/commandkit/classes/memory-semaphore-storage#memorysemaphorestorage'>MemorySemaphoreStorage</a>
+
+
+</div>

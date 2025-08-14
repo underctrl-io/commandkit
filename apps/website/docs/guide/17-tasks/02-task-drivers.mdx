@@ -1,0 +1,200 @@
+---
+title: Task Drivers
+description: Learn about different task drivers and how to configure them for your use case.
+---
+
+# Task Drivers
+
+Task drivers handle the persistence and scheduling of your tasks. The tasks plugin supports multiple drivers to fit different deployment scenarios and requirements.
+
+## Available Drivers
+
+### SQLite Driver (Development)
+
+The SQLite driver provides persistent, file-based task scheduling. It's perfect for development environments and single-instance applications with job recovery on restart.
+
+**Pros:**
+
+- Persistent job storage
+- Jobs recoverable on restart
+- No external dependencies
+- Lightweight and reliable
+
+**Cons:**
+
+- Single instance only
+- No distributed scheduling support
+- Intended for development use
+
+**Usage:**
+
+```ts
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+import { setDriver } from '@commandkit/tasks';
+
+setDriver(new SQLiteDriver('./tasks.db'));
+```
+
+### BullMQ Driver (Production)
+
+The BullMQ driver provides robust, distributed task scheduling using Redis as the backend. It's ideal for production environments with multiple bot instances.
+
+**Pros:**
+
+- Distributed scheduling across multiple instances
+- Persistent task storage
+- Built-in retry mechanisms
+- Production-ready with Redis
+
+**Cons:**
+
+- Requires Redis server
+- More complex setup
+- Additional dependency
+
+**Installation:**
+
+```bash
+npm install bullmq
+```
+
+**Usage:**
+
+```ts
+import { BullMQDriver } from '@commandkit/tasks/bullmq';
+import { setDriver } from '@commandkit/tasks';
+
+setDriver(
+  new BullMQDriver({
+    host: 'localhost',
+    port: 6379,
+  }),
+);
+```
+
+**Advanced Redis Configuration:**
+
+```ts
+const driver = new BullMQDriver({
+  host: 'redis.example.com',
+  port: 6379,
+  password: 'your-password',
+  tls: true,
+  retryDelayOnFailover: 100,
+  maxRetriesPerRequest: 3,
+});
+```
+
+## Setting Up Drivers
+
+### Basic Setup
+
+Configure your driver before the tasks plugin loads:
+
+```ts
+import { tasks } from '@commandkit/tasks';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+import { setDriver } from '@commandkit/tasks';
+
+// Set up the driver
+setDriver(new SQLiteDriver('./tasks.db'));
+
+export default {
+  plugins: [tasks()],
+};
+```
+
+### Environment-Specific Configuration
+
+```ts
+import { tasks } from '@commandkit/tasks';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+import { BullMQDriver } from '@commandkit/tasks/bullmq';
+import { setDriver } from '@commandkit/tasks';
+import { COMMANDKIT_IS_DEV } from 'commandkit';
+
+// Choose driver based on environment
+if (COMMANDKIT_IS_DEV) {
+  setDriver(new SQLiteDriver('./tasks.db'));
+} else {
+  setDriver(
+    new BullMQDriver({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+    }),
+  );
+}
+
+export default {
+  plugins: [tasks()],
+};
+```
+
+## Driver Comparison
+
+| Feature              | SQLite      | BullMQ          |
+| -------------------- | ----------- | --------------- |
+| **Setup Complexity** | Simple      | Moderate        |
+| **Dependencies**     | None        | `bullmq`, Redis |
+| **Persistence**      | File-based  | Redis           |
+| **Distributed**      | No          | Yes             |
+| **Job Recovery**     | Yes         | Yes             |
+| **Production Ready** | Development | Yes             |
+| **Memory Usage**     | Low         | Moderate        |
+
+## Choosing the Right Driver
+
+### Use SQLite when:
+
+- You're developing locally
+- You want persistent job storage during development
+- You have a single bot instance
+- You need job recovery on restart
+
+### Use BullMQ when:
+
+- You have multiple bot instances
+- You need distributed task scheduling
+- You're deploying to production
+- You need advanced features like retries and monitoring
+
+## Custom Drivers
+
+You can create your own driver by implementing the `TaskDriver` interface:
+
+```ts
+import { TaskDriver, TaskRunner } from '@commandkit/tasks';
+import { TaskData } from '@commandkit/tasks';
+
+class CustomDriver implements TaskDriver {
+  private runner: TaskRunner | null = null;
+
+  async create(task: TaskData): Promise<string> {
+    // Implement your scheduling logic
+    const id = await this.scheduler.schedule(task);
+
+    // invoke the runner function to execute the task (normally, this would be invoked by the scheduler)
+    await this.runner?.(task);
+
+    return id;
+  }
+
+  async delete(task: string): Promise<void> {
+    // Implement your deletion logic
+    await this.scheduler.cancel(task);
+  }
+
+  async setTaskRunner(runner: TaskRunner): Promise<void> {
+    this.runner = runner;
+  }
+}
+
+// Use your custom driver
+setDriver(new CustomDriver());
+```
+
+## Next Steps
+
+- [Dynamic Tasks](./03-dynamic-tasks) - Learn how to create tasks on-demand
+- [Advanced Patterns](./04-advanced-patterns) - Best practices for task management

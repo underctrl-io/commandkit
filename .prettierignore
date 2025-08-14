@@ -30,3 +30,6 @@ pnpm-debug.log*
 .turbo
 turbo-lint.log
 .source
+
+turbo/generators/templates/**/*.hbs
+routeTree.gen.ts

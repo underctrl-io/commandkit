@@ -1,4 +1,4 @@
-import { build } from 'tsdown';
+import { build, Options } from 'tsdown';
 import { CompilerPlugin, CompilerPluginRuntime } from '../plugins';
 import { loadConfigFile } from '../config/loader';
 import { writeFile } from 'node:fs/promises';
@@ -8,6 +8,9 @@ import { rimraf } from 'rimraf';
 import { performTypeCheck } from './type-checker';
 import { copyLocaleFiles } from './common';
 import { MaybeArray } from '../components';
+import { COMMANDKIT_CWD } from '../utils/constants';
+import { mergeDeep } from '../config/utils';
+import { existsSync } from 'node:fs';
 
 /**
  * @private
@@ -25,7 +28,7 @@ export interface ApplicationBuildOptions {
  * @private
  * @internal
  */
-function mergeDefinitionsIfNeeded(env: Record<string, string>) {
+function mergeDefinitionsIfNeeded(env: Record<string, string>, isDev: boolean) {
   const values = Object.fromEntries(
     Object.entries(process.env).filter(
       ([k]) => !(k in env) && k.startsWith('COMMANDKIT_PUBLIC_'),
@@ -35,6 +38,19 @@ function mergeDefinitionsIfNeeded(env: Record<string, string>) {
   return {
     ...env,
     ...values,
+    ...(isDev
+      ? {
+          NODE_ENV: 'development',
+          COMMANDKIT_BOOTSTRAP_MODE: 'development',
+          COMMANDKIT_IS_DEV: 'true',
+          COMMANDKIT_IS_TEST: 'false',
+        }
+      : {
+          NODE_ENV: 'production',
+          COMMANDKIT_BOOTSTRAP_MODE: 'production',
+          COMMANDKIT_IS_DEV: 'false',
+          COMMANDKIT_IS_TEST: 'false',
+        }),
   };
 }
 
@@ -51,7 +67,7 @@ export async function buildApplication({
   const config = await loadConfigFile(configPath);
 
   if (!isDev && !config?.typescript?.ignoreBuildErrors) {
-    await performTypeCheck(configPath || process.cwd());
+    await performTypeCheck(configPath || COMMANDKIT_CWD);
   }
 
   const pluginRuntime = new CompilerPluginRuntime(
@@ -70,45 +86,77 @@ export async function buildApplication({
 
     await pluginRuntime.init();
 
-    await build({
-      watch: false,
-      dts: false,
-      clean: true,
-      format: ['esm'],
-      shims: true,
-      minify: false,
-      silent: !!isDev,
-      inputOptions: {
-        transform: {
-          jsx: {
-            runtime: 'automatic',
-            importSource: 'commandkit',
+    await build(
+      mergeDeep(
+        {
+          watch: false,
+          dts: false,
+          clean: true,
+          format: ['esm'],
+          shims: true,
+          minify: false,
+          silent: !!isDev,
+          inputOptions: {
+            transform: {
+              jsx: {
+                runtime: 'automatic',
+                importSource: 'commandkit',
+              },
+            },
+            checks: {
+              circularDependency: true,
+            },
+            onwarn: (warning, defaultWarn) => {
+              if (warning?.message?.includes('compilerOptions.jsx')) return;
+
+              return defaultWarn(warning);
+            },
+            onLog: (level, log, defaultLog) => {
+              if (isDev) return;
+
+              return defaultLog(level, log);
+            },
+            moduleTypes: {
+              '.json': 'js',
+              '.node': 'binary',
+            },
           },
-        },
-        moduleTypes: {
-          '.json': 'js',
-          '.node': 'binary',
-        },
-      },
-      plugins: rolldownPlugins,
-      platform: 'node',
-      skipNodeModulesBundle: true,
-      sourcemap: true,
-      target: 'node16',
-      outDir: dest,
-      env: mergeDefinitionsIfNeeded(config.env || {}),
-      entry: [
-        'src',
-        `!${config.distDir}`,
-        '!.commandkit',
-        '!**/*.test.*',
-        '!**/*.spec.*',
-      ],
-      unbundle: !!isDev,
-    });
+          plugins: rolldownPlugins,
+          platform: 'node',
+          skipNodeModulesBundle: true,
+          sourcemap:
+            config.sourceMap?.[isDev ? 'development' : 'production'] ?? true,
+          target: 'node16',
+          outDir: dest,
+          env: mergeDefinitionsIfNeeded(config.env || {}, !!isDev),
+          entry: Array.from(
+            new Set([
+              'src',
+              `!${config.distDir}`,
+              '!.commandkit',
+              '!**/*.test.*',
+              '!**/*.spec.*',
+              ...(config.entrypoints ?? []),
+            ]),
+          ),
+          unbundle: isDev
+            ? true
+            : (config.compilerOptions?.disableChunking ?? false),
+        } satisfies Options,
+        config.compilerOptions?.tsdown,
+      ),
+    );
 
     await copyLocaleFiles('src', dest);
-    await injectEntryFile(configPath || process.cwd(), !!isDev, config.distDir);
+    await injectEntryFile(
+      configPath || COMMANDKIT_CWD,
+      !!isDev,
+      !!(
+        config.antiCrashScript?.[isDev ? 'development' : 'production'] ??
+        (isDev ? true : false)
+      ),
+      config.distDir,
+    );
   } catch (error) {
     console.error('Build failed:', error);
     if (error instanceof Error) {
@@ -154,10 +202,17 @@ const wrapInAsyncIIFE = (code: string[]) =>
 async function injectEntryFile(
   configPath: string,
   isDev: boolean,
+  emitAntiCrashScript: boolean,
   distDir?: string,
 ) {
+  const dist = isDev ? '.commandkit' : distDir || 'dist';
+  const entryFilePath = join(configPath, dist, 'index.js');
+
+  // skip if the entry file already exists
+  if (existsSync(entryFilePath)) return;
+
   const code = `/* Entrypoint File Generated By CommandKit */
-${isDev ? `\n\n// Injected for development\n${wrapInAsyncIIFE([envScript(isDev), antiCrashScript])}\n\n` : wrapInAsyncIIFE([envScript(isDev)])}
+${isDev ? `\n\n// Injected for development\n${wrapInAsyncIIFE([envScript(isDev), emitAntiCrashScript ? antiCrashScript : ''])}\n\n` : wrapInAsyncIIFE([envScript(isDev)])}
 
 import { commandkit } from 'commandkit';
 import { Client } from 'discord.js';
@@ -179,7 +234,5 @@ await bootstrap().catch((e) => {
 })
 `;
 
-  const dist = isDev ? '.commandkit' : distDir || 'dist';
-
-  await writeFile(join(configPath, dist, 'index.js'), code);
+  await writeFile(entryFilePath, code);
 }

@@ -1,0 +1,32 @@
+---
+title: "OpenKV"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## openKV
+
+<GenerationInfo sourceFile="packages/commandkit/src/kv/kv.ts" sourceLine="731" packageName="commandkit" />
+
+Opens a new KV instance
+
+```ts title="Signature"
+function openKV(path: string | Buffer | URL | DatabaseSync = 'commandkit_kv.db', options: KvOptions = { enableWAL: true, namespace: 'commandkit_kv' }): KV
+```
+Parameters
+
+### path
+
+<MemberInfo kind="parameter" type={`string | Buffer | URL | DatabaseSync`} />
+
+### options
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/commandkit/interfaces/kv-options#kvoptions'>KvOptions</a>`} />
+

@@ -1,0 +1,89 @@
+---
+title: "TaskDriver"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TaskDriver
+
+<GenerationInfo sourceFile="packages/tasks/src/driver.ts" sourceLine="33" packageName="@commandkit/tasks" />
+
+Interface for task persistence and scheduling drivers.
+
+Drivers handle the actual scheduling, persistence, and execution timing of tasks.
+Different drivers can provide different persistence mechanisms (in-memory, database, etc.)
+and scheduling capabilities.
+
+
+
+*Example*
+
+```ts
+import { TaskDriver } from '@commandkit/tasks';
+
+class CustomDriver implements TaskDriver {
+  async create(task: TaskData): Promise<string> {
+    // Schedule the task in your system
+    const id = await this.scheduler.schedule(task);
+    return id;
+  }
+
+  async delete(task: string): Promise<void> {
+    // Remove the task from your system
+    await this.scheduler.cancel(task);
+  }
+
+  async setTaskRunner(runner: TaskRunner): Promise<void> {
+    // Set up the execution handler
+    this.runner = runner;
+  }
+}
+```
+
+```ts title="Signature"
+interface TaskDriver {
+    create(task: TaskData): Promise<string>;
+    delete(task: string): Promise<void>;
+    setTaskRunner(runner: TaskRunner): Promise<void>;
+}
+```
+
+<div className="members-wrapper">
+
+### create
+
+<MemberInfo kind="method" type={`(task: <a href='/docs/next/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
+
+Creates a new scheduled task.
+
+This method should schedule the task according to its schedule configuration
+and return a unique identifier that can be used to delete the task later.
+Multiple tasks may be created with the same name.
+### delete
+
+<MemberInfo kind="method" type={`(task: string) => Promise&#60;void&#62;`}   />
+
+Deletes a scheduled task by its identifier.
+
+This method should remove the task from the scheduling system and cancel
+any pending executions. If the task doesn't exist, this method should
+complete successfully without throwing an error.
+### setTaskRunner
+
+<MemberInfo kind="method" type={`(runner: <a href='/docs/next/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
+
+Sets the task execution runner function.
+
+This method should store the provided runner function and call it whenever
+a task is due for execution. The runner function receives the task execution
+data and should handle any errors that occur during execution.
+
+
+</div>

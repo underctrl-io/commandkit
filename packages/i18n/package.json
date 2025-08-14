@@ -20,7 +20,10 @@
     "redis",
     "cache"
   ],
-  "author": "twilight <hello@twlite.dev>",
+  "contributors": [
+    "Twilight <hello@twlite.dev>",
+    "Avraj <avraj@underctrl.io>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/underctrl-io/commandkit/issues"
@@ -32,8 +35,8 @@
   },
   "devDependencies": {
     "commandkit": "workspace:*",
-    "discord.js": "^14.19.1",
+    "discord.js": "catalog:discordjs",
     "tsconfig": "workspace:*",
-    "typescript": "^5.7.3"
+    "typescript": "catalog:build"
   }
 }

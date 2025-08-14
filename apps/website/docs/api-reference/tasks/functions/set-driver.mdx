@@ -1,0 +1,41 @@
+---
+title: "SetDriver"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## setDriver
+
+<GenerationInfo sourceFile="packages/tasks/src/driver-manager.ts" sourceLine="111" packageName="@commandkit/tasks" />
+
+Sets the global task driver.
+
+This is a convenience function that sets the driver on the global task driver manager.
+
+
+
+*Example*
+
+```ts
+import { setDriver } from '@commandkit/tasks';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+
+setDriver(new SQLiteDriver('./tasks.db'));
+```
+
+```ts title="Signature"
+function setDriver(driver: TaskDriver): void
+```
+Parameters
+
+### driver
+
+<MemberInfo kind="parameter" type={`<a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a>`} />
+

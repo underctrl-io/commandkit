@@ -1,0 +1,263 @@
+---
+title: Basic Operations
+description: Learn the fundamental operations for working with the KV store.
+---
+
+# Basic Operations
+
+This guide covers the fundamental operations of the CommandKit KV store, including storing and retrieving data with JSON serialization and dot notation support.
+
+## Creating a KV Store
+
+```typescript
+import { KV, openKV } from 'commandkit/kv';
+
+// Create with custom database file
+const kv = new KV('my-bot-data.db');
+
+// Or use the convenience function
+const kv = openKV('my-bot-data.db');
+
+// In-memory store for testing
+const kv = openKV(':memory:');
+```
+
+## Storing Data
+
+The KV store supports storing any JSON-serializable data type directly:
+
+### Primitive Values
+
+```typescript
+// Strings
+kv.set('bot_name', 'MyAwesomeBot');
+
+// Numbers
+kv.set('user_count', 1234);
+kv.set('pi', 3.14159);
+
+// Booleans
+kv.set('maintenance_mode', false);
+kv.set('feature_enabled', true);
+
+// BigInt
+kv.set('large_number', BigInt('12345678901234567890'));
+
+// Null and undefined
+kv.set('empty_value', null);
+kv.set('no_value', undefined);
+```
+
+### Objects and Arrays
+
+```typescript
+// Objects
+kv.set('user:123', {
+  name: 'John Doe',
+  age: 30,
+  email: 'john@example.com',
+  preferences: {
+    theme: 'dark',
+    notifications: true,
+  },
+});
+
+// Arrays
+kv.set('tags', ['javascript', 'typescript', 'discord']);
+kv.set('numbers', [1, 2, 3, 4, 5]);
+
+// Mixed arrays
+kv.set('mixed_data', ['string', 42, true, { key: 'value' }, [1, 2, 3]]);
+```
+
+### Complex Data Types
+
+```typescript
+// Dates
+kv.set('created_at', new Date());
+kv.set('expires_at', new Date('2024-12-31'));
+
+// Maps
+kv.set(
+  'permissions',
+  new Map([
+    ['admin', true],
+    ['moderator', false],
+    ['user', true],
+  ]),
+);
+
+// Sets
+kv.set('unique_ids', new Set([1, 2, 3, 4, 5]));
+
+// Buffers
+kv.set('binary_data', Buffer.from('Hello, World!'));
+
+// Regular Expressions
+kv.set('email_regex', /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+
+// Functions (serialized as strings)
+kv.set('validator', (value: string) => value.length > 0);
+```
+
+## Retrieving Data
+
+### Basic Retrieval
+
+```typescript
+// Get stored values
+const botName = kv.get('bot_name'); // 'MyAwesomeBot'
+const userCount = kv.get('user_count'); // 1234
+const isMaintenance = kv.get('maintenance_mode'); // false
+
+// Get objects
+const user = kv.get('user:123');
+// { name: 'John Doe', age: 30, email: 'john@example.com', preferences: { theme: 'dark', notifications: true } }
+
+// Get arrays
+const tags = kv.get('tags'); // ['javascript', 'typescript', 'discord']
+
+// Get complex types
+const createdAt = kv.get('created_at'); // Date object
+const permissions = kv.get('permissions'); // Map object
+const uniqueIds = kv.get('unique_ids'); // Set object
+```
+
+### Dot Notation for Nested Properties
+
+The KV store supports accessing nested properties using dot notation:
+
+```typescript
+// Store an object
+kv.set('user:123', {
+  name: 'John Doe',
+  age: 30,
+  settings: {
+    theme: 'dark',
+    notifications: {
+      email: true,
+      push: false,
+    },
+  },
+});
+
+// Access nested properties
+const userName = kv.get('user:123.name'); // 'John Doe'
+const userAge = kv.get('user:123.age'); // 30
+const theme = kv.get('user:123.settings.theme'); // 'dark'
+const emailNotifications = kv.get('user:123.settings.notifications.email'); // true
+
+// Set nested properties
+kv.set('user:123.settings.theme', 'light');
+kv.set('user:123.settings.notifications.push', true);
+
+// The object is automatically updated
+const updatedUser = kv.get('user:123');
+// { name: 'John Doe', age: 30, settings: { theme: 'light', notifications: { email: true, push: true } } }
+```
+
+## Checking Existence
+
+```typescript
+// Check if a key exists
+if (kv.has('user:123')) {
+  console.log('User exists');
+}
+
+// Check nested properties
+if (kv.has('user:123.settings.theme')) {
+  console.log('User has theme setting');
+}
+```
+
+## Deleting Data
+
+```typescript
+// Delete a key
+kv.delete('user:123');
+
+// Delete nested properties (removes the entire object)
+kv.delete('user:123.settings.theme');
+```
+
+## Bulk Operations
+
+### Get All Data
+
+```typescript
+// Get all key-value pairs as an object
+const allData = kv.all();
+console.log('All stored data:', allData);
+// { 'bot_name': 'MyAwesomeBot', 'user_count': 1234, ... }
+
+// Get all keys
+const keys = kv.keys();
+console.log('All keys:', keys);
+// ['bot_name', 'user_count', 'user:123', ...]
+
+// Get all values
+const values = kv.values();
+console.log('All values:', values);
+// ['MyAwesomeBot', 1234, { name: 'John Doe', ... }, ...]
+
+// Count total entries
+const count = kv.count();
+console.log(`Total entries: ${count}`);
+```
+
+### Iteration
+
+```typescript
+// Iterate over all key-value pairs
+for (const [key, value] of kv) {
+  console.log(`${key}:`, value);
+}
+
+// Convert to array
+const entries = [...kv];
+console.log('All entries:', entries);
+
+// Use with array methods
+const userEntries = [...kv].filter(([key]) => key.startsWith('user:'));
+```
+
+## Clearing Data
+
+```typescript
+// Remove all data from the current namespace
+kv.clear();
+```
+
+## Error Handling
+
+```typescript
+// Always check if data exists before using it
+const user = kv.get('user:123');
+if (user) {
+  console.log('User found:', user.name);
+} else {
+  console.log('User not found');
+}
+
+// Handle missing nested properties
+const theme = kv.get('user:123.settings.theme');
+if (theme !== undefined) {
+  console.log('Theme:', theme);
+} else {
+  console.log('No theme setting found');
+}
+```
+
+## Best Practices
+
+1. **Use Descriptive Keys**: Choose meaningful key names that clearly indicate what data they contain
+2. **Structure Your Data**: Use consistent object structures for related data
+3. **Handle Missing Data**: Always check if data exists before using it
+4. **Use Dot Notation Wisely**: Dot notation is convenient but can make data structure less explicit
+5. **Serialize Complex Data**: The KV store handles serialization automatically, but be aware of what can be serialized
+6. **Clean Up Resources**: Close the database connection when you're done
+
+## Next Steps
+
+- [Namespaces](./03-namespaces.mdx) - Organize data with namespaces
+- [Advanced Features](./04-advanced-features.mdx) - Expiration, transactions, and more

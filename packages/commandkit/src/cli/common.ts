@@ -5,6 +5,7 @@ import colors from '../utils/colors';
 import { ResolvedCommandKitConfig } from '../config/utils';
 import { generateTypesPackage } from '../utils/types-package';
 import { execSync } from 'node:child_process';
+import { COMMANDKIT_CWD } from '../utils/constants';
 
 let ts: typeof import('typescript') | undefined;
 
@@ -44,21 +45,6 @@ export function panic(message: any): never {
  * @private
  * @internal
  */
-export function findPackageJSON() {
-  const cwd = process.cwd();
-  const target = join(cwd, 'package.json');
-
-  if (!fs.existsSync(target)) {
-    panic('Could not find package.json in current directory.');
-  }
-
-  return JSON.parse(fs.readFileSync(target, 'utf8'));
-}
-
-/**
- * @private
- * @internal
- */
 async function ensureTypeScript(target: string) {
   const isTypeScript = /\.(c|m)?tsx?$/.test(target);
 
@@ -85,10 +71,11 @@ function detectPackageManager() {
     'package-lock.json': 'npm',
     'bun.lock': 'bun',
     'bun.lockb': 'bun',
+    'deno.lock': 'deno',
   };
 
   for (const [lockfile, manager] of Object.entries(lockfiles)) {
-    if (fs.existsSync(join(process.cwd(), lockfile))) {
+    if (fs.existsSync(join(COMMANDKIT_CWD, lockfile))) {
       packageManager = manager;
       break;
     }
@@ -114,10 +101,10 @@ export async function loadTypeScript(e?: string) {
     if (e instanceof Error && 'code' in e && e.code === 'MODULE_NOT_FOUND') {
       try {
         const packageManager = detectPackageManager();
-
-        execSync(`${packageManager} add typescript`, {
+        const prefix = packageManager === 'deno' ? 'npm:' : '';
+        execSync(`${packageManager} add -D ${prefix}typescript`, {
           stdio: 'inherit',
-          cwd: process.cwd(),
+          cwd: COMMANDKIT_CWD,
         });
 
         console.log(
@@ -168,7 +155,7 @@ export async function loadConfigFileFromPath(
 
     await generateTypesPackage();
 
-    const nodeModulesPath = process.cwd();
+    const nodeModulesPath = COMMANDKIT_CWD;
 
     const tmpFile = join(nodeModulesPath, 'compiled-commandkit.config.mjs');
 
@@ -222,8 +209,8 @@ export function erase(dir: string) {
  * @internal
  */
 export async function copyLocaleFiles(_from: string, _to: string) {
-  const resolvedFrom = join(process.cwd(), _from);
-  const resolvedTo = join(process.cwd(), _to);
+  const resolvedFrom = join(COMMANDKIT_CWD, _from);
+  const resolvedTo = join(COMMANDKIT_CWD, _to);
 
   const localePaths = ['app/locales'];
   const srcLocalePaths = localePaths.map((path) => join(resolvedFrom, path));

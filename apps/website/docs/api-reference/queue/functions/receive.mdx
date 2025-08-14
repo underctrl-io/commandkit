@@ -1,0 +1,32 @@
+---
+title: "Receive"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## receive
+
+<GenerationInfo sourceFile="packages/queue/src/index.ts" sourceLine="31" packageName="@commandkit/queue" />
+
+Receive a message from a topic.
+
+```ts title="Signature"
+function receive<T>(topic: string, handler: (message: T) => Awaitable<void>): Promise<void>
+```
+Parameters
+
+### topic
+
+<MemberInfo kind="parameter" type={`string`} />
+
+### handler
+
+<MemberInfo kind="parameter" type={`(message: T) =&#62; <a href='/docs/next/api-reference/queue/types/awaitable#awaitable'>Awaitable</a>&#60;void&#62;`} />
+

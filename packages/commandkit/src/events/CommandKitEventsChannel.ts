@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events';
-import type { CommandKit } from '../CommandKit';
+import type { CommandKit } from '../commandkit';
 import type { AsyncFunction, GenericFunction } from '../context/async-context';
 
 /**

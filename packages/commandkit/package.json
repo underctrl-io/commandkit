@@ -34,7 +34,19 @@
     "./analytics.cjs",
     "./analytics.d.ts",
     "./ai.cjs",
-    "./ai.d.ts"
+    "./ai.d.ts",
+    "./env.cjs",
+    "./env.d.ts",
+    "./async-queue.cjs",
+    "./async-queue.d.ts",
+    "./ratelimit.cjs",
+    "./ratelimit.d.ts",
+    "./semaphore.cjs",
+    "./semaphore.d.ts",
+    "./mutex.cjs",
+    "./mutex.d.ts",
+    "./kv.cjs",
+    "./kv.d.ts"
   ],
   "exports": {
     ".": {
@@ -101,6 +113,36 @@
       "require": "./ai.cjs",
       "import": "./ai.cjs",
       "types": "./ai.d.ts"
+    },
+    "./env": {
+      "require": "./env.cjs",
+      "import": "./env.cjs",
+      "types": "./env.d.ts"
+    },
+    "./async-queue": {
+      "require": "./async-queue.cjs",
+      "import": "./async-queue.cjs",
+      "types": "./async-queue.d.ts"
+    },
+    "./ratelimit": {
+      "require": "./ratelimit.cjs",
+      "import": "./ratelimit.cjs",
+      "types": "./ratelimit.d.ts"
+    },
+    "./semaphore": {
+      "require": "./semaphore.cjs",
+      "import": "./semaphore.cjs",
+      "types": "./semaphore.d.ts"
+    },
+    "./mutex": {
+      "require": "./mutex.cjs",
+      "import": "./mutex.cjs",
+      "types": "./mutex.d.ts"
+    },
+    "./kv": {
+      "require": "./kv.cjs",
+      "import": "./kv.cjs",
+      "types": "./kv.d.ts"
     }
   },
   "scripts": {
@@ -132,23 +174,20 @@
     "picocolors": "^1.1.1",
     "rfdc": "^1.3.1",
     "rimraf": "^6.0.0",
-    "tsdown": "^0.12.7",
+    "tsdown": "^0.14.0",
     "use-macro": "^1.1.0"
   },
   "devDependencies": {
     "@types/ms": "^2.0.0",
     "@types/node": "^22.10.2",
     "@types/yargs": "^17.0.32",
-    "discord.js": "^14.19.1",
+    "discord.js": "catalog:discordjs",
     "tsconfig": "workspace:*",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vitest": "^3.0.5"
   },
-  "peerDependencies": {
-    "discord.js": "^14"
-  },
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   }
 }

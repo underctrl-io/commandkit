@@ -1,0 +1,54 @@
+---
+title: "CommandKitCompilerOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandKitCompilerOptions
+
+<GenerationInfo sourceFile="packages/commandkit/src/config/types.ts" sourceLine="5" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+interface CommandKitCompilerOptions {
+    macro?: {
+    /**
+     * Whether to enable macro function compilation in development mode.
+     * @default false
+     */
+    development?: boolean;
+  };
+    tsdown?: Partial<TsDownOptions>;
+    disableChunking?: boolean;
+}
+```
+
+<div className="members-wrapper">
+
+### macro
+
+<MemberInfo kind="property" type={`{     /**      * Whether to enable macro function compilation in development mode.      * @default false      */     development?: boolean;   }`}   />
+
+The macro compiler options to use with CommandKit.
+### tsdown
+
+<MemberInfo kind="property" type={`Partial&#60;TsDownOptions&#62;`}   />
+
+The tsdown compiler options to use with CommandKit.
+**DO NOT USE THIS UNLESS YOU KNOW WHAT YOU ARE DOING** as it alters the behavior of the build process.
+### disableChunking
+
+<MemberInfo kind="property" type={`boolean`} default={`false`}   />
+
+Disables chunking of the output (production only, development never chunks).
+
+
+</div>

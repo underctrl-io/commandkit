@@ -1,0 +1,31 @@
+---
+title: "TaskExecutionData"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TaskExecutionData
+
+<GenerationInfo sourceFile="packages/tasks/src/types.ts" sourceLine="73" packageName="@commandkit/tasks" />
+
+Data structure passed to task execution handlers.
+
+This includes the task metadata and execution timestamp, but excludes
+scheduling information since the task is already being executed.
+
+```ts title="Signature"
+type TaskExecutionData = Omit<
+  TaskData,
+  'schedule' | 'immediate' | 'timezone'
+> & {
+  /** Unix timestamp when the task execution started */
+  timestamp: number;
+}
+```

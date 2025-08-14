@@ -1,0 +1,89 @@
+---
+title: "AsyncQueue"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## AsyncQueue
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/async-queue.ts" sourceLine="17" packageName="commandkit" />
+
+
+
+```ts title="Signature"
+class AsyncQueue {
+    constructor(options: AsyncQueueOptions = {})
+    add(task: AsyncQueueTask<T>, signal?: AbortSignal) => Promise<T>;
+    pause() => ;
+    resume() => ;
+    abort() => ;
+    clear() => ;
+    getRunning() => number;
+    getPending() => number;
+    isPaused() => boolean;
+    isAborted() => boolean;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/commandkit/interfaces/async-queue-options#asyncqueueoptions'>AsyncQueueOptions</a> = {}) => AsyncQueue`}   />
+
+
+### add
+
+<MemberInfo kind="method" type={`(task: <a href='/docs/next/api-reference/commandkit/types/async-queue-task#asyncqueuetask'>AsyncQueueTask</a>&#60;T&#62;, signal?: AbortSignal) => Promise&#60;T&#62;`}   />
+
+Adds a task to the queue.
+### pause
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Pauses the queue. No new tasks will be started until resumed.
+### resume
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Resumes the queue and processes pending tasks.
+### abort
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Aborts the queue, rejecting all pending tasks.
+### clear
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Clears all pending tasks from the queue.
+### getRunning
+
+<MemberInfo kind="method" type={`() => number`}   />
+
+Returns the number of running tasks.
+### getPending
+
+<MemberInfo kind="method" type={`() => number`}   />
+
+Returns the number of pending tasks in the queue.
+### isPaused
+
+<MemberInfo kind="method" type={`() => boolean`}   />
+
+Returns true if the queue is currently paused.
+### isAborted
+
+<MemberInfo kind="method" type={`() => boolean`}   />
+
+Returns true if the queue has been aborted.
+
+
+</div>

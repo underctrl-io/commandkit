@@ -1,0 +1,26 @@
+---
+title: "TaskRunner"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TaskRunner
+
+<GenerationInfo sourceFile="packages/tasks/src/driver.ts" sourceLine="78" packageName="@commandkit/tasks" />
+
+Function type for executing tasks.
+
+This function is called by the driver when a task is scheduled to run.
+It receives the task execution data and should handle the actual execution
+of the task logic.
+
+```ts title="Signature"
+type TaskRunner = (task: TaskExecutionData) => Promise<void>
+```

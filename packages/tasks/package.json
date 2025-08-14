@@ -1,9 +1,26 @@
 {
   "name": "@commandkit/tasks",
-  "version": "0.1.0",
-  "description": "Tasks management plugin for CommandKit",
+  "version": "0.0.0",
+  "description": "Task management plugin for CommandKit",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./bullmq": {
+      "types": "./dist/drivers/bullmq.d.ts",
+      "import": "./dist/drivers/bullmq.js",
+      "require": "./dist/drivers/bullmq.js"
+    },
+    "./sqlite": {
+      "types": "./dist/drivers/sqlite.d.ts",
+      "import": "./dist/drivers/sqlite.js",
+      "require": "./dist/drivers/sqlite.js"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -13,23 +30,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/underctrl-io/commandkit.git"
+    "url": "git+https://github.com/underctrl-io/commandkit.git",
+    "directory": "packages/tasks"
   },
   "keywords": [
     "commandkit",
-    "tasks",
-    "scheduler"
+    "tasks"
   ],
-  "author": "twilight <hello@twlite.dev>",
+  "contributors": [
+    "Twilight <hello@twlite.dev>",
+    "Avraj <avraj@underctrl.io>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/underctrl-io/commandkit/issues"
   },
   "homepage": "https://github.com/underctrl-io/commandkit#readme",
   "devDependencies": {
-    "bullmq": "^5.48.1",
+    "bullmq": "^5.56.5",
     "commandkit": "workspace:*",
     "tsconfig": "workspace:*",
-    "typescript": "^5.7.3"
+    "typescript": "catalog:build"
+  },
+  "dependencies": {
+    "cron-parser": "^4.9.0"
   }
 }

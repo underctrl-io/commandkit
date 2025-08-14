@@ -1,0 +1,15 @@
+export enum SerializerType {
+  String,
+  Number,
+  Boolean,
+  Object,
+  Date,
+  BigInt,
+  Null,
+  Undefined,
+  Array,
+  Map,
+  Set,
+  Buffer,
+  RegExp,
+}

@@ -1,0 +1,41 @@
+---
+title: "MutexOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## MutexOptions
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/mutex.ts" sourceLine="42" packageName="commandkit" />
+
+Configuration options for mutex
+
+```ts title="Signature"
+interface MutexOptions {
+    timeout?: number;
+    storage?: MutexStorage;
+}
+```
+
+<div className="members-wrapper">
+
+### timeout
+
+<MemberInfo kind="property" type={`number`}   />
+
+Default timeout in milliseconds for lock acquisition. Default: 30000
+### storage
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/mutex-storage#mutexstorage'>MutexStorage</a>`}   />
+
+Storage implementation for persisting mutex data. Default: <a href='/docs/next/api-reference/commandkit/classes/memory-mutex-storage#memorymutexstorage'>MemoryMutexStorage</a>
+
+
+</div>

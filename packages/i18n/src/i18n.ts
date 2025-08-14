@@ -18,6 +18,8 @@ import CommandKit, {
   PreparedAppCommandExecution,
   CommandBuilderLike,
   CommandKitHMREvent,
+  getCommandKit,
+  COMMANDKIT_CWD,
 } from 'commandkit';
 import FsBackend from 'i18next-fs-backend';
 import { basename, extname, join } from 'path';
@@ -124,16 +126,18 @@ NativeContext.prototype.locale = function (locale?: Locale) {
  * @throws Error if the i18n instance is not found in the store.
  * @example
  * ```ts
- * import { getI18n } from '@commandkit/i18n';
+ * import { useI18n } from '@commandkit/i18n';
  * import { commandkit } from 'commandkit';
  *
- * const i18n = getI18n(commandkit);
+ * const i18n = useI18n(commandkit);
  *
  * // Use the i18n instance
  * i18n.t('key');
  * ```
  */
-export function getI18n(commandkit: CommandKit): i18n {
+export function useI18n(commandkit?: CommandKit): i18n {
+  commandkit ??= getCommandKit(true);
+
   const i18n = commandkit.store.get('i18n:plugin:instance') as i18n;
 
   if (!i18n) {
@@ -194,7 +198,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
     }
 
     // Set the default locale for command execution
-    ctx.commandkit.config.defaultLocale = (this.i18n.language ||
+    ctx.commandkit.appConfig.defaultLocale = (this.i18n.language ||
       'en-US') as Locale;
 
     Logger.info('I18nPlugin has been activated');
@@ -295,7 +299,7 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
     event: CommandKitHMREvent,
   ): Promise<void> {
     const targetLocation = event.path;
-    const localeDir = join(process.cwd(), '/src/app/locales');
+    const localeDir = join(COMMANDKIT_CWD, '/src/app/locales');
 
     if (!targetLocation.startsWith(localeDir)) return;
 

@@ -41,10 +41,9 @@ You can find the full documentation [here](https://commandkit.dev).
 
 To create a new CommandKit project, you can use the following command:
 
-<!-- TODO: use stable version -->
 
 ```bash
-npm create commandkit@dev
+npm create commandkit
 ```
 
 This will prompt you to enter few details about your project. Once you have entered the details, you can simply run `commandkit dev` to start the bot application.

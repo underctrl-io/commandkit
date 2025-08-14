@@ -1,0 +1,48 @@
+---
+title: "Ratelimit"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## ratelimit
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/ratelimiter.ts" sourceLine="237" packageName="commandkit" />
+
+Convenience function to check if a request is allowed for a given key.
+Uses the default rate limiter instance.
+
+
+
+*Example*
+
+```typescript
+const allowed = await ratelimit('user:123');
+// update the default rate limiter config
+import { defaultRateLimiter } from 'commandkit/ratelimit';
+
+// update max allowed requests
+defaultRateLimiter.setMaxRequests(10);
+
+// update the timeout interval
+defaultRateLimiter.setInterval(30000);
+
+// update the storage implementation
+defaultRateLimiter.setStorage(new RedisStorage());
+```
+
+```ts title="Signature"
+function ratelimit(key: string): Promise<boolean>
+```
+Parameters
+
+### key
+
+<MemberInfo kind="parameter" type={`string`} />
+

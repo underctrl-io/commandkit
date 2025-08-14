@@ -9,6 +9,7 @@ import {
   isCompilerPlugin,
 } from '../plugins';
 import { panic } from './common';
+import { COMMANDKIT_CWD } from '../utils/constants';
 
 /**
  * Creates a command line interface for CommandKit.
@@ -142,7 +143,7 @@ export async function bootstrapCommandkitCLI(
       }
     });
 
-  const types = join(process.cwd(), 'node_modules', 'commandkit-types');
+  const types = join(COMMANDKIT_CWD, 'node_modules', 'commandkit-types');
 
   if (!existsSync(types)) {
     await mkdir(types, { recursive: true }).catch(() => {});

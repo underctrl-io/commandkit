@@ -1,4 +1,4 @@
-import type { CommandKit } from '../CommandKit';
+import type { CommandKit } from '../commandkit';
 import { Logger } from '../logger/Logger';
 import { COMMANDKIT_IS_DEV, HMREventType } from './constants';
 

@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "module": "ESNext",
-    "target": "ESNext"
+    "target": "ESNext",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "templates"]

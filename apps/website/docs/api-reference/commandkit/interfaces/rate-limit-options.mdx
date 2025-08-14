@@ -1,0 +1,47 @@
+---
+title: "RateLimitOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## RateLimitOptions
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/ratelimiter.ts" sourceLine="42" packageName="commandkit" />
+
+Configuration options for rate limiting
+
+```ts title="Signature"
+interface RateLimitOptions {
+    maxRequests?: number;
+    interval?: number;
+    storage?: RateLimitStorage;
+}
+```
+
+<div className="members-wrapper">
+
+### maxRequests
+
+<MemberInfo kind="property" type={`number`}   />
+
+Maximum number of requests allowed per interval. Default: 10
+### interval
+
+<MemberInfo kind="property" type={`number`}   />
+
+Time interval in milliseconds for the rate limit window. Default: 60000
+### storage
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a>`}   />
+
+Storage implementation for persisting rate limit data. Default: <a href='/docs/next/api-reference/commandkit/classes/memory-rate-limit-storage#memoryratelimitstorage'>MemoryRateLimitStorage</a>
+
+
+</div>

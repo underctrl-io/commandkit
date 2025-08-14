@@ -1,0 +1,90 @@
+---
+title: "TasksPlugin"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TasksPlugin
+
+<GenerationInfo sourceFile="packages/tasks/src/plugin.ts" sourceLine="54" packageName="@commandkit/tasks" />
+
+CommandKit plugin that provides task management capabilities.
+
+This plugin automatically loads task definitions from the `src/app/tasks` directory
+and manages their execution through configured drivers. It supports hot module
+replacement (HMR) for development workflows.
+
+
+
+*Example*
+
+```ts
+import { tasks } from '@commandkit/tasks';
+
+export default {
+  plugins: [
+    tasks(),
+  ],
+};
+```
+
+```ts title="Signature"
+class TasksPlugin extends RuntimePlugin<TasksPluginOptions> {
+    public readonly name = 'tasks';
+    public readonly tasks = new Collection<string, Task>();
+    activate(ctx: CommandKitPluginRuntime) => Promise<void>;
+    deactivate(ctx: CommandKitPluginRuntime) => Promise<void>;
+    performHMR(ctx: CommandKitPluginRuntime, event: CommandKitHMREvent) => Promise<void>;
+}
+```
+* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>&#60;<a href='/docs/next/api-reference/tasks/interfaces/tasks-plugin-options#taskspluginoptions'>TasksPluginOptions</a>&#62;</code>
+
+
+
+<div className="members-wrapper">
+
+### name
+
+<MemberInfo kind="property" type={``}   />
+
+The plugin name identifier
+### tasks
+
+<MemberInfo kind="property" type={``}   />
+
+Collection of loaded task instances indexed by task name
+### activate
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Activates the tasks plugin.
+
+This method:
+1. Sets up the task execution runner
+2. Loads all task definitions from the tasks directory
+3. Schedules tasks that have defined schedules
+### deactivate
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>) => Promise&#60;void&#62;`}   />
+
+Deactivates the tasks plugin.
+
+Clears all loaded tasks from memory.
+### performHMR
+
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/commandkit/classes/command-kit-plugin-runtime#commandkitpluginruntime'>CommandKitPluginRuntime</a>, event: <a href='/docs/next/api-reference/commandkit/interfaces/command-kit-hmrevent#commandkithmrevent'>CommandKitHMREvent</a>) => Promise&#60;void&#62;`}   />
+
+Handles hot module replacement (HMR) for task files.
+
+When a task file is modified during development, this method reloads the
+task definition and updates the scheduler accordingly.
+
+
+</div>

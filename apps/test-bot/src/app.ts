@@ -1,6 +1,8 @@
 import { Client } from 'discord.js';
 import { Logger, commandkit } from 'commandkit';
-import './ai';
+import { setDriver } from '@commandkit/tasks';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+import './ai.ts';
 
 const client = new Client({
   intents: [
@@ -11,6 +13,8 @@ const client = new Client({
     'GuildMessageTyping',
   ],
 });
+
+setDriver(new SQLiteDriver('./tasks.db'));
 
 Logger.log('Application bootstrapped successfully!');
 

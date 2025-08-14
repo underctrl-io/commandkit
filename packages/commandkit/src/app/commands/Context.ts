@@ -11,14 +11,14 @@ import {
   Guild,
   TextBasedChannel,
 } from 'discord.js';
-import { CommandKit } from '../../CommandKit';
+import { CommandKit } from '../../commandkit';
 import {
   MessageCommandOptions,
   MessageCommandParser,
 } from './MessageCommandParser';
 import { CommandKitEnvironment } from '../../context/environment';
 import { GenericFunction, getContext } from '../../context/async-context';
-import { exitMiddleware, redirect } from '../middleware/signals';
+import { exitMiddleware, redirect } from '../interrupt/signals';
 import {
   LoadedCommand,
   ResolvableCommand,
@@ -500,7 +500,7 @@ export class Context<
     const locale = preferUser ? this.getUserLocale() : this.getGuildLocale();
 
     if (!locale) {
-      return this.commandkit.config.defaultLocale;
+      return this.commandkit.appConfig.defaultLocale;
     }
 
     return locale;

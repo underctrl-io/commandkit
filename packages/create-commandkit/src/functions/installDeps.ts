@@ -12,11 +12,11 @@ const baseDependencies = [
 const dependencies = {
   js: {
     dependencies: baseDependencies,
-    devDependencies: ['@types/node'],
+    devDependencies: ['@types/node', 'typescript', 'prettier'],
   },
   ts: {
     dependencies: baseDependencies,
-    devDependencies: ['@types/node', 'typescript'],
+    devDependencies: ['@types/node', 'typescript', 'prettier'],
   },
 };
 
@@ -25,6 +25,24 @@ interface InstallDepsProps {
   dir: string;
   lang: Language;
   stdio: IOType;
+}
+
+function getInstallCommand(
+  manager: PackageManager,
+  deps: string[],
+  dev = false,
+) {
+  switch (manager) {
+    case 'npm':
+    case 'pnpm':
+    case 'yarn':
+    case 'bun':
+      return `${manager} add ${dev ? '-D' : ''} ${deps.join(' ')}`;
+    case 'deno':
+      return `deno add ${dev ? '--dev' : ''} ${deps.map((d) => `npm:${d}`).join(' ')}`;
+    default:
+      return manager satisfies never;
+  }
 }
 
 export function installDeps({
@@ -37,17 +55,20 @@ export function installDeps({
 
   try {
     if (dependencies[lang].dependencies.length) {
-      const depsCommand = `${manager} add ${dependencies[
-        lang
-      ].dependencies.join(' ')}`;
+      const depsCommand = getInstallCommand(
+        manager,
+        dependencies[lang].dependencies,
+      );
 
       execSync(depsCommand, { cwd: dir, stdio });
     }
 
     if (dependencies[lang].devDependencies.length) {
-      const devDepsCommand = `${manager} add -D ${dependencies[
-        lang
-      ].devDependencies.join(' ')}`;
+      const devDepsCommand = getInstallCommand(
+        manager,
+        dependencies[lang].devDependencies,
+        true,
+      );
 
       execSync(devDepsCommand, { cwd: dir, stdio });
     }

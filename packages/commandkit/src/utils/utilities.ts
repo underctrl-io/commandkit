@@ -1,8 +1,11 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { COMMANDKIT_IS_CLI, COMMANDKIT_IS_DEV } from './constants';
+import {
+  COMMANDKIT_CWD,
+  COMMANDKIT_IS_CLI,
+  COMMANDKIT_IS_DEV,
+} from './constants';
 import { getConfig } from '../config/config';
-import { eventWorkerContext } from '../app/events/EventWorkerContext';
 
 let appDir: string | null = null;
 let currentDir: string | null = null;
@@ -26,9 +29,9 @@ function getSrcDir() {
 export function getCurrentDirectory(): string {
   if (currentDir) return currentDir;
   const src = getSrcDir();
-  let root = join(process.cwd(), src);
+  let root = join(COMMANDKIT_CWD, src);
 
-  if (!existsSync(root)) root = process.cwd();
+  if (!existsSync(root)) root = COMMANDKIT_CWD;
 
   currentDir = root;
 
@@ -43,7 +46,7 @@ export function getCurrentDirectory(): string {
 export function getSourceDirectories(): string[] {
   const dist = getConfig().distDir;
   const locations = ['src', '.commandkit', dist].map((dir) =>
-    join(process.cwd(), dir),
+    join(COMMANDKIT_CWD, dir),
   );
 
   return locations;
@@ -56,9 +59,9 @@ export function getSourceDirectories(): string[] {
 export function findAppDirectory(): string | null {
   if (appDir) return appDir;
 
-  let root = join(process.cwd(), getSrcDir());
+  let root = join(COMMANDKIT_CWD, getSrcDir());
 
-  if (!existsSync(root)) root = process.cwd();
+  if (!existsSync(root)) root = COMMANDKIT_CWD;
 
   const dirs = ['app'].map((dir) => join(root, dir));
 
@@ -164,37 +167,6 @@ export function devOnly<T extends (...args: any[]) => any>(fn: T): T {
   };
 
   return f as T;
-}
-
-/**
- * Custom error for stopping event propagation.
- */
-export class StopEventPropagationError extends Error {
-  constructor() {
-    super('Event propagation stopped');
-    this.name = 'StopEventPropagationError';
-  }
-}
-
-/**
- * Stops event propagation. This function should be called inside an event handler
- * to prevent further event handling.
- * @throws {StopEventPropagationError}
- * @example // src/app/events/messageCreate/handler.ts
- * import { stopEvents } from 'commandkit';
- *
- * export default async function messageCreateHandler() {
- *   console.log('Message created');
- *   // Stop further event propagation
- *   stopEvents();
- * }
- */
-export function stopEvents(): never {
-  if (!eventWorkerContext.getStore()) {
-    throw new Error('stopEvents() may only be called inside an event handler');
-  }
-
-  throw new StopEventPropagationError();
 }
 
 /**

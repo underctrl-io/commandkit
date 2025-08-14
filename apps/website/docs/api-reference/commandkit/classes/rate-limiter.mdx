@@ -1,0 +1,78 @@
+---
+title: "RateLimiter"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## RateLimiter
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/ratelimiter.ts" sourceLine="91" packageName="commandkit" />
+
+Rate limiter implementation that enforces request limits per key.
+Supports configurable request limits and time intervals.
+
+```ts title="Signature"
+class RateLimiter {
+    constructor(maxRequests: number = DEFAULT_MAX_REQUESTS, interval: number = DEFAULT_TIMEOUT, storage: RateLimitStorage = new MemoryRateLimitStorage())
+    setStorage(storage: RateLimitStorage) => ;
+    getStorage() => RateLimitStorage;
+    limit(key: string) => Promise<boolean>;
+    getRemaining(key: string) => Promise<number>;
+    getResetTime(key: string) => Promise<number>;
+    reset(key: string) => Promise<void>;
+    getConfig() => Omit<RateLimitOptions, 'storage'>;
+}
+```
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(maxRequests: number = DEFAULT_MAX_REQUESTS, interval: number = DEFAULT_TIMEOUT, storage: <a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a> = new MemoryRateLimitStorage()) => RateLimiter`}   />
+
+Creates a new rate limiter instance
+### setStorage
+
+<MemberInfo kind="method" type={`(storage: <a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a>) => `}   />
+
+Sets the storage implementation for the rate limiter
+### getStorage
+
+<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a>`}   />
+
+Gets the storage implementation for the rate limiter
+### limit
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;boolean&#62;`}   />
+
+Checks if a request is allowed for the given key and increments the counter if allowed
+### getRemaining
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+Gets the remaining requests allowed for a given key
+### getResetTime
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;number&#62;`}   />
+
+Gets the time until the rate limit resets for a given key
+### reset
+
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;void&#62;`}   />
+
+Resets the rate limit for a given key
+### getConfig
+
+<MemberInfo kind="method" type={`() => Omit&#60;<a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-options#ratelimitoptions'>RateLimitOptions</a>, 'storage'&#62;`}   />
+
+Gets the current configuration of the rate limiter
+
+
+</div>

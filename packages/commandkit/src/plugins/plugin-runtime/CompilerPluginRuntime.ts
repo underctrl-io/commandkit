@@ -3,8 +3,10 @@ import {
   MaybeFalsey,
   TransformedResult,
   TemplateHandler,
+  isCompilerPlugin,
 } from '..';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { Logger } from '../../logger/Logger';
 
 /**
  * Interface representing a template entry in the plugin runtime.
@@ -49,7 +51,9 @@ export class CompilerPluginRuntime {
    * Creates a new instance of CompilerPluginRuntime.
    * @param plugins An array of compiler plugins to be managed by this runtime.
    */
-  public constructor(private readonly plugins: CompilerPlugin[]) {}
+  public constructor(private readonly plugins: CompilerPlugin[]) {
+    this.plugins = this.plugins.filter((p) => !!p && isCompilerPlugin(p));
+  }
 
   /**
    * Returns the plugins managed by this runtime.
@@ -88,7 +92,7 @@ export class CompilerPluginRuntime {
   }
 
   /**
-   * Unregisters a template handler for a given name.
+   * Unregister a template handler for a given name.
    * This method must be called inside the deactivate() method of a plugin.
    * @param name - The name of the template to unregister.
    */
@@ -150,6 +154,13 @@ export class CompilerPluginRuntime {
   ): Promise<{ code: string; map: string | null }> {
     let map: string | null = null;
     for (const plugin of this.plugins) {
+      if (!plugin?.transform || typeof plugin?.transform !== 'function') {
+        Logger.warn(
+          `Plugin ${plugin?.name ?? '<unknown>'} is invalid or does not have a transform method or the method is not a function`,
+        );
+        continue;
+      }
+
       try {
         const res: MaybeFalsey<TransformedResult> = await plugin.transform?.({
           code,

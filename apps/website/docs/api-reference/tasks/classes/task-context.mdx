@@ -1,0 +1,119 @@
+---
+title: "TaskContext"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## TaskContext
+
+<GenerationInfo sourceFile="packages/tasks/src/context.ts" sourceLine="48" packageName="@commandkit/tasks" />
+
+Execution context provided to task functions.
+
+This class provides access to the task instance, custom data, CommandKit instance,
+and a temporary store for sharing data between prepare and execute functions.
+
+
+
+*Example*
+
+```ts
+import { task } from '@commandkit/tasks';
+
+export default task({
+  name: 'reminder',
+  async execute(ctx) {
+    // Access custom data passed to the task
+    const { userId, message } = ctx.data;
+
+    // Access CommandKit and Discord.js client
+    const user = await ctx.commandkit.client.users.fetch(userId);
+    await user.send(`Reminder: ${message}`);
+
+    // Use the store to share data between prepare and execute
+    const processedCount = ctx.store.get('processedCount') || 0;
+    ctx.store.set('processedCount', processedCount + 1);
+  },
+});
+```
+
+```ts title="Signature"
+class TaskContext<T extends Record<string, any> = Record<string, any>> {
+    public readonly store = new Map<string, any>();
+    constructor(_data: TaskContextData<T>)
+    task: Task
+    client: Client
+    data: T
+    commandkit: CommandKit
+}
+```
+
+<div className="members-wrapper">
+
+### store
+
+<MemberInfo kind="property" type={``}   />
+
+Temporary key-value store for sharing data between prepare and execute functions.
+
+This store is useful for passing computed values or state between the prepare
+and execute phases of task execution.
+
+
+
+*Example*
+
+```ts
+export default task({
+  name: 'conditional-task',
+  async prepare(ctx) {
+    const shouldRun = await checkConditions();
+    ctx.store.set('shouldRun', shouldRun);
+    return shouldRun;
+  },
+  async execute(ctx) {
+    const shouldRun = ctx.store.get('shouldRun');
+    if (shouldRun) {
+      await performAction();
+    }
+  },
+});
+```
+### constructor
+
+<MemberInfo kind="method" type={`(_data: <a href='/docs/next/api-reference/tasks/interfaces/task-context-data#taskcontextdata'>TaskContextData</a>&#60;T&#62;) => TaskContext`}   />
+
+Creates a new task execution context.
+### task
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/classes/task#task'>Task</a>`}   />
+
+Gets the task instance being executed.
+### client
+
+<MemberInfo kind="property" type={`Client`}   />
+
+Gets the Discord.js client.
+### data
+
+<MemberInfo kind="property" type={`T`}   />
+
+Gets the custom data passed to the task execution.
+### commandkit
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
+
+Gets the CommandKit instance for accessing bot functionality.
+
+This provides access to the Discord.js client, CommandKit store, and other
+bot-related functionality.
+
+
+</div>

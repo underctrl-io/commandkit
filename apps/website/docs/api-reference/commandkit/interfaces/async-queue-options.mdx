@@ -1,0 +1,48 @@
+---
+title: "AsyncQueueOptions"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## AsyncQueueOptions
+
+<GenerationInfo sourceFile="packages/commandkit/src/utils/useful-stuff/async-queue.ts" sourceLine="6" packageName="commandkit" />
+
+Async queue implementation for processing tasks sequentially or with limited concurrency.
+Useful for rate-limiting, batching, or controlling resource usage.
+
+```ts title="Signature"
+interface AsyncQueueOptions {
+    concurrency?: number;
+    onDrain?: () => void | Promise<void>;
+    signal?: AbortSignal;
+}
+```
+
+<div className="members-wrapper">
+
+### concurrency
+
+<MemberInfo kind="property" type={`number`}   />
+
+Maximum number of concurrent tasks. Default: 1 (sequential)
+### onDrain
+
+<MemberInfo kind="property" type={`() =&#62; void | Promise&#60;void&#62;`}   />
+
+Optional callback invoked when all tasks are completed
+### signal
+
+<MemberInfo kind="property" type={`AbortSignal`}   />
+
+Optional AbortSignal for cancelling the queue
+
+
+</div>

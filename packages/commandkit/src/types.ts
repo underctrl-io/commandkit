@@ -4,7 +4,7 @@ import {
   Interaction,
   RESTPostAPIApplicationCommandsJSONBody,
 } from 'discord.js';
-import type { CommandKit } from './CommandKit';
+import type { CommandKit } from './commandkit';
 
 type Prettify<T> = {
   [K in keyof T]: T[K];
@@ -48,5 +48,6 @@ export type CommandData = Prettify<
   Omit<RESTPostAPIApplicationCommandsJSONBody, 'description'> & {
     description?: string;
     guilds?: string[];
+    aliases?: string[];
   }
 >;

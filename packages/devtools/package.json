@@ -3,7 +3,6 @@
   "description": "CommandKit devtools",
   "version": "0.0.0",
   "main": "dist/index.js",
-  "type": "commonjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "lint": "tsc --noEmit",
@@ -17,9 +16,9 @@
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "commandkit": "workspace:*",
-    "discord.js": "^14.19.1",
+    "discord.js": "catalog:discordjs",
     "tsconfig": "workspace:*",
-    "typescript": "^5.8.3"
+    "typescript": "catalog:build"
   },
   "files": [
     "dist",

@@ -1,7 +1,7 @@
 export * from './handlers/AppCommandHandler';
 export * from './commands/Context';
 export * from './commands/MessageCommandParser';
-export * from './middleware/signals';
+export * from './interrupt/signals';
 export * from './register/CommandRegistrar';
 
 export {

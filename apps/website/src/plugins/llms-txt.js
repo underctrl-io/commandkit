@@ -38,7 +38,8 @@ module.exports = function (context) {
             entry.name.endsWith('.md')
           ) {
             const content = await fs.promises.readFile(fullPath, 'utf8');
-            const { data: frontmatter } = matter(content);
+            const { data: frontmatter, content: markdownContent } =
+              matter(content);
 
             // Get relative path from guide directory
             const relativePath = path
@@ -51,6 +52,7 @@ module.exports = function (context) {
               description: frontmatter.description,
               path: relativePath,
               version: versionPrefix,
+              content: markdownContent,
             });
           }
         }
@@ -68,14 +70,13 @@ module.exports = function (context) {
 
       // Generate markdown content
       const markdownContent = [
-        '# CommandKit Docs\n',
+        '# CommandKit Documentation\n\n',
         ...allDocs
-          .filter((doc) => doc.title && doc.description)
+          .filter((doc) => doc.title && doc.content)
           .map((doc) => {
-            const url = `${DOCS_URL}/${removeNumericPrefix(doc.path)}`;
-            return `- [${doc.title}](${url}): ${doc.description || doc.title}`;
+            return `## ${doc.title}\n\n${doc.content}\n\n---\n\n`;
           }),
-      ].join('\n');
+      ].join('');
 
       // Write markdown content
       const llmsTxtPath = path.join(outDir, 'llms.txt');

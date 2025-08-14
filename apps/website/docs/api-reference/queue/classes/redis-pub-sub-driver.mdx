@@ -1,0 +1,56 @@
+---
+title: "RedisPubSubDriver"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## RedisPubSubDriver
+
+<GenerationInfo sourceFile="packages/queue/src/discordjs/index.ts" sourceLine="16" packageName="@commandkit/queue" />
+
+
+
+```ts title="Signature"
+class RedisPubSubDriver<TEvent extends Record<string, any> = Record<string, any>> implements MessageQueue {
+    constructor(broker: PubSubRedisBroker<TEvent>)
+    send(topic: T, message: TEvent[T]) => Promise<void>;
+    receive(topic: T, handler: Handler<TEvent>) => Promise<void>;
+    close() => Promise<void>;
+}
+```
+* Implements: <code><a href='/docs/next/api-reference/queue/interfaces/message-queue#messagequeue'>MessageQueue</a></code>
+
+
+
+<div className="members-wrapper">
+
+### constructor
+
+<MemberInfo kind="method" type={`(broker: PubSubRedisBroker&#60;TEvent&#62;) => RedisPubSubDriver`}   />
+
+
+### send
+
+<MemberInfo kind="method" type={`(topic: T, message: TEvent[T]) => Promise&#60;void&#62;`}   />
+
+
+### receive
+
+<MemberInfo kind="method" type={`(topic: T, handler: Handler&#60;TEvent&#62;) => Promise&#60;void&#62;`}   />
+
+
+### close
+
+<MemberInfo kind="method" type={`() => Promise&#60;void&#62;`}   />
+
+
+
+
+</div>

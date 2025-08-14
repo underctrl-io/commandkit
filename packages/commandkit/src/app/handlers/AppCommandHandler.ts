@@ -10,7 +10,7 @@ import {
   Message,
   SlashCommandBuilder,
 } from 'discord.js';
-import type { CommandKit } from '../../CommandKit';
+import type { CommandKit } from '../../commandkit';
 import { AsyncFunction, GenericFunction } from '../../context/async-context';
 import { Logger } from '../../logger/Logger';
 import type { CommandData } from '../../types';
@@ -24,6 +24,7 @@ import { Context } from '../commands/Context';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandRegistrar } from '../register/CommandRegistrar';
 import { Command, Middleware } from '../router';
+import { getConfig } from '../../config/config';
 
 /**
  * Function type for wrapping command execution with custom logic.
@@ -48,7 +49,6 @@ export interface AppCommandNative {
  * Custom properties that can be added to an AppCommand.
  * This allows for additional metadata or configuration to be associated with a command.
  */
-// export type CustomAppCommandProps = Record<string, any>;
 export interface CustomAppCommandProps {
   [key: string]: any;
 }
@@ -158,19 +158,6 @@ export class AppCommandHandler {
    * @internal
    */
   private loadedMiddlewares = new Collection<string, LoadedMiddleware>();
-
-  // Name-to-ID mapping for easier lookup
-  /**
-   * @private
-   * @internal
-   */
-  private commandNameToId = new Map<string, string>();
-
-  /**
-   * @private
-   * @internal
-   */
-  private subcommandPathToId = new Map<string, string>();
 
   /**
    * Command registrar for handling Discord API registration.
@@ -419,6 +406,12 @@ export class AppCommandHandler {
     source: Interaction | Message,
     cmdName?: string,
   ): Promise<PreparedAppCommandExecution | null> {
+    const config = getConfig();
+
+    if (config.disablePrefixCommands && source instanceof Message) {
+      return null;
+    }
+
     let parser: MessageCommandParser | undefined;
 
     // Extract command name (and possibly subcommand) from the source
@@ -427,18 +420,27 @@ export class AppCommandHandler {
         if (source.author.bot) return null;
 
         const prefix =
-          await this.commandkit.config.getMessageCommandPrefix(source);
+          await this.commandkit.appConfig.getMessageCommandPrefix(source);
+
+        if (!prefix || !prefix.length) return null;
 
         parser = new MessageCommandParser(
           source,
           Array.isArray(prefix) ? prefix : [prefix],
           (command: string) => {
             // Find the command by name
-            const commandId = this.commandNameToId.get(command);
-            if (!commandId) return null;
-
-            const loadedCommand = this.loadedCommands.get(commandId);
-            if (!loadedCommand) return null;
+            const loadedCommand = this.findCommandByName(command);
+            if (!loadedCommand) {
+              if (
+                COMMANDKIT_IS_DEV &&
+                this.commandkit.config.showUnknownPrefixCommandsWarning
+              ) {
+                Logger.error(
+                  `Prefix command "${command}" was not found.\nNote: This warning is only shown in development mode as an alert to help you find the command. If you wish to remove this warning, set \`showUnknownPrefixCommandsWarning\` to \`false\` in your commandkit config.`,
+                );
+              }
+              return null;
+            }
 
             if (
               source.guildId &&
@@ -489,10 +491,7 @@ export class AppCommandHandler {
     }
 
     // Find the command by name
-    const commandId = this.commandNameToId.get(cmdName);
-    if (!commandId) return null;
-
-    const loadedCommand = this.loadedCommands.get(commandId);
+    const loadedCommand = this.findCommandByName(cmdName);
     if (!loadedCommand) return null;
 
     // If this is a guild specific command, check if we're in the right guild
@@ -526,13 +525,31 @@ export class AppCommandHandler {
   }
 
   /**
+   * Finds a command by name.
+   * @param name - The command name to search for
+   * @returns The loaded command or null if not found
+   */
+  private findCommandByName(name: string): LoadedCommand | null {
+    for (const [, loadedCommand] of this.loadedCommands) {
+      if (loadedCommand.data.command.name === name) {
+        return loadedCommand;
+      }
+
+      // Check aliases for prefix commands
+      const aliases = loadedCommand.data.command.aliases;
+      if (aliases && Array.isArray(aliases) && aliases.includes(name)) {
+        return loadedCommand;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Reloads all commands and middleware from scratch.
    */
   public async reloadCommands() {
     this.loadedCommands.clear();
     this.loadedMiddlewares.clear();
-    this.commandNameToId.clear();
-    this.subcommandPathToId.clear();
     this.externalCommandData.clear();
     this.externalMiddlewareData.clear();
 
@@ -580,7 +597,6 @@ export class AppCommandHandler {
   public async registerExternalLoadedCommands(data: LoadedCommand[]) {
     for (const command of data) {
       this.loadedCommands.set(command.command.id, command);
-      this.commandNameToId.set(command.command.name, command.command.id);
     }
   }
 
@@ -620,12 +636,17 @@ export class AppCommandHandler {
 
     // generate types
     if (COMMANDKIT_IS_DEV) {
+      const commandNames = Array.from(this.loadedCommands.values()).map(
+        (v) => v.data.command.name,
+      );
+      const aliases = Array.from(this.loadedCommands.values()).flatMap(
+        (v) => v.data.command.aliases || [],
+      );
+
+      const allNames = [...commandNames, ...aliases];
+
       await rewriteCommandDeclaration(
-        `type CommandTypeData = ${Array.from(
-          this.loadedCommands
-            .mapValues((v) => JSON.stringify(v.command.name))
-            .values(),
-        ).join(' | ')}`,
+        `type CommandTypeData = ${allNames.map((name) => JSON.stringify(name)).join(' | ')}`,
       );
     }
 
@@ -698,13 +719,18 @@ export class AppCommandHandler {
         );
       }
 
-      if (
-        (!commandFileData.command.type ||
-          commandFileData.command.type === ApplicationCommandType.ChatInput) &&
-        !commandFileData.command.description
-      ) {
-        commandFileData.command.description = `${command.name} command`;
-      }
+      // Apply the specified logic for name and description
+      const commandName = commandFileData.command.name || command.name;
+      const commandDescription =
+        commandFileData.command.description || `${commandName} command`;
+
+      // Update the command data with resolved name and description
+      const updatedCommandData = {
+        ...commandFileData.command,
+        name: commandName,
+        description: commandDescription,
+        aliases: commandFileData.command.aliases,
+      } as CommandData;
 
       let handlerCount = 0;
 
@@ -734,13 +760,13 @@ export class AppCommandHandler {
         );
       }
 
-      let lastUpdated = commandFileData.command;
+      let lastUpdated = updatedCommandData;
 
       await this.commandkit.plugins.execute(async (ctx, plugin) => {
         const res = await plugin.prepareCommand(ctx, lastUpdated);
 
         if (res) {
-          lastUpdated = res;
+          lastUpdated = res as CommandData;
         }
       });
 
@@ -749,12 +775,12 @@ export class AppCommandHandler {
         guilds: commandFileData.command.guilds,
         data: {
           ...commandFileData,
-          command: 'toJSON' in lastUpdated ? lastUpdated.toJSON() : lastUpdated,
+          command:
+            'toJSON' in lastUpdated && typeof lastUpdated.toJSON === 'function'
+              ? lastUpdated.toJSON()
+              : lastUpdated,
         },
       });
-
-      // Map command name to ID for easier lookup
-      this.commandNameToId.set(command.name, id);
     } catch (error) {
       Logger.error(`Failed to load command ${command.name} (${id})`, error);
     }

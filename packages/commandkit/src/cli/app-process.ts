@@ -31,20 +31,39 @@ export function createAppProcess(
 
   const stdio = getStdio(isDev) as IOType[];
 
-  const ps = spawn(
-    'node',
-    [
-      `--title="CommandKit ${isDev ? 'Development' : 'Production'}"`,
-      '--enable-source-maps',
-      fileName,
-    ],
-    {
-      cwd,
-      windowsHide: true,
-      env: isDev ? DevEnv() : ProdEnv(),
-      stdio,
-    },
-  );
+  const baseArgs = [
+    `--title="CommandKit ${isDev ? 'Development' : 'Production'}"`,
+    '--enable-source-maps',
+  ];
+
+  const nodeOptions = process.env.NODE_OPTIONS;
+  let nodeArgs = [...baseArgs];
+
+  if (nodeOptions) {
+    const options = nodeOptions.trim().split(/\s+/);
+
+    for (const option of options) {
+      const optionName = option.split('=')[0];
+      const existingIndex = nodeArgs.findIndex((arg) =>
+        arg.startsWith(optionName),
+      );
+
+      if (existingIndex !== -1) {
+        nodeArgs[existingIndex] = option;
+      } else {
+        nodeArgs.push(option);
+      }
+    }
+  }
+
+  nodeArgs.push(fileName);
+
+  const ps = spawn('node', nodeArgs, {
+    cwd,
+    windowsHide: true,
+    env: isDev ? DevEnv() : ProdEnv(),
+    stdio,
+  });
 
   ps.stdout?.pipe(process.stdout);
   ps.stderr?.pipe(process.stderr);

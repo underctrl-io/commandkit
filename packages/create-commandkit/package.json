@@ -29,8 +29,8 @@
   "homepage": "https://commandkit.dev",
   "scripts": {
     "lint": "tsc --noEmit",
-    "dev": "tsup --watch",
-    "build": "tsup",
+    "dev": "tsc --watch",
+    "build": "tsc",
     "publish-package": "npm publish"
   },
   "dependencies": {
@@ -45,7 +45,6 @@
     "@types/gradient-string": "^1.1.5",
     "@types/node": "^22.0.0",
     "tsconfig": "workspace:*",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "catalog:build"
   }
 }
