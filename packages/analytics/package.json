@@ -16,7 +16,7 @@
     }
   },
   "scripts": {
-    "lint": "tsc --noEmit",
+    "check-types": "tsc --noEmit",
     "build": "tsc"
   },
   "repository": {

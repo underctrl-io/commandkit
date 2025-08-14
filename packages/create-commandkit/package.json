@@ -28,7 +28,7 @@
   },
   "homepage": "https://commandkit.dev",
   "scripts": {
-    "lint": "tsc --noEmit",
+    "check-types": "tsc --noEmit",
     "dev": "tsc --watch",
     "build": "tsc",
     "publish-package": "npm publish"

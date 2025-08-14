@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "bootstrap": "turbo gen bootstrap --args",
-    "lint": "turbo run --filter=\"./packages/*\" lint",
+    "check-types": "turbo run --filter=\"./packages/*\" check-types",
     "build": "turbo run --filter=\"./packages/*\" build",
     "publish-package": "pnpm publish-package",
     "build-docs": "pnpm run --filter=\"./apps/website\" build",

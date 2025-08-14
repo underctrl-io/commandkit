@@ -3,10 +3,19 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^lint", "^build", "lint"]
+      "dependsOn": ["^build", "check-types"],
+      "outputs": ["dist/**"],
+      "cache": true
     },
-    "lint": {
-      "dependsOn": ["^build"]
+    "check-types": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "cache": true
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
     }
   }
 }
