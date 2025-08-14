@@ -1,6 +1,7 @@
 node_modules
 
 **/website/docs/api-reference
+**/website/docs/guide.old
 **/website/versioned_docs
 **/website/versioned_sidebars
 .docusaurus
