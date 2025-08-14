@@ -4,20 +4,22 @@ description:
   Setup a new CommandKit project using the create-commandkit CLI
 ---
 
-:::warning
+:::info
 
-- CommandKit requires at least [Node.js](https://nodejs.org/) v22
+- CommandKit requires at least [Node.js](https://nodejs.org/) v24
 - This documentation assumes that you have a basic understanding of
   how to use [discord.js](https://discord.js.org/). If you are new to
   discord.js, we recommend you to read the
-  [discord.js guide](https://discordjs.guide/) first. :::
+  [discord.js guide](https://discordjs.guide/) first.
+
+:::
 
 The quickest way to setup a new CommandKit project is to use the
 `create-commandkit` CLI. To get started, run the following command in
 your terminal:
 
 ```sh npm2yarn
-npm create commandkit@latest
+npm create commandkit@next
 ```
 
 This will start the CLI in an interactive mode. You can follow the
@@ -77,7 +79,11 @@ the `@dev` tag like so:
 npm create commandkit@dev
 ```
 
-:::warning The development version is likely to have bugs. :::
+:::warning
+
+The development version is likely to have bugs.
+
+:::
 
 ## Manual setup
 

@@ -11,9 +11,12 @@ If you don't want to use the
 generate a base CommandKit project, you can integrate CommandKit
 manually into your application.
 
-:::info While this guide primarily uses TypeScript, you can use
-JavaScript files without any problems to follow along if that's what
-you're comfortable with (e.g. `commandkit.config.js`, `app.js`, etc)
+:::info
+
+While this guide primarily uses TypeScript, you can use JavaScript
+files without any problems to follow along if that's what you're
+comfortable with (e.g. `commandkit.config.js`, `app.js`, etc)
+
 :::
 
 ## Configuration file
@@ -90,9 +93,13 @@ export const message: MessageCommand = async ({ message }) => {
 This command will reply with "Pong!" when the user runs the `/ping`
 slash command, or sends `!ping` in the chat.
 
-:::tip The prefix for message commands can be changed globally or
-per-guild. Learn more
-[here](../02-commands/05-custom-message-commands-prefix.mdx). :::
+:::tip
+
+The prefix for message commands can be changed globally or per-guild.
+Learn more
+[here](../02-commands/05-custom-message-commands-prefix.mdx).
+
+:::
 
 ## Adding events
 
@@ -116,8 +123,11 @@ export default function (client: Client<true>) {
 }
 ```
 
-:::tip You can find a full list of events under the
+:::tip
+
+You can find a full list of events under the
 [discord.js Client class](https://discord.js.org/docs/packages/discord.js/main/Client:Class).
+
 :::
 
 ## Running the app in development
@@ -132,11 +142,15 @@ to restart the entire application.
 npx commandkit dev
 ```
 
-:::warning When running in development mode, CommandKit will generate
-a `.commandkit` folder in the root of your project. This folder
-contains the compiled files used in development mode. You should not
-commit this folder to your version control system by making sure you
-add it to your `.gitignore` file. :::
+:::warning
+
+When running in development mode, CommandKit will generate a
+`.commandkit` folder in the root of your project. This folder contains
+the compiled files used in development mode. You should not commit
+this folder to your version control system by making sure you add it
+to your `.gitignore` file.
+
+:::
 
 ## Building for production
 
@@ -148,11 +162,15 @@ folder in your project directory containing the compiled files.
 npx commandkit build
 ```
 
-:::warning After running your build script, CommandKit will generate a
-`dist` folder in the root of your project. This folder contains the
-compiled files used for production. You should not commit this folder
-to your version control system by making sure you add it to your
-`.gitignore` file. :::
+:::warning
+
+After running your build script, CommandKit will generate a `dist`
+folder in the root of your project. This folder contains the compiled
+files used for production. You should not commit this folder to your
+version control system by making sure you add it to your `.gitignore`
+file.
+
+:::
 
 ## Running the app in production
 
