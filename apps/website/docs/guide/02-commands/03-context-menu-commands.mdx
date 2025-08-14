@@ -1,3 +1,80 @@
 ---
 title: Context menu commands
 ---
+
+Context menu commands allows users on Discord to run commands by
+either referencing a message or a user. Context menu commands can be
+grouped to either 'Message' or 'User' context menu commands.
+
+Alongside chat input commands, you can use CommandKit to also register
+and handle context menu commands.
+
+Context menu commands live in the same directory as your chat input
+commands. To begin, create a command file in your `src/app/commands`
+directory.
+
+This guide will create 2 simple `report-message` and `report-user`
+commands. It's not an actual reporting system, but it should make
+understanding the nature of these context menu commands easier.
+
+## Message context menu command
+
+```ts title="src/app/commands/report-message.ts"
+import type {
+  CommandData,
+  MessageContextMenuCommand,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'report-message',
+  description: 'Report a message to moderators.',
+};
+
+export const messageContextMenu: MessageContextMenuCommand = async ({
+  interaction,
+}) => {
+  const content = interaction.targetMessage.content;
+
+  // you could add your message reporting logic here
+
+  await interaction.reply({
+    content: `You have reported the following message: ${content}`,
+    flags: MessageFlags.Ephemeral,
+  });
+};
+```
+
+By just exporting the `messageContextMenu` function from your command
+file, CommandKit will properly update your command type before
+registering it to the Discord API. You don't have to manually set a
+`type` in your `command` object, as you would with most command
+handlers.
+
+## User context menu command
+
+The logic for registering and handling user context menu commands is
+very similar to message context menu commands.
+
+```ts title="src/app/commands/report-user.ts"
+import type { CommandData, UserContextMenuCommand } from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'report-user',
+  description: 'Report a user to moderators.',
+};
+
+export const userContextMenu: UserContextMenuCommand = async ({
+  interaction,
+}) => {
+  const userId = interaction.targetUser.id;
+
+  // you could add your user reporting logic here
+
+  await interaction.reply({
+    content: `You have reported a user with the ID: ${userId}`,
+    flags: MessageFlags.Ephemeral,
+  });
+};
+```
