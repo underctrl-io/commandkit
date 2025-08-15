@@ -1,3 +1,40 @@
 ---
 title: after function
 ---
+
+The `after` function allows you to execute a callback after a command
+has been executed. This is useful for performing actions that should
+occur after the command has completed, such as logging or cleanup
+tasks.
+
+## Usage
+
+```ts title="src/app/commands/ping.ts"
+import {
+  type CommandData,
+  type ChatInputCommand,
+  after,
+} from 'commandkit';
+
+export const command: CommandData = {};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  after(() => {
+    // This code will be executed after the command has been executed
+    console.log('Command has been executed');
+  });
+
+  await ctx.interaction.reply({
+    content: 'Hello World',
+    ephemeral: true,
+  });
+};
+```
+
+:::info
+
+The `after` function is guaranteed to be called after the command has
+been executed, regardless of whether the command was successful or
+not.
+
+:::
