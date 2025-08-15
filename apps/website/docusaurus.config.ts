@@ -44,7 +44,7 @@ const config: Config = {
             '0.1.10': {
               label: 'v0.1.10',
               path: 'v0',
-              banner: 'unmaintained'
+              banner: 'unmaintained',
             },
           },
           sidebarPath: './sidebars.ts',

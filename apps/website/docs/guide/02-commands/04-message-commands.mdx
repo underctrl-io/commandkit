@@ -22,7 +22,8 @@ message commands in favor of the more modern
 
 Message commands, like all the other command types, live in your
 `src/app/commands` directory. To let CommandKit know that this is a
-message command, just export the `message` function from your command file.
+message command, just export the `message` function from your command
+file.
 
 ```ts title="src/app/commands/ping.ts"
 import type { CommandData, MessageCommand } from 'commandkit';
@@ -107,6 +108,11 @@ commandkit.setPrefixResolver(async (message) => {
 
 :::warning
 
-The `setPrefixResolver` method runs on every message, so it's important to make sure that it's as lightweight as possible. To help with performance, you may want to implement caching, which CommandKit also supports with the [`@commandkit/cache`](../05-official-plugins/03-commandkit-cache.mdx) official plugin.
+The `setPrefixResolver` method runs on every message, so it's
+important to make sure that it's as lightweight as possible. To help
+with performance, you may want to implement caching, which CommandKit
+also supports with the
+[`@commandkit/cache`](../05-official-plugins/03-commandkit-cache.mdx)
+official plugin.
 
 :::
