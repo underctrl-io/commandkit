@@ -98,8 +98,17 @@ import { commandkit } from 'commandkit';
 import { database } from '../database'; // This is a mock database
 
 commandkit.setPrefixResolver(async (message) => {
+  if (!message.guildId) {
+    return '!'; // Fallback to '!' if command is used in a DM
+  }
+
   const guildSettings = await database.findUnique({
-    where: { guildId },
+    where: {
+      guildId: message.guildId,
+    },
+    select: {
+      prefix: true,
+    },
   });
 
   return guildSettings?.prefix ?? '!'; // Fallback to '!' if no prefix is found
