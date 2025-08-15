@@ -20,7 +20,7 @@ message commands in favor of the more modern
 
 Message commands, like all the other command types, live in your
 `src/app/commands` directory. To let CommandKit know that this is a
-message command, just export the `messageCommand` function.
+message command, just export the `message` function.
 
 ```ts title="src/app/commands/ping.ts"
 import type { CommandData, MessageCommand } from 'commandkit';
@@ -29,7 +29,7 @@ export const command: CommandData = {
   name: 'ping',
 };
 
-export const messageCommand: MessageCommand = async (ctx) => {
+export const message: MessageCommand = async (ctx) => {
   await ctx.message.reply('Pong!');
 };
 ```
@@ -57,7 +57,7 @@ export const command: CommandData = {
   name: 'ping',
 };
 
-export const messageCommand: MessageCommand = async (ctx) => {
+export const message: MessageCommand = async (ctx) => {
   const args = ctx.message.args(); // string[]
 };
 ```
