@@ -1,3 +1,42 @@
 ---
-title: Category directory
+title: Category Directory
 ---
+
+Category directories are special directories inside
+`src/app/commands`, with `(categoryName)` as their name.
+
+It is primarily used to group related commands together. This is
+useful for organizing your commands into logical groups, making it
+easier to manage and maintain your code. You can even nest multiple
+category directories to create a hierarchy of commands. This can then
+be used across your application in places such as middlewares,
+plugins, or even other commands through your `commandkit` instance.
+
+## Example Structure
+
+```title="" {4-15}
+.
+├── src/
+│   ├── app/
+│   │   ├── commands/
+│   │   │   ├── (Fun)/
+│   │   │   │   ├── (Jokes)/
+│   │   │   │   │   ├── random-joke.ts
+│   │   │   │   │   └── dad-joke.ts
+│   │   │   │   ├── 8ball.ts
+│   │   │   │   ├── cat.ts
+│   │   │   │   └── dog.ts
+│   │   │   └── (Moderation)/
+│   │   │       ├── timeout.ts
+│   │   │       ├── kick.ts
+│   │   │       └── ban.ts
+│   │   └── events/
+│   │       └── ready/
+│   │           └── log.ts
+│   └── app.ts
+├── .env
+├── .gitignore
+├── commandkit.config.ts
+├── package.json
+└── tsconfig.json
+```
