@@ -18,9 +18,11 @@ message commands in favor of the more modern
 
 :::
 
+## Basic Setup
+
 Message commands, like all the other command types, live in your
 `src/app/commands` directory. To let CommandKit know that this is a
-message command, just export the `message` function.
+message command, just export the `message` function from your command file.
 
 ```ts title="src/app/commands/ping.ts"
 import type { CommandData, MessageCommand } from 'commandkit';
@@ -33,14 +35,6 @@ export const message: MessageCommand = async (ctx) => {
   await ctx.message.reply('Pong!');
 };
 ```
-
-:::tip
-
-By default, your bot's prefix will be `!`. However, with CommandKit
-you can set custom prefixes, or even guild-based prefixes.
-[Read more](./05-custom-message-commands-prefix.mdx)
-
-:::
 
 ## Message command options (arguments)
 
@@ -63,5 +57,56 @@ export const message: MessageCommand = async (ctx) => {
 ```
 
 With the above command as an example, if a user on Discord runs
-`!ping arg1 arg2 arg3`, the value of `args` will equal
-`['arg1', 'arg2', 'arg3']`.
+`!ping john jack jane`, the value of `args` will equal
+`['john', 'jack', 'jane']`.
+
+## Custom Prefixes
+
+The simplest way to set a custom prefix is using the
+`setPrefixResolver` method on the `commandkit` instance:
+
+```ts title="src/app.ts"
+import { commandkit } from 'commandkit';
+
+commandkit.setPrefixResolver(async (message) => {
+  return '?';
+});
+```
+
+This sets a global prefix of `?` for all message commands. Your bot
+will now respond to commands like `?help` or `?ping`.
+
+:::tip
+
+You can return an array of strings to support multiple prefixes
+simultaneously:
+
+```ts
+return ['?', '!', '>'];
+```
+
+:::
+
+### Guild-Specific Prefixes
+
+For a more dynamic approach, you might want different prefixes for
+different guilds. Here's how to implement that:
+
+```ts title="src/app.ts"
+import { commandkit } from 'commandkit';
+import { database } from '../database'; // This is a mock database
+
+commandkit.setPrefixResolver(async (message) => {
+  const guildSettings = await database.findUnique({
+    where: { guildId },
+  });
+
+  return guildSettings?.prefix ?? '!'; // Fallback to '!' if no prefix is found
+});
+```
+
+:::warning
+
+The `setPrefixResolver` method runs on every message, so it's important to make sure that it's as lightweight as possible. To help with performance, you may want to implement caching, which CommandKit also supports with the [`@commandkit/cache`](../05-official-plugins/03-commandkit-cache.mdx) official plugin.
+
+:::

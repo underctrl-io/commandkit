@@ -37,12 +37,14 @@ const config: Config = {
           lastVersion: 'current',
           versions: {
             current: {
-              label: '1.2',
+              label: 'v1',
               // path: 'v1',
+              badge: false,
             },
             '0.1.10': {
-              label: '0.1.10',
+              label: 'v0.1.10',
               path: 'v0',
+              banner: 'unmaintained'
             },
           },
           sidebarPath: './sidebars.ts',
@@ -140,7 +142,7 @@ const config: Config = {
           position: 'right',
           versions: {
             current: { label: 'v1' },
-            '0.1.10': { label: 'v0' },
+            '0.1.10': { label: 'v0 ⛔' },
           },
         },
         {
