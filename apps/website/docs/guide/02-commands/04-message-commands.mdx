@@ -45,7 +45,7 @@ idea of message command options will be different compared to
 getting parsed data, you'll essentially be dealing with string
 'arguments'.
 
-```ts title="src/app/commands/ping.ts"
+```ts title="src/app/commands/ping.ts" {8}
 import type { CommandData, MessageCommand } from 'commandkit';
 
 export const command: CommandData = {
