@@ -2,10 +2,10 @@
 title: after Function
 ---
 
-The `after` function allows you to execute a callback after a command
-has been executed. This is useful for performing actions that should
-occur after the command has completed, such as logging or cleanup
-tasks.
+The `after()` function allows you to execute a callback after a
+command has been executed. This is useful for performing actions that
+should occur after the command has completed, such as logging or
+cleanup tasks.
 
 ## Usage
 
@@ -33,8 +33,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 :::info
 
-The `after` function is guaranteed to be called after the command has
-been executed, regardless of whether the command was successful or
-not.
+The `after()` function will always be called, regardless of whether
+the command execution was successful or not.
 
 :::
