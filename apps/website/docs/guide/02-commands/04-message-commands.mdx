@@ -18,7 +18,7 @@ message commands in favor of the more modern
 
 :::
 
-## Basic Setup
+## Basic setup
 
 Message commands, like all the other command types, live in your
 `src/app/commands` directory. To let CommandKit know that this is a
@@ -61,7 +61,7 @@ With the above command as an example, if a user on Discord runs
 `!ping john jack jane`, the value of `args` will equal
 `['john', 'jack', 'jane']`.
 
-## Custom Prefixes
+## Custom prefixes
 
 The simplest way to set a custom prefix is using the
 `setPrefixResolver` method on the `commandkit` instance:
@@ -88,7 +88,7 @@ return ['?', '!', '>'];
 
 :::
 
-### Guild-Specific Prefixes
+### Guild-specific prefixes
 
 For a more dynamic approach, you might want different prefixes for
 different guilds. Here's how to implement that:
