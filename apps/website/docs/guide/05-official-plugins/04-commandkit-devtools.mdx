@@ -1,3 +1,196 @@
 ---
 title: '@commandkit/devtools'
 ---
+
+The `@commandkit/devtools` plugin provides a comprehensive set of
+development tools and utilities designed to enhance your CommandKit
+development experience. It includes features like command inspection,
+performance monitoring, debugging tools, and a web-based interface for
+managing your Discord bot during development.
+
+:::warning
+
+This plugin is currently in early development and may not be fully
+stable. It is recommended to use it for testing and feedback purposes
+only. Features and APIs may change in future releases.
+
+:::
+
+## Features
+
+- **Command Inspection**: View and analyze all registered commands in
+  your bot
+- **Performance Monitoring**: Track command execution times and
+  performance metrics
+- **Debugging Tools**: Enhanced logging and debugging capabilities
+- **Web Interface**: Browser-based dashboard for managing your bot
+- **Real-time Updates**: Live updates of bot status and metrics
+- **Development Utilities**: Additional tools to streamline
+  development workflow
+
+## Installation
+
+Install the devtools plugin using your preferred package manager:
+
+```sh npm2yarn
+npm install @commandkit/devtools@dev
+```
+
+:::info
+
+Currently, the devtools plugin is only available as a development
+version. Use the `@dev` tag when installing to get the latest
+development build.
+
+:::
+
+## Setup
+
+Add the devtools plugin to your CommandKit configuration:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { devtools } from '@commandkit/devtools';
+
+export default defineConfig({
+  plugins: [devtools()],
+});
+```
+
+That's it! The devtools plugin will automatically start when you run
+your application in development mode.
+
+## Using the devtools
+
+Once the plugin is installed and configured, the devtools interface
+will be available at `http://localhost:4356` when you start your
+application with `commandkit dev`.
+
+```bash
+npx commandkit dev
+```
+
+The web interface provides access to all devtools features and allows
+you to:
+
+- Monitor your bot's status and performance
+- Inspect registered commands and their configurations
+- View real-time logs and debug information
+- Access development utilities and tools
+
+## Configuration Options
+
+The devtools plugin accepts several configuration options to customize
+its behavior:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { devtools } from '@commandkit/devtools';
+
+export default defineConfig({
+  plugins: [
+    devtools({
+      // Custom port for the devtools interface
+      port: 4356,
+
+      // Enable or disable specific features
+      features: {
+        commandInspection: true,
+        performanceMonitoring: true,
+        debugging: true,
+      },
+
+      // Additional configuration options
+      enableLogging: true,
+    }),
+  ],
+});
+```
+
+### Configuration Properties
+
+- `port` (number): The port number for the devtools web interface
+  (default: `4356`)
+- `features` (object): Enable or disable specific devtools features
+- `enableLogging` (boolean): Enable enhanced logging capabilities
+
+## Development Workflow
+
+The devtools plugin integrates seamlessly with CommandKit's
+development workflow:
+
+1. **Start Development**: Run `commandkit dev` to start your bot in
+   development mode
+2. **Access Devtools**: Open `http://localhost:4356` in your browser
+3. **Monitor & Debug**: Use the web interface to monitor your bot and
+   debug issues
+4. **Hot Reload**: Make changes to your code and see updates in
+   real-time
+
+:::tip Development Only
+
+The devtools plugin is designed for development use only and should
+not be included in production builds. Consider using environment-based
+configuration to conditionally include the plugin:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { devtools } from '@commandkit/devtools';
+
+export default defineConfig({
+  plugins: [
+    // Only include devtools in development
+    ...(process.env.NODE_ENV === 'development' ? [devtools()] : []),
+  ],
+});
+```
+
+:::
+
+## Preview
+
+The devtools interface provides a modern, intuitive dashboard for
+managing your Discord bot during development:
+
+<img
+  src="/img/devtools.webp"
+  alt="CommandKit DevTools Interface"
+  width="100%"
+/>
+
+## Troubleshooting
+
+### Port Already in Use
+
+If port `4356` is already in use, you can specify a different port in
+the configuration:
+
+```ts
+devtools({ port: 4357 });
+```
+
+### Interface Not Loading
+
+Ensure that:
+
+1. The devtools plugin is properly configured
+2. Your application is running in development mode
+3. No firewall is blocking the specified port
+4. You're accessing the correct URL (`http://localhost:4356`)
+
+### Performance Issues
+
+If you experience performance issues:
+
+1. Disable unnecessary features in the configuration
+2. Reduce logging verbosity
+3. Consider using a different port
+
+## Feedback and Contributions
+
+As this plugin is in early development, your feedback is valuable for
+improving the devtools experience. Please report issues, suggest
+features, or contribute to the development through:
+
+- [GitHub Issues](https://github.com/underctrl-io/commandkit/issues)
+- [Discord Community](https://ctrl.lol/discord)
