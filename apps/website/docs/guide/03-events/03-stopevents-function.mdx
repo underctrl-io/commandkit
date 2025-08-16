@@ -1,0 +1,39 @@
+---
+title: stopEvents function
+---
+
+The `stopEvents()` function is a utility function that allows you to
+stop the execution of the events chain in CommandKit. This is useful
+when you want to prevent further event handlers from being executed
+after a certain point. It is typically used in the context of event
+handlers to control the flow of execution.
+
+## Usage
+
+```ts title="src/app/events/messageCreate/event.ts"
+import type { Message } from 'discord.js';
+import { stopEvents } from 'commandkit';
+
+export default async function (message: Message) {
+  console.log('Message received:', message.content);
+
+  // Stop further event handlers of messageCreate from being executed after this point
+  stopEvents();
+  // code below will not be executed
+}
+```
+
+:::warning
+
+Calling `stopEvents()` in a try/catch block may lead to unexpected
+behavior.
+
+:::
+
+:::info
+
+At this time, the `stopEvents()` function is only available for
+[Discord.js events](./01-discordjs-events.mdx), and not for custom
+namespaced events.
+
+:::
