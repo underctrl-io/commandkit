@@ -1,0 +1,733 @@
+---
+title: AI Best Practices & Examples
+description:
+  Best practices and real-world examples for AI-powered Discord bots.
+---
+
+# AI Best Practices & Examples
+
+This guide covers best practices for implementing AI-powered Discord
+bots and provides real-world examples.
+
+## Security Best Practices
+
+### Permission Validation
+
+Always validate user permissions before executing sensitive
+operations:
+
+```ts
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const { userId, action } = ctx.ai.params;
+
+  // Check if user has required permissions
+  if (!ctx.message.member?.permissions.has('ManageMessages')) {
+    await ctx.message.reply(
+      '❌ You need "Manage Messages" permission to use this command.',
+    );
+    return;
+  }
+
+  // Additional role-based checks
+  const hasModeratorRole = ctx.message.member.roles.cache.some(
+    (role) => role.name.toLowerCase().includes('moderator'),
+  );
+
+  if (action === 'ban' && !hasModeratorRole) {
+    await ctx.message.reply(
+      '❌ Only moderators can perform ban actions.',
+    );
+    return;
+  }
+
+  // Proceed with the action
+};
+```
+
+### Input Sanitization
+
+Sanitize and validate all user inputs:
+
+```ts
+import { AiConfig, AiCommand } from '@commandkit/ai';
+
+export const aiConfig = {
+  parameters: z.object({
+    message: z
+      .string()
+      .min(1, 'Message cannot be empty')
+      .max(500, 'Message too long')
+      .refine(
+        (text) => !containsProfanity(text),
+        'Message contains inappropriate content',
+      ),
+    userId: z
+      .string()
+      .regex(/^\d{17,19}$/, 'Invalid Discord user ID format'),
+  }),
+} satisfies AiConfig;
+
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const { message, userId } = ctx.ai.params;
+
+  // Additional runtime validation
+  const sanitizedMessage = sanitizeHtml(message);
+  const isValidUser = await ctx.client.users
+    .fetch(userId)
+    .catch(() => null);
+
+  if (!isValidUser) {
+    await ctx.message.reply('❌ Invalid user specified.');
+    return;
+  }
+
+  // Use sanitized input
+  await processMessage(sanitizedMessage, isValidUser);
+};
+```
+
+### Rate Limiting
+
+Implement rate limiting to prevent abuse:
+
+```ts
+const userCooldowns = new Map<string, number>();
+const COOLDOWN_DURATION = 30000; // 30 seconds
+
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const userId = ctx.message.author.id;
+  const now = Date.now();
+  const cooldownEnd = userCooldowns.get(userId) || 0;
+
+  if (now < cooldownEnd) {
+    const remaining = Math.ceil((cooldownEnd - now) / 1000);
+    await ctx.message.reply(
+      `⏰ Please wait ${remaining} seconds before using this command again.`,
+    );
+    return;
+  }
+
+  // Set cooldown
+  userCooldowns.set(userId, now + COOLDOWN_DURATION);
+
+  // Process command
+  await processCommand(ctx);
+};
+```
+
+## Performance Optimization
+
+### Efficient Database Queries
+
+Optimize database operations in AI commands:
+
+```ts
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const { userIds } = ctx.ai.params;
+
+  // ❌ Bad: Multiple individual queries
+  // const users = [];
+  // for (const id of userIds) {
+  //   const user = await database.user.findUnique({ where: { id } });
+  //   users.push(user);
+  // }
+
+  // ✅ Good: Single batch query
+  const users = await database.user.findMany({
+    where: { id: { in: userIds } },
+    select: { id: true, name: true, level: true }, // Only select needed fields
+  });
+
+  return users;
+};
+```
+
+### Caching Strategies
+
+Implement caching for frequently accessed data:
+
+```ts
+import { cacheTag } from '@commandkit/cache';
+
+async function getGuildSettings(guildId: string) {
+  'use cache';
+  const cacheKey = `guild:${guildId}:settings`;
+
+  cacheTag(cacheKey);
+
+  const settings = await database.guild.findUnique({
+    where: { id: guildId },
+    include: { settings: true },
+  });
+
+  return settings;
+}
+
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const guildId = ctx.message.guildId;
+  const guildSettings = await getGuildSettings(guildId);
+
+  return guildSettings;
+};
+```
+
+### Async Processing
+
+Handle long-running operations asynchronously:
+
+```ts
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const { operation } = ctx.ai.params;
+
+  if (isLongRunningOperation(operation)) {
+    // Send immediate acknowledgment
+    await ctx.message.reply('🔄 Processing your request...');
+
+    // Process asynchronously
+    processLongOperation(operation, ctx.message)
+      .then((result) => {
+        ctx.message.reply(`✅ Operation completed: ${result}`);
+      })
+      .catch((error) => {
+        ctx.message.reply(`❌ Operation failed: ${error.message}`);
+      });
+
+    return;
+  }
+
+  // Handle quick operations normally
+  const result = await processQuickOperation(operation);
+  await ctx.message.reply(`✅ ${result}`);
+};
+```
+
+## Real-World Examples
+
+### Music Bot Commands
+
+```ts title="src/commands/music.ts"
+export const aiConfig = {
+  description: 'Play, pause, skip, or manage music in voice channels',
+  parameters: z.object({
+    action: z.enum(['play', 'pause', 'skip', 'queue', 'volume']),
+    query: z
+      .string()
+      .optional()
+      .describe('Song name, URL, or search query for play action'),
+    volume: z
+      .number()
+      .min(0)
+      .max(100)
+      .optional()
+      .describe('Volume level for volume action'),
+  }),
+} satisfies AiConfig;
+
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const { action, query, volume } = ctx.ai.params;
+  const member = ctx.message.member;
+  const voiceChannel = member?.voice.channel;
+
+  if (!voiceChannel) {
+    await ctx.message.reply(
+      '❌ You need to be in a voice channel to use music commands.',
+    );
+    return;
+  }
+
+  const musicPlayer = getMusicPlayer(ctx.message.guildId);
+
+  switch (action) {
+    case 'play':
+      if (!query) {
+        await ctx.message.reply(
+          '❌ Please provide a song name or URL to play.',
+        );
+        return;
+      }
+
+      const track = await searchTrack(query);
+      if (!track) {
+        await ctx.message.reply(
+          `❌ No results found for "${query}".`,
+        );
+        return;
+      }
+
+      await musicPlayer.play(track, voiceChannel);
+      await ctx.message.reply(
+        `🎵 Now playing: **${track.title}** by ${track.artist}`,
+      );
+      break;
+
+    case 'pause':
+      if (musicPlayer.isPaused()) {
+        musicPlayer.resume();
+        await ctx.message.reply('▶️ Music resumed.');
+      } else {
+        musicPlayer.pause();
+        await ctx.message.reply('⏸️ Music paused.');
+      }
+      break;
+
+    case 'skip':
+      const skipped = await musicPlayer.skip();
+      await ctx.message.reply(
+        skipped ? '⏭️ Track skipped.' : '❌ No track to skip.',
+      );
+      break;
+
+    case 'queue':
+      const queue = musicPlayer.getQueue();
+      if (queue.length === 0) {
+        await ctx.message.reply('📭 Queue is empty.');
+        return;
+      }
+
+      const queueList = queue
+        .slice(0, 10)
+        .map(
+          (track, i) =>
+            `${i + 1}. **${track.title}** by ${track.artist}`,
+        )
+        .join('\n');
+
+      await ctx.message.reply(`🎵 **Queue:**\n${queueList}`);
+      break;
+
+    case 'volume':
+      if (volume === undefined) {
+        await ctx.message.reply(
+          `🔊 Current volume: ${musicPlayer.getVolume()}%`,
+        );
+        return;
+      }
+
+      musicPlayer.setVolume(volume);
+      await ctx.message.reply(`🔊 Volume set to ${volume}%`);
+      break;
+  }
+};
+```
+
+### Server Management
+
+```ts title="src/commands/server-admin.ts"
+export const aiConfig = {
+  description:
+    'Manage server settings, roles, and channels (admin only)',
+  parameters: z.object({
+    action: z.enum([
+      'create-channel',
+      'create-role',
+      'update-settings',
+      'cleanup',
+    ]),
+    channelName: z.string().optional(),
+    channelType: z.enum(['text', 'voice', 'category']).optional(),
+    roleName: z.string().optional(),
+    roleColor: z.string().optional(),
+    setting: z.string().optional(),
+    value: z.union([z.string(), z.number(), z.boolean()]).optional(),
+  }),
+} satisfies AiConfig;
+
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const {
+    action,
+    channelName,
+    channelType,
+    roleName,
+    roleColor,
+    setting,
+    value,
+  } = ctx.ai.params;
+
+  // Admin permission check
+  if (!ctx.message.member?.permissions.has('Administrator')) {
+    await ctx.message.reply(
+      '❌ This command requires Administrator permissions.',
+    );
+    return;
+  }
+
+  const guild = ctx.message.guild;
+
+  switch (action) {
+    case 'create-channel':
+      if (!channelName || !channelType) {
+        await ctx.message.reply(
+          '❌ Channel name and type are required.',
+        );
+        return;
+      }
+
+      const channelTypeMap = {
+        text: ChannelType.GuildText,
+        voice: ChannelType.GuildVoice,
+        category: ChannelType.GuildCategory,
+      };
+
+      const channel = await guild.channels.create({
+        name: channelName,
+        type: channelTypeMap[channelType],
+      });
+
+      await ctx.message.reply(
+        `✅ Created ${channelType} channel: ${channel}`,
+      );
+      break;
+
+    case 'create-role':
+      if (!roleName) {
+        await ctx.message.reply('❌ Role name is required.');
+        return;
+      }
+
+      const role = await guild.roles.create({
+        name: roleName,
+        color: roleColor || '#99AAB5',
+        reason: `Created by ${ctx.message.author.tag} via AI command`,
+      });
+
+      await ctx.message.reply(`✅ Created role: ${role}`);
+      break;
+
+    case 'update-settings':
+      if (!setting || value === undefined) {
+        await ctx.message.reply(
+          '❌ Setting name and value are required.',
+        );
+        return;
+      }
+
+      await updateGuildSetting(guild.id, setting, value);
+      await ctx.message.reply(
+        `✅ Updated setting "${setting}" to "${value}"`,
+      );
+      break;
+
+    case 'cleanup':
+      const cleanupResults = await performServerCleanup(guild);
+      await ctx.message.reply(
+        `🧹 Cleanup completed:\n${formatCleanupResults(cleanupResults)}`,
+      );
+      break;
+  }
+};
+```
+
+### Economy System
+
+```ts title="src/commands/economy.ts"
+export const aiConfig = {
+  description:
+    'Manage user economy - check balance, transfer money, shop',
+  parameters: z.object({
+    action: z.enum([
+      'balance',
+      'transfer',
+      'shop',
+      'buy',
+      'work',
+      'daily',
+    ]),
+    targetUser: z
+      .string()
+      .optional()
+      .describe('User ID for balance check or transfer'),
+    amount: z
+      .number()
+      .min(1)
+      .optional()
+      .describe('Amount to transfer'),
+    item: z
+      .string()
+      .optional()
+      .describe('Item name to buy from shop'),
+  }),
+} satisfies AiConfig;
+
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const { action, targetUser, amount, item } = ctx.ai.params;
+  const userId = ctx.message.author.id;
+
+  switch (action) {
+    case 'balance':
+      const checkUserId = targetUser || userId;
+      const user = await getEconomyUser(checkUserId);
+
+      if (targetUser && targetUser !== userId) {
+        const targetUserObj =
+          await ctx.client.users.fetch(targetUser);
+        await ctx.message.reply(
+          `💰 ${targetUserObj.username}'s balance: ${user.balance} coins`,
+        );
+      } else {
+        await ctx.message.reply(
+          `💰 Your balance: ${user.balance} coins`,
+        );
+      }
+      break;
+
+    case 'transfer':
+      if (!targetUser || !amount) {
+        await ctx.message.reply(
+          '❌ Target user and amount are required for transfers.',
+        );
+        return;
+      }
+
+      if (targetUser === userId) {
+        await ctx.message.reply(
+          '❌ You cannot transfer money to yourself.',
+        );
+        return;
+      }
+
+      const sender = await getEconomyUser(userId);
+      if (sender.balance < amount) {
+        await ctx.message.reply(
+          '❌ Insufficient balance for this transfer.',
+        );
+        return;
+      }
+
+      await transferMoney(userId, targetUser, amount);
+      const recipient = await ctx.client.users.fetch(targetUser);
+
+      await ctx.message.reply(
+        `✅ Transferred ${amount} coins to ${recipient.username}`,
+      );
+      break;
+
+    case 'shop':
+      const shopItems = await getShopItems();
+      const itemList = shopItems
+        .map(
+          (item) =>
+            `**${item.name}** - ${item.price} coins\n*${item.description}*`,
+        )
+        .join('\n\n');
+
+      await ctx.message.reply(`🛍️ **Shop Items:**\n\n${itemList}`);
+      break;
+
+    case 'buy':
+      if (!item) {
+        await ctx.message.reply(
+          '❌ Item name is required for purchases.',
+        );
+        return;
+      }
+
+      const purchaseResult = await buyItem(userId, item);
+      if (purchaseResult.success) {
+        await ctx.message.reply(
+          `✅ Purchased ${item} for ${purchaseResult.price} coins!`,
+        );
+      } else {
+        await ctx.message.reply(`❌ ${purchaseResult.error}`);
+      }
+      break;
+
+    case 'work':
+      const workResult = await performWork(userId);
+      if (workResult.success) {
+        await ctx.message.reply(
+          `💼 You worked and earned ${workResult.earnings} coins!`,
+        );
+      } else {
+        await ctx.message.reply(`❌ ${workResult.error}`);
+      }
+      break;
+
+    case 'daily':
+      const dailyResult = await claimDaily(userId);
+      if (dailyResult.success) {
+        await ctx.message.reply(
+          `🎁 Daily reward claimed: ${dailyResult.amount} coins!`,
+        );
+      } else {
+        await ctx.message.reply(`❌ ${dailyResult.error}`);
+      }
+      break;
+  }
+};
+```
+
+## Error Handling Patterns
+
+### Graceful Degradation
+
+```ts
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  try {
+    // Primary functionality
+    const result = await primaryOperation(ctx.ai.params);
+    await ctx.message.reply(`✅ ${result}`);
+  } catch (primaryError) {
+    console.warn('Primary operation failed:', primaryError.message);
+
+    try {
+      // Fallback functionality
+      const fallbackResult = await fallbackOperation(ctx.ai.params);
+      await ctx.message.reply(
+        `⚠️ Used fallback method: ${fallbackResult}`,
+      );
+    } catch (fallbackError) {
+      console.error('Fallback also failed:', fallbackError.message);
+      await ctx.message.reply(
+        '❌ Service temporarily unavailable. Please try again later.',
+      );
+    }
+  }
+};
+```
+
+### User-Friendly Error Messages
+
+```ts
+function getErrorMessage(error: Error): string {
+  const errorMappings = {
+    INSUFFICIENT_PERMISSIONS:
+      "❌ You don't have permission to perform this action.",
+    USER_NOT_FOUND: '❌ The specified user was not found.',
+    CHANNEL_NOT_FOUND: '❌ The specified channel was not found.',
+    RATE_LIMITED:
+      "⏰ You're doing that too quickly. Please wait a moment.",
+    NETWORK_ERROR:
+      '🌐 Network error. Please check your connection and try again.',
+    DATABASE_ERROR:
+      '💾 Database temporarily unavailable. Please try again later.',
+  };
+
+  for (const [key, message] of Object.entries(errorMappings)) {
+    if (error.message.includes(key)) {
+      return message;
+    }
+  }
+
+  return '❌ An unexpected error occurred. Please try again.';
+}
+```
+
+## Testing AI Commands
+
+### Unit Tests
+
+```ts
+import { describe, it, expect, vi } from 'vitest';
+import { AiContext } from '@commandkit/ai';
+
+describe('Economy AI Command', () => {
+  it('should check user balance correctly', async () => {
+    const mockContext = {
+      params: { action: 'balance' },
+      message: { author: { id: '123456789' } },
+      client: { users: { fetch: vi.fn() } },
+    } as unknown as AiContext;
+
+    vi.mocked(getEconomyUser).mockResolvedValue({ balance: 100 });
+
+    await ai(mockContext);
+
+    expect(mockContext.message.reply).toHaveBeenCalledWith(
+      '💰 Your balance: 100 coins',
+    );
+  });
+
+  it('should handle insufficient balance for transfers', async () => {
+    const mockContext = {
+      params: {
+        action: 'transfer',
+        targetUser: '987654321',
+        amount: 150,
+      },
+      message: { author: { id: '123456789' } },
+    } as unknown as AiContext;
+
+    vi.mocked(getEconomyUser).mockResolvedValue({ balance: 100 });
+
+    await ai(mockContext);
+
+    expect(mockContext.message.reply).toHaveBeenCalledWith(
+      '❌ Insufficient balance for this transfer.',
+    );
+  });
+});
+```
+
+## Deployment Considerations
+
+### Environment Configuration
+
+```ts title="src/config/ai.ts"
+export const aiConfig = {
+  development: {
+    model: 'gemini-1.5-flash',
+    maxSteps: 3,
+    temperature: 0.8,
+    debug: true,
+  },
+  production: {
+    model: 'gemini-2.0-flash',
+    maxSteps: 8,
+    temperature: 0.6,
+    debug: false,
+  },
+  testing: {
+    model: 'mock-model',
+    maxSteps: 1,
+    temperature: 0,
+    debug: true,
+  },
+};
+
+export function getAIConfig() {
+  const env = process.env.NODE_ENV || 'development';
+  return aiConfig[env] || aiConfig.development;
+}
+```
+
+### Monitoring and Logging
+
+```ts
+import { Logger } from 'commandkit';
+
+export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
+  const startTime = Date.now();
+
+  try {
+    // Log command usage
+    Logger.info('AI command executed', {
+      command: 'example',
+      userId: ctx.message.author.id,
+      guildId: ctx.message.guildId,
+      params: ctx.ai.params,
+    });
+
+    const result = await processCommand(ctx);
+
+    // Log success metrics
+    Logger.info('AI command completed', {
+      command: 'example',
+      duration: Date.now() - startTime,
+      success: true,
+    });
+
+    return result;
+  } catch (error) {
+    // Log errors with context
+    Logger.error('AI command failed', {
+      command: 'example',
+      error: error.message,
+      duration: Date.now() - startTime,
+      userId: ctx.message.author.id,
+      guildId: ctx.message.guildId,
+    });
+
+    throw error;
+  }
+};
+```

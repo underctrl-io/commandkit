@@ -1,0 +1,118 @@
+---
+title: Modal
+description:
+  Learn how to use the Modal component to create interactive forms
+---
+
+# Modal
+
+The Modal component allows you to create interactive forms that appear
+as popups in Discord. Modals are useful for collecting user input in a
+structured way.
+
+## Basic Usage
+
+```tsx
+import {
+  Modal,
+  ShortInput,
+  ParagraphInput,
+  OnModalKitSubmit,
+} from 'commandkit';
+
+const handleSubmit: OnModalKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const name = interaction.fields.getTextInputValue('name');
+  const description =
+    interaction.fields.getTextInputValue('description');
+
+  await interaction.reply({
+    content: `Name: ${name}\nDescription: ${description}`,
+  });
+
+  context.dispose();
+};
+
+const modal = (
+  <Modal title="User Profile" onSubmit={handleSubmit}>
+    <ShortInput
+      customId="name"
+      label="Name"
+      placeholder="Enter your name"
+      required
+    />
+    <ParagraphInput
+      customId="description"
+      label="Description"
+      placeholder="Tell us about yourself"
+    />
+  </Modal>
+);
+```
+
+## Input Types
+
+### Short Input
+
+For single-line text input.
+
+```tsx
+<ShortInput
+  customId="username"
+  label="Username"
+  placeholder="Enter username"
+  required
+  minLength={3}
+  maxLength={20}
+/>
+```
+
+### Paragraph Input
+
+For multi-line text input.
+
+```tsx
+<ParagraphInput
+  customId="bio"
+  label="Biography"
+  placeholder="Write your bio here..."
+  required
+  minLength={10}
+  maxLength={1000}
+/>
+```
+
+## Showing the Modal
+
+```tsx
+import { Modal, ShortInput } from 'commandkit';
+
+export async function chatInput(ctx: ChatInputCommandContext) {
+  const modal = (
+    <Modal title="Feedback" onSubmit={handleSubmit}>
+      <ShortInput
+        customId="feedback"
+        label="Your Feedback"
+        placeholder="What do you think?"
+        required
+      />
+    </Modal>
+  );
+
+  await ctx.interaction.showModal(modal);
+}
+```
+
+## Important Notes
+
+- Modals can have up to 5 input fields
+- Each input field must have a unique `customId`
+- Input fields can be marked as required using the `required` prop
+- You can set minimum and maximum lengths for text inputs
+- Modals can only be shown in response to an interaction
+- The modal title must be between 1 and 45 characters
+- Input labels must be between 1 and 45 characters
+- Placeholders are optional but recommended for better UX
+- Always dispose of the context after handling the submission

@@ -1,11 +1,14 @@
 ---
 title: Basic Operations
-description: Learn the fundamental operations for working with the KV store.
+description:
+  Learn the fundamental operations for working with the KV store.
 ---
 
 # Basic Operations
 
-This guide covers the fundamental operations of the CommandKit KV store, including storing and retrieving data with JSON serialization and dot notation support.
+This guide covers the fundamental operations of the CommandKit KV
+store, including storing and retrieving data with JSON serialization
+and dot notation support.
 
 ## Creating a KV Store
 
@@ -24,7 +27,8 @@ const kv = openKV(':memory:');
 
 ## Storing Data
 
-The KV store supports storing any JSON-serializable data type directly:
+The KV store supports storing any JSON-serializable data type
+directly:
 
 ### Primitive Values
 
@@ -67,7 +71,13 @@ kv.set('tags', ['javascript', 'typescript', 'discord']);
 kv.set('numbers', [1, 2, 3, 4, 5]);
 
 // Mixed arrays
-kv.set('mixed_data', ['string', 42, true, { key: 'value' }, [1, 2, 3]]);
+kv.set('mixed_data', [
+  'string',
+  42,
+  true,
+  { key: 'value' },
+  [1, 2, 3],
+]);
 ```
 
 ### Complex Data Types
@@ -145,7 +155,9 @@ kv.set('user:123', {
 const userName = kv.get('user:123.name'); // 'John Doe'
 const userAge = kv.get('user:123.age'); // 30
 const theme = kv.get('user:123.settings.theme'); // 'dark'
-const emailNotifications = kv.get('user:123.settings.notifications.email'); // true
+const emailNotifications = kv.get(
+  'user:123.settings.notifications.email',
+); // true
 
 // Set nested properties
 kv.set('user:123.settings.theme', 'light');
@@ -218,7 +230,9 @@ const entries = [...kv];
 console.log('All entries:', entries);
 
 // Use with array methods
-const userEntries = [...kv].filter(([key]) => key.startsWith('user:'));
+const userEntries = [...kv].filter(([key]) =>
+  key.startsWith('user:'),
+);
 ```
 
 ## Clearing Data
@@ -250,14 +264,21 @@ if (theme !== undefined) {
 
 ## Best Practices
 
-1. **Use Descriptive Keys**: Choose meaningful key names that clearly indicate what data they contain
-2. **Structure Your Data**: Use consistent object structures for related data
-3. **Handle Missing Data**: Always check if data exists before using it
-4. **Use Dot Notation Wisely**: Dot notation is convenient but can make data structure less explicit
-5. **Serialize Complex Data**: The KV store handles serialization automatically, but be aware of what can be serialized
-6. **Clean Up Resources**: Close the database connection when you're done
+1. **Use Descriptive Keys**: Choose meaningful key names that clearly
+   indicate what data they contain
+2. **Structure Your Data**: Use consistent object structures for
+   related data
+3. **Handle Missing Data**: Always check if data exists before using
+   it
+4. **Use Dot Notation Wisely**: Dot notation is convenient but can
+   make data structure less explicit
+5. **Serialize Complex Data**: The KV store handles serialization
+   automatically, but be aware of what can be serialized
+6. **Clean Up Resources**: Close the database connection when you're
+   done
 
 ## Next Steps
 
 - [Namespaces](./03-namespaces.mdx) - Organize data with namespaces
-- [Advanced Features](./04-advanced-features.mdx) - Expiration, transactions, and more
+- [Advanced Features](./04-advanced-features.mdx) - Expiration,
+  transactions, and more

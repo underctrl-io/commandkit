@@ -1,11 +1,15 @@
 ---
 title: Rate Limiter
-description: Control request frequency with configurable limits and intervals
+description:
+  Control request frequency with configurable limits and intervals
 ---
 
 # Rate Limiter
 
-Think of a rate limiter like a traffic light for your application. It controls how often something can happen - like how many times a user can click a button or make an API request. This prevents your system from being overwhelmed.
+Think of a rate limiter like a traffic light for your application. It
+controls how often something can happen - like how many times a user
+can click a button or make an API request. This prevents your system
+from being overwhelmed.
 
 ## Basic Usage
 
@@ -27,7 +31,8 @@ if (allowed) {
 
 ## Custom Configuration
 
-Sometimes you need different limits for different situations. You can create a custom rate limiter with specific settings:
+Sometimes you need different limits for different situations. You can
+create a custom rate limiter with specific settings:
 
 ```typescript
 import { createRateLimiter } from 'commandkit/ratelimit';
@@ -45,21 +50,28 @@ const allowed = await apiLimiter.limit('api:endpoint');
 
 ### Checking Remaining Requests
 
-You can check how many requests a user has left and when the limit resets:
+You can check how many requests a user has left and when the limit
+resets:
 
 ```typescript
-import { getRemainingRequests, getResetTime } from 'commandkit/ratelimit';
+import {
+  getRemainingRequests,
+  getResetTime,
+} from 'commandkit/ratelimit';
 
 const remaining = await getRemainingRequests('user:123');
 const resetTime = await getResetTime('user:123');
 
 console.log(`${remaining} requests remaining`);
-console.log(`Limit resets in ${Math.round(resetTime / 1000)} seconds`);
+console.log(
+  `Limit resets in ${Math.round(resetTime / 1000)} seconds`,
+);
 ```
 
 ### Manual Reset
 
-In some cases, you might want to reset a user's rate limit (like after they upgrade their account):
+In some cases, you might want to reset a user's rate limit (like after
+they upgrade their account):
 
 ```typescript
 import { resetRateLimit } from 'commandkit/ratelimit';
@@ -70,7 +82,9 @@ await resetRateLimit('user:123');
 
 ### Using External Storage
 
-By default, rate limiters store data in memory. If you're running multiple servers, you'll want to use external storage like Redis so all servers can share the same rate limit information:
+By default, rate limiters store data in memory. If you're running
+multiple servers, you'll want to use external storage like Redis so
+all servers can share the same rate limit information:
 
 ```typescript
 import { RateLimiter, RateLimitStorage } from 'commandkit/ratelimit';
@@ -81,7 +95,11 @@ import { Redis } from 'ioredis';
 const redis = new Redis();
 
 // Use Redis-based rate limit storage
-const limiter = new RateLimiter(10, 60000, new RedisRateLimitStorage(redis));
+const limiter = new RateLimiter(
+  10,
+  60000,
+  new RedisRateLimitStorage(redis),
+);
 ```
 
 You can also use the convenience function:
@@ -106,14 +124,21 @@ const limiter = createRateLimiter({
 ## Common Use Cases
 
 - **API Rate Limiting**: Prevent users from making too many API calls
-- **User Action Throttling**: Limit how often users can click buttons or submit forms
+- **User Action Throttling**: Limit how often users can click buttons
+  or submit forms
 - **Resource Access Control**: Control access to expensive operations
-- **Spam Prevention**: Stop automated bots from overwhelming your system
+- **Spam Prevention**: Stop automated bots from overwhelming your
+  system
 
 ## Tips for Beginners
 
-1. **Start Simple**: Use the default `ratelimit()` function for basic needs
-2. **Choose Good Keys**: Use descriptive keys like `user:123` or `api:endpoint` to make debugging easier
-3. **Set Reasonable Limits**: Don't make limits too strict or too loose - find the right balance
-4. **Handle Rejection**: Always check if the rate limit allows the action before proceeding
-5. **Consider Your Users**: Think about legitimate use cases when setting limits
+1. **Start Simple**: Use the default `ratelimit()` function for basic
+   needs
+2. **Choose Good Keys**: Use descriptive keys like `user:123` or
+   `api:endpoint` to make debugging easier
+3. **Set Reasonable Limits**: Don't make limits too strict or too
+   loose - find the right balance
+4. **Handle Rejection**: Always check if the rate limit allows the
+   action before proceeding
+5. **Consider Your Users**: Think about legitimate use cases when
+   setting limits

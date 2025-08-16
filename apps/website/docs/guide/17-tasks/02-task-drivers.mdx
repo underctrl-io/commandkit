@@ -1,17 +1,23 @@
 ---
 title: Task Drivers
-description: Learn about different task drivers and how to configure them for your use case.
+description:
+  Learn about different task drivers and how to configure them for
+  your use case.
 ---
 
 # Task Drivers
 
-Task drivers handle the persistence and scheduling of your tasks. The tasks plugin supports multiple drivers to fit different deployment scenarios and requirements.
+Task drivers handle the persistence and scheduling of your tasks. The
+tasks plugin supports multiple drivers to fit different deployment
+scenarios and requirements.
 
 ## Available Drivers
 
 ### SQLite Driver (Development)
 
-The SQLite driver provides persistent, file-based task scheduling. It's perfect for development environments and single-instance applications with job recovery on restart.
+The SQLite driver provides persistent, file-based task scheduling.
+It's perfect for development environments and single-instance
+applications with job recovery on restart.
 
 **Pros:**
 
@@ -37,7 +43,9 @@ setDriver(new SQLiteDriver('./tasks.db'));
 
 ### BullMQ Driver (Production)
 
-The BullMQ driver provides robust, distributed task scheduling using Redis as the backend. It's ideal for production environments with multiple bot instances.
+The BullMQ driver provides robust, distributed task scheduling using
+Redis as the backend. It's ideal for production environments with
+multiple bot instances.
 
 **Pros:**
 
@@ -161,7 +169,8 @@ export default {
 
 ## Custom Drivers
 
-You can create your own driver by implementing the `TaskDriver` interface:
+You can create your own driver by implementing the `TaskDriver`
+interface:
 
 ```ts
 import { TaskDriver, TaskRunner } from '@commandkit/tasks';
@@ -196,5 +205,7 @@ setDriver(new CustomDriver());
 
 ## Next Steps
 
-- [Dynamic Tasks](./03-dynamic-tasks) - Learn how to create tasks on-demand
-- [Advanced Patterns](./04-advanced-patterns) - Best practices for task management
+- [Dynamic Tasks](./03-dynamic-tasks) - Learn how to create tasks
+  on-demand
+- [Advanced Patterns](./04-advanced-patterns) - Best practices for
+  task management

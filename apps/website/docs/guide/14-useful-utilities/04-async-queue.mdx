@@ -1,15 +1,21 @@
 ---
 title: Async Queue
-description: Process tasks sequentially or with limited concurrency using async queues
+description:
+  Process tasks sequentially or with limited concurrency using async
+  queues
 ---
 
 # Async Queue
 
-An async queue is like a line at a bank. Tasks wait in line and get processed one by one (or a few at a time). This helps you control how many things happen simultaneously and ensures everything gets done in an orderly way.
+An async queue is like a line at a bank. Tasks wait in line and get
+processed one by one (or a few at a time). This helps you control how
+many things happen simultaneously and ensures everything gets done in
+an orderly way.
 
 ## Basic Usage
 
-The simplest way to use a queue is with the default sequential processing:
+The simplest way to use a queue is with the default sequential
+processing:
 
 ```typescript
 import { createAsyncQueue } from 'commandkit/async-queue';
@@ -82,7 +88,8 @@ console.log(`Paused: ${queue.isPaused()}`);
 
 ### Cancelling Operations
 
-You can cancel queue operations if they take too long or if you need to stop them:
+You can cancel queue operations if they take too long or if you need
+to stop them:
 
 ```typescript
 import { createAsyncQueue } from 'commandkit/async-queue';
@@ -136,7 +143,9 @@ const processItem = async (item: number) => {
 };
 
 // Add all items to queue
-const promises = items.map((item) => queue.add(() => processItem(item)));
+const promises = items.map((item) =>
+  queue.add(() => processItem(item)),
+);
 
 // Wait for all to complete
 const results = await Promise.all(promises);
@@ -144,7 +153,8 @@ const results = await Promise.all(promises);
 
 ### Error Handling
 
-Queues handle errors gracefully, so one failed task doesn't stop the others:
+Queues handle errors gracefully, so one failed task doesn't stop the
+others:
 
 ```typescript
 import { createAsyncQueue } from 'commandkit/async-queue';
@@ -182,18 +192,28 @@ results.forEach((result, index) => {
 ## Common Use Cases
 
 - **API Rate Limiting**: Control how many API calls are made at once
-- **File Processing Pipelines**: Process files one by one or in small batches
-- **Database Operation Batching**: Execute database operations in controlled batches
-- **Image Processing Queues**: Process images without overwhelming the system
+- **File Processing Pipelines**: Process files one by one or in small
+  batches
+- **Database Operation Batching**: Execute database operations in
+  controlled batches
+- **Image Processing Queues**: Process images without overwhelming the
+  system
 - **Email Sending Queues**: Send emails in an orderly way
 - **Background Job Processing**: Handle background tasks efficiently
 
 ## Tips for Beginners
 
-1. **Start with Sequential**: Use the default concurrency of 1 for simple cases
-2. **Set Reasonable Limits**: Don't set concurrency too high (might overwhelm resources) or too low (might be too slow)
-3. **Use `onDrain` Callback**: Get notified when all tasks are complete
-4. **Handle Errors**: Use `Promise.allSettled()` to handle individual task failures
-5. **Monitor Queue State**: Check running and pending counts for debugging
-6. **Use Timeouts**: Set timeouts to prevent tasks from hanging forever
-7. **Think About Your Resources**: Set concurrency based on what your system can handle
+1. **Start with Sequential**: Use the default concurrency of 1 for
+   simple cases
+2. **Set Reasonable Limits**: Don't set concurrency too high (might
+   overwhelm resources) or too low (might be too slow)
+3. **Use `onDrain` Callback**: Get notified when all tasks are
+   complete
+4. **Handle Errors**: Use `Promise.allSettled()` to handle individual
+   task failures
+5. **Monitor Queue State**: Check running and pending counts for
+   debugging
+6. **Use Timeouts**: Set timeouts to prevent tasks from hanging
+   forever
+7. **Think About Your Resources**: Set concurrency based on what your
+   system can handle

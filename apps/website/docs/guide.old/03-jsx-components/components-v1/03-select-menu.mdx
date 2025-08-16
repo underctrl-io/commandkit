@@ -1,0 +1,150 @@
+---
+title: Select Menu
+description:
+  Learn how to use various Select Menu components to create
+  interactive dropdowns
+---
+
+# Select Menu
+
+CommandKit provides several types of select menus for different use
+cases. Each type allows users to select from a list of options in a
+dropdown menu.
+
+## String Select Menu
+
+The most common type of select menu that allows users to select from
+predefined string options.
+
+```tsx
+import {
+  StringSelectMenu,
+  StringSelectMenuOption,
+  OnStringSelectMenuKitSubmit,
+} from 'commandkit';
+
+const handleSelect: OnStringSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const selection = interaction.values[0];
+  await interaction.reply(`You selected: ${selection}`);
+  context.dispose();
+};
+
+const select = (
+  <StringSelectMenu onSelect={handleSelect}>
+    <StringSelectMenuOption
+      label="Option 1"
+      value="1"
+      description="First option"
+      emoji="1️⃣"
+    />
+    <StringSelectMenuOption
+      label="Option 2"
+      value="2"
+      description="Second option"
+      emoji="2️⃣"
+    />
+  </StringSelectMenu>
+);
+```
+
+## Channel Select Menu
+
+Allows users to select a channel from the server.
+
+```tsx
+import {
+  ChannelSelectMenu,
+  OnChannelSelectMenuKitSubmit,
+} from 'commandkit';
+
+const handleSelect: OnChannelSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const channel = interaction.values[0];
+  await interaction.reply(`Selected channel: ${channel}`);
+  context.dispose();
+};
+
+const select = <ChannelSelectMenu onSelect={handleSelect} />;
+```
+
+## Role Select Menu
+
+Allows users to select a role from the server.
+
+```tsx
+import {
+  RoleSelectMenu,
+  OnRoleSelectMenuKitSubmit,
+} from 'commandkit';
+
+const handleSelect: OnRoleSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const role = interaction.values[0];
+  await interaction.reply(`Selected role: ${role}`);
+  context.dispose();
+};
+
+const select = <RoleSelectMenu onSelect={handleSelect} />;
+```
+
+## User Select Menu
+
+Allows users to select a user from the server.
+
+```tsx
+import {
+  UserSelectMenu,
+  OnUserSelectMenuKitSubmit,
+} from 'commandkit';
+
+const handleSelect: OnUserSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const user = interaction.values[0];
+  await interaction.reply(`Selected user: ${user}`);
+  context.dispose();
+};
+
+const select = <UserSelectMenu onSelect={handleSelect} />;
+```
+
+## Mentionable Select Menu
+
+Allows users to select a user or role from the server.
+
+```tsx
+import {
+  MentionableSelectMenu,
+  OnMentionableSelectMenuKitSubmit,
+} from 'commandkit';
+
+const handleSelect: OnMentionableSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const mentionable = interaction.values[0];
+  await interaction.reply(`Selected: ${mentionable}`);
+  context.dispose();
+};
+
+const select = <MentionableSelectMenu onSelect={handleSelect} />;
+```
+
+## Important Notes
+
+- All select menus must be placed inside an ActionRow
+- You can have only one select menu per row
+- String select menus can have up to 25 options
+- Other select menus (channel, role, user, mentionable) don't need
+  options as they are populated automatically
+- Select menus can be disabled using the `disabled` prop
+- Custom IDs are automatically generated if not provided
+- For string select menus, each option must have a unique value

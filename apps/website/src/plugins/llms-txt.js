@@ -2,6 +2,14 @@ const path = require('path');
 const fs = require('fs');
 const matter = require('gray-matter');
 
+const DOCS_URL = 'https://commandkit.dev/docs/guide';
+
+const removeNumericPrefix = (path) => {
+  // 01-getting-started/01-introduction -> getting-started/introduction
+  const segments = path.split('/');
+  return segments.map((segment) => segment.replace(/^\d+\-/, '')).join('/');
+};
+
 module.exports = function (context) {
   return {
     name: 'llms-txt-plugin',
@@ -16,7 +24,8 @@ module.exports = function (context) {
         if (!fs.existsSync(dir)) return;
 
         // skip versioned docs
-        if (dir.includes(versionedDocsDir)) return;
+        // TODO: remove guide.old
+        if (dir.includes(versionedDocsDir) || dir.includes('guide.old')) return;
 
         const entries = await fs.promises.readdir(dir, { withFileTypes: true });
 

@@ -1,0 +1,91 @@
+---
+title: Legacy Plugin
+description:
+  The legacy plugin for CommandKit enables legacy commands and events
+  handler in CommandKit. This is useful if you are migrating from an
+  older version of CommandKit and want to incrementally upgrade your
+  application without making major changes.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Legacy Plugin
+
+The Legacy plugin for CommandKit enables support for legacy command
+and event handlers. This is particularly useful when migrating from an
+older version of CommandKit or another framework, as it allows you to
+incrementally upgrade your application without requiring immediate
+major changes to your existing code.
+
+## Installation
+
+<Tabs>
+<TabItem value="npm" label="npm">
+
+```bash
+npm install @commandkit/legacy
+```
+
+</TabItem>
+<TabItem value="yarn" label="yarn">
+
+```bash
+yarn add @commandkit/legacy
+```
+
+</TabItem>
+<TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm add @commandkit/legacy
+```
+
+</TabItem>
+</Tabs>
+
+## Usage
+
+Add the Legacy plugin to your CommandKit configuration:
+
+```js
+import { defineConfig } from 'commandkit';
+import { legacy } from '@commandkit/legacy';
+
+export default defineConfig({
+  plugins: [legacy()],
+});
+```
+
+## Features
+
+The Legacy plugin provides the following features:
+
+1. **Legacy Command Handler Support**: Enables support for older
+   command handler formats, making migration easier.
+
+2. **Legacy Event Handler Support**: Allows you to continue using your
+   existing event handler structure.
+
+3. **Legacy Validation Support**: Maintains compatibility with
+   existing validation methods.
+
+4. **Hot Module Replacement (HMR)**: The plugin automatically enables
+   HMR for legacy commands, events, and validations, improving the
+   development experience by allowing you to see changes without
+   restarting your bot.
+
+## Migration Strategy
+
+The Legacy plugin is designed as a transitional tool. While it allows
+you to continue using your existing code structure, it's recommended
+to gradually migrate your commands, events, and validators to the new
+CommandKit format over time.
+
+This approach enables you to:
+
+1. Upgrade your bot's framework immediately without breaking existing
+   functionality
+2. Incrementally refactor your code at your own pace
+3. Take advantage of new CommandKit features for new commands while
+   maintaining backward compatibility

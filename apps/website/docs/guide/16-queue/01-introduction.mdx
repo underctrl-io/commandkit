@@ -1,11 +1,16 @@
 ---
 title: Message Queue
-description: Learn how to use CommandKit's message queue system for inter-service communication.
+description:
+  Learn how to use CommandKit's message queue system for inter-service
+  communication.
 ---
 
 # Message Queue
 
-The CommandKit Queue package provides a service-agnostic message queue API for inter-service communication. It allows you to send and receive messages between different parts of your application or across multiple services using a simple, unified interface.
+The CommandKit Queue package provides a service-agnostic message queue
+API for inter-service communication. It allows you to send and receive
+messages between different parts of your application or across
+multiple services using a simple, unified interface.
 
 ## Features
 
@@ -56,19 +61,23 @@ npm install @commandkit/queue @discordjs/brokers ioredis
 
 ### Topics
 
-Topics are named channels where messages are sent and received. Think of them as categories or channels for different types of messages.
+Topics are named channels where messages are sent and received. Think
+of them as categories or channels for different types of messages.
 
 ### Messages
 
-Messages can be any JSON-serializable data. They're sent to topics and received by subscribers.
+Messages can be any JSON-serializable data. They're sent to topics and
+received by subscribers.
 
 ### Drivers
 
-Drivers are implementations that handle the actual message queue backend. CommandKit provides a unified API that works with any driver.
+Drivers are implementations that handle the actual message queue
+backend. CommandKit provides a unified API that works with any driver.
 
 ## Use Cases
 
-- **Inter-Service Communication**: Send messages between different parts of your application
+- **Inter-Service Communication**: Send messages between different
+  parts of your application
 - **Event Broadcasting**: Broadcast events to multiple subscribers
 - **Task Distribution**: Distribute work across multiple workers
 - **Real-time Updates**: Send real-time updates to connected clients
@@ -76,6 +85,9 @@ Drivers are implementations that handle the actual message queue backend. Comman
 
 ## Next Steps
 
-- [Basic Operations](./02-basic-operations.md) - Learn about sending and receiving messages
-- [Discord.js Integration](./03-discordjs-integration.md) - Set up Redis PubSub with Discord.js
-- [Advanced Features](./04-advanced-features.md) - Custom drivers, error handling, and more
+- [Basic Operations](./02-basic-operations.md) - Learn about sending
+  and receiving messages
+- [Discord.js Integration](./03-discordjs-integration.md) - Set up
+  Redis PubSub with Discord.js
+- [Advanced Features](./04-advanced-features.md) - Custom drivers,
+  error handling, and more

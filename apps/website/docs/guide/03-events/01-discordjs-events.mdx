@@ -1,0 +1,162 @@
+---
+title: Discord.js Events
+---
+
+Events allow your Discord bot to react to various actions happening on
+Discord, such as when users send messages, join guilds, or when your
+bot comes online.
+
+CommandKit provides a simple way to organize and handle Discord.js
+events using the `events` directory inside your `src/app` directory.
+This approach makes it easy to manage multiple events and keep your
+code organized.
+
+## Basic event directory structure
+
+Each Discord.js event gets its own directory within `src/app/events`,
+and the directory name must match the exact Discord.js event name.
+Inside each event directory, you can create multiple handler files
+that will all execute when that event is triggered.
+
+Here's how your project structure might look with the
+`"messageCreate"` and `"ready"` events:
+
+```title="" {4-9}
+.
+├── src/
+│   ├── app/
+│   │   └── events/
+│   │       ├── messageCreate/
+│   │       │   ├── give-xp.ts
+│   │       │   └── log-message.ts
+│   │       └── ready/
+│   │           └── log.ts
+│   └── app.ts
+├── .env
+├── .gitignore
+├── commandkit.config.ts
+├── package.json
+└── tsconfig.json
+```
+
+:::tip
+
+You can see what events are available in Discord.js by checking the
+[Discord.js documentation](https://discord.js.org/docs/packages/discord.js/main/ClientEventTypes:Interface).
+
+:::
+
+## Creating an event handler
+
+To create an event handler, create a folder inside the
+`src/app/events` directory which should match the event name from
+Discord.js. This example will use the `"ready"` event.
+
+```ts title="src/app/events/ready/log.ts"
+import type { Client } from 'commandkit';
+
+export default function (client: Client<true>) {
+  console.log(`🤖 ${client.user.displayName} is online!`);
+}
+```
+
+That's it! CommandKit will automatically detect this file and register
+it as one of the handler functions for the `"ready"` event.
+
+### Event parameters
+
+Just like the Discord.js `client.on()` method, the parameters you
+receive in your event file will be based on what event you're trying
+to handle. In the example above, the `"ready"` event should give you a
+[`Client`](https://discord.js.org/docs/packages/discord.js/main/Client:Class)
+instance.
+
+If you were to, for example, handle the `"messageCreate"` event, you
+would get a
+[`Message`](https://discord.js.org/docs/packages/discord.js/main/Message:Class)
+instance.
+
+### Events with multiple parameters
+
+Some Discord.js events have multiple parameters, such as the
+`"messageUpdate"` event.
+
+```ts title="src/app/events/messageUpdate/log-message-update.ts"
+import type { Message } from 'discord.js';
+
+export default function (oldMessage: Message, newMessage: Message) {
+  console.log(
+    `Message from ${oldMessage.author.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
+  );
+}
+```
+
+### Additional parameters
+
+Outside of the parameters provided by Discord.js, CommandKit will pass
+additional parameters to the event handler, including a
+[`Client`](https://discord.js.org/docs/packages/discord.js/main/Client:Class)
+and
+[`CommandKit`](../../api-reference/commandkit/classes/command-kit.mdx)
+instance.
+
+```ts title="src/app/events/messageCreate/log.ts"
+import type { CommandKit } from 'commandkit';
+import type { Message } from 'discord.js';
+
+export default function (
+  message: Message,
+  client: Client<true>,
+  commandkit: CommandKit,
+) {
+  console.log(
+    `Message from ${message.author.username}: ${message.content}`,
+  );
+}
+```
+
+## Multiple handlers for the same event
+
+One of the powerful features of CommandKit's event system is the
+ability to have multiple handlers for the same event. Each handler
+file you create in an event directory will be executed when that event
+is called.
+
+For example, you might want to do several things when a message is
+created:
+
+```ts title="src/app/events/messageCreate/give-xp.ts"
+import type { MessageCreateEvent } from 'commandkit';
+
+export default function ({ message }: MessageCreateEvent) {
+  // Don't give XP to bots
+  if (message.author.bot) return;
+
+  // Give XP to the user
+  console.log(`Giving XP to ${message.author.username}`);
+}
+```
+
+```ts title="src/app/events/messageCreate/log-message.ts"
+import type { MessageCreateEvent } from 'commandkit';
+
+export default function ({ message }: MessageCreateEvent) {
+  console.log(
+    `Message from ${message.author.username}: ${message.content}`,
+  );
+}
+```
+
+Both handler functions will be called whenever a message is sent in
+Discord.
+
+:::tip
+
+Event handler files can be named anything you want - CommandKit
+identifies them by their location in the event directory, not by their
+filename. However, since each file is treated as a handler function,
+they're executed one-by-one in the order of their file name.
+
+Example: `01-give-xp.ts` will be executed before `02-log-message.ts`.
+
+:::

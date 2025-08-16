@@ -1,0 +1,109 @@
+---
+title: Media Gallery
+description:
+  Display multiple images in a gallery format using the MediaGallery
+  component
+---
+
+The `MediaGallery` component allows you to display multiple images in
+a grid layout, perfect for showcasing multiple images or avatars in a
+single message.
+
+## Basic Usage
+
+```tsx title="src/app/commands/gallery-example.tsx"
+import {
+  type ChatInputCommand,
+  MediaGallery,
+  MediaGalleryItem,
+  TextDisplay,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const images = [
+    'https://cdn.discordapp.com/embed/avatars/0.png',
+    'https://cdn.discordapp.com/embed/avatars/1.png',
+    'https://cdn.discordapp.com/embed/avatars/2.png',
+  ];
+
+  const gallery = (
+    <>
+      <TextDisplay content="Discord Avatars Gallery" />
+      <MediaGallery>
+        {images.map((url, index) => (
+          <MediaGalleryItem
+            url={url}
+            description={`Avatar ${index + 1}`}
+          />
+        ))}
+      </MediaGallery>
+    </>
+  );
+
+  await ctx.interaction.reply({
+    components: [gallery],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Dynamic Galleries
+
+You can create dynamic galleries by mapping over arrays of image URLs:
+
+```tsx title="src/app/commands/dynamic-gallery.tsx"
+import {
+  type ChatInputCommand,
+  MediaGallery,
+  MediaGalleryItem,
+  TextDisplay,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  // Generate an array of Discord avatar URLs
+  const mediaItems = Array.from(
+    { length: 6 },
+    (_, i) => `https://cdn.discordapp.com/embed/avatars/${i}.png`,
+  );
+
+  const gallery = (
+    <>
+      <TextDisplay content="Dynamic Avatar Gallery" />
+      <MediaGallery>
+        {mediaItems.map((url, index) => (
+          <MediaGalleryItem
+            url={url}
+            description={`Avatar ${index + 1}`}
+          />
+        ))}
+      </MediaGallery>
+    </>
+  );
+
+  await ctx.interaction.reply({
+    components: [gallery],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Best Practices
+
+1. **Image URLs**: Always use valid, accessible image URLs
+2. **Descriptions**: Provide meaningful descriptions for each image
+3. **Performance**: Limit the number of images to avoid message size
+   limits
+4. **Organization**: Group related images together in the gallery
+
+## Available Props
+
+### MediaGallery
+
+- `children`: MediaGalleryItem components to display in the gallery
+
+### MediaGalleryItem
+
+- `url`: URL of the image to display
+- `description`: Description text for the image

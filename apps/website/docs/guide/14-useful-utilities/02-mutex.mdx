@@ -1,15 +1,20 @@
 ---
 title: Mutex
-description: Ensure exclusive access to shared resources with async mutex locks
+description:
+  Ensure exclusive access to shared resources with async mutex locks
 ---
 
 # Mutex
 
-A mutex is like a "do not disturb" sign for your data. It ensures that only one operation can access a shared resource at a time. Imagine multiple people trying to edit the same document - a mutex makes sure only one person can edit it at once.
+A mutex is like a "do not disturb" sign for your data. It ensures that
+only one operation can access a shared resource at a time. Imagine
+multiple people trying to edit the same document - a mutex makes sure
+only one person can edit it at once.
 
 ## Basic Usage
 
-The easiest way to use a mutex is with the `withMutex` function, which automatically handles locking and unlocking:
+The easiest way to use a mutex is with the `withMutex` function, which
+automatically handles locking and unlocking:
 
 ```typescript
 import { withMutex } from 'commandkit/mutex';
@@ -41,7 +46,8 @@ const result = await mutex.withLock('resource', async () => {
 
 ### Manual Lock Management
 
-Sometimes you need more control over when locks are acquired and released:
+Sometimes you need more control over when locks are acquired and
+released:
 
 ```typescript
 import { acquireLock, releaseLock, isLocked } from 'commandkit/mutex';
@@ -65,7 +71,8 @@ console.log(`Resource is ${locked ? 'locked' : 'available'}`);
 
 ### Cancelling Operations
 
-You can cancel a mutex operation if it takes too long or if you need to stop it for any reason:
+You can cancel a mutex operation if it takes too long or if you need
+to stop it for any reason:
 
 ```typescript
 import { withMutex } from 'commandkit/mutex';
@@ -91,7 +98,9 @@ try {
 
 ### Using External Storage
 
-By default, mutexes store lock information in memory. If you're running multiple servers, you'll want to use external storage like Redis:
+By default, mutexes store lock information in memory. If you're
+running multiple servers, you'll want to use external storage like
+Redis:
 
 ```typescript
 import { Mutex, MutexStorage } from 'commandkit/mutex';
@@ -127,17 +136,26 @@ const mutex = createMutex({
 
 ## Common Use Cases
 
-- **Database Transactions**: Ensure only one operation can modify data at a time
-- **File System Access**: Prevent multiple operations from writing to the same file
-- **Configuration Updates**: Make sure configuration changes don't conflict
-- **Cache Invalidation**: Control when cache is cleared to prevent race conditions
+- **Database Transactions**: Ensure only one operation can modify data
+  at a time
+- **File System Access**: Prevent multiple operations from writing to
+  the same file
+- **Configuration Updates**: Make sure configuration changes don't
+  conflict
+- **Cache Invalidation**: Control when cache is cleared to prevent
+  race conditions
 - **Resource Pool Management**: Manage access to limited resources
 
 ## Tips for Beginners
 
-1. **Use `withMutex` When Possible**: It automatically handles cleanup, so you don't forget to release locks
-2. **Set Reasonable Timeouts**: Don't make timeouts too short (might fail unnecessarily) or too long (might hang forever)
-3. **Use Descriptive Names**: Give your resources meaningful names like `user:123:profile` or `database:users`
+1. **Use `withMutex` When Possible**: It automatically handles
+   cleanup, so you don't forget to release locks
+2. **Set Reasonable Timeouts**: Don't make timeouts too short (might
+   fail unnecessarily) or too long (might hang forever)
+3. **Use Descriptive Names**: Give your resources meaningful names
+   like `user:123:profile` or `database:users`
 4. **Handle Errors**: Always handle cases where lock acquisition fails
-5. **Think About Deadlocks**: Be careful not to create situations where two operations wait for each other
-6. **Consider Your Setup**: Use external storage if you have multiple servers
+5. **Think About Deadlocks**: Be careful not to create situations
+   where two operations wait for each other
+6. **Consider Your Setup**: Use external storage if you have multiple
+   servers

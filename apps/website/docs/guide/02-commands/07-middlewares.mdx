@@ -1,0 +1,95 @@
+---
+title: Middlewares
+---
+
+Middlewares in CommandKit allow you to execute code before and after
+command execution. This is incredibly powerful for implementing
+features like logging, authentication, permission checks, or any other
+cross-cutting concerns for your Discord bot.
+
+CommandKit supports three different types of middleware files, each
+serving different scoping purposes for your commands.
+
+## Basic middleware structure
+
+All middleware files follow the same export pattern. You can export
+`beforeExecute` and `afterExecute` functions that will run at their
+respective times during command execution.
+
+```ts title="src/app/commands/+middleware.ts"
+import { MiddlewareContext } from 'commandkit';
+
+export function beforeExecute(ctx: MiddlewareContext) {
+  // This function will be executed before the command is executed
+  console.log(
+    `User ${ctx.interaction.user.id} is about to execute a command`,
+  );
+}
+
+export function afterExecute(ctx: MiddlewareContext) {
+  // This function will be executed after the command is executed
+  console.log(
+    `Command execution completed for user ${ctx.interaction.user.id}`,
+  );
+}
+```
+
+## Middleware types
+
+### Directory-scoped middleware
+
+Create a `+middleware.ts` file in any commands directory to apply
+middleware to all commands within that directory and its
+subdirectories.
+
+```ts title="src/app/commands/(Moderation)/+middleware.ts"
+import { MiddlewareContext } from 'commandkit';
+
+export function beforeExecute(ctx: MiddlewareContext) {
+  // This middleware will run before any moderation command
+  if (!ctx.interaction.member.permissions.has('KickMembers')) {
+    throw new Error(
+      'You need moderation permissions to use this command',
+    );
+  }
+}
+```
+
+### Command-specific middleware
+
+For command-specific middleware, create a file named
+`+<command-name>.middleware.ts` where `<command-name>` matches your
+command file name.
+
+```ts title="src/app/commands/+ban.middleware.ts"
+import { MiddlewareContext } from 'commandkit';
+
+export function beforeExecute(ctx: MiddlewareContext) {
+  // This middleware only runs before the ban command
+  console.log('Ban command is about to be executed');
+}
+```
+
+### Global middleware
+
+Create a `+global-middleware.ts` file in your commands directory to
+apply middleware to every command in your entire Discord bot.
+
+```ts title="src/app/commands/+global-middleware.ts"
+import { MiddlewareContext } from 'commandkit';
+
+export function beforeExecute(ctx: MiddlewareContext) {
+  // This middleware runs before ANY command in your bot
+  console.log(
+    `Command executed by ${ctx.interaction.user.tag} in ${ctx.interaction.guild?.name || 'DMs'}`,
+  );
+}
+```
+
+:::tip
+
+Middleware execution (both before and after) follows a hierarchy:
+directory-scoped middleware runs first, then command-specific
+middleware, and finally global middleware.
+
+:::

@@ -1,11 +1,14 @@
 ---
 title: Dynamic Tasks
-description: Learn how to create tasks on-demand from commands and events.
+description:
+  Learn how to create tasks on-demand from commands and events.
 ---
 
 # Dynamic Tasks
 
-While static tasks are great for recurring operations, you often need to create tasks dynamically based on user interactions or events. The tasks plugin provides utilities for creating tasks on-demand.
+While static tasks are great for recurring operations, you often need
+to create tasks dynamically based on user interactions or events. The
+tasks plugin provides utilities for creating tasks on-demand.
 
 ## Creating Dynamic Tasks
 
@@ -24,7 +27,8 @@ const taskId = await createTask({
 
 ## Reminder System Example
 
-Here's a complete example of a reminder command that creates dynamic tasks:
+Here's a complete example of a reminder command that creates dynamic
+tasks:
 
 ```ts
 import type { CommandData, ChatInputCommand } from 'commandkit';
@@ -135,10 +139,14 @@ export const command: CommandData = {
 };
 
 export const chatInput: ChatInputCommand = async (ctx) => {
-  const maintenanceMode = ctx.commandkit.store.get('maintenance-mode');
+  const maintenanceMode = ctx.commandkit.store.get(
+    'maintenance-mode',
+  );
 
   if (maintenanceMode) {
-    await ctx.interaction.reply('Maintenance mode is already enabled.');
+    await ctx.interaction.reply(
+      'Maintenance mode is already enabled.',
+    );
     return;
   }
 
@@ -154,7 +162,9 @@ export const chatInput: ChatInputCommand = async (ctx) => {
     schedule: Date.now() + 5 * 60 * 1000, // 5 minutes from now
   });
 
-  await ctx.interaction.reply('Maintenance scheduled for 5 minutes from now.');
+  await ctx.interaction.reply(
+    'Maintenance scheduled for 5 minutes from now.',
+  );
 };
 ```
 
@@ -241,7 +251,8 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 ### Task Storage and Retrieval
 
-For more complex scenarios, you might want to store task IDs in your database:
+For more complex scenarios, you might want to store task IDs in your
+database:
 
 ```ts
 import type { CommandData, ChatInputCommand } from 'commandkit';
@@ -325,10 +336,14 @@ export const chatInput: ChatInputCommand = async (ctx) => {
       schedule: Date.now() + delay * 60 * 1000,
     });
 
-    await ctx.interaction.reply(`Task scheduled successfully. ID: ${taskId}`);
+    await ctx.interaction.reply(
+      `Task scheduled successfully. ID: ${taskId}`,
+    );
   } catch (error) {
     console.error('Failed to schedule task:', error);
-    await ctx.interaction.reply('Failed to schedule task. Please try again.');
+    await ctx.interaction.reply(
+      'Failed to schedule task. Please try again.',
+    );
   }
 };
 ```
@@ -470,5 +485,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
 
 ## Next Steps
 
-- [Advanced Patterns](./04-advanced-patterns) - Learn advanced task management techniques
-- [Task Drivers](./02-task-drivers) - Understand different persistence options
+- [Advanced Patterns](./04-advanced-patterns) - Learn advanced task
+  management techniques
+- [Task Drivers](./02-task-drivers) - Understand different persistence
+  options

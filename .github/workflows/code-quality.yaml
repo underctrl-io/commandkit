@@ -1,0 +1,52 @@
+name: Code Quality
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!renovate/*'
+
+jobs:
+  check-types:
+    name: Check Types
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '10.14.0'
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check TypeScript Types
+        run: pnpm dlx turbo check-types
+
+  prettier:
+    name: Prettier Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '10.14.0'
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check Prettier Formatting
+        run: pnpm prettier:check

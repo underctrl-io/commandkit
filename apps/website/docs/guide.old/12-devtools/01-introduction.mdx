@@ -1,0 +1,65 @@
+---
+title: DevTools Plugin
+description:
+  The DevTools plugin for CommandKit provides a set of tools and
+  utilities to enhance the development experience. It includes
+  features like command inspection, performance monitoring, and
+  debugging tools.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The DevTools plugin for CommandKit provides a set of tools and
+utilities to enhance the development experience. It includes features
+like command inspection, performance monitoring, and debugging tools.
+
+:::warning This plugin is in early development and may not be fully
+functional. It is recommended to use it for testing and feedback
+purposes only. :::
+
+## Installation
+
+<Tabs>
+<TabItem value="npm" label="npm">
+
+```bash
+npm install @commandkit/devtools@dev
+```
+
+</TabItem>
+<TabItem value="yarn" label="yarn">
+
+```bash
+yarn add @commandkit/devtools@dev
+```
+
+</TabItem>
+<TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm add @commandkit/devtools@dev
+```
+
+</TabItem>
+</Tabs>
+
+## Usage
+
+Add the DevTools plugin to your CommandKit configuration:
+
+```ts
+import { defineConfig } from 'commandkit';
+import { devtools } from '@commandkit/devtools';
+
+export default defineConfig({
+  plugins: [devtools()],
+});
+```
+
+That's it! The DevTools plugin will run in http://localhost:4356 when
+you start your application with `commandkit dev`.
+
+### Preview
+
+<img src="/img/devtools.webp" alt="DevTools Web" width="100%" />

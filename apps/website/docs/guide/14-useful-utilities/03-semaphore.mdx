@@ -1,15 +1,20 @@
 ---
 title: Semaphore
-description: Control concurrent access to limited resources with async semaphores
+description:
+  Control concurrent access to limited resources with async semaphores
 ---
 
 # Semaphore
 
-A semaphore is like a parking lot with a limited number of spaces. It allows a specific number of operations to happen at the same time, but no more. Perfect for controlling access to limited resources like database connections.
+A semaphore is like a parking lot with a limited number of spaces. It
+allows a specific number of operations to happen at the same time, but
+no more. Perfect for controlling access to limited resources like
+database connections.
 
 ## Basic Usage
 
-The easiest way to use a semaphore is with the `withPermit` function, which automatically handles getting and releasing permits:
+The easiest way to use a semaphore is with the `withPermit` function,
+which automatically handles getting and releasing permits:
 
 ```typescript
 import { withPermit } from 'commandkit/semaphore';
@@ -33,16 +38,20 @@ const semaphore = createSemaphore({
   timeout: 60000, // 60 second timeout
 });
 
-const result = await semaphore.withPermit('api-endpoint', async () => {
-  return await apiCall();
-});
+const result = await semaphore.withPermit(
+  'api-endpoint',
+  async () => {
+    return await apiCall();
+  },
+);
 ```
 
 ## Advanced Usage
 
 ### Manual Permit Management
 
-Sometimes you need more control over when permits are acquired and released:
+Sometimes you need more control over when permits are acquired and
+released:
 
 ```typescript
 import {
@@ -70,7 +79,8 @@ console.log(`${available} permits available`);
 
 ### Cancelling Operations
 
-You can cancel a semaphore operation if it takes too long or if you need to stop it for any reason:
+You can cancel a semaphore operation if it takes too long or if you
+need to stop it for any reason:
 
 ```typescript
 import { withPermit } from 'commandkit/semaphore';
@@ -96,20 +106,28 @@ try {
 
 ### Monitoring Semaphore State
 
-You can check how many permits are being used and how many are available:
+You can check how many permits are being used and how many are
+available:
 
 ```typescript
-import { getAvailablePermits, getAcquiredPermits } from 'commandkit/semaphore';
+import {
+  getAvailablePermits,
+  getAcquiredPermits,
+} from 'commandkit/semaphore';
 
 const available = await getAvailablePermits('database');
 const acquired = await getAcquiredPermits('database');
 
-console.log(`Database connections: ${acquired} active, ${available} available`);
+console.log(
+  `Database connections: ${acquired} active, ${available} available`,
+);
 ```
 
 ### Using External Storage
 
-By default, semaphores store permit information in memory. If you're running multiple servers, you'll want to use external storage like Redis:
+By default, semaphores store permit information in memory. If you're
+running multiple servers, you'll want to use external storage like
+Redis:
 
 ```typescript
 import { Semaphore, SemaphoreStorage } from 'commandkit/semaphore';
@@ -148,18 +166,29 @@ const semaphore = createSemaphore({
 
 ## Common Use Cases
 
-- **Database Connection Pooling**: Limit how many database connections are used at once
-- **API Rate Limiting with Concurrency**: Allow multiple API calls but not too many
-- **File Upload Throttling**: Control how many files can be uploaded simultaneously
+- **Database Connection Pooling**: Limit how many database connections
+  are used at once
+- **API Rate Limiting with Concurrency**: Allow multiple API calls but
+  not too many
+- **File Upload Throttling**: Control how many files can be uploaded
+  simultaneously
 - **External Service Access**: Limit calls to third-party services
-- **Resource Pool Management**: Manage access to limited resources like memory or CPU
+- **Resource Pool Management**: Manage access to limited resources
+  like memory or CPU
 
 ## Tips for Beginners
 
-1. **Use `withPermit` When Possible**: It automatically handles cleanup, so you don't forget to release permits
-2. **Set Appropriate Limits**: Don't set too many permits (might overwhelm resources) or too few (might be too slow)
-3. **Monitor Usage**: Keep an eye on how many permits are being used to optimize performance
-4. **Use Descriptive Names**: Give your resources meaningful names like `database:main` or `api:external`
-5. **Handle Errors**: Always handle cases where permit acquisition fails
-6. **Consider Your Resources**: Set permit limits based on what your system can actually handle
-7. **Think About Your Setup**: Use external storage if you have multiple servers
+1. **Use `withPermit` When Possible**: It automatically handles
+   cleanup, so you don't forget to release permits
+2. **Set Appropriate Limits**: Don't set too many permits (might
+   overwhelm resources) or too few (might be too slow)
+3. **Monitor Usage**: Keep an eye on how many permits are being used
+   to optimize performance
+4. **Use Descriptive Names**: Give your resources meaningful names
+   like `database:main` or `api:external`
+5. **Handle Errors**: Always handle cases where permit acquisition
+   fails
+6. **Consider Your Resources**: Set permit limits based on what your
+   system can actually handle
+7. **Think About Your Setup**: Use external storage if you have
+   multiple servers

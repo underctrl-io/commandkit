@@ -1,11 +1,16 @@
 ---
 title: Discord.js Integration
-description: Learn how to integrate CommandKit Queue with Discord.js using Redis PubSub.
+description:
+  Learn how to integrate CommandKit Queue with Discord.js using Redis
+  PubSub.
 ---
 
 # Discord.js Integration
 
-CommandKit Queue provides seamless integration with Discord.js through the `@discordjs/brokers` package and Redis PubSub. This allows you to send messages between different Discord.js shards or even different Discord.js applications.
+CommandKit Queue provides seamless integration with Discord.js through
+the `@discordjs/brokers` package and Redis PubSub. This allows you to
+send messages between different Discord.js shards or even different
+Discord.js applications.
 
 ## Prerequisites
 
@@ -19,7 +24,8 @@ npm install @commandkit/queue @discordjs/brokers ioredis
 
 ### 1. Create a Redis Connection
 
-First, you need a Redis instance running. You can use a local Redis server or a cloud service like Redis Cloud.
+First, you need a Redis instance running. You can use a local Redis
+server or a cloud service like Redis Cloud.
 
 ```typescript
 import Redis from 'ioredis';
@@ -179,7 +185,10 @@ await send('shard-communication', {
 // In shard 1 (receiving)
 await receive('shard-communication', (message) => {
   if (message.toShard === 0) {
-    console.log(`Received from shard ${message.fromShard}:`, message.data);
+    console.log(
+      `Received from shard ${message.fromShard}:`,
+      message.data,
+    );
   }
 });
 ```
@@ -237,7 +246,11 @@ await receive('voice-updates', (message) => {
   );
 
   // Notify other users
-  notifyVoiceChannelUsers(message.guildId, message.channelId, message);
+  notifyVoiceChannelUsers(
+    message.guildId,
+    message.channelId,
+    message,
+  );
 });
 ```
 
@@ -356,4 +369,5 @@ process.on('SIGTERM', cleanup);
 
 ## Next Steps
 
-- [Advanced Features](./04-advanced-features.md) - Custom drivers, error handling, and more
+- [Advanced Features](./04-advanced-features.md) - Custom drivers,
+  error handling, and more

@@ -1,0 +1,151 @@
+---
+title: CommandKit Configuration
+description:
+  Learn how to configure CommandKit CLI for your project with detailed
+  examples and best practices.
+---
+
+CommandKit CLI can be configured using a `commandkit.config` file in
+the root of your project directory (typically alongside
+`package.json`). You can use any of the following file formats:
+
+- `commandkit.config.js`
+- `commandkit.config.mjs`
+- `commandkit.config.cjs`
+- `commandkit.config.ts`
+
+Throughout this guide, we'll be using `commandkit.config.ts` as an
+example.
+
+## Basic Configuration
+
+Here's a minimal configuration to get started:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+
+export default defineConfig({});
+```
+
+## Configuration Options
+
+### Plugins
+
+The `plugins` array allows you to extend CommandKit's functionality
+with additional features:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { somePlugin } from '@commandkit/some-plugin';
+
+export default defineConfig({
+  plugins: [
+    somePlugin({
+      // Plugin specific options
+    }),
+  ],
+});
+```
+
+### Rolldown Plugins
+
+Customize your build process with rolldown plugins:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { someRolldownPlugin } from 'some-rolldown-plugin';
+
+export default defineConfig({
+  rolldownPlugins: [
+    someRolldownPlugin({
+      // Plugin specific options
+    }),
+  ],
+});
+```
+
+### Compiler Options
+
+Fine-tune the compilation process with these options:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+
+export default defineConfig({
+  compilerOptions: {
+    macro: {
+      development: true, // Enables "use macro" directive compilation during development
+    },
+    cache: {
+      development: true, // Enables "use cache" directive usage during development
+    },
+  },
+});
+```
+
+### Build Output
+
+Customize where your compiled code is output:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+
+export default defineConfig({
+  distDir: 'build', // Changes output directory from default 'dist' to 'build'
+});
+```
+
+### Environment Variables
+
+Define static environment variables for your project:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+
+export default defineConfig({
+  env: {
+    NODE_ENV: 'development',
+    API_URL: 'http://localhost:3000',
+  },
+});
+```
+
+## Best Practices
+
+1. **Type Safety**: Always use `commandkit.config.ts` for better type
+   checking and IDE support.
+2. **Security**: Always store sensitive information in `.env` file and
+   make sure it is not committed to your version control system.
+3. **Plugin Management**:
+   - Only include necessary plugins to keep build times fast
+   - Plugins have full access to your discord bot. So always be
+     careful when installing the plugins.
+
+## Complete Example
+
+Here's a comprehensive configuration example:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { somePlugin } from '@commandkit/some-plugin';
+import { someRolldownPlugin } from 'some-rolldown-plugin';
+
+export default defineConfig({
+  plugins: [somePlugin()],
+  rolldownPlugins: [someRolldownPlugin()],
+  compilerOptions: {
+    macro: {
+      development: true,
+    },
+    cache: {
+      development: true,
+    },
+  },
+  distDir: 'dist',
+  env: {
+    NODE_ENV: 'development',
+  },
+  typedCommands: true,
+  typedLocales: true,
+});
+```

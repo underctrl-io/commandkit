@@ -1,11 +1,14 @@
 ---
 title: Advanced Patterns
-description: Learn advanced patterns and best practices for task management.
+description:
+  Learn advanced patterns and best practices for task management.
 ---
 
 # Advanced Patterns
 
-Once you're comfortable with the basics, you can implement more sophisticated task management patterns. This guide covers advanced techniques for complex use cases.
+Once you're comfortable with the basics, you can implement more
+sophisticated task management patterns. This guide covers advanced
+techniques for complex use cases.
 
 ## Task Workflows
 
@@ -27,9 +30,12 @@ export default task({
     const processedData = await processData(data);
 
     // Step 3: Send notification
-    const channel = ctx.commandkit.client.channels.cache.get('log-channel');
+    const channel =
+      ctx.commandkit.client.channels.cache.get('log-channel');
     if (channel?.isTextBased()) {
-      await channel.send(`Data processing completed for ID: ${data.id}`);
+      await channel.send(
+        `Data processing completed for ID: ${data.id}`,
+      );
     }
   },
 });
@@ -59,7 +65,9 @@ export default task({
 
       if (attempt < maxAttempts) {
         // Log retry attempt
-        console.log(`Will retry attempt ${attempt + 1} of ${maxAttempts}`);
+        console.log(
+          `Will retry attempt ${attempt + 1} of ${maxAttempts}`,
+        );
 
         // In a real implementation, you might use a different approach
         // such as storing retry state in a database
@@ -71,7 +79,9 @@ export default task({
         const channel =
           ctx.commandkit.client.channels.cache.get('error-channel');
         if (channel?.isTextBased()) {
-          await channel.send(`Task failed after ${maxAttempts} attempts`);
+          await channel.send(
+            `Task failed after ${maxAttempts} attempts`,
+          );
         }
       }
     }
@@ -96,7 +106,9 @@ export default task({
     const conditionsMet = await checkRequiredConditions();
 
     if (!conditionsMet) {
-      console.log('Required conditions not met, skipping task execution');
+      console.log(
+        'Required conditions not met, skipping task execution',
+      );
       return;
     }
 
@@ -216,7 +228,8 @@ export default task({
     ctx.commandkit.store.set('last-run', Date.now());
 
     // Get or initialize counter
-    const counter = ctx.commandkit.store.get('execution-counter') || 0;
+    const counter =
+      ctx.commandkit.store.get('execution-counter') || 0;
     ctx.commandkit.store.set('execution-counter', counter + 1);
 
     console.log(`Task executed ${counter + 1} times`);
@@ -279,7 +292,10 @@ export default task({
         await performOperation(fallbackOperation);
         console.log('Fallback operation succeeded');
       } catch (fallbackError) {
-        console.error('Fallback operation also failed:', fallbackError);
+        console.error(
+          'Fallback operation also failed:',
+          fallbackError,
+        );
 
         // Log the failure for manual intervention
         const channel =
@@ -349,17 +365,23 @@ export default task({
 
 ## Best Practices Summary
 
-1. **Error Handling**: Always handle errors gracefully and implement fallback mechanisms
-2. **Resource Management**: Clean up resources and implement proper cleanup tasks
+1. **Error Handling**: Always handle errors gracefully and implement
+   fallback mechanisms
+2. **Resource Management**: Clean up resources and implement proper
+   cleanup tasks
 3. **Monitoring**: Track task execution metrics and performance
-4. **State Management**: Use the context store for sharing data between task phases
-5. **Conditional Execution**: Check required conditions before proceeding with task work
+4. **State Management**: Use the context store for sharing data
+   between task phases
+5. **Conditional Execution**: Check required conditions before
+   proceeding with task work
 6. **Batching**: Process large datasets in manageable batches
 7. **Adaptive Processing**: Adjust processing based on system load
-8. **Logging**: Implement comprehensive logging for debugging and monitoring
+8. **Logging**: Implement comprehensive logging for debugging and
+   monitoring
 
 ## Next Steps
 
 - [Getting Started](./01-getting-started) - Review the basics
 - [Task Drivers](./02-task-drivers) - Understand persistence options
-- [Dynamic Tasks](./03-dynamic-tasks) - Learn about on-demand task creation
+- [Dynamic Tasks](./03-dynamic-tasks) - Learn about on-demand task
+  creation
