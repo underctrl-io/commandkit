@@ -68,10 +68,13 @@ it as one of the handler functions for the `"ready"` event.
 Just like the Discord.js `client.on()` method, the parameters you
 receive in your event file will be based on what event you're trying
 to handle. In the example above, the `"ready"` event should give you a
-`Client` instance.
+[`Client`](https://discord.js.org/docs/packages/discord.js/main/Client:Class)
+instance.
 
 If you were to, for example, handle the `"messageCreate"` event, you
-would get a `Message` instance.
+would get a
+[`Message`](https://discord.js.org/docs/packages/discord.js/main/Message:Class)
+instance.
 
 ### Events with multiple parameters
 
@@ -91,8 +94,11 @@ export default function (oldMessage: Message, newMessage: Message) {
 ### Additional parameters
 
 Outside of the parameters provided by Discord.js, CommandKit will pass
-additional parameters to the event handler, including a `Client` and
-`CommandKit` instance.
+additional parameters to the event handler, including a
+[`Client`](https://discord.js.org/docs/packages/discord.js/main/Client:Class)
+and
+[`CommandKit`](../../api-reference/commandkit/classes/command-kit.mdx)
+instance.
 
 ```ts title="src/app/events/messageCreate/log.ts"
 import type { CommandKit } from 'commandkit';
