@@ -1,18 +1,12 @@
 ---
 title: Async Queue
-description:
-  Process tasks sequentially or with limited concurrency using async
-  queues
 ---
 
-# Async Queue
+An async queue manages task execution by processing them sequentially
+or with controlled concurrency. Tasks are queued and executed in
+order, with configurable limits on how many can run simultaneously.
 
-An async queue is like a line at a bank. Tasks wait in line and get
-processed one by one (or a few at a time). This helps you control how
-many things happen simultaneously and ensures everything gets done in
-an orderly way.
-
-## Basic Usage
+## Basic usage
 
 The simplest way to use a queue is with the default sequential
 processing:
@@ -33,7 +27,7 @@ const result2 = await queue.add(async () => {
 });
 ```
 
-## Custom Configuration
+## Custom configuration
 
 You can create a queue that processes multiple tasks at the same time:
 
@@ -59,9 +53,9 @@ const promises = [
 const results = await Promise.all(promises);
 ```
 
-## Advanced Usage
+## Advanced usage
 
-### Queue Control
+### Queue control
 
 You can pause and resume the queue, and check its status:
 
@@ -86,10 +80,9 @@ console.log(`Pending: ${queue.getPending()}`);
 console.log(`Paused: ${queue.isPaused()}`);
 ```
 
-### Cancelling Operations
+### Cancelling operations
 
-You can cancel queue operations if they take too long or if you need
-to stop them:
+You can cancel queue operations using an AbortSignal:
 
 ```typescript
 import { createAsyncQueue } from 'commandkit/async-queue';
@@ -122,7 +115,7 @@ try {
 }
 ```
 
-### Batch Processing
+### Batch processing
 
 Queues are great for processing large batches of items efficiently:
 
@@ -151,10 +144,9 @@ const promises = items.map((item) =>
 const results = await Promise.all(promises);
 ```
 
-### Error Handling
+### Error handling
 
-Queues handle errors gracefully, so one failed task doesn't stop the
-others:
+Queues handle errors gracefully without stopping other tasks:
 
 ```typescript
 import { createAsyncQueue } from 'commandkit/async-queue';
@@ -183,37 +175,8 @@ results.forEach((result, index) => {
 });
 ```
 
-## Default Settings
+## Default settings
 
 - **Concurrency**: 1 (sequential processing)
 - **Storage**: In-memory
 - **Abort Support**: Yes
-
-## Common Use Cases
-
-- **API Rate Limiting**: Control how many API calls are made at once
-- **File Processing Pipelines**: Process files one by one or in small
-  batches
-- **Database Operation Batching**: Execute database operations in
-  controlled batches
-- **Image Processing Queues**: Process images without overwhelming the
-  system
-- **Email Sending Queues**: Send emails in an orderly way
-- **Background Job Processing**: Handle background tasks efficiently
-
-## Tips for Beginners
-
-1. **Start with Sequential**: Use the default concurrency of 1 for
-   simple cases
-2. **Set Reasonable Limits**: Don't set concurrency too high (might
-   overwhelm resources) or too low (might be too slow)
-3. **Use `onDrain` Callback**: Get notified when all tasks are
-   complete
-4. **Handle Errors**: Use `Promise.allSettled()` to handle individual
-   task failures
-5. **Monitor Queue State**: Check running and pending counts for
-   debugging
-6. **Use Timeouts**: Set timeouts to prevent tasks from hanging
-   forever
-7. **Think About Your Resources**: Set concurrency based on what your
-   system can handle

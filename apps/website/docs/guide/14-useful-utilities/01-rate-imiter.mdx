@@ -1,17 +1,12 @@
 ---
 title: Rate Limiter
-description:
-  Control request frequency with configurable limits and intervals
 ---
 
-# Rate Limiter
+CommandKit provides a rate limiter utility that controls the frequency
+of operations such as user actions or API requests. This helps prevent
+system overload by enforcing configurable request limits.
 
-Think of a rate limiter like a traffic light for your application. It
-controls how often something can happen - like how many times a user
-can click a button or make an API request. This prevents your system
-from being overwhelmed.
-
-## Basic Usage
+## Basic usage
 
 The simplest way to use rate limiting is with the default settings:
 
@@ -29,10 +24,9 @@ if (allowed) {
 }
 ```
 
-## Custom Configuration
+## Custom configuration
 
-Sometimes you need different limits for different situations. You can
-create a custom rate limiter with specific settings:
+You can create a custom rate limiter with specific settings:
 
 ```typescript
 import { createRateLimiter } from 'commandkit/ratelimit';
@@ -46,9 +40,9 @@ const apiLimiter = createRateLimiter({
 const allowed = await apiLimiter.limit('api:endpoint');
 ```
 
-## Advanced Usage
+## Advanced usage
 
-### Checking Remaining Requests
+### Checking remaining requests
 
 You can check how many requests a user has left and when the limit
 resets:
@@ -68,10 +62,9 @@ console.log(
 );
 ```
 
-### Manual Reset
+### Manual reset
 
-In some cases, you might want to reset a user's rate limit (like after
-they upgrade their account):
+You can manually reset a user's rate limit when needed:
 
 ```typescript
 import { resetRateLimit } from 'commandkit/ratelimit';
@@ -80,11 +73,11 @@ import { resetRateLimit } from 'commandkit/ratelimit';
 await resetRateLimit('user:123');
 ```
 
-### Using External Storage
+### Using external storage
 
-By default, rate limiters store data in memory. If you're running
-multiple servers, you'll want to use external storage like Redis so
-all servers can share the same rate limit information:
+Rate limiters store data in memory by default. For multi-server
+deployments, use external storage like Redis to share rate limit data
+across all servers:
 
 ```typescript
 import { RateLimiter, RateLimitStorage } from 'commandkit/ratelimit';
@@ -115,30 +108,8 @@ const limiter = createRateLimiter({
 });
 ```
 
-## Default Settings
+## Default settings
 
 - **Max Requests**: 10 requests
 - **Time Window**: 60 seconds (1 minute)
 - **Storage**: In-memory (works for single-server applications)
-
-## Common Use Cases
-
-- **API Rate Limiting**: Prevent users from making too many API calls
-- **User Action Throttling**: Limit how often users can click buttons
-  or submit forms
-- **Resource Access Control**: Control access to expensive operations
-- **Spam Prevention**: Stop automated bots from overwhelming your
-  system
-
-## Tips for Beginners
-
-1. **Start Simple**: Use the default `ratelimit()` function for basic
-   needs
-2. **Choose Good Keys**: Use descriptive keys like `user:123` or
-   `api:endpoint` to make debugging easier
-3. **Set Reasonable Limits**: Don't make limits too strict or too
-   loose - find the right balance
-4. **Handle Rejection**: Always check if the rate limit allows the
-   action before proceeding
-5. **Consider Your Users**: Think about legitimate use cases when
-   setting limits

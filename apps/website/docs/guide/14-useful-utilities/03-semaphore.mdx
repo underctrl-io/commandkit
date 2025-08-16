@@ -1,17 +1,13 @@
 ---
 title: Semaphore
-description:
-  Control concurrent access to limited resources with async semaphores
 ---
 
-# Semaphore
+A semaphore controls the number of operations that can access a
+resource concurrently. It maintains a set number of permits, allowing
+only that many operations to proceed simultaneously while others wait
+in queue.
 
-A semaphore is like a parking lot with a limited number of spaces. It
-allows a specific number of operations to happen at the same time, but
-no more. Perfect for controlling access to limited resources like
-database connections.
-
-## Basic Usage
+## Basic usage
 
 The easiest way to use a semaphore is with the `withPermit` function,
 which automatically handles getting and releasing permits:
@@ -26,7 +22,7 @@ const result = await withPermit('database-connection', async () => {
 });
 ```
 
-## Custom Configuration
+## Custom configuration
 
 You can create a semaphore with specific limits and timeout settings:
 
@@ -46,9 +42,9 @@ const result = await semaphore.withPermit(
 );
 ```
 
-## Advanced Usage
+## Advanced usage
 
-### Manual Permit Management
+### Manual permit management
 
 Sometimes you need more control over when permits are acquired and
 released:
@@ -77,10 +73,9 @@ const available = await getAvailablePermits('resource');
 console.log(`${available} permits available`);
 ```
 
-### Cancelling Operations
+### Cancelling operations
 
-You can cancel a semaphore operation if it takes too long or if you
-need to stop it for any reason:
+You can cancel a semaphore operation using an AbortSignal:
 
 ```typescript
 import { withPermit } from 'commandkit/semaphore';
@@ -104,7 +99,7 @@ try {
 }
 ```
 
-### Monitoring Semaphore State
+### Monitoring semaphore state
 
 You can check how many permits are being used and how many are
 available:
@@ -123,11 +118,10 @@ console.log(
 );
 ```
 
-### Using External Storage
+### Using external storage
 
-By default, semaphores store permit information in memory. If you're
-running multiple servers, you'll want to use external storage like
-Redis:
+Semaphores store permit information in memory by default. For
+multi-server deployments, use external storage like Redis:
 
 ```typescript
 import { Semaphore, SemaphoreStorage } from 'commandkit/semaphore';
@@ -158,37 +152,8 @@ const semaphore = createSemaphore({
 });
 ```
 
-## Default Settings
+## Default settings
 
 - **Permits**: 1 (sequential access)
 - **Timeout**: 30 seconds (30000ms)
 - **Storage**: In-memory (works for single-server applications)
-
-## Common Use Cases
-
-- **Database Connection Pooling**: Limit how many database connections
-  are used at once
-- **API Rate Limiting with Concurrency**: Allow multiple API calls but
-  not too many
-- **File Upload Throttling**: Control how many files can be uploaded
-  simultaneously
-- **External Service Access**: Limit calls to third-party services
-- **Resource Pool Management**: Manage access to limited resources
-  like memory or CPU
-
-## Tips for Beginners
-
-1. **Use `withPermit` When Possible**: It automatically handles
-   cleanup, so you don't forget to release permits
-2. **Set Appropriate Limits**: Don't set too many permits (might
-   overwhelm resources) or too few (might be too slow)
-3. **Monitor Usage**: Keep an eye on how many permits are being used
-   to optimize performance
-4. **Use Descriptive Names**: Give your resources meaningful names
-   like `database:main` or `api:external`
-5. **Handle Errors**: Always handle cases where permit acquisition
-   fails
-6. **Consider Your Resources**: Set permit limits based on what your
-   system can actually handle
-7. **Think About Your Setup**: Use external storage if you have
-   multiple servers
