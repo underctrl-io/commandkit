@@ -1,25 +1,30 @@
 ---
-title: Custom events
+title: Custom Events
 ---
 
 CommandKit also supports using custom events in the `events`
 directory. Custom events must be defined in a namespaced directory,
-which are primarily handled by plugins. For example, if you have a
-custom event called `guildMemberBoost`, you can create a file called
-`src/app/events/(custom)/guildMemberBoost/handler.ts` which will be
-handled by the appropriate plugins.
+which are primarily handled by plugins.
 
-:::info
+For example, if you have a plugin that is handling a custom event
+called `"guildMemberBoost"` under a namespace called `"custom"`, you
+can create a file in the `src/app/events/(custom)/guildMemberBoost`
+directory which will be handled by the appropriate plugin.
 
-Event namespace directories are not the same as
-[command categories](../02-commands/06-category-directory.mdx) as they
-serve a different purpose.
+:::warning
+
+The `"custom"` namespace above is just an example. Namespaces will
+generally be set by plugins, so make sure to check the plugin's
+documentation for the correct one.
 
 :::
 
-The usage of custom events is the same way as
-[Discord.js events](./01-discordjs-events.mdx). The only difference is
-that these events are namespaced and are primarily handled by plugins.
+:::danger
+
+Event namespace directories are **not** the same as
+[command categories](../02-commands/06-category-directory.mdx).
+
+:::
 
 ## How plugins execute namespaced events
 
