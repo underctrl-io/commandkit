@@ -1,3 +1,901 @@
 ---
 title: '@commandkit/i18n'
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `@commandkit/i18n` plugin integrates
+[i18next](https://www.i18next.com/) into CommandKit, enabling you to
+create multilingual Discord bots that automatically adapt to your
+users' preferred languages. This plugin provides seamless
+internationalization support for commands, events, and all bot
+interactions.
+
+## Features
+
+- **Automatic locale detection** - Automatically uses Discord's guild
+  preferred locale
+- **Easy setup** - Simple configuration with sensible defaults
+- **File-based translations** - Organize translations in JSON files
+- **Context-aware** - Access translations in commands, events, and
+  legacy handlers
+- **i18next ecosystem** - Full compatibility with i18next plugins and
+  features
+- **Command metadata localization** - Localize command names,
+  descriptions, and options
+
+## Installation
+
+```sh npm2yarn
+npm install @commandkit/i18n
+```
+
+## Basic setup
+
+Add the i18n plugin to your CommandKit configuration:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { i18n } from '@commandkit/i18n';
+
+export default defineConfig({
+  plugins: [i18n()],
+});
+```
+
+## Advanced configuration
+
+You can customize the i18n plugin by passing options to it:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { i18n } from '@commandkit/i18n';
+
+export default defineConfig({
+  plugins: [
+    i18n({
+      plugins: [someI18nextPlugin],
+      // Add other i18next configuration options as needed
+    }),
+  ],
+});
+```
+
+## Translation files structure
+
+Create a `locales` directory inside your `src/app` folder with
+subdirectories for each language. Each language directory should
+contain JSON files for your translations.
+
+```
+src
+└── app
+    ├── locales
+    │   ├── en-US
+    │   │   └── ping.json
+    │   │   └── messageCreate.event.json
+    │   └── fr
+    │       └── ping.json
+    │       └── messageCreate.event.json
+    ├── commands
+    │   ├── ping.ts
+    │   └── help.ts
+    └── events
+        └── messageCreate
+            └── handler.ts
+```
+
+### Supported locales
+
+CommandKit uses Discord's locale identifiers. Please refer to
+[Discord's Locales documentation](https://discord.com/developers/docs/reference#locales)
+for a complete list.
+
+## Quick start example
+
+Here's a complete example to get you started:
+
+1. **Configure the plugin**:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { i18n } from '@commandkit/i18n';
+
+export default defineConfig({
+  plugins: [i18n()],
+});
+```
+
+2. **Create translation files**:
+
+```json title="src/app/locales/en-US/ping.json"
+{
+  "$command": {
+    "name": "ping",
+    "description": "Check the bot's latency"
+  },
+  "response": "🏓 Pong! Latency: **{{latency}}ms**"
+}
+```
+
+```json title="src/app/locales/fr/ping.json"
+{
+  "$command": {
+    "name": "ping",
+    "description": "Vérifier la latence du bot"
+  },
+  "response": "🏓 Pong! Latence: **{{latency}}ms**"
+}
+```
+
+3. **Use translations in your command**:
+
+```ts title="src/app/commands/ping.ts"
+import type { ChatInputCommand, CommandData } from 'commandkit';
+
+export const command: CommandData = {
+  name: 'ping',
+  description: "Check the bot's latency",
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const { t } = ctx.locale();
+
+  await ctx.interaction.reply({
+    content: t('response', { latency: ctx.client.ws.ping }),
+  });
+};
+```
+
+That's it! Your bot will now automatically respond in the user's guild
+preferred language.
+
+## Commands localization
+
+CommandKit's i18n plugin provides powerful localization features for
+chat input commands, allowing you to translate command metadata
+(names, descriptions, options) and responses to match your users'
+preferred languages.
+
+### Translation file structure
+
+Translation files should be placed in your `locales` directory and
+named after the command they translate. For example, translations for
+a `ping` command should be in `ping.json`.
+
+#### Basic translation file
+
+```json title="src/app/locales/en-US/ping.json"
+{
+  "response": "🏓 Pong! Latency: **{{latency}}ms**",
+  "error": "❌ Failed to ping the server",
+  "database_response": "📊 Database latency: **{{dbLatency}}ms**"
+}
+```
+
+#### Command metadata localization
+
+Use the special `$command` key to localize command metadata that
+appears in Discord's interface:
+
+```json title="src/app/locales/en-US/ping.json"
+{
+  "$command": {
+    "name": "ping",
+    "description": "Check the bot's latency and response time",
+    "options": [
+      {
+        "name": "database",
+        "description": "Also check database connection latency"
+      },
+      {
+        "name": "target",
+        "description": "Specify a target server to ping",
+        "choices": [
+          {
+            "name": "Main Server",
+            "value": "main"
+          },
+          {
+            "name": "Backup Server",
+            "value": "backup"
+          }
+        ]
+      }
+    ]
+  },
+  "response": "🏓 Pong! Latency: **{{latency}}ms**",
+  "database_response": "📊 Database latency: **{{dbLatency}}ms**"
+}
+```
+
+The `$command` object structure mirrors Discord's application command
+structure:
+
+- `name`: Command name (shown in Discord's command picker)
+- `description`: Command description (shown in Discord's command
+  picker)
+- `options`: Array of option localizations
+  - `name`: Option name
+  - `description`: Option description
+  - `choices`: Array of choice localizations (for string options with
+    predefined choices)
+
+### Using translations in commands
+
+The `locale()` function in your command context provides access to
+translations and i18next features:
+
+```ts title="src/app/commands/ping.ts"
+import type { ChatInputCommand } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  // Get translation function and i18next instance for the current guild's locale
+  const { t, i18n } = ctx.locale();
+
+  const latency = ctx.client.ws.ping;
+
+  // Use the translation function with interpolation
+  await ctx.interaction.reply({
+    content: t('response', { latency }),
+    ephemeral: true,
+  });
+};
+```
+
+#### Manual locale override
+
+You can specify a particular locale instead of using the guild's
+preferred locale:
+
+```ts
+export const chatInput: ChatInputCommand = async (ctx) => {
+  // Force French locale
+  const { t } = ctx.locale('fr');
+
+  await ctx.interaction.reply({
+    content: t('response', { latency: ctx.client.ws.ping }),
+  });
+};
+```
+
+### Advanced translation features
+
+#### Pluralization
+
+i18next supports automatic pluralization:
+
+```json title="locales/en-US/user.json"
+{
+  "member_count": "{{count}} member",
+  "member_count_plural": "{{count}} members"
+}
+```
+
+```ts
+const { t } = ctx.locale();
+const memberCount = guild.memberCount;
+
+// Automatically chooses singular or plural form
+const message = t('member_count', { count: memberCount });
+```
+
+#### Nested Translations
+
+Organize translations using nested objects:
+
+```json title="locales/en-US/errors.json"
+{
+  "validation": {
+    "required": "This field is required",
+    "invalid_format": "Invalid format provided",
+    "too_long": "Input is too long (max {{max}} characters)"
+  },
+  "permissions": {
+    "insufficient": "You don't have permission to use this command",
+    "missing_role": "You need the {{role}} role to use this command"
+  }
+}
+```
+
+```ts
+const { t } = ctx.locale();
+
+// Access nested translations with dot notation
+await ctx.interaction.reply({
+  content: t('errors.permissions.insufficient'),
+  ephemeral: true,
+});
+```
+
+#### Context and Namespaces
+
+Use different translation contexts for better organization:
+
+```ts
+const { t } = ctx.locale();
+
+// Default namespace (command file name)
+t('response');
+
+// Specific namespace
+t('common:greeting', { name: user.displayName });
+
+// Multiple namespaces
+t(['errors:validation.required', 'common:error']);
+```
+
+## Events localization
+
+Event handlers in CommandKit can also benefit from localization,
+allowing you to create multilingual responses and messages for various
+Discord events like message creation, member joins, and more.
+
+### Using translations in event handlers
+
+Since event handlers don't have the same context as commands, you need
+to import the `locale` function directly from the i18n plugin:
+
+```ts title="src/app/events/messageCreate/handler.ts"
+import { locale } from '@commandkit/i18n';
+import type { Message } from 'discord.js';
+
+export default async function onMessageCreate(message: Message) {
+  // Skip bot messages
+  if (message.author.bot) return;
+
+  // Get translations for the guild's preferred locale
+  const { t } = locale(message.guild?.preferredLocale);
+
+  if (message.content.toLowerCase() === 'hello') {
+    await message.reply(
+      t('greeting', { user: message.author.displayName }),
+    );
+  }
+
+  if (message.content.toLowerCase() === 'help') {
+    await message.reply(t('help_message'));
+  }
+}
+```
+
+### Event translation files
+
+Create translation files for your events using descriptive names:
+
+```json title="src/app/locales/en-US/messageCreate.event.json"
+{
+  "greeting": "👋 Hello {{user}}! Welcome to our server!",
+  "help_message": "📖 Use `/help` to see all available commands",
+  "auto_mod": {
+    "warning": "⚠️ {{user}}, please watch your language!",
+    "timeout": "🔇 {{user}} has been timed out for inappropriate language"
+  }
+}
+```
+
+```json title="src/app/locales/fr/messageCreate.event.json"
+{
+  "greeting": "👋 Salut {{user}} ! Bienvenue sur notre serveur !",
+  "help_message": "📖 Utilisez `/help` pour voir toutes les commandes disponibles",
+  "auto_mod": {
+    "warning": "⚠️ {{user}}, attention à votre langage !",
+    "timeout": "🔇 {{user}} a été mis en sourdine pour langage inapproprié"
+  }
+}
+```
+
+### Advanced event localization
+
+#### Guild welcome messages
+
+```ts title="src/app/events/guildMemberAdd/handler.ts"
+import { locale } from '@commandkit/i18n';
+import type { GuildMember } from 'discord.js';
+
+export default async function onGuildMemberAdd(member: GuildMember) {
+  const { t } = locale(member.guild.preferredLocale);
+
+  // Find welcome channel
+  const welcomeChannel = member.guild.channels.cache.find(
+    (channel) => channel.name === 'welcome',
+  );
+
+  if (welcomeChannel?.isTextBased()) {
+    const memberCount = member.guild.memberCount;
+
+    await welcomeChannel.send({
+      content: t('welcome.message', {
+        user: member.displayName,
+        guild: member.guild.name,
+        count: memberCount,
+      }),
+      // You can also send embeds with localized content
+      embeds: [
+        {
+          title: t('welcome.embed.title'),
+          description: t('welcome.embed.description', {
+            user: member.displayName,
+          }),
+          color: 0x00ff00,
+          fields: [
+            {
+              name: t('welcome.embed.fields.rules'),
+              value: t('welcome.embed.fields.rules_description'),
+            },
+            {
+              name: t('welcome.embed.fields.channels'),
+              value: t('welcome.embed.fields.channels_description'),
+            },
+          ],
+        },
+      ],
+    });
+  }
+}
+```
+
+```json title="src/app/locales/en-US/guildMemberAdd.event.json"
+{
+  "welcome": {
+    "message": "🎉 Welcome {{user}} to **{{guild}}**! You're our **{{count}}** member!",
+    "embed": {
+      "title": "Welcome to the Server!",
+      "description": "Hi {{user}}, we're glad to have you here!",
+      "fields": {
+        "rules": "📋 Rules",
+        "rules_description": "Please read our rules in #rules channel",
+        "channels": "💬 Important Channels",
+        "channels_description": "Check out #announcements and #general"
+      }
+    }
+  }
+}
+```
+
+#### Locale detection strategies
+
+When working with events, you have several options for determining the
+appropriate locale:
+
+##### 1. Guild preferred locale (recommended)
+
+```ts
+// Use the guild's preferred locale set by server admins
+const { t } = locale(message.guild?.preferredLocale);
+```
+
+##### 2. User locale
+
+```ts
+// Use the individual user's Discord locale
+const { t } = locale(message.author.locale);
+```
+
+##### 3. Fallback chain
+
+```ts
+// Try multiple locale sources with fallback
+const detectedLocale =
+  message.guild?.preferredLocale || message.author.locale || 'en-US';
+
+const { t } = locale(detectedLocale);
+```
+
+##### 4. Custom locale detection
+
+```ts
+async function detectLocale(message: Message): Promise<string> {
+  // Custom logic: check database for user preferences
+  const userSettings = await getUserSettings(message.author.id);
+  if (userSettings?.language) {
+    return userSettings.language;
+  }
+
+  // Fall back to guild locale
+  return message.guild?.preferredLocale || 'en-US';
+}
+
+export default async function onMessageCreate(message: Message) {
+  const userLocale = await detectLocale(message);
+  const { t } = locale(userLocale);
+
+  // Use translations...
+}
+```
+
+### Error handling with localization
+
+Handle translation errors gracefully in event handlers:
+
+```ts title="src/app/events/messageCreate/autoMod.ts"
+import { locale } from '@commandkit/i18n';
+import type { Message } from 'discord.js';
+
+const FORBIDDEN_WORDS = ['spam', 'scam', 'hack'];
+
+export default async function autoModerator(message: Message) {
+  if (message.author.bot) return;
+
+  try {
+    const { t } = locale(message.guild?.preferredLocale);
+
+    const hasViolation = FORBIDDEN_WORDS.some((word) =>
+      message.content.toLowerCase().includes(word),
+    );
+
+    if (hasViolation) {
+      // Delete the message
+      await message.delete();
+
+      // Send warning
+      await message.channel.send({
+        content: t('moderation.auto_warning', {
+          user: message.author.displayName,
+        }),
+      });
+
+      // Log the action
+      console.log(
+        t('moderation.log_message', {
+          user: message.author.tag,
+          guild: message.guild?.name,
+          channel: message.channel.name,
+        }),
+      );
+    }
+  } catch (error) {
+    // Fallback to English if translation fails
+    console.error('Translation error:', error);
+    await message.channel.send(
+      `⚠️ ${message.author.displayName}, please follow our community guidelines.`,
+    );
+  }
+}
+```
+
+### Best practices for event localization
+
+1. **Always provide fallbacks**: Event handlers should gracefully
+   handle missing translations
+2. **Use appropriate locale sources**: Choose between guild, user, or
+   custom locale detection based on context
+3. **Keep translations consistent**: Use the same tone and style
+   across events and commands
+4. **Test with different locales**: Ensure your events work correctly
+   with various language settings
+5. **Cache translations when possible**: For high-frequency events,
+   consider caching translation functions
+
+## Usage with legacy commands
+
+The i18n plugin is fully compatible with the
+[`@commandkit/legacy`](./06-commandkit-legacy.mdx) plugin, allowing
+you to add internationalization to existing projects without major
+refactoring.
+
+### Translations in legacy commands
+
+For legacy commands, import the `locale` function directly from the
+i18n plugin:
+
+```ts title="src/app/commands/legacy/ping.js"
+import { locale } from '@commandkit/i18n';
+
+export async function run({ interaction, client }) {
+  // The locale function can automatically infer the locale from the interaction
+  const { t } = locale();
+
+  const latency = client.ws.ping;
+
+  return interaction.reply({
+    content: t('response', { latency }),
+    ephemeral: true,
+  });
+}
+
+// Legacy command metadata
+export const data = {
+  name: 'ping',
+  description: 'Check bot latency',
+};
+```
+
+#### Manual locale specification
+
+You can also specify a locale manually:
+
+```ts
+export async function run({ interaction, client }) {
+  // Use a specific locale
+  const guildLocale = interaction.guild?.preferredLocale || 'en-US';
+  const { t } = locale(guildLocale);
+
+  return interaction.reply({
+    content: t('response', { latency: client.ws.ping }),
+    ephemeral: true,
+  });
+}
+```
+
+### Legacy command translation files
+
+Translation files for legacy commands work the same way as modern
+commands:
+
+```json title="src/app/locales/en-US/ping.json"
+{
+  "response": "🏓 Pong! Latency: **{{latency}}ms**",
+  "error": "❌ Could not determine latency"
+}
+```
+
+```json title="src/app/locales/fr/ping.json"
+{
+  "response": "🏓 Pong! Latence: **{{latency}}ms**",
+  "error": "❌ Impossible de déterminer la latence"
+}
+```
+
+### Migrating legacy commands
+
+Here's how to migrate an existing legacy command to use i18n:
+
+#### Before (No localization)
+
+```ts title="src/app/commands/legacy/userinfo.js"
+export async function run({ interaction }) {
+  const user =
+    interaction.options.getUser('user') || interaction.user;
+  const member = interaction.guild?.members.cache.get(user.id);
+
+  const embed = {
+    title: `User Information - ${user.username}`,
+    fields: [
+      { name: 'Username', value: user.username, inline: true },
+      { name: 'ID', value: user.id, inline: true },
+      {
+        name: 'Account Created',
+        value: user.createdAt.toDateString(),
+        inline: true,
+      },
+    ],
+    color: 0x0099ff,
+  };
+
+  if (member) {
+    embed.fields.push(
+      {
+        name: 'Joined Server',
+        value: member.joinedAt?.toDateString() || 'Unknown',
+        inline: true,
+      },
+      {
+        name: 'Roles',
+        value: member.roles.cache.map((role) => role.name).join(', '),
+        inline: false,
+      },
+    );
+  }
+
+  return interaction.reply({ embeds: [embed] });
+}
+
+export const data = {
+  name: 'userinfo',
+  description: 'Get information about a user',
+  options: [
+    {
+      name: 'user',
+      description: 'The user to get information about',
+      type: 6, // User
+      required: false,
+    },
+  ],
+};
+```
+
+#### After (With localization)
+
+```ts title="src/app/commands/legacy/userinfo.js"
+import { locale } from '@commandkit/i18n';
+
+export async function run({ interaction }) {
+  const { t } = locale();
+
+  const user =
+    interaction.options.getUser('user') || interaction.user;
+  const member = interaction.guild?.members.cache.get(user.id);
+
+  const embed = {
+    title: t('embed.title', { username: user.username }),
+    fields: [
+      {
+        name: t('embed.fields.username'),
+        value: user.username,
+        inline: true,
+      },
+      { name: t('embed.fields.id'), value: user.id, inline: true },
+      {
+        name: t('embed.fields.created'),
+        value: user.createdAt.toDateString(),
+        inline: true,
+      },
+    ],
+    color: 0x0099ff,
+  };
+
+  if (member) {
+    embed.fields.push(
+      {
+        name: t('embed.fields.joined'),
+        value: member.joinedAt?.toDateString() || t('embed.unknown'),
+        inline: true,
+      },
+      {
+        name: t('embed.fields.roles'),
+        value: member.roles.cache.map((role) => role.name).join(', '),
+        inline: false,
+      },
+    );
+  }
+
+  return interaction.reply({ embeds: [embed] });
+}
+
+export const data = {
+  name: 'userinfo',
+  description: 'Get information about a user',
+  options: [
+    {
+      name: 'user',
+      description: 'The user to get information about',
+      type: 6, // User
+      required: false,
+    },
+  ],
+};
+```
+
+```json title="src/app/locales/en-US/userinfo.json"
+{
+  "embed": {
+    "title": "User Information - {{username}}",
+    "unknown": "Unknown",
+    "fields": {
+      "username": "Username",
+      "id": "ID",
+      "created": "Account Created",
+      "joined": "Joined Server",
+      "roles": "Roles"
+    }
+  }
+}
+```
+
+```json title="src/app/locales/es/userinfo.json"
+{
+  "embed": {
+    "title": "Información del Usuario - {{username}}",
+    "unknown": "Desconocido",
+    "fields": {
+      "username": "Nombre de Usuario",
+      "id": "ID",
+      "created": "Cuenta Creada",
+      "joined": "Se Unió al Servidor",
+      "roles": "Roles"
+    }
+  }
+}
+```
+
+### Best practices for legacy commands
+
+1. **Gradual Migration**: You can migrate commands one at a time
+   without affecting others
+2. **Consistent Naming**: Use the same translation keys across legacy
+   and modern commands when possible
+3. **Error Handling**: Always provide fallback text for missing
+   translations
+4. **Testing**: Test legacy commands with different locales to ensure
+   compatibility
+
+### Mixed command types
+
+You can use both legacy and modern commands with i18n in the same
+project:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { i18n } from '@commandkit/i18n';
+
+export default defineConfig({
+  // Enable both legacy and modern command support
+  plugins: [i18n()],
+
+  // Configuration for mixed command types
+  paths: {
+    commands: 'src/app/commands',
+    events: 'src/app/events',
+  },
+});
+```
+
+This allows you to:
+
+- Keep existing legacy commands working
+- Add new commands using the modern syntax
+- Gradually migrate legacy commands when convenient
+- Maintain consistent localization across all command types
+
+## Complete example
+
+Here's a comprehensive example showing various localization features:
+
+```json title="src/app/locales/en-US/moderation.json"
+{
+  "$command": {
+    "name": "ban",
+    "description": "Ban a user from the server",
+    "options": [
+      {
+        "name": "user",
+        "description": "The user to ban"
+      },
+      {
+        "name": "reason",
+        "description": "Reason for the ban"
+      },
+      {
+        "name": "duration",
+        "description": "Ban duration",
+        "choices": [
+          { "name": "Permanent", "value": "permanent" },
+          { "name": "1 Day", "value": "1d" },
+          { "name": "1 Week", "value": "1w" }
+        ]
+      }
+    ]
+  },
+  "success": "✅ **{{user}}** has been banned",
+  "success_with_reason": "✅ **{{user}}** has been banned\n**Reason:** {{reason}}",
+  "errors": {
+    "user_not_found": "❌ User not found",
+    "insufficient_permissions": "❌ I don't have permission to ban this user",
+    "cannot_ban_self": "❌ You cannot ban yourself"
+  }
+}
+```
+
+```ts title="src/app/commands/moderation.ts"
+import type { ChatInputCommand } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const { t } = ctx.locale();
+  const user = ctx.interaction.options.getUser('user', true);
+  const reason = ctx.interaction.options.getString('reason');
+
+  try {
+    // Attempt to ban the user
+    await ctx.interaction.guild?.members.ban(user, {
+      reason: reason || undefined,
+    });
+
+    // Send localized success message
+    const successKey = reason ? 'success_with_reason' : 'success';
+    await ctx.interaction.reply({
+      content: t(successKey, {
+        user: user.displayName,
+        reason,
+      }),
+    });
+  } catch (error) {
+    // Send localized error message
+    await ctx.interaction.reply({
+      content: t('errors.insufficient_permissions'),
+      ephemeral: true,
+    });
+  }
+};
+```
