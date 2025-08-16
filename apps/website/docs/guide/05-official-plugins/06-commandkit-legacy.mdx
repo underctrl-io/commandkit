@@ -1,3 +1,71 @@
 ---
 title: '@commandkit/legacy'
 ---
+
+:::danger
+
+This plugin is not recommended as we do not plan to continue
+supporting the legacy structure. We only recommend this if you're
+trying to incrementally upgrade your application. If you prefer the
+old way, you can use v0.1.10, but please note, that version is not
+actively maintained.
+
+:::
+
+The `@commandkit/legacy` plugin enables support for legacy command and
+event handlers. This is particularly useful when migrating from an
+older version of CommandKit or another framework, as it allows you to
+incrementally upgrade your application without requiring immediate
+major changes to your existing code.
+
+## Installation
+
+```sh npm2yarn
+npm install @commandkit/legacy
+```
+
+## Usage
+
+Add the Legacy plugin to your CommandKit configuration:
+
+```js
+import { defineConfig } from 'commandkit';
+import { legacy } from '@commandkit/legacy';
+
+export default defineConfig({
+  plugins: [legacy()],
+});
+```
+
+## Features
+
+The Legacy plugin provides the following features:
+
+1. **Legacy Command Handler Support**: Enables support for older
+   command handler formats, making migration easier.
+
+2. **Legacy Event Handler Support**: Allows you to continue using your
+   existing event handler structure.
+
+3. **Legacy Validation Support**: Maintains compatibility with
+   existing validation methods.
+
+4. **Hot Module Replacement (HMR)**: The plugin automatically enables
+   HMR for legacy commands, events, and validations, improving the
+   development experience by allowing you to see changes without
+   restarting your bot.
+
+## Migration Strategy
+
+The Legacy plugin is designed as a transitional tool. While it allows
+you to continue using your existing code structure, it's recommended
+to gradually migrate your commands, events, and validators to the new
+CommandKit format over time.
+
+This approach enables you to:
+
+1. Upgrade your bot's framework immediately without breaking existing
+   functionality
+2. Incrementally refactor your code at your own pace
+3. Take advantage of new CommandKit features for new commands while
+   maintaining backward compatibility

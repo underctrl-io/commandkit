@@ -1,3 +1,68 @@
 ---
 title: '@commandkit/redis'
 ---
+
+The `@commandkit/redis` plugin provides a cache provider for
+CommandKit that allows you to store data in Redis. It works out of the
+box with the [`@commandkit/cache`](./03-commandkit-cache.mdx) plugin.
+
+## Installation
+
+```sh npm2yarn
+npm install @commandkit/redis
+```
+
+## Usage
+
+This plugin will automatically register the Redis cache provider with
+your CommandKit instance.
+
+```js
+import { defineConfig } from 'commandkit';
+import { redis } from '@commandkit/redis';
+
+export default defineConfig({
+  plugins: [redis()],
+});
+```
+
+Once configured, your cache functions will automatically use Redis as
+the storage backend:
+
+```ts
+async function getCachedData() {
+  'use cache'; // This directive enables caching for the function
+
+  // Your data retrieval logic
+  const data = await getFromDatabase('something');
+
+  return data;
+}
+```
+
+## Manual Configuration
+
+If you need more control over the Redis client configuration, you can
+set up the cache provider manually instead of using the plugin:
+
+```ts
+import { setCacheProvider } from '@commandkit/cache';
+import { RedisCacheProvider } from '@commandkit/redis';
+import { Redis } from 'ioredis';
+
+// Configure the Redis client with custom options
+const redis = new Redis({
+  host: 'your-redis-host',
+  port: 6379,
+  // Add other Redis options as needed
+});
+
+const redisProvider = new RedisCacheProvider(redis);
+
+// Register the provider with CommandKit
+setCacheProvider(redisProvider);
+```
+
+This approach gives you full control over the Redis client
+configuration while still integrating with CommandKit's caching
+system.
