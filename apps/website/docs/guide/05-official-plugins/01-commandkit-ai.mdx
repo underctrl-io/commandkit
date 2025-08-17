@@ -12,6 +12,27 @@ This is an experimental feature and is subject to change.
 
 :::
 
+## Architecture Overview
+
+The AI system consists of several key components:
+
+```mermaid
+graph TD
+    A[Discord Message] --> B[Message Filter]
+    B --> C[AI Model Selection]
+    C --> D[System Prompt Generation]
+    D --> E[AI Processing]
+    E --> F[Tool Execution]
+    F --> G[Response Generation]
+    G --> H[Discord Reply]
+
+    I[Built-in Tools] --> F
+    J[Custom Tools] --> F
+    K[AI Commands] --> F
+```
+
+AI plugin basically acts as a smart command handler that decides which command to execute based on the given prompt. Similarly, the AI commands are basically an abstraction for tool calling feature of the large-language models. This plugin uses the [ai sdk](https://ai-sdk.dev) under the hood to interact with large-language models.
+
 ## Installation
 
 Install the AI plugin and your preferred AI SDK:
