@@ -1,3 +1,143 @@
 ---
 title: Modal
 ---
+
+The `Modal` component allows you to create interactive forms that
+appear as popups in Discord.
+
+## Basic usage
+
+```tsx title="src/app/commands/user-profile.ts"
+import type { ChatInputCommand, OnModalKitSubmit } from 'commandkit';
+import { Modal, ShortInput, ParagraphInput } from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSubmit: OnModalKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const name = interaction.fields.getTextInputValue('name');
+  const description =
+    interaction.fields.getTextInputValue('description');
+
+  await interaction.reply({
+    content: `**Profile Created!**\n**Name:** ${name}\n**Description:** ${description}`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const modal = (
+    <Modal title="User Profile" onSubmit={handleSubmit}>
+      <ShortInput
+        customId="name"
+        label="Name"
+        placeholder="Enter your name"
+        required
+      />
+      <ParagraphInput
+        customId="description"
+        label="Description"
+        placeholder="Tell us about yourself"
+      />
+    </Modal>
+  );
+
+  await interaction.showModal(modal);
+};
+```
+
+## Input types
+
+### Short input
+
+For single-line text input:
+
+```tsx title="src/app/commands/username.ts"
+import type { ChatInputCommand, OnModalKitSubmit } from 'commandkit';
+import { Modal, ShortInput } from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSubmit: OnModalKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const username = interaction.fields.getTextInputValue('username');
+
+  await interaction.reply({
+    content: `Username set to: ${username}`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const modal = (
+    <Modal title="Set Username" onSubmit={handleSubmit}>
+      <ShortInput
+        customId="username"
+        label="Username"
+        placeholder="Enter username"
+        required
+        minLength={3}
+        maxLength={20}
+      />
+    </Modal>
+  );
+
+  await interaction.showModal(modal);
+};
+```
+
+### Paragraph input
+
+For multi-line text input:
+
+```tsx title="src/app/commands/feedback.ts"
+import type { ChatInputCommand, OnModalKitSubmit } from 'commandkit';
+import { Modal, ParagraphInput } from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSubmit: OnModalKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const feedback = interaction.fields.getTextInputValue('feedback');
+
+  await interaction.reply({
+    content: "Thank you for your feedback! We'll review it soon.",
+    flags: MessageFlags.Ephemeral,
+  });
+
+  // Here you could save the feedback to a database
+  console.log(`Feedback received: ${feedback}`);
+
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const modal = (
+    <Modal title="Feedback Form" onSubmit={handleSubmit}>
+      <ParagraphInput
+        customId="feedback"
+        label="Your Feedback"
+        placeholder="What do you think about our service?"
+        required
+        minLength={10}
+        maxLength={1000}
+      />
+    </Modal>
+  );
+
+  await interaction.showModal(modal);
+};
+```

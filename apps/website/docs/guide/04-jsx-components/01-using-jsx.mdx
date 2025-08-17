@@ -1,3 +1,67 @@
 ---
 title: Using JSX
 ---
+
+CommandKit provides first-class JSX support for both TypeScript and
+JavaScript projects. This allows you to write Discord message
+components using a familiar and intuitive syntax if you're already
+familiar with React.
+
+## Setup
+
+CommandKit automatically configures JSX support in your project. If
+you are doing a manual setup, ensure you have the following in your
+`tsconfig.json` or `jsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "commandkit"
+  }
+}
+```
+
+## Available components
+
+CommandKit provides JSX versions for the following Discord.js
+builders:
+
+- [`ActionRow`](./02-discord-components-v1/01-action-row.mdx)
+- [`Button`](./02-discord-components-v1/02-button.mdx)
+- [`SelectMenu`](./02-discord-components-v1/03-select-menu.mdx)
+- [`Modal`](./02-discord-components-v1/04-modal.mdx)
+- [`TextDisplay`](./03-discord-components-v2/01-text-display.mdx)
+- [`Container`](./03-discord-components-v2/02-container.mdx)
+- [`MediaGallery`](./03-discord-components-v2/03-media-gallery.mdx)
+- [`Separator`](./03-discord-components-v2/04-section-separator.mdx)
+- [`File`](./03-discord-components-v2/05-file.mdx)
+
+## Example usage
+
+```tsx
+import { Button, ActionRow } from 'commandkit';
+
+const message = (
+  <Container>
+    <TextDisplay>Welcome to our server!</TextDisplay>
+    <ActionRow>
+      <Button style="primary">Click me!</Button>
+    </ActionRow>
+  </Container>
+);
+```
+
+## JSX fragments
+
+CommandKit fully supports JSX fragments for grouping multiple elements
+without adding extra nodes:
+
+```tsx
+const elements = (
+  <>
+    <TextDisplay>First message</TextDisplay>
+    <TextDisplay>Second message</TextDisplay>
+  </>
+);
+```

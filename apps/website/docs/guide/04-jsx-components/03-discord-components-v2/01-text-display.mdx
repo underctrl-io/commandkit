@@ -1,3 +1,25 @@
 ---
-title: Text display
+title: Text Display
 ---
+
+The `TextDisplay` component is the most basic component that allows
+you to show text content in your Discord messages.
+
+## Basic usage
+
+```tsx title="src/app/commands/text-example.ts"
+import type { ChatInputCommand } from 'commandkit';
+import { TextDisplay } from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const textComponent = <TextDisplay content="Hello, world!" />;
+
+  await interaction.reply({
+    components: [textComponent],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
