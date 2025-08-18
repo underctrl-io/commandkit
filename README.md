@@ -13,9 +13,20 @@ If you are looking for support or want to provide suggestions, check out the [Di
 ## Links
 
 - [Website](https://commandkit.dev) ([source](https://github.com/underctrl-io/commandkit/tree/main/apps/website))
-- [Support Server](https://ctrl.lol/discord)
-- [CommandKit source](https://github.com/underctrl-io/commandkit/tree/main/packages/commandkit)
 - [npm](https://www.npmjs.com/package/commandkit)
+
+## Packages
+
+- [commandkit](./packages/commandkit)
+- [create-commandkit](./packages/create-commandkit)
+- [@commandkit/ai](./packages/ai)
+- [@commandkit/cache](./packages/cache)
+- [@commandkit/devtools](./packages/devtools)
+- [@commandkit/i18n](./packages/i18n)
+- [@commandkit/legacy](./packages/legacy)
+- [@commandkit/queue](./packages/queue)
+- [@commandkit/redis](./packages/redis)
+- [@commandkit/tasks](./packages/tasks)
 
 ## Contributing
 
