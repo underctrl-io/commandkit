@@ -128,18 +128,19 @@ and
 instance.
 
 ```ts title="src/app/events/messageCreate/log.ts"
-import type { CommandKit } from 'commandkit';
-import type { Message } from 'discord.js';
+import type { EventHandler } from 'commandkit';
 
-export default function (
-  message: Message,
-  client: Client<true>,
-  commandkit: CommandKit,
-) {
+const handler: EventHandler<'messageCreate'> = (
+  message,
+  client,
+  commandkit,
+) => {
   console.log(
     `Message from ${message.author.username}: ${message.content}`,
   );
-}
+};
+
+export default handler;
 ```
 
 ## Multiple handlers for the same event
@@ -153,25 +154,29 @@ For example, you might want to do several things when a message is
 created:
 
 ```ts title="src/app/events/messageCreate/give-xp.ts"
-import type { MessageCreateEvent } from 'commandkit';
+import type { EventHandler } from 'commandkit';
 
-export default function ({ message }: MessageCreateEvent) {
+const handler: EventHandler<'messageCreate'> = (message) => {
   // Don't give XP to bots
   if (message.author.bot) return;
 
   // Give XP to the user
   console.log(`Giving XP to ${message.author.username}`);
-}
+};
+
+export default handler;
 ```
 
 ```ts title="src/app/events/messageCreate/log-message.ts"
-import type { MessageCreateEvent } from 'commandkit';
+import type { EventHandler } from 'commandkit';
 
-export default function ({ message }: MessageCreateEvent) {
+const handler: EventHandler<'messageCreate'> = (message) => {
   console.log(
     `Message from ${message.author.username}: ${message.content}`,
   );
-}
+};
+
+export default handler;
 ```
 
 Both handler functions will be called whenever a message is sent in
