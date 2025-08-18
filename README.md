@@ -6,6 +6,8 @@
     <a href="https://www.npmjs.com/package/commandkit"><img src="https://img.shields.io/npm/dt/commandkit?maxAge=3600" alt="npm downloads" /></a>
 </div>
 
+<p align="center">The discord.js meta-framework for building powerful, modular, and extensible Discord bots with ease.</p>
+
 ## Support and Suggestions
 
 If you are looking for support or want to provide suggestions, check out the [Discord](https://ctrl.lol/discord).
