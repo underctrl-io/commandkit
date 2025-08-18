@@ -17,8 +17,10 @@ import {
   Separator,
   MediaGallery,
   MediaGalleryItem,
+  File,
 } from 'commandkit';
 import {
+  AttachmentBuilder,
   ButtonStyle,
   Colors,
   MessageFlags,
@@ -59,23 +61,22 @@ export const command: CommandData = {
 // }
 
 export const chatInput: ChatInputCommand = async ({ interaction }) => {
-  const images = [
-    'https://cdn.discordapp.com/embed/avatars/0.png',
-    'https://cdn.discordapp.com/embed/avatars/1.png',
-    'https://cdn.discordapp.com/embed/avatars/2.png',
-  ];
+  const fileContent = '# Hello World\nThis is a test markdown file.';
 
-  const components = [
-    <TextDisplay content="# Discord Avatars Gallery" />,
-    <MediaGallery>
-      {images.map((url, index) => (
-        <MediaGalleryItem url={url} description={`Avatar ${index + 1}`} />
-      ))}
-    </MediaGallery>,
-  ];
+  const container = (
+    <Container accentColor={Colors.Blue}>
+      <TextDisplay content="Here's a file:" />
+      <File url="attachment://example.md" />
+    </Container>
+  );
 
   await interaction.reply({
-    components: components,
+    components: [container],
+    files: [
+      new AttachmentBuilder(Buffer.from(fileContent), {
+        name: 'example.md',
+      }),
+    ],
     flags: MessageFlags.IsComponentsV2,
   });
 };

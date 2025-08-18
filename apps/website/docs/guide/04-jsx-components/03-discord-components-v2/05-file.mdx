@@ -8,8 +8,12 @@ Discord messages.
 ## Basic usage
 
 ```tsx title="src/app/commands/file-example.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { Container, File, TextDisplay } from 'commandkit';
+import {
+  type ChatInputCommand,
+  Container,
+  File,
+  TextDisplay,
+} from 'commandkit';
 import { AttachmentBuilder, Colors, MessageFlags } from 'discord.js';
 
 export const chatInput: ChatInputCommand = async ({
