@@ -34,6 +34,26 @@ export function afterExecute(ctx: MiddlewareContext) {
 }
 ```
 
+## Stop command execution
+
+You can stop a command from running by calling `ctx.cancel()` in the
+`beforeExecute` function.
+
+```ts title="src/app/commands/+middleware.ts"
+import type { MiddlewareContext } from 'commandkit';
+
+export function beforeExecute(ctx: MiddlewareContext) {
+  if (ctx.interaction.user.id !== '1234567890') {
+    // Conditionally stop command execution
+    console.log(`${ctx.commandName} will not be executed!`);
+    ctx.cancel();
+  }
+
+  // Continue with command execution
+  console.log(`${ctx.commandName} will be executed!`);
+}
+```
+
 ## Middleware types
 
 ### Directory-scoped middleware
@@ -43,7 +63,7 @@ middleware to all commands within that directory and its
 subdirectories.
 
 ```ts title="src/app/commands/(Moderation)/+middleware.ts"
-import { MiddlewareContext } from 'commandkit';
+import type { MiddlewareContext } from 'commandkit';
 
 export function beforeExecute(ctx: MiddlewareContext) {
   // This middleware will run before any moderation command
@@ -62,7 +82,7 @@ For command-specific middleware, create a file named
 command file name.
 
 ```ts title="src/app/commands/+ban.middleware.ts"
-import { MiddlewareContext } from 'commandkit';
+import type { MiddlewareContext } from 'commandkit';
 
 export function beforeExecute(ctx: MiddlewareContext) {
   // This middleware only runs before the ban command
@@ -76,7 +96,7 @@ Create a `+global-middleware.ts` file in your commands directory to
 apply middleware to every command in your entire Discord bot.
 
 ```ts title="src/app/commands/+global-middleware.ts"
-import { MiddlewareContext } from 'commandkit';
+import type { MiddlewareContext } from 'commandkit';
 
 export function beforeExecute(ctx: MiddlewareContext) {
   // This middleware runs before ANY command in your bot
