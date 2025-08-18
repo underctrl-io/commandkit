@@ -2,23 +2,23 @@ import { type IOType, execSync } from 'node:child_process';
 import ora from 'ora';
 
 import type { Language, PackageManager } from '../types';
+import { getCommandKitVersion } from '../utils';
 
-const baseDependencies = [
-  // TODO: use latest tag for CommandKit v1
-  'commandkit@dev',
+const getBaseDependencies = () => [
+  `commandkit${getCommandKitVersion()}`,
   'discord.js',
 ];
 
-const dependencies = {
+const getDependencies = () => ({
   js: {
-    dependencies: baseDependencies,
-    devDependencies: ['@types/node', 'typescript', 'prettier'],
+    dependencies: getBaseDependencies(),
+    devDependencies: ['prettier'],
   },
   ts: {
-    dependencies: baseDependencies,
+    dependencies: getBaseDependencies(),
     devDependencies: ['@types/node', 'typescript', 'prettier'],
   },
-};
+});
 
 interface InstallDepsProps {
   manager: PackageManager;
@@ -54,6 +54,8 @@ export function installDeps({
   const spinner = ora('Installing dependencies...').start();
 
   try {
+    const dependencies = getDependencies();
+
     if (dependencies[lang].dependencies.length) {
       const depsCommand = getInstallCommand(
         manager,

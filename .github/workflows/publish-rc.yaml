@@ -36,7 +36,7 @@ jobs:
 
       - name: Update package versions
         run: |
-          rc_suffix="-rc${{ github.event.inputs.rc_version }}"
+          rc_suffix="-rc.${{ github.event.inputs.rc_version }}"
           echo "Adding suffix: $rc_suffix"
 
           for dir in packages/*; do
@@ -93,6 +93,38 @@ jobs:
                 fi
               fi
             fi
+          done
+
+      - name: Deprecate previous release candidate versions
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: |
+          PACKAGES=(
+            "commandkit"
+            "create-commandkit"
+            "@commandkit/legacy"
+            "@commandkit/redis"
+            "@commandkit/i18n"
+            "@commandkit/devtools"
+            "@commandkit/cache"
+            "@commandkit/analytics"
+            "@commandkit/ai"
+            "@commandkit/queue"
+            "@commandkit/tasks"
+          )
+
+          for pkg in "${PACKAGES[@]}"; do
+            echo "Deprecating previous release candidate version of $pkg..."
+            (
+              ALL_VERSIONS=$(npm info "$pkg" versions -json)
+              VERSION_TO_DEPRECATE=$(echo "$ALL_VERSIONS" | node -e "
+                const versions = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8'));
+                const rcVersions = versions.filter(v => v.includes('-rc.'));
+                const versionToDeprecate = rcVersions[rcVersions.length - 2];
+                console.log(versionToDeprecate);
+              ")
+              [ -n "$VERSION_TO_DEPRECATE" ] && npm deprecate "$pkg@$VERSION_TO_DEPRECATE" "Deprecated release candidate version." && echo "✅ Deprecated $VERSION_TO_DEPRECATE"
+            ) || echo "⚠️ Skipped deprecation for $pkg (maybe not enough release candidate versions)"
           done
 
       - name: Summary
