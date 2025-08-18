@@ -270,7 +270,7 @@ export class CommandsRouter {
         parentPath: entry.parentPath,
         global: GLOBAL_MIDDLEWARE_PATTERN.test(name),
         command: COMMAND_MIDDLEWARE_PATTERN.test(name)
-          ? name.split('.')[0] || null
+          ? name.match(COMMAND_MIDDLEWARE_PATTERN)?.[1] || null
           : null,
       };
 

@@ -1,0 +1,67 @@
+---
+title: Chat Input Commands
+---
+
+Chat input commands, more commonly known as 'Slash Commands', are a
+way for users on Discord to perform actions using your bot.
+
+CommandKit provides a very simple way to manage your chat input
+commands, including registering them to the Discord API, as well as
+handling their execution.
+
+To create a new chat input command, create a new file in the
+`src/app/commands` directory with the name of the command. This guide
+will create a basic ping command which will respond with "Pong!" when
+executed.
+
+```ts title="src/app/commands/ping.ts"
+import type { CommandData, ChatInputCommand } from 'commandkit';
+
+export const command: CommandData = {
+  name: 'ping',
+  description: 'Replies with Pong!',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  await ctx.interaction.reply('Pong!');
+};
+```
+
+## Exports explained
+
+### `command`
+
+This is the command data object which defines the shape of your
+command. This is directly registered to the Discord API everytime your
+commands are refreshed.
+
+### `chatInput`
+
+This is the main handler function for your chat input command. By
+exporting this function, CommandKit will know that it's a chat input
+command and will register and handle it accordingly.
+
+:::tip
+
+Chat input commands are just one of the command types that CommandKit
+supports. Learn more about
+[message commands](./04-message-commands.mdx) and
+[context menu commands](./03-context-menu-commands.mdx).
+
+:::
+
+## Guild-based commands
+
+You can register your chat input command to specific guilds by using
+the `guilds` property in the `command` object which accepts an array
+of guild IDs.
+
+```ts title="src/app/commands/ping.ts" {6}
+import type { CommandData } from 'commandkit';
+
+export const command: CommandData = {
+  name: 'ping',
+  description: 'Replies with Pong!',
+  guilds: ['1055188344188973066'],
+};
+```

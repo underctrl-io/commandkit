@@ -1,0 +1,170 @@
+---
+title: Button
+---
+
+The `Button` component allows you to create interactive buttons in
+your Discord messages. Buttons can have different styles, labels, and
+emojis.
+
+## Basic usage
+
+```tsx title="src/app/commands/button-example.tsx"
+import type { ChatInputCommand } from 'commandkit';
+import { ActionRow, Button } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const button = (
+    <ActionRow>
+      <Button>Click me!</Button>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: "Here's a button:",
+    components: [button],
+  });
+};
+```
+
+## Button styles
+
+Discord provides several built-in button styles:
+
+```tsx title="src/app/commands/button-styles.tsx"
+import type { ChatInputCommand } from 'commandkit';
+import { ActionRow, Button } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const buttons = (
+    <ActionRow>
+      <Button style="primary">Primary</Button>
+      <Button style="secondary">Secondary</Button>
+      <Button style="success">Success</Button>
+      <Button style="danger">Danger</Button>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Different button styles:',
+    components: [buttons],
+  });
+};
+```
+
+## Link buttons
+
+Link buttons redirect users to external URLs:
+
+```tsx title="src/app/commands/link-button.tsx"
+import type { ChatInputCommand } from 'commandkit';
+import { ActionRow, Button } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const linkButton = (
+    <ActionRow>
+      <Button style="link" url="https://discord.com">
+        Visit Discord
+      </Button>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Click to visit Discord:',
+    components: [linkButton],
+  });
+};
+```
+
+## Buttons with emojis
+
+Add emojis to make your buttons more visually appealing:
+
+```tsx title="src/app/commands/emoji-button.tsx"
+import type { ChatInputCommand } from 'commandkit';
+import { ActionRow, Button } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const emojiButton = (
+    <ActionRow>
+      <Button emoji="🎮">Play Game</Button>
+      <Button emoji="⚙️">Settings</Button>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Buttons with emojis:',
+    components: [emojiButton],
+  });
+};
+```
+
+## Disabled buttons
+
+Disable buttons to prevent interaction:
+
+```tsx title="src/app/commands/disabled-button.tsx"
+import type { ChatInputCommand } from 'commandkit';
+import { ActionRow, Button } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const disabledButton = (
+    <ActionRow>
+      <Button disabled>Cannot Click</Button>
+      <Button>Can Click</Button>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Disabled vs enabled buttons:',
+    components: [disabledButton],
+  });
+};
+```
+
+## Handling button clicks
+
+Handle button interactions with the `onClick` prop:
+
+```tsx title="src/app/commands/interactive-button.tsx"
+import type { ChatInputCommand, OnButtonKitClick } from 'commandkit';
+import { ActionRow, Button } from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleClick: OnButtonKitClick = async (
+  interaction,
+  context,
+) => {
+  await interaction.reply({
+    content: 'Button clicked!',
+    flags: MessageFlags.Ephemeral,
+  });
+
+  // Clean up the button context
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const interactiveButton = (
+    <ActionRow>
+      <Button onClick={handleClick}>Click me!</Button>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Click the button to see it work:',
+    components: [interactiveButton],
+  });
+};
+```

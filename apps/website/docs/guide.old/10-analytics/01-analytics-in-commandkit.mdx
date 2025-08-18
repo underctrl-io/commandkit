@@ -1,0 +1,134 @@
+---
+title: Analytics in CommandKit
+description:
+  Learn how to use the analytics plugin in CommandKit to track events
+  and metrics.
+---
+
+# Analytics in CommandKit
+
+The analytics plugin for CommandKit enables analytics in your project.
+It provides a simple and efficient way to track events and metrics.
+CommandKit itself does not store any analytics data - it acts as a
+bridge between your application and your chosen analytics provider.
+
+## How it Works
+
+CommandKit's analytics system is designed to be provider-agnostic.
+This means:
+
+1. CommandKit doesn't store any analytics data itself
+2. All data is sent directly to your configured analytics provider
+3. You can easily switch between different providers or use multiple
+   providers
+4. The system is extensible, allowing you to create custom providers
+
+## Automatic Tracking
+
+CommandKit automatically tracks various anonymous metrics:
+
+- Command execution events (`command_execution`)
+- Cache performance metrics:
+  - Cache hits (`cache_hit`)
+  - Cache misses (`cache_miss`)
+  - Cache revalidations (`cache_revalidated`)
+- Feature flag metrics:
+  - Feature flag metrics (`feature_flag_metrics`)
+  - Feature flag decisions (`feature_flag_decision`)
+- Anonymous interaction patterns
+
+## Installation
+
+```sh
+npm install @commandkit/analytics
+```
+
+## Basic Usage
+
+To track custom events in your Discord bot:
+
+```ts
+import { track } from 'commandkit/analytics';
+
+// Track a custom event with anonymous data
+await track({
+  name: 'button_interaction',
+  data: {
+    buttonType: 'verification',
+    // Use hashed or anonymous identifiers if needed
+    interactionType: 'button',
+    // Track timing for performance metrics
+    responseTime: 150,
+  },
+});
+```
+
+## Filtering Events
+
+You can filter out specific events using the `setFilter` function:
+
+```ts
+import { useAnalytics } from 'commandkit/analytics';
+
+const analytics = useAnalytics();
+
+// Filter out events based on anonymous criteria
+analytics.setFilter((engine, event) => {
+  // Skip events from development environments
+  if (process.env.NODE_ENV === 'development') {
+    return false; // false means skip this event
+  }
+
+  // Skip specific event types
+  if (event.name === 'debug_event') {
+    return false;
+  }
+
+  return true; // true means track this event
+});
+```
+
+## Available Providers
+
+CommandKit comes with built-in support for popular analytics
+providers:
+
+- [PostHog](./02-posthog.mdx)
+- [Umami](./03-umami.mdx)
+
+## Creating Custom Providers
+
+You can create your own analytics provider by implementing the
+`AnalyticsProvider` interface. See our
+[Custom Providers](./04-custom-providers.mdx) guide for detailed
+instructions.
+
+## Disabling Analytics
+
+You can disable analytics for specific requests (i.e. command or event
+scoped) using the `noAnalytics` function:
+
+```ts
+import { noAnalytics } from 'commandkit/analytics';
+
+// Disable analytics for specific commands or events
+if (interaction.commandName === 'debug') {
+  noAnalytics();
+}
+```
+
+## Privacy Considerations
+
+When implementing analytics in your bot, consider:
+
+1. Only track anonymous, aggregated data
+2. Avoid storing personal information
+3. Use hashed identifiers when necessary
+4. Be transparent about what data you collect
+5. Respect user privacy and Discord's Terms of Service
+
+## Next Steps
+
+- Learn how to [set up PostHog](./02-posthog.mdx)
+- Learn how to [set up Umami](./03-umami.mdx)
+- Learn how to [create custom providers](./04-custom-providers.mdx)

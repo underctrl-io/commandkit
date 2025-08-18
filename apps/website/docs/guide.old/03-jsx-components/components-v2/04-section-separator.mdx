@@ -1,0 +1,160 @@
+---
+title: Section and Separator
+description: Organize your content with Sections and Separators
+---
+
+The `Section` and `Separator` components help you organize and
+structure your message content in a clear and visually appealing way.
+
+## Section Component
+
+The `Section` component allows you to group related content together.
+
+```tsx title="src/app/commands/section-example.tsx"
+import {
+  type ChatInputCommand,
+  Container,
+  Section,
+  TextDisplay,
+  Thumbnail,
+} from 'commandkit';
+import { Colors, MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const container = (
+    <Container accentColor={Colors.Blue}>
+      <Section>
+        <TextDisplay content="Welcome to the first section" />
+        <Thumbnail url="https://cdn.discordapp.com/embed/avatars/0.png" />
+      </Section>
+    </Container>
+  );
+
+  await ctx.interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Separator Component
+
+The `Separator` component creates visual spacing between sections. It
+supports different spacing sizes and can include a divider line.
+
+```tsx title="src/app/commands/separator-example.tsx"
+import {
+  type ChatInputCommand,
+  Container,
+  Section,
+  Separator,
+  TextDisplay,
+} from 'commandkit';
+import {
+  Colors,
+  MessageFlags,
+  SeparatorSpacingSize,
+} from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const container = (
+    <Container accentColor={Colors.Green}>
+      <Section>
+        <TextDisplay content="First Section" />
+      </Section>
+
+      <Separator spacing={SeparatorSpacingSize.Large} />
+
+      <Section>
+        <TextDisplay content="Second Section" />
+      </Section>
+
+      <Separator spacing={SeparatorSpacingSize.Large} dividier />
+
+      <Section>
+        <TextDisplay content="Third Section" />
+      </Section>
+    </Container>
+  );
+
+  await ctx.interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Combining Sections and Separators
+
+Here's an example of how to combine both components for a
+well-structured message:
+
+```tsx title="src/app/commands/combined-example.tsx"
+import {
+  type ChatInputCommand,
+  Container,
+  Section,
+  Separator,
+  TextDisplay,
+  Button,
+} from 'commandkit';
+import {
+  Colors,
+  MessageFlags,
+  SeparatorSpacingSize,
+  ButtonStyle,
+} from 'discord.js';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const container = (
+    <Container accentColor={Colors.Purple}>
+      <Section>
+        <TextDisplay content="# Welcome" />
+        <TextDisplay content="This is the header section" />
+      </Section>
+
+      <Separator spacing={SeparatorSpacingSize.Large} dividier />
+
+      <Section>
+        <TextDisplay content="## Features" />
+        <TextDisplay content="Here are some features:" />
+        <Button url="https://commandkit.dev" style={ButtonStyle.Link}>
+          Learn More
+        </Button>
+      </Section>
+
+      <Separator spacing={SeparatorSpacingSize.Large} />
+
+      <Section>
+        <TextDisplay content="## Footer" />
+        <TextDisplay content="Thanks for using our bot!" />
+      </Section>
+    </Container>
+  );
+
+  await ctx.interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Available Props
+
+### Section
+
+- `children`: Components to render inside the section
+
+### Separator
+
+- `spacing`: Size of the spacing (SeparatorSpacingSize)
+- `dividier`: Whether to show a divider line (boolean)
+
+## Best Practices
+
+1. **Organization**: Use sections to group related content
+2. **Visual Hierarchy**: Use separators to create clear visual breaks
+3. **Consistency**: Maintain consistent spacing throughout your
+   message
+4. **Readability**: Don't overuse separators - use them to enhance
+   readability

@@ -7,5 +7,14 @@
   "semi": true,
   "endOfLine": "lf",
   "useTabs": false,
-  "jsxSingleQuote": false
+  "jsxSingleQuote": false,
+  "overrides": [
+    {
+      "files": ["*.md", "*.mdx"],
+      "options": {
+        "proseWrap": "always",
+        "printWidth": 70
+      }
+    }
+  ]
 }

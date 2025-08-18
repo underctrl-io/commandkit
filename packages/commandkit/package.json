@@ -146,10 +146,9 @@
     }
   },
   "scripts": {
-    "lint": "tsc --noEmit",
+    "check-types": "tsc --noEmit",
     "dev": "pnpm run --filter=test-bot dev",
     "build": "tsdown",
-    "publish-package": "npm publish",
     "test": "vitest"
   },
   "repository": {

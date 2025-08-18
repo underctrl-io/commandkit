@@ -1,6 +1,7 @@
-import {
+import type {
   CacheType,
   Client,
+  ClientEvents,
   Interaction,
   RESTPostAPIApplicationCommandsJSONBody,
 } from 'discord.js';
@@ -51,3 +52,10 @@ export type CommandData = Prettify<
     aliases?: string[];
   }
 >;
+
+/**
+ * Represents an event handler for a specific event.
+ */
+export type EventHandler<K extends keyof ClientEvents> = (
+  ...args: ClientEvents[K]
+) => void | Promise<void>;

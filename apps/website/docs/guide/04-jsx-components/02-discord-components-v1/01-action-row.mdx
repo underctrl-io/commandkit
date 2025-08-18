@@ -1,0 +1,91 @@
+---
+title: Action Row
+---
+
+The `ActionRow` component is a container that groups interactive
+components like buttons and select menus together in a single row.
+
+## Basic usage
+
+```tsx title="src/app/commands/example.tsx"
+import type { ChatInputCommand } from 'commandkit';
+import { ActionRow, Button } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const row = (
+    <ActionRow>
+      <Button>Click me!</Button>
+      <Button>Another button</Button>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Choose an option:',
+    components: [row],
+  });
+};
+```
+
+## With select menus
+
+```tsx title="src/app/commands/select-example.tsx"
+import type { ChatInputCommand } from 'commandkit';
+import {
+  ActionRow,
+  StringSelectMenu,
+  StringSelectMenuOption,
+} from 'commandkit';
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const row = (
+    <ActionRow>
+      <StringSelectMenu placeholder="Choose an option">
+        <StringSelectMenuOption label="Option 1" value="1" />
+        <StringSelectMenuOption label="Option 2" value="2" />
+      </StringSelectMenu>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Select from the dropdown:',
+    components: [row],
+  });
+};
+```
+
+## Multiple action rows
+
+You can use multiple ActionRows in a single message to organize your
+components:
+
+```tsx title="src/app/commands/multiple-rows.tsx"
+import type { ChatInputCommand } from 'commandkit';
+import { ActionRow, Button } from 'commandkit';
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const firstRow = (
+    <ActionRow>
+      <Button style="primary">Primary Action</Button>
+      <Button style="secondary">Secondary Action</Button>
+    </ActionRow>
+  );
+
+  const secondRow = (
+    <ActionRow>
+      <Button style="success">Confirm</Button>
+      <Button style="danger">Cancel</Button>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Multiple action rows:',
+    components: [firstRow, secondRow],
+  });
+};
+```

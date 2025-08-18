@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
@@ -39,6 +39,8 @@ jobs:
             "@commandkit/i18n:packages/i18n"
             "@commandkit/devtools:packages/devtools"
             "@commandkit/cache:packages/cache"
+            "@commandkit/analytics:packages/analytics"
+            "@commandkit/ai:packages/ai"
             "@commandkit/queue:packages/queue"
             "@commandkit/tasks:packages/tasks"
           )
@@ -46,5 +48,21 @@ jobs:
           for entry in "${PACKAGES[@]}"; do
             IFS=":" read -r name path <<< "$entry"
             echo "Publishing $name..."
-            (pnpm --filter="$name" publish --no-git-checks --access public && echo "✅ Published $name") || echo "❌ Failed to publish $name"
+            
+            VERSION=$(node -p "require('./$path/package.json').version")
+            
+            if npm view "$name@$VERSION" version >/dev/null 2>&1; then
+              echo "📦 $name@$VERSION already exists on npm, skipping..."
+            else
+              if pnpm --filter="$name" publish --no-git-checks --access public; then
+                echo "✅ Published $name@$VERSION"
+              else
+                if npm view "$name@$VERSION" version >/dev/null 2>&1; then
+                  echo "📦 $name@$VERSION was published by another process, skipping..."
+                else
+                  echo "❌ Failed to publish $name@$VERSION"
+                  exit 1
+                fi
+              fi
+            fi
           done

@@ -131,7 +131,7 @@ export async function buildApplication({
           env: mergeDefinitionsIfNeeded(config.env || {}, !!isDev),
           entry: Array.from(
             new Set([
-              'src',
+              'src/**/*.{js,cjs,mjs,ts,cts,mts,jsx,tsx}',
               `!${config.distDir}`,
               '!.commandkit',
               '!**/*.test.*',

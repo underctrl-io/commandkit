@@ -1,0 +1,396 @@
+---
+title: '@commandkit/analytics'
+---
+
+CommandKit provides a powerful analytics system that helps you track
+events and metrics in your Discord bot while maintaining user privacy.
+The `@commandkit/analytics` plugin acts as a bridge between your
+application and your chosen analytics provider, without storing any
+data itself.
+
+## Installation
+
+Install the analytics package to get started:
+
+```bash npm2yarn
+npm install @commandkit/analytics
+```
+
+## How it works
+
+CommandKit's analytics system is designed to be provider-agnostic and
+privacy-focused:
+
+1. **No data storage**: CommandKit doesn't store any analytics data
+   itself
+2. **Direct transmission**: All data is sent directly to your
+   configured analytics provider
+3. **Multiple providers**: You can easily switch between different
+   providers or use multiple providers simultaneously
+4. **Extensible**: The system allows you to create custom providers
+   for your specific needs
+5. **Anonymous tracking**: Focus on anonymous, aggregated metrics to
+   respect user privacy
+
+## Automatic tracking
+
+CommandKit automatically tracks various anonymous metrics when
+analytics is enabled:
+
+- **Command execution events** (`command_execution`)
+- **Cache performance metrics**:
+  - Cache hits (`cache_hit`)
+  - Cache misses (`cache_miss`)
+  - Cache revalidations (`cache_revalidated`)
+- **Feature flag metrics**:
+  - Feature flag metrics (`feature_flag_metrics`)
+  - Feature flag decisions (`feature_flag_decision`)
+- **Anonymous interaction patterns**
+
+## Available providers
+
+CommandKit comes with built-in support for popular analytics
+providers:
+
+### PostHog
+
+PostHog is an open-source product analytics platform that helps you
+understand user behavior:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { posthog } from '@commandkit/analytics/posthog';
+
+export default defineConfig({
+  plugins: [
+    posthog({
+      posthogOptions: {
+        apiKey: 'YOUR_POSTHOG_API_KEY',
+      },
+    }),
+  ],
+});
+```
+
+### Umami
+
+Umami is a simple, fast, privacy-focused alternative to Google
+Analytics:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { umami } from '@commandkit/analytics/umami';
+
+export default defineConfig({
+  plugins: [
+    umami({
+      umamiOptions: {
+        hostUrl: 'YOUR_UMAMI_HOST_URL',
+        websiteId: 'YOUR_UMAMI_WEBSITE_ID',
+        // Optional: Additional configuration
+        sessionId: 'YOUR_UMAMI_SESSION_ID',
+        userAgent: 'YOUR_UMAMI_USER_AGENT',
+      },
+    }),
+  ],
+});
+```
+
+## Basic usage
+
+Track custom events in your Discord bot using the `track` function:
+
+```ts title="src/app/commands/ban.ts"
+import { track } from 'commandkit/analytics';
+import type { ChatInputCommand, CommandData } from 'commandkit';
+
+export const command: CommandData = {
+  name: 'ban',
+  description: 'Ban a user from the server',
+  options: [
+    {
+      name: 'user',
+      description: 'The user to ban',
+      type: 6, // User
+      required: true,
+    },
+  ],
+};
+
+export const chatInput: ChatInputCommand = async ({
+  interaction,
+}) => {
+  const user = interaction.options.getUser('user', true);
+
+  // Perform the ban
+  await interaction.guild?.members.ban(user);
+
+  // Track the moderation action with anonymous data
+  await track({
+    name: 'moderation_action',
+    data: {
+      actionType: 'ban',
+      // Track performance metrics
+      responseTime: Date.now() - interaction.createdTimestamp,
+      // Track anonymous usage patterns
+      timeOfDay: new Date().getHours(),
+      dayOfWeek: new Date().getDay(),
+    },
+  });
+
+  await interaction.reply(`Successfully banned ${user.tag}`);
+};
+```
+
+## Identifying anonymous sessions
+
+You can identify anonymous sessions in your analytics provider using
+the `identify` function:
+
+```ts
+import { useAnalytics } from 'commandkit/analytics';
+
+const analytics = useAnalytics();
+
+await analytics.identify({
+  // Use a hashed or anonymous identifier
+  distinctId: 'session_' + Math.random().toString(36).substring(7),
+  properties: {
+    // Track anonymous session properties
+    sessionStart: Date.now(),
+    environment: process.env.NODE_ENV,
+    version: '1.0.0',
+  },
+});
+```
+
+## Filtering events
+
+You can filter out specific events using the `setFilter` function:
+
+```ts
+import { useAnalytics } from 'commandkit/analytics';
+
+const analytics = useAnalytics();
+
+// Filter out events based on anonymous criteria
+analytics.setFilter((engine, event) => {
+  // Skip events from development environments
+  if (process.env.NODE_ENV === 'development') {
+    return false; // false means skip this event
+  }
+
+  // Skip specific event types
+  if (event.name === 'debug_event') {
+    return false;
+  }
+
+  return true; // true means track this event
+});
+```
+
+## Disabling analytics
+
+You can disable analytics for specific requests using the
+`noAnalytics` function:
+
+```ts
+import { noAnalytics } from 'commandkit/analytics';
+
+// Disable analytics for specific commands or events
+if (interaction.commandName === 'debug') {
+  noAnalytics();
+}
+```
+
+## Creating custom providers
+
+You can create your own analytics provider by implementing the
+`AnalyticsProvider` interface:
+
+```ts title="src/providers/custom-analytics.ts"
+import {
+  AnalyticsProvider,
+  AnalyticsEvent,
+  IdentifyEvent,
+} from 'commandkit/analytics';
+
+class CustomAnalyticsProvider implements AnalyticsProvider {
+  readonly name = 'custom-analytics';
+
+  constructor(private readonly analytics: YourAnalyticsService) {}
+
+  async track(
+    engine: AnalyticsEngine,
+    event: AnalyticsEvent,
+  ): Promise<void> {
+    // Implement your tracking logic here
+    const { name, data } = event;
+
+    // Example: Send anonymous data to your analytics service
+    await this.analytics.track({
+      name,
+      // Only include anonymous data
+      data: {
+        ...data,
+        // Add anonymous session info
+        sessionId: this.generateSessionId(),
+        timestamp: Date.now(),
+      },
+    });
+  }
+
+  async identify(
+    engine: AnalyticsEngine,
+    event: IdentifyEvent,
+  ): Promise<void> {
+    // Implement anonymous session identification
+    await this.analytics.identify({
+      // Use anonymous session identifiers
+      sessionId: this.generateSessionId(),
+      timestamp: Date.now(),
+      // Include anonymous session properties
+      properties: {
+        environment: process.env.NODE_ENV,
+        version: '1.0.0',
+      },
+    });
+  }
+
+  private generateSessionId(): string {
+    return 'session_' + Math.random().toString(36).substring(7);
+  }
+}
+```
+
+### Creating a plugin
+
+Create a plugin class that extends `RuntimePlugin`:
+
+```ts title="src/plugins/custom-analytics-plugin.ts"
+import {
+  CommandKitPluginRuntime,
+  RuntimePlugin,
+} from 'commandkit/plugin';
+import { CustomAnalyticsProvider } from '../providers/custom-analytics';
+
+export interface CustomAnalyticsPluginOptions {
+  analyticsOptions: {
+    apiKey: string;
+    options?: YourAnalyticsOptions;
+  };
+}
+
+export class CustomAnalyticsPlugin extends RuntimePlugin<CustomAnalyticsPluginOptions> {
+  public readonly name = 'CustomAnalytics';
+
+  private provider: CustomAnalyticsProvider | null = null;
+
+  public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
+    const analytics = new YourAnalyticsService(
+      this.options.analyticsOptions.apiKey,
+      this.options.analyticsOptions.options,
+    );
+
+    this.provider = new CustomAnalyticsProvider(analytics);
+
+    ctx.commandkit.analytics.registerProvider(this.provider);
+  }
+
+  public async deactivate(
+    ctx: CommandKitPluginRuntime,
+  ): Promise<void> {
+    if (!this.provider) return;
+
+    // Cleanup if needed
+    await this.provider.analytics.shutdown?.();
+
+    ctx.commandkit.analytics.removeProvider(this.provider);
+  }
+}
+```
+
+### Using your custom provider
+
+Add your custom provider to your CommandKit configuration:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { CustomAnalyticsPlugin } from './src/plugins/custom-analytics-plugin';
+
+export default defineConfig({
+  plugins: [
+    new CustomAnalyticsPlugin({
+      analyticsOptions: {
+        apiKey: 'YOUR_API_KEY',
+        options: {
+          // Your analytics service options
+        },
+      },
+    }),
+  ],
+});
+```
+
+## Privacy considerations
+
+When implementing analytics in your bot, always consider:
+
+1. **Anonymous data only**: Only track anonymous, aggregated data
+2. **No personal information**: Avoid storing personal information
+3. **Hashed identifiers**: Use hashed identifiers when necessary
+4. **Transparency**: Be transparent about what data you collect
+5. **Discord compliance**: Respect user privacy and Discord's Terms of
+   Service
+6. **Data minimization**: Only collect data that's necessary for your
+   use case
+
+## Common use cases
+
+### Performance monitoring
+
+```ts
+await track({
+  name: 'command_performance',
+  data: {
+    commandName: 'complex-calculation',
+    executionTime: Date.now() - startTime,
+    memoryUsage: process.memoryUsage().heapUsed,
+  },
+});
+```
+
+### Feature usage analytics
+
+```ts
+await track({
+  name: 'feature_usage',
+  data: {
+    featureName: 'auto-moderation',
+    configurationUsed: 'strict',
+    triggerCount: violations.length,
+  },
+});
+```
+
+### Error tracking
+
+```ts
+await track({
+  name: 'error_occurred',
+  data: {
+    errorType: 'api_timeout',
+    commandContext: 'user-info',
+    recoveryAction: 'retry_successful',
+  },
+});
+```
+
+:::tip
+
+The `@commandkit/analytics` plugin works seamlessly with other
+CommandKit features and plugins. You can use it alongside features
+like caching and feature flags to get comprehensive insights into your
+bot's performance and usage patterns.
+
+:::

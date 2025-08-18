@@ -1,0 +1,528 @@
+---
+title: Advanced AI Configuration
+description:
+  Deep dive into advanced AI configuration options and customization.
+---
+
+# Advanced AI Configuration
+
+CommandKit provides extensive configuration options to customize the
+AI behavior, from system prompts to error handling.
+
+## Complete Configuration Options
+
+The `configureAI` function accepts a comprehensive configuration
+object:
+
+```ts title="src/ai.ts"
+import { configureAI } from '@commandkit/ai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_API_KEY,
+});
+
+configureAI({
+  // Required: Select which AI model to use
+  selectAiModel: async (ctx, message) => ({
+    model: google.languageModel('gemini-2.0-flash'),
+    maxSteps: 5,
+    abortSignal: AbortSignal.timeout(30000),
+  }),
+
+  // Optional: Filter which messages trigger AI processing
+  messageFilter: async (commandkit, message) => {
+    return message.mentions.users.has(message.client.user.id);
+  },
+
+  // Optional: Disable built-in Discord tools
+  disableBuiltInTools: false,
+
+  // Optional: Custom system prompt generation
+  prepareSystemPrompt: async (ctx, message) => {
+    return `You are ${message.client.user.username}, a helpful Discord bot...`;
+  },
+
+  // Optional: Custom prompt preparation
+  preparePrompt: async (ctx, message) => {
+    // either return a string
+    return `User: ${message.content}\nAI:`;
+
+    // or return an array of messages
+    // this is useful if you want to include conversation history
+    return [
+      {
+        role: 'user',
+        content: message.content,
+      },
+    ];
+  },
+
+  // Optional: Processing lifecycle hooks
+  onProcessingStart: async (ctx, message) => {
+    console.log('AI processing started');
+  },
+
+  onProcessingFinish: async (ctx, message) => {
+    console.log('AI processing finished');
+  },
+
+  onResult: async (ctx, message, result) => {
+    await message.reply(result.text);
+  },
+
+  onError: async (ctx, message, error) => {
+    console.error('AI error:', error);
+    await message.reply('Something went wrong!');
+  },
+});
+```
+
+## Model Selection Strategies
+
+### Static Model Selection
+
+Use the same model for all requests:
+
+```ts
+selectAiModel: async (ctx, message) => ({
+  model: google.languageModel('gemini-2.0-flash'),
+});
+```
+
+### Dynamic Model Selection
+
+Choose models based on context:
+
+```ts
+selectAiModel: async (ctx, message) => {
+  // Use different models based on channel or user
+  if (message.channelId === 'premium-channel-id') {
+    return {
+      model: google.languageModel('gemini-2.0-flash'),
+      maxSteps: 10,
+    };
+  }
+
+  // Default model for regular channels
+  return {
+    model: google.languageModel('gemini-1.5-flash'),
+    maxSteps: 5,
+  };
+};
+```
+
+### Model Selection with Custom Options
+
+Configure model-specific options:
+
+```ts
+selectAiModel: async (ctx, message) => ({
+  model: google.languageModel('gemini-2.0-flash'),
+  maxSteps: 8,
+  temperature: 0.7,
+  maxTokens: 2000,
+  abortSignal: AbortSignal.timeout(45000),
+  tools: {
+    // Add custom tools specific to this model
+    customTool: myCustomTool,
+  },
+});
+```
+
+## Message Filtering
+
+### Basic Filtering
+
+```ts
+messageFilter: async (commandkit, message) => {
+  // Only respond to mentions
+  return message.mentions.users.has(message.client.user.id);
+};
+```
+
+### Advanced Filtering
+
+```ts
+messageFilter: async (commandkit, message) => {
+  // Don't process bot messages
+  if (message.author.bot) return false;
+
+  // Only process in specific channels
+  const allowedChannels = ['ai-chat', 'bot-commands'];
+  if (
+    message.inGuild() &&
+    !allowedChannels.includes(message.channel.name)
+  ) {
+    return false;
+  }
+
+  // Check user permissions
+  if (
+    message.inGuild() &&
+    !message.member?.permissions.has('SendMessages')
+  ) {
+    return false;
+  }
+
+  // Check for mentions or specific keywords
+  const hasMention = message.mentions.users.has(
+    message.client.user.id,
+  );
+  const hasKeyword = /\b(hey bot|help me|ai)\b/i.test(
+    message.content,
+  );
+
+  return hasMention || hasKeyword;
+};
+```
+
+### Role-based Filtering
+
+```ts
+messageFilter: async (commandkit, message) => {
+  if (!message.inGuild()) return false;
+
+  const member = message.member;
+  const allowedRoles = ['Premium', 'Moderator', 'AI User'];
+
+  return member.roles.cache.some((role) =>
+    allowedRoles.includes(role.name),
+  );
+};
+```
+
+## Custom System Prompts
+
+### Dynamic System Prompts
+
+```ts
+prepareSystemPrompt: async (ctx, message) => {
+  const basePrompt = `You are ${message.client.user.username}, a helpful Discord bot.`;
+
+  if (message.inGuild()) {
+    const guild = message.guild;
+    const member = message.member;
+
+    return `${basePrompt}
+    
+**Current Context:**
+- Server: ${guild.name} (${guild.memberCount} members)
+- Channel: ${message.channel.name}
+- User: ${member.displayName} (${member.roles.cache.map((r) => r.name).join(', ')})
+
+**Your Capabilities:**
+${ctx.commandkit.commandHandler
+  .getCommandsArray()
+  .filter((cmd) => 'ai' in cmd.data)
+  .map(
+    (cmd) =>
+      `- ${cmd.data.command.name}: ${cmd.data.command.description}`,
+  )
+  .join('\n')}
+
+Keep responses under 2000 characters and be helpful!`;
+  }
+
+  return `${basePrompt}\n\nYou are in a direct message. Be conversational and helpful!`;
+};
+```
+
+### Contextual System Prompts
+
+```ts
+prepareSystemPrompt: async (ctx, message) => {
+  const timeOfDay = new Date().getHours();
+  const greeting =
+    timeOfDay < 12
+      ? 'Good morning'
+      : timeOfDay < 18
+        ? 'Good afternoon'
+        : 'Good evening';
+
+  const userHistory = await getUserInteractionHistory(
+    message.author.id,
+  );
+  const personalizedNote =
+    userHistory.length > 0
+      ? `You've helped this user ${userHistory.length} times before.`
+      : 'This is your first interaction with this user.';
+
+  return `${greeting}! You are ${message.client.user.username}, a friendly Discord bot.
+  
+${personalizedNote}
+
+Current server context: ${message.inGuild() ? message.guild.name : 'Direct Message'}
+Available commands: ${getAvailableAICommands().join(', ')}
+
+Be helpful, concise, and friendly in your responses!`;
+};
+```
+
+## Custom Prompt Preparation
+
+### Enhanced User Context
+
+```ts
+preparePrompt: async (ctx, message) => {
+  const userInfo = `<user>
+  <id>${message.author.id}</id>
+  <username>${message.author.username}</username>
+  <displayName>${message.author.displayName}</displayName>
+  <avatar>${message.author.avatarURL()}</avatar>
+  <createdAt>${message.author.createdAt.toISOString()}</createdAt>
+  </user>`;
+
+  const channelInfo = message.inGuild()
+    ? `
+  <channel>
+  <id>${message.channelId}</id>
+  <name>${message.channel.name}</name>
+  <type>${message.channel.type}</type>
+  </channel>
+  
+  <guild>
+  <id>${message.guildId}</id>
+  <name>${message.guild.name}</name>
+  <memberCount>${message.guild.memberCount}</memberCount>
+  </guild>`
+    : '<context>Direct Message</context>';
+
+  return `${userInfo}${channelInfo}
+  
+Message: ${message.content}
+
+Please respond appropriately based on the context and available tools.`;
+};
+```
+
+### Conversation History
+
+```ts
+import type { AiMessage } from '@commandkit/ai';
+
+preparePrompt: async (ctx, message) => {
+  const recentMessages = await message.channel.messages.fetch({
+    limit: 5,
+    // fetch 5 messages before the current one
+    before: message.id,
+  });
+
+  const isMe = (id: string) => id === message.client.user.id;
+
+  const conversation: AiMessage = recentMessages
+    // Filter out non-text messages and other bots
+    .filter(
+      (msg) =>
+        msg.content && (!msg.author.bot || isMe(msg.author.id)),
+    )
+    .reverse()
+    .map((msg) => ({
+      role: isMe(msg.author.id) ? 'assistant' : 'user',
+      content: msg.content,
+    }));
+
+  // Add the current user message to the conversation
+  return [
+    ...conversation,
+    {
+      role: 'user',
+      content: message.content,
+    },
+  ];
+};
+```
+
+## Lifecycle Hooks
+
+### Processing Start Hook
+
+```ts
+onProcessingStart: async (ctx, message) => {
+  // Start typing indicator
+  await message.channel.sendTyping();
+
+  // Log processing start
+  console.log(`AI processing started for user ${message.author.id}`);
+
+  // Store processing metrics
+  ctx.store.set('processingStartTime', Date.now());
+
+  // Send acknowledgment for slow operations
+  if (isExpectedToTakeLong(message.content)) {
+    await message.react('⏳');
+  }
+};
+```
+
+### Processing Finish Hook
+
+```ts
+onProcessingFinish: async (ctx, message) => {
+  const startTime = ctx.store.get('processingStartTime');
+  const duration = startTime ? Date.now() - startTime : 0;
+
+  console.log(`AI processing finished in ${duration}ms`);
+
+  // Remove processing indicators
+  await message.reactions.removeAll().catch(() => {});
+
+  // Log metrics
+  await logAIUsage({
+    userId: message.author.id,
+    guildId: message.guildId,
+    duration,
+    success: true,
+  });
+};
+```
+
+### Result Handling
+
+```ts
+onResult: async (ctx, message, result) => {
+  const { text, finishReason, usage } = result;
+
+  // Log token usage
+  console.log(`Tokens used: ${usage?.totalTokens || 'unknown'}`);
+
+  if (!text?.trim()) {
+    await message.reply(
+      'I processed your request but have nothing to say.',
+    );
+    return;
+  }
+
+  // Split long responses
+  if (text.length > 2000) {
+    const chunks = splitMessage(text, 2000);
+    for (const chunk of chunks) {
+      await message.reply(chunk);
+    }
+  } else {
+    await message.reply({
+      content: text,
+      allowedMentions: { parse: [] },
+    });
+  }
+
+  // React based on result
+  if (finishReason === 'stop') {
+    await message.react('✅');
+  } else if (finishReason === 'length') {
+    await message.react('📝'); // Indicate truncated response
+  }
+};
+```
+
+### Error Handling
+
+```ts
+onError: async (ctx, message, error) => {
+  console.error('AI processing error:', {
+    error: error.message,
+    userId: message.author.id,
+    guildId: message.guildId,
+    messageContent: message.content.substring(0, 100),
+  });
+
+  // Different error responses based on error type
+  if (error.message.includes('timeout')) {
+    await message.reply(
+      '⏰ The request took too long to process. Please try again.',
+    );
+  } else if (error.message.includes('rate limit')) {
+    await message.reply(
+      "🚫 I'm currently rate limited. Please wait a moment and try again.",
+    );
+  } else if (error.message.includes('invalid')) {
+    await message.reply(
+      '❌ There was an issue with your request. Please rephrase and try again.',
+    );
+  } else {
+    await message.reply(
+      '🔧 Something went wrong while processing your request.',
+    );
+  }
+
+  // Log to monitoring service
+  await reportError({
+    service: 'ai',
+    error: error.message,
+    context: { userId: message.author.id, guildId: message.guildId },
+  });
+};
+```
+
+## Built-in Tools Configuration
+
+### Disabling Built-in Tools
+
+```ts
+configureAI({
+  disableBuiltInTools: true,
+  selectAiModel: async (ctx, message) => ({
+    model: myModel,
+    tools: {
+      // Only use your custom tools
+      myCustomTool: myCustomTool,
+    },
+  }),
+});
+```
+
+### Selective Tool Usage
+
+```ts
+selectAiModel: async (ctx, message) => {
+  const tools = {};
+
+  // Add tools based on context
+  if (message.inGuild()) {
+    tools.getGuildById = getGuildById;
+    tools.getChannelById = getChannelById;
+  }
+
+  if (message.member?.permissions.has('Administrator')) {
+    tools.adminTools = adminTools;
+  }
+
+  return {
+    model: myModel,
+    tools,
+  };
+};
+```
+
+## Environment-specific Configuration
+
+### Development vs Production
+
+```ts title="src/ai.ts"
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+configureAI({
+  selectAiModel: async (ctx, message) => ({
+    model: google.languageModel(
+      isDevelopment ? 'gemini-1.5-flash' : 'gemini-2.0-flash',
+    ),
+    maxSteps: isDevelopment ? 3 : 8,
+    temperature: isDevelopment ? 0.8 : 0.6,
+  }),
+
+  onError: async (ctx, message, error) => {
+    if (isDevelopment) {
+      // Detailed error in development
+      await message.reply(`Debug Error: ${error.message}`);
+      console.error(error.stack);
+    } else {
+      // Generic error in production
+      await message.reply(
+        'An error occurred while processing your request.',
+      );
+      // Log to production monitoring
+      logProductionError(error, ctx, message);
+    }
+  },
+});
+```

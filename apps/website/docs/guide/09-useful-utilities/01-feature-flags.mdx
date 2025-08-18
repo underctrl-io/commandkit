@@ -1,0 +1,497 @@
+---
+title: Feature Flags
+description:
+  Control feature visibility with CommandKit's built-in feature flag
+  system
+---
+
+Feature flags are a powerful tool for controlling the visibility of
+features in your application. They allow you to enable or disable
+features for specific users or groups, making it easier to test and
+roll out new functionality. This is particularly useful for A/B
+testing, gradual rollouts, and canary releases.
+
+CommandKit natively offers a feature flag system that allows you to
+define flags in your configuration and use them in your code. This
+system is designed to be simple and flexible, allowing you to easily
+manage feature flags across your application.
+
+## Use cases
+
+Feature flags can be used in various scenarios to improve your
+application's development and deployment process:
+
+- **Maintenance Mode**: Enable or disable features during maintenance
+  without affecting the user experience
+- **A/B Testing**: Test different versions of a feature with different
+  user groups (e.g., show one version to 50% of users)
+- **Gradual Rollouts**: Gradually roll out new features to a small
+  percentage of users before full deployment
+- **Canary Releases**: Release features to a small group of users to
+  test in production before wider rollout
+- **Feature Toggles**: Enable or disable features without deploying
+  new code
+- **User Segmentation**: Customize the user experience based on user
+  preferences or behavior
+- **Testing and Debugging**: Isolate features for testing without
+  affecting the entire application
+
+## Defining feature flags
+
+Feature flags can be defined in any file in your project (except
+`app.ts`). The recommended place to define them is in the `src/flags`
+directory.
+
+```ts title="src/flags/embedColorFlag.ts"
+import { flag } from 'commandkit';
+import murmurhash from 'murmurhash';
+
+export const embedColorFlag = flag({
+  name: 'embed-color-flag',
+  description: 'Show red color instead of blue in embeds',
+  identify(ctx) {
+    const command = ctx.command;
+    const id =
+      command?.interaction?.user.id ?? command?.message?.author.id;
+
+    return { id: id ?? null };
+  },
+  decide({ entities }) {
+    if (!entities.id) {
+      // if no ID is provided, we cannot determine the feature flag
+      // so fall back to the default behavior
+      return false;
+    }
+
+    // use murmurhash to hash the ID and determine the bucket
+    // this allows us to have a consistent way to determine the feature flag
+    // based on the user ID, so that the same user will always see the same feature flag
+    // this is useful for A/B testing, where you want to show the same feature to the same user
+    // without changing it every time they use the command
+    // you can use any other hashing function or logic here as needed
+    const hash = murmurhash.v3(entities.id);
+    const bucket = hash % 100;
+
+    // show red color instead of blue in embeds
+    // to 50% of users, based on their ID
+    // this is a simple A/B test
+    // you can use any other logic here
+    return bucket < 50;
+  },
+});
+```
+
+## Using feature flags
+
+Once you have defined a feature flag, you can use it in your code to
+control the visibility of features. You can use the function returned
+by the `flag` function to check if a feature flag is enabled or not.
+
+```ts title="src/commands/hello.ts"
+import { ChatInputCommand, CommandData } from 'commandkit';
+import { embedColorFlag } from '../flags/embedColorFlag';
+
+export const command: CommandData = {
+  name: 'hello',
+  description: 'Hello world command',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const showRedColor = await embedColorFlag();
+
+  await ctx.interaction.reply({
+    embeds: [
+      {
+        title: 'Hello world',
+        description: 'This is a hello world command',
+        color: showRedColor ? 0xff0000 : 0x0000ff,
+      },
+    ],
+  });
+};
+```
+
+Now there's a 50% chance that the embed will be red instead of blue.
+You can use this feature flag to test the new color scheme with a
+subset of users before rolling it out to everyone.
+
+## Context identification
+
+Sometimes you may want to identify specific users or groups for
+feature flags. For example, you may want to show a secret feature to
+server boosters only. In order to identify the context of the flag,
+you can add the `identify` method to the flag definition.
+
+```ts title="src/flags/embedColorFlag.ts"
+import { flag } from 'commandkit';
+import { GuildMember } from 'discord.js';
+
+interface Entity {
+  isBooster: boolean;
+}
+
+export const embedColorFlag = flag<boolean, Entity>({
+  key: 'embed-color-flag',
+  description: 'Show red color instead of blue in embeds',
+  identify(ctx) {
+    let member: GuildMember | null = null;
+
+    if (ctx.command) {
+      member = (ctx.command.interaction || ctx.command.message)
+        ?.member as GuildMember;
+    } else if (ctx.event) {
+      // handle event specific context
+      if (ctx.event.event === 'guildMemberUpdate') {
+        const [_oldMember, newMember] = ctx.event.argumentsAs(
+          'guildMemberUpdate',
+        );
+
+        member = newMember as GuildMember;
+      }
+    }
+
+    return { isBooster: member?.premiumSince !== null };
+  },
+  decide({ entities }) {
+    return entities.isBooster;
+  },
+});
+```
+
+:::info Understanding Flag Context
+
+Feature flags are **context-aware**, meaning they automatically detect
+and provide the necessary context (like user information, guild data,
+etc.) when used within CommandKit's execution environment.
+
+**Automatic Context Detection:**
+
+- ✅ **Commands** - Flags automatically access interaction/message
+  data
+- ✅ **Events** - Flags automatically access event-specific data
+- ✅ **Middlewares** - Flags automatically access the current
+  execution context
+
+**Manual Context Required:** If you need to use flags outside of these
+contexts (e.g., in utility functions, background jobs, or external API
+handlers), you must manually provide the identification data:
+
+```ts
+// Option 1: Pass values directly
+const result = await myFlag.run({ identify: { isBooster: true } });
+
+// Option 2: Pass as a function (useful for dynamic values)
+const result = await myFlag.run({
+  identify: () => ({ isBooster: user.premiumSince !== null }),
+});
+```
+
+**Best Practice:** Keep flag usage within commands, events, and
+middlewares whenever possible. Manual context passing should only be
+used when absolutely necessary, as it bypasses the automatic context
+detection which causes flags to be less efficient and more
+error-prone.
+
+:::
+
+## Analytics integration
+
+You may want to see how many users are using a specific feature flag.
+You can do this by using the `analytics` plugin of CommandKit, which
+automatically collects the analytics data in the background whenever
+the feature flags are used. See
+[Analytics in CommandKit](../05-official-plugins/02-commandkit-analytics.mdx)
+for more information on how to set it up.
+
+## Custom providers
+
+While CommandKit's built-in feature flag system is powerful for local
+flag management, you may want to integrate with external feature flag
+services like LaunchDarkly, Split, Unleash, or your own custom
+backend. CommandKit supports this through the provider pattern.
+
+### What are flag providers?
+
+Flag providers are adapters that allow CommandKit to fetch feature
+flag configurations from external systems. When a provider is
+configured, your local `decide` function receives additional context
+from the external system, giving you the flexibility to combine local
+logic with remote configuration.
+
+### Setting up a provider
+
+#### Step 1: Implement the FlagProvider interface
+
+```ts title="src/providers/LaunchDarklyProvider.ts"
+import { FlagProvider, FlagConfiguration } from 'commandkit';
+
+export class LaunchDarklyProvider implements FlagProvider {
+  private client: any; // LaunchDarkly SDK client
+
+  constructor(private apiKey: string) {}
+
+  async initialize(): Promise<void> {
+    // Initialize LaunchDarkly client
+    // this.client = LaunchDarkly.initialize(this.apiKey);
+    // await this.client.waitUntilReady();
+    console.log('LaunchDarkly provider initialized');
+  }
+
+  async getFlag(
+    key: string,
+    context?: any,
+  ): Promise<FlagConfiguration | null> {
+    try {
+      // Fetch flag from LaunchDarkly
+      // const variation = await this.client.variation(key, context, false);
+      // const flagDetail = await this.client.variationDetail(key, context, false);
+
+      // Return provider configuration
+      return {
+        enabled: true, // Whether the flag is enabled
+        percentage: 75, // Optional: percentage rollout
+        config: {
+          // Custom configuration from LaunchDarkly
+          colors: ['#ff0000', '#00ff00'],
+          feature: 'enhanced-ui',
+        },
+      };
+    } catch (error) {
+      console.error(
+        `LaunchDarkly flag evaluation failed for ${key}:`,
+        error,
+      );
+      return null;
+    }
+  }
+
+  async hasFlag(key: string): Promise<boolean> {
+    // Check if flag exists in LaunchDarkly
+    return true;
+  }
+
+  async destroy(): Promise<void> {
+    // Clean up LaunchDarkly client
+    // await this.client.close();
+  }
+}
+```
+
+#### Step 2: Configure the global provider
+
+```ts title="src/app.ts"
+import { setFlagProvider } from 'commandkit';
+import { LaunchDarklyProvider } from './providers/LaunchDarklyProvider';
+
+const provider = new LaunchDarklyProvider(
+  process.env.LAUNCHDARKLY_API_KEY!,
+);
+
+// Initialize and set the global provider
+await provider.initialize();
+setFlagProvider(provider);
+```
+
+#### Step 3: Use provider data in your flags
+
+```ts title="src/flags/embedColorFlag.ts"
+import { flag } from 'commandkit';
+import murmurhash from 'murmurhash';
+
+export const embedColorFlag = flag({
+  key: 'embed-color-flag',
+  description:
+    'Show different embed colors based on external configuration',
+  identify(ctx) {
+    const command = ctx.command;
+    const id =
+      command?.interaction?.user.id ?? command?.message?.author.id;
+    return { id: id ?? null };
+  },
+  decide({ entities, provider }) {
+    // Local fallback when provider is unavailable
+    if (!provider) {
+      // Use local hashing logic
+      const hash = murmurhash.v3(entities.id || 'anonymous');
+      return hash % 100 < 50;
+    }
+
+    // Provider-based logic
+    if (!provider.enabled) {
+      return false; // Provider disabled this flag
+    }
+
+    // Use provider's percentage rollout
+    if (provider.percentage) {
+      const hash = murmurhash.v3(entities.id || 'anonymous');
+      const bucket = hash % 100;
+      return bucket < provider.percentage;
+    }
+
+    // Use provider's custom config
+    if (provider.config?.colors) {
+      return provider.config.colors[0]; // Return specific color
+    }
+
+    return provider.enabled;
+  },
+});
+```
+
+### Built-in JSON provider
+
+CommandKit includes a simple JSON-based provider for basic external
+configuration:
+
+```ts title="src/providers/config.ts"
+import { JsonFlagProvider, setFlagProvider } from 'commandkit';
+
+const provider = new JsonFlagProvider({
+  'embed-color-flag': {
+    enabled: true,
+    percentage: 75,
+    config: {
+      colors: ['#ff0000', '#00ff00', '#0000ff'],
+      theme: 'dark',
+    },
+  },
+  'premium-features': {
+    enabled: true,
+    targeting: {
+      segments: ['premium_users', 'beta_testers'],
+    },
+  },
+});
+
+await provider.initialize();
+setFlagProvider(provider);
+```
+
+### Advanced provider examples
+
+#### Database-backed provider
+
+```ts title="src/providers/DatabaseProvider.ts"
+import { FlagProvider, FlagConfiguration } from 'commandkit';
+
+export class DatabaseProvider implements FlagProvider {
+  constructor(private db: any) {}
+
+  async getFlag(key: string): Promise<FlagConfiguration | null> {
+    const result = await this.db.query(
+      'SELECT * FROM feature_flags WHERE key = ?',
+      [key],
+    );
+
+    if (!result.length) return null;
+
+    const flag = result[0];
+    return {
+      enabled: flag.enabled,
+      percentage: flag.rollout_percentage,
+      config: JSON.parse(flag.config || '{}'),
+      targeting: JSON.parse(flag.targeting || '{}'),
+    };
+  }
+
+  async hasFlag(key: string): Promise<boolean> {
+    const result = await this.db.query(
+      'SELECT 1 FROM feature_flags WHERE key = ?',
+      [key],
+    );
+    return result.length > 0;
+  }
+}
+```
+
+#### Multi-source provider
+
+```ts title="src/providers/MultiProvider.ts"
+import { FlagProvider, FlagConfiguration } from 'commandkit';
+
+export class MultiProvider implements FlagProvider {
+  constructor(private providers: FlagProvider[]) {}
+
+  async getFlag(
+    key: string,
+    context?: any,
+  ): Promise<FlagConfiguration | null> {
+    // Try providers in order, return first successful result
+    for (const provider of this.providers) {
+      try {
+        const result = await provider.getFlag(key, context);
+        if (result) return result;
+      } catch (error) {
+        console.warn(`Provider failed for ${key}:`, error);
+        continue;
+      }
+    }
+    return null;
+  }
+
+  async hasFlag(key: string): Promise<boolean> {
+    for (const provider of this.providers) {
+      if (await provider.hasFlag(key)) return true;
+    }
+    return false;
+  }
+}
+```
+
+## Best practices
+
+### Always provide fallbacks
+
+Your `decide` function should handle cases where the provider is
+unavailable:
+
+```ts
+decide({ entities, provider }) {
+  // Always check if provider data is available
+  if (!provider) {
+    // Local fallback logic
+    return defaultBehavior(entities);
+  }
+
+  // Provider-based logic
+  return providerBasedLogic(entities, provider);
+}
+```
+
+### Handle provider errors gracefully
+
+Providers may fail due to network issues, API limits, or configuration
+problems. CommandKit automatically catches these errors and continues
+with local evaluation.
+
+### Use provider configuration wisely
+
+The provider's `config` object can contain any data structure your
+external system provides:
+
+```ts
+decide({ entities, provider }) {
+  if (provider?.config?.experimentConfig) {
+    const experiment = provider.config.experimentConfig;
+    return evaluateExperiment(entities, experiment);
+  }
+
+  return defaultLogic(entities);
+}
+```
+
+### Disable analytics when needed
+
+For high-frequency flags or privacy-sensitive scenarios, you can
+disable analytics:
+
+```ts
+export const highFrequencyFlag = flag({
+  key: 'rate-limiting-flag',
+  description: 'High frequency flag for rate limiting',
+  disableAnalytics: true, // Skip analytics tracking
+  decide({ entities }) {
+    return entities.requestCount > 100;
+  },
+});
+```

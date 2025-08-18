@@ -160,20 +160,22 @@ export default function Home(): React.JSX.Element {
               </span>{' '}
               handle it for you!
             </p>
-            <p className="font-semibold lg:text-xl text-gray-600 dark:text-gray-300">
+            <p className="lg:text-lg text-gray-600 dark:text-gray-300">
               The discord.js meta-framework for building powerful, modular, and
               extensible Discord bots with ease.
             </p>
 
             <div className="flex items-center justify-center gap-3 mt-10 md:justify-start [&>a]:text-white [&>a]:hover:text-white">
               <Link
-                to="/docs/guide/installation"
+                to="/docs/v0/guide/installation"
+                // to="/docs/guide/getting-started/introduction"
                 className="font-semibold bg-gradient-to-r from-[#b079fc] to-[#9a60f7] hover:from-[#9a60f7] hover:to-[#7e33f6] py-2 px-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
               >
                 Guide
               </Link>
               <Link
-                to="/docs/api-reference/classes/ButtonKit"
+                to="/docs/v0/api-reference/classes/ButtonKit"
+                // to="/docs/api-reference/commandkit"
                 className="font-semibold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 py-2 px-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
               >
                 API <span className="hidden md:inline">Reference</span>

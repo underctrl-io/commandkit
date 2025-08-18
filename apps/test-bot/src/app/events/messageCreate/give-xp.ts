@@ -1,8 +1,8 @@
-import type { Message } from 'discord.js';
-import { database } from '../../../database/store.ts';
 import { revalidateTag } from '@commandkit/cache';
+import type { EventHandler } from 'commandkit';
+import { database } from '../../../database/store.ts';
 
-export default async function (message: Message) {
+const handler: EventHandler<'messageCreate'> = async (message) => {
   if (message.author.bot || !message.inGuild()) return;
 
   const key = `xp:${message.guildId}:${message.author.id}`;
@@ -13,4 +13,6 @@ export default async function (message: Message) {
 
   database.set(key, newXp);
   await revalidateTag(key);
-}
+};
+
+export default handler;

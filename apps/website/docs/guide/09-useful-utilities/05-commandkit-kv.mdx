@@ -1,0 +1,245 @@
+---
+title: commandkit/kv
+---
+
+CommandKit provides a built-in key-value store that offers simple,
+persistent storage using SQLite. It supports storing any
+JSON-serializable data types directly, including objects, arrays,
+dates, maps, sets, and more.
+
+## Basic usage
+
+The simplest way to use the key-value store is to create an instance
+and start storing data:
+
+```typescript
+import { KV } from 'commandkit/kv';
+
+// Create a new KV store
+const kv = new KV('data.db');
+
+// Store data directly
+kv.set('user:123', { name: 'John', age: 30 });
+kv.set('counter', 42);
+kv.set('active', true);
+
+// Retrieve data
+const user = kv.get('user:123'); // { name: 'John', age: 30 }
+const counter = kv.get('counter'); // 42
+```
+
+## Configuration options
+
+You can customize the key-value store with various options:
+
+```typescript
+import { openKV } from 'commandkit/kv';
+
+// Create with custom database file
+const kv = openKV('my-bot-data.db');
+
+// In-memory store for testing
+const testKv = openKV(':memory:');
+
+// Create with specific namespace
+const userKv = openKV('data.db', {
+  namespace: 'users',
+});
+```
+
+## Supported data types
+
+The KV store supports storing and retrieving these data types:
+
+- **Primitives**: `string`, `number`, `boolean`, `bigint`, `null`,
+  `undefined`
+- **Objects**: Plain objects, nested objects
+- **Arrays**: Any array of supported types
+- **Dates**: JavaScript Date objects
+- **Collections**: `Map`, `Set`
+- **Buffers**: Node.js Buffer objects
+- **Regular Expressions**: RegExp objects
+- **Functions**: Function objects (serialized as strings)
+
+```typescript
+// Store different data types
+kv.set('user', { name: 'John', preferences: { theme: 'dark' } });
+kv.set('tags', ['javascript', 'typescript', 'discord']);
+kv.set('created_at', new Date());
+kv.set(
+  'permissions',
+  new Map([
+    ['admin', true],
+    ['user', false],
+  ]),
+);
+kv.set('unique_ids', new Set([1, 2, 3]));
+```
+
+## Dot notation for nested access
+
+Access and modify nested properties using dot notation:
+
+```typescript
+// Store an object
+kv.set('user:123', {
+  name: 'John Doe',
+  settings: {
+    theme: 'dark',
+    notifications: { email: true, push: false },
+  },
+});
+
+// Access nested properties
+const theme = kv.get('user:123.settings.theme'); // 'dark'
+const emailNotifications = kv.get(
+  'user:123.settings.notifications.email',
+); // true
+
+// Set nested properties
+kv.set('user:123.settings.theme', 'light');
+kv.set('user:123.settings.notifications.push', true);
+```
+
+## Namespaces
+
+Organize your data into logical groups using namespaces:
+
+```typescript
+const kv = openKV('bot-data.db');
+
+// Create namespace instances
+const userKv = kv.namespace('users');
+const configKv = kv.namespace('config');
+const guildKv = kv.namespace('guilds');
+
+// Store data in different namespaces
+userKv.set('123', { name: 'John', level: 5 });
+configKv.set('theme', 'dark');
+guildKv.set('456', { name: 'My Server', premium: true });
+
+// Same key in different namespaces
+userKv.set('settings', { theme: 'light' });
+configKv.set('settings', { maintenance: false });
+```
+
+### Namespace operations
+
+Each namespace has its own isolated operations:
+
+```typescript
+// Check current namespace
+console.log(userKv.getCurrentNamespace()); // 'users'
+
+// List all namespaces
+const namespaces = kv.namespaces();
+console.log('Available namespaces:', namespaces);
+
+// Namespace-specific counts and data
+console.log(`Users: ${userKv.count()}`);
+console.log('User keys:', userKv.keys());
+console.log('All users:', userKv.all());
+```
+
+## Expiration support
+
+Set automatic expiration for temporary data:
+
+```typescript
+// Set data with expiration (1 hour)
+kv.setex(
+  'session:123',
+  { userId: 123, token: 'abc123' },
+  60 * 60 * 1000,
+);
+
+// Set expiration for existing keys
+kv.set('user:123', { name: 'John' });
+kv.expire('user:123', 30 * 60 * 1000); // 30 minutes
+
+// Check time to live
+const ttl = kv.ttl('user:123');
+if (ttl > 0) {
+  console.log(`Expires in ${Math.floor(ttl / 1000)} seconds`);
+}
+```
+
+## Transactions
+
+Execute multiple operations atomically:
+
+```typescript
+// Basic transaction
+kv.transaction(() => {
+  kv.set('user:123', { balance: 100 });
+  kv.set('user:456', { balance: 200 });
+  // If any operation fails, all changes are rolled back
+});
+
+// Async transactions
+await kv.transaction(async () => {
+  const user = kv.get('user:123') || { balance: 0 };
+  user.balance += 50;
+  kv.set('user:123', user);
+
+  // Log the transaction
+  kv.set(`transaction:${Date.now()}`, {
+    type: 'deposit',
+    amount: 50,
+    timestamp: new Date(),
+  });
+});
+```
+
+## Bulk operations
+
+Work with multiple entries efficiently:
+
+```typescript
+// Get all data
+const allData = kv.all();
+const keys = kv.keys();
+const values = kv.values();
+const count = kv.count();
+
+// Iterate over entries
+for (const [key, value] of kv) {
+  console.log(`${key}:`, value);
+}
+
+// Filter entries
+const userEntries = [...kv].filter(([key]) =>
+  key.startsWith('user:'),
+);
+
+// Check existence
+if (kv.has('user:123')) {
+  console.log('User exists');
+}
+
+// Delete data
+kv.delete('user:123');
+kv.clear(); // Clear all data in current namespace
+```
+
+## Resource management
+
+Use proper resource management to ensure database connections are
+closed:
+
+```typescript
+// Automatic cleanup with using statement
+{
+  using kv = openKV('data.db');
+  kv.set('key', 'value');
+  // kv is automatically closed when the block ends
+}
+
+// Manual cleanup
+const kv = openKV('data.db');
+try {
+  kv.set('key', 'value');
+} finally {
+  kv.close();
+}
+```
