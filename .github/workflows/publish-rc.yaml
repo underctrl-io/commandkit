@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       rc_version:
-        description: 'Release candidate version number (e.g., 1 for -rc1, 2 for -rc2)'
+        description: 'Release candidate version number (e.g., 1 for -rc.1, 2 for -rc.2)'
         required: true
         type: string
 
@@ -133,4 +133,4 @@ jobs:
           echo "📋 Summary:"
           echo "   RC Version: ${{ github.event.inputs.rc_version }}"
           echo "   Tag: next"
-          echo "   Suffix: -rc${{ github.event.inputs.rc_version }}"
+          echo "   Suffix: -rc.${{ github.event.inputs.rc_version }}"
