@@ -9,21 +9,20 @@ emojis.
 ## Basic usage
 
 ```tsx title="src/app/commands/button-example.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { ActionRow, Button } from 'commandkit';
+import { type ChatInputCommand, ActionRow, Button } from 'commandkit';
 
 export const chatInput: ChatInputCommand = async ({
   interaction,
 }) => {
-  const button = (
+  const buttonRow = (
     <ActionRow>
-      <Button>Click me!</Button>
+      <Button customId="clickme-button">Click me!</Button>
     </ActionRow>
   );
 
   await interaction.reply({
     content: "Here's a button:",
-    components: [button],
+    components: [buttonRow],
   });
 };
 ```
@@ -33,18 +32,26 @@ export const chatInput: ChatInputCommand = async ({
 Discord provides several built-in button styles:
 
 ```tsx title="src/app/commands/button-styles.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { ActionRow, Button } from 'commandkit';
+import { type ChatInputCommand, ActionRow, Button } from 'commandkit';
+import { ButtonStyle } from 'discord.js';
 
 export const chatInput: ChatInputCommand = async ({
   interaction,
 }) => {
   const buttons = (
     <ActionRow>
-      <Button style="primary">Primary</Button>
-      <Button style="secondary">Secondary</Button>
-      <Button style="success">Success</Button>
-      <Button style="danger">Danger</Button>
+      <Button style={ButtonStyle.Primary} customId="primary">
+        Primary
+      </Button>
+      <Button style={ButtonStyle.Secondary} customId="secondary">
+        Secondary
+      </Button>
+      <Button style={ButtonStyle.Success} customId="success">
+        Success
+      </Button>
+      <Button style={ButtonStyle.Danger} customId="danger">
+        Danger
+      </Button>
     </ActionRow>
   );
 
@@ -60,15 +67,15 @@ export const chatInput: ChatInputCommand = async ({
 Link buttons redirect users to external URLs:
 
 ```tsx title="src/app/commands/link-button.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { ActionRow, Button } from 'commandkit';
+import { type ChatInputCommand, ActionRow, Button } from 'commandkit';
+import { ButtonStyle } from 'discord.js';
 
 export const chatInput: ChatInputCommand = async ({
   interaction,
 }) => {
   const linkButton = (
     <ActionRow>
-      <Button style="link" url="https://discord.com">
+      <Button style={ButtonStyle.Link} url="https://discord.com">
         Visit Discord
       </Button>
     </ActionRow>
@@ -86,16 +93,19 @@ export const chatInput: ChatInputCommand = async ({
 Add emojis to make your buttons more visually appealing:
 
 ```tsx title="src/app/commands/emoji-button.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { ActionRow, Button } from 'commandkit';
+import { type ChatInputCommand, ActionRow, Button } from 'commandkit';
 
 export const chatInput: ChatInputCommand = async ({
   interaction,
 }) => {
   const emojiButton = (
     <ActionRow>
-      <Button emoji="🎮">Play Game</Button>
-      <Button emoji="⚙️">Settings</Button>
+      <Button emoji="🎮" customId="play-game">
+        Play Game
+      </Button>
+      <Button emoji="⚙️" customId="settings">
+        Settings
+      </Button>
     </ActionRow>
   );
 
@@ -111,16 +121,17 @@ export const chatInput: ChatInputCommand = async ({
 Disable buttons to prevent interaction:
 
 ```tsx title="src/app/commands/disabled-button.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { ActionRow, Button } from 'commandkit';
+import { type ChatInputCommand, ActionRow, Button } from 'commandkit';
 
 export const chatInput: ChatInputCommand = async ({
   interaction,
 }) => {
   const disabledButton = (
     <ActionRow>
-      <Button disabled>Cannot Click</Button>
-      <Button>Can Click</Button>
+      <Button disabled customId="disabled">
+        Cannot Click
+      </Button>
+      <Button customId="enabled">Can Click</Button>
     </ActionRow>
   );
 
@@ -136,8 +147,12 @@ export const chatInput: ChatInputCommand = async ({
 Handle button interactions with the `onClick` prop:
 
 ```tsx title="src/app/commands/interactive-button.tsx"
-import type { ChatInputCommand, OnButtonKitClick } from 'commandkit';
-import { ActionRow, Button } from 'commandkit';
+import {
+  type ChatInputCommand,
+  type OnButtonKitClick,
+  ActionRow,
+  Button,
+} from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
 const handleClick: OnButtonKitClick = async (
@@ -158,7 +173,9 @@ export const chatInput: ChatInputCommand = async ({
 }) => {
   const interactiveButton = (
     <ActionRow>
-      <Button onClick={handleClick}>Click me!</Button>
+      <Button onClick={handleClick} customId="clickme-button">
+        Click me!
+      </Button>
     </ActionRow>
   );
 

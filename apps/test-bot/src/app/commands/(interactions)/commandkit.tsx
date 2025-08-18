@@ -43,36 +43,16 @@ export const command: CommandData = {
 // }
 
 export async function chatInput({ interaction }: ChatInputCommandContext) {
-  // await interaction.deferReply();
-
-  // await interaction.editReply({
-  //   content: 'Click the button below to test CommandKit buttons.',
-  //   components: <ButtonGrid />,
-  // });
-
-  const firstRow = (
+  const row = (
     <ActionRow>
-      <Button style={ButtonStyle.Primary} customId="button-1">
-        Primary Action
+      <Button disabled customId="disabled">
+        Cannot Click
       </Button>
-      <Button style={ButtonStyle.Secondary} customId="button-2">
-        Secondary Action
-      </Button>
-    </ActionRow>
-  );
-
-  const secondRow = (
-    <ActionRow>
-      <Button style={ButtonStyle.Success} customId="button-3">
-        Confirm
-      </Button>
-      <Button style={ButtonStyle.Danger} customId="button-4">
-        Cancel
-      </Button>
+      <Button customId="enabled">Can Click</Button>
     </ActionRow>
   );
 
   await interaction.reply({
-    components: [firstRow, secondRow],
+    components: [row],
   });
 }
