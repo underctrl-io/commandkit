@@ -6,6 +6,8 @@ import {
   ChatInputCommandContext,
   StringSelectMenu,
   StringSelectMenuOption,
+  OnStringSelectMenuKitSubmit,
+  ChatInputCommand,
 } from 'commandkit';
 import { ButtonStyle, MessageFlags } from 'discord.js';
 
@@ -42,17 +44,37 @@ export const command: CommandData = {
 //   );
 // }
 
-export async function chatInput({ interaction }: ChatInputCommandContext) {
-  const row = (
+const handleSelect: OnStringSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const selections = interaction.values;
+  await interaction.reply({
+    content: `You selected: ${selections.join(', ')}`,
+    flags: MessageFlags.Ephemeral,
+  });
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const selectMenu = (
     <ActionRow>
-      <Button disabled customId="disabled">
-        Cannot Click
-      </Button>
-      <Button customId="enabled">Can Click</Button>
+      <StringSelectMenu
+        placeholder="Choose multiple options"
+        minValues={1}
+        maxValues={3}
+        onSelect={handleSelect}
+      >
+        <StringSelectMenuOption label="Pizza" value="pizza" emoji="🍕" />
+        <StringSelectMenuOption label="Burger" value="burger" emoji="🍔" />
+        <StringSelectMenuOption label="Pasta" value="pasta" emoji="🍝" />
+        <StringSelectMenuOption label="Sushi" value="sushi" emoji="🍣" />
+      </StringSelectMenu>
     </ActionRow>
   );
 
   await interaction.reply({
-    components: [row],
+    content: 'Select your favorite foods (1-3 options):',
+    components: [selectMenu],
   });
-}
+};

@@ -11,11 +11,9 @@ The most common type of select menu that allows users to select from
 predefined string options:
 
 ```tsx title="src/app/commands/string-select.tsx"
-import type {
-  ChatInputCommand,
-  OnStringSelectMenuKitSubmit,
-} from 'commandkit';
 import {
+  type ChatInputCommand,
+  type OnStringSelectMenuKitSubmit,
   ActionRow,
   StringSelectMenu,
   StringSelectMenuOption,
@@ -31,6 +29,8 @@ const handleSelect: OnStringSelectMenuKitSubmit = async (
     content: `You selected: ${selection}`,
     flags: MessageFlags.Ephemeral,
   });
+
+  // Clean up the select menu context
   context.dispose();
 };
 
@@ -77,11 +77,12 @@ export const chatInput: ChatInputCommand = async ({
 Allows users to select a channel from the server:
 
 ```tsx title="src/app/commands/channel-select.tsx"
-import type {
-  ChatInputCommand,
-  OnChannelSelectMenuKitSubmit,
+import {
+  type ChatInputCommand,
+  type OnChannelSelectMenuKitSubmit,
+  ActionRow,
+  ChannelSelectMenu,
 } from 'commandkit';
-import { ActionRow, ChannelSelectMenu } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
 const handleSelect: OnChannelSelectMenuKitSubmit = async (
@@ -93,6 +94,8 @@ const handleSelect: OnChannelSelectMenuKitSubmit = async (
     content: `Selected channel: <#${channel}>`,
     flags: MessageFlags.Ephemeral,
   });
+
+  // Clean up the select menu context
   context.dispose();
 };
 
@@ -120,11 +123,12 @@ export const chatInput: ChatInputCommand = async ({
 Allows users to select a role from the server:
 
 ```tsx title="src/app/commands/role-select.tsx"
-import type {
-  ChatInputCommand,
-  OnRoleSelectMenuKitSubmit,
+import {
+  type ChatInputCommand,
+  type OnRoleSelectMenuKitSubmit,
+  ActionRow,
+  RoleSelectMenu,
 } from 'commandkit';
-import { ActionRow, RoleSelectMenu } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
 const handleSelect: OnRoleSelectMenuKitSubmit = async (
@@ -136,6 +140,8 @@ const handleSelect: OnRoleSelectMenuKitSubmit = async (
     content: `Selected role: <@&${role}>`,
     flags: MessageFlags.Ephemeral,
   });
+
+  // Clean up the select menu context
   context.dispose();
 };
 
@@ -163,11 +169,12 @@ export const chatInput: ChatInputCommand = async ({
 Allows users to select a user from the server:
 
 ```tsx title="src/app/commands/user-select.tsx"
-import type {
-  ChatInputCommand,
-  OnUserSelectMenuKitSubmit,
+import {
+  type ChatInputCommand,
+  type OnUserSelectMenuKitSubmit,
+  ActionRow,
+  UserSelectMenu,
 } from 'commandkit';
-import { ActionRow, UserSelectMenu } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
 const handleSelect: OnUserSelectMenuKitSubmit = async (
@@ -179,6 +186,8 @@ const handleSelect: OnUserSelectMenuKitSubmit = async (
     content: `Selected user: <@${user}>`,
     flags: MessageFlags.Ephemeral,
   });
+
+  // Clean up the select menu context
   context.dispose();
 };
 
@@ -206,11 +215,12 @@ export const chatInput: ChatInputCommand = async ({
 Allows users to select a user or role from the server:
 
 ```tsx title="src/app/commands/mentionable-select.tsx"
-import type {
-  ChatInputCommand,
-  OnMentionableSelectMenuKitSubmit,
+import {
+  type ChatInputCommand,
+  type OnMentionableSelectMenuKitSubmit,
+  ActionRow,
+  MentionableSelectMenu,
 } from 'commandkit';
-import { ActionRow, MentionableSelectMenu } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
 const handleSelect: OnMentionableSelectMenuKitSubmit = async (
@@ -222,6 +232,8 @@ const handleSelect: OnMentionableSelectMenuKitSubmit = async (
     content: `Selected: <@${mentionable}>`,
     flags: MessageFlags.Ephemeral,
   });
+
+  // Clean up the select menu context
   context.dispose();
 };
 
@@ -250,11 +262,9 @@ You can allow multiple selections by setting the `minValues` and
 `maxValues` properties:
 
 ```tsx title="src/app/commands/multi-select.tsx"
-import type {
-  ChatInputCommand,
-  OnStringSelectMenuKitSubmit,
-} from 'commandkit';
 import {
+  type ChatInputCommand,
+  type OnStringSelectMenuKitSubmit,
   ActionRow,
   StringSelectMenu,
   StringSelectMenuOption,
@@ -270,6 +280,8 @@ const handleSelect: OnStringSelectMenuKitSubmit = async (
     content: `You selected: ${selections.join(', ')}`,
     flags: MessageFlags.Ephemeral,
   });
+
+  // Clean up the select menu context
   context.dispose();
 };
 
