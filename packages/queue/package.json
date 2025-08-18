@@ -1,6 +1,6 @@
 {
   "name": "@commandkit/queue",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "description": "Service agnostic message queue api for commandkit",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

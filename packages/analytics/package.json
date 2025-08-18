@@ -1,6 +1,6 @@
 {
   "name": "@commandkit/analytics",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "description": "Analytics providers for CommandKit",
   "files": [
     "dist"
