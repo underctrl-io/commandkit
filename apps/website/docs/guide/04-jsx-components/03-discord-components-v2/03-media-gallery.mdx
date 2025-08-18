@@ -30,7 +30,6 @@ export const chatInput: ChatInputCommand = async ({
     <MediaGallery>
       {images.map((url, index) => (
         <MediaGalleryItem
-          key={index}
           url={url}
           description={`Avatar ${index + 1}`}
         />

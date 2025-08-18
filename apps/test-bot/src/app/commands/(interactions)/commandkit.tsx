@@ -15,6 +15,8 @@ import {
   TextDisplay,
   Container,
   Separator,
+  MediaGallery,
+  MediaGalleryItem,
 } from 'commandkit';
 import {
   ButtonStyle,
@@ -57,34 +59,23 @@ export const command: CommandData = {
 // }
 
 export const chatInput: ChatInputCommand = async ({ interaction }) => {
-  const headerContainer = (
-    <Container accentColor={Colors.Blue}>
-      <TextDisplay content="# Bot Status Report" />
-      <TextDisplay
-        content={`Generated on <t:${Math.floor(Date.now() / 1000)}:F>`}
-      />
-    </Container>
-  );
+  const images = [
+    'https://cdn.discordapp.com/embed/avatars/0.png',
+    'https://cdn.discordapp.com/embed/avatars/1.png',
+    'https://cdn.discordapp.com/embed/avatars/2.png',
+  ];
 
-  const statsContainer = (
-    <Container accentColor={Colors.Green}>
-      <TextDisplay content="## Server Statistics" />
-      <TextDisplay content="**Servers:** 50" />
-      <TextDisplay content="**Users:** 15,000" />
-      <TextDisplay content="**Commands executed:** 1,250 today" />
-    </Container>
-  );
-
-  const alertsContainer = (
-    <Container accentColor={Colors.Yellow}>
-      <TextDisplay content="## System Alerts" />
-      <TextDisplay content="⚠️ Scheduled maintenance in 2 hours" />
-      <TextDisplay content="✅ All systems operational" />
-    </Container>
-  );
+  const components = [
+    <TextDisplay content="# Discord Avatars Gallery" />,
+    <MediaGallery>
+      {images.map((url, index) => (
+        <MediaGalleryItem url={url} description={`Avatar ${index + 1}`} />
+      ))}
+    </MediaGallery>,
+  ];
 
   await interaction.reply({
-    components: [headerContainer, statsContainer, alertsContainer],
+    components: components,
     flags: MessageFlags.IsComponentsV2,
   });
 };
