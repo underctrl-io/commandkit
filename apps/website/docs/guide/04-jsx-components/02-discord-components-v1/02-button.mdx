@@ -8,7 +8,7 @@ emojis.
 
 ## Basic usage
 
-```tsx title="src/app/commands/button-example.ts"
+```tsx title="src/app/commands/button-example.tsx"
 import type { ChatInputCommand } from 'commandkit';
 import { ActionRow, Button } from 'commandkit';
 
@@ -32,7 +32,7 @@ export const chatInput: ChatInputCommand = async ({
 
 Discord provides several built-in button styles:
 
-```tsx title="src/app/commands/button-styles.ts"
+```tsx title="src/app/commands/button-styles.tsx"
 import type { ChatInputCommand } from 'commandkit';
 import { ActionRow, Button } from 'commandkit';
 
@@ -59,7 +59,7 @@ export const chatInput: ChatInputCommand = async ({
 
 Link buttons redirect users to external URLs:
 
-```tsx title="src/app/commands/link-button.ts"
+```tsx title="src/app/commands/link-button.tsx"
 import type { ChatInputCommand } from 'commandkit';
 import { ActionRow, Button } from 'commandkit';
 
@@ -85,7 +85,7 @@ export const chatInput: ChatInputCommand = async ({
 
 Add emojis to make your buttons more visually appealing:
 
-```tsx title="src/app/commands/emoji-button.ts"
+```tsx title="src/app/commands/emoji-button.tsx"
 import type { ChatInputCommand } from 'commandkit';
 import { ActionRow, Button } from 'commandkit';
 
@@ -110,7 +110,7 @@ export const chatInput: ChatInputCommand = async ({
 
 Disable buttons to prevent interaction:
 
-```tsx title="src/app/commands/disabled-button.ts"
+```tsx title="src/app/commands/disabled-button.tsx"
 import type { ChatInputCommand } from 'commandkit';
 import { ActionRow, Button } from 'commandkit';
 
@@ -135,7 +135,7 @@ export const chatInput: ChatInputCommand = async ({
 
 Handle button interactions with the `onClick` prop:
 
-```tsx title="src/app/commands/interactive-button.ts"
+```tsx title="src/app/commands/interactive-button.tsx"
 import type { ChatInputCommand, OnButtonKitClick } from 'commandkit';
 import { ActionRow, Button } from 'commandkit';
 import { MessageFlags } from 'discord.js';

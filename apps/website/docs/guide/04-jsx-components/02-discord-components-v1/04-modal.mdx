@@ -7,7 +7,7 @@ appear as popups in Discord.
 
 ## Basic usage
 
-```tsx title="src/app/commands/user-profile.ts"
+```tsx title="src/app/commands/user-profile.tsx"
 import type { ChatInputCommand, OnModalKitSubmit } from 'commandkit';
 import { Modal, ShortInput, ParagraphInput } from 'commandkit';
 import { MessageFlags } from 'discord.js';
@@ -57,7 +57,7 @@ export const chatInput: ChatInputCommand = async ({
 
 For single-line text input:
 
-```tsx title="src/app/commands/username.ts"
+```tsx title="src/app/commands/username.tsx"
 import type { ChatInputCommand, OnModalKitSubmit } from 'commandkit';
 import { Modal, ShortInput } from 'commandkit';
 import { MessageFlags } from 'discord.js';
@@ -100,7 +100,7 @@ export const chatInput: ChatInputCommand = async ({
 
 For multi-line text input:
 
-```tsx title="src/app/commands/feedback.ts"
+```tsx title="src/app/commands/feedback.tsx"
 import type { ChatInputCommand, OnModalKitSubmit } from 'commandkit';
 import { Modal, ParagraphInput } from 'commandkit';
 import { MessageFlags } from 'discord.js';
