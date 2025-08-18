@@ -12,9 +12,7 @@ This is an experimental feature and is subject to change.
 
 :::
 
-## Architecture Overview
-
-The AI system consists of several key components:
+## Architecture overview
 
 ```mermaid
 graph TD
@@ -31,16 +29,16 @@ graph TD
     K[AI Commands] --> F
 ```
 
-AI plugin basically acts as a smart command handler that decides which
-command to execute based on the given prompt. Similarly, the AI
-commands are basically an abstraction for tool calling feature of the
-large language models. This plugin uses the
-[ai sdk](https://ai-sdk.dev) under the hood to interact with large
+The `@commandkit/ai` plugin basically acts as a smart command handler
+that decides which command to execute based on the given prompt.
+Similarly, the AI commands are basically an abstraction for tool
+calling feature of the large language models. This plugin uses the
+[AI SDK](https://ai-sdk.dev) under the hood to interact with large
 language models.
 
 ## Installation
 
-Install the AI plugin and your preferred AI SDK:
+Install the plugin and your preferred AI SDK:
 
 ```bash npm2yarn
 npm install @commandkit/ai
