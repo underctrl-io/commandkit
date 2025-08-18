@@ -40,16 +40,26 @@ builders:
 ## Example usage
 
 ```tsx
-import { Button, ActionRow } from 'commandkit';
+import {
+  Container,
+  TextDisplay,
+  ActionRow,
+  Button,
+} from 'commandkit';
+import { ButtonStyle } from 'discord.js';
 
 const message = (
   <Container>
     <TextDisplay>Welcome to our server!</TextDisplay>
     <ActionRow>
-      <Button style="primary">Click me!</Button>
+      <Button style={ButtonStyle.Primary}>Click me!</Button>
     </ActionRow>
   </Container>
 );
+
+interaction.reply({
+  components: [message],
+});
 ```
 
 ## JSX fragments
@@ -64,4 +74,8 @@ const elements = (
     <TextDisplay>Second message</TextDisplay>
   </>
 );
+
+interaction.reply({
+  components: elements,
+});
 ```

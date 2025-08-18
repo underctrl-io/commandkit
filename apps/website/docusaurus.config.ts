@@ -34,16 +34,19 @@ const config: Config = {
       'classic',
       {
         docs: {
-          lastVersion: '0.1.10',
+          lastVersion: 'current',
           versions: {
             current: {
-              label: 'v1',
+              label: '1.x',
               // path: 'v1',
-              badge: false,
+              badge: true,
+              banner: 'none',
             },
             '0.1.10': {
-              label: 'v0.1.10',
+              label: '0.1.10',
               path: 'v0',
+              badge: true,
+              banner: 'none',
             },
           },
           sidebarPath: './sidebars.ts',
@@ -140,8 +143,8 @@ const config: Config = {
           type: 'docsVersionDropdown',
           position: 'right',
           versions: {
-            current: { label: 'v1' },
-            '0.1.10': { label: 'v0' },
+            current: { label: '1.x' },
+            '0.1.10': { label: '0.1.10' },
           },
         },
         {
