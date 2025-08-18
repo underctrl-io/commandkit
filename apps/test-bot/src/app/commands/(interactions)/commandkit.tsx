@@ -8,6 +8,10 @@ import {
   StringSelectMenuOption,
   OnStringSelectMenuKitSubmit,
   ChatInputCommand,
+  OnModalKitSubmit,
+  Modal,
+  ShortInput,
+  ParagraphInput,
 } from 'commandkit';
 import { ButtonStyle, MessageFlags } from 'discord.js';
 
@@ -44,37 +48,34 @@ export const command: CommandData = {
 //   );
 // }
 
-const handleSelect: OnStringSelectMenuKitSubmit = async (
-  interaction,
-  context,
-) => {
-  const selections = interaction.values;
+const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
+  const name = interaction.fields.getTextInputValue('name');
+  const description = interaction.fields.getTextInputValue('description');
+
   await interaction.reply({
-    content: `You selected: ${selections.join(', ')}`,
+    content: `**Profile Created!**\n**Name:** ${name}\n**Description:** ${description}`,
     flags: MessageFlags.Ephemeral,
   });
+
   context.dispose();
 };
 
 export const chatInput: ChatInputCommand = async ({ interaction }) => {
-  const selectMenu = (
-    <ActionRow>
-      <StringSelectMenu
-        placeholder="Choose multiple options"
-        minValues={1}
-        maxValues={3}
-        onSelect={handleSelect}
-      >
-        <StringSelectMenuOption label="Pizza" value="pizza" emoji="🍕" />
-        <StringSelectMenuOption label="Burger" value="burger" emoji="🍔" />
-        <StringSelectMenuOption label="Pasta" value="pasta" emoji="🍝" />
-        <StringSelectMenuOption label="Sushi" value="sushi" emoji="🍣" />
-      </StringSelectMenu>
-    </ActionRow>
+  const modal = (
+    <Modal title="User Profile" onSubmit={handleSubmit}>
+      <ShortInput
+        customId="name"
+        label="Name"
+        placeholder="Enter your name"
+        required
+      />
+      <ParagraphInput
+        customId="description"
+        label="Description"
+        placeholder="Tell us about yourself"
+      />
+    </Modal>
   );
 
-  await interaction.reply({
-    content: 'Select your favorite foods (1-3 options):',
-    components: [selectMenu],
-  });
+  await interaction.showModal(modal);
 };
