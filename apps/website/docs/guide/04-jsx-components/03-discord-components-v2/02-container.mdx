@@ -8,8 +8,11 @@ organize and style multiple components together.
 ## Basic usage
 
 ```tsx title="src/app/commands/container-example.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { Container, TextDisplay } from 'commandkit';
+import {
+  type ChatInputCommand,
+  Container,
+  TextDisplay,
+} from 'commandkit';
 import { Colors, MessageFlags } from 'discord.js';
 
 export const chatInput: ChatInputCommand = async ({
@@ -35,8 +38,11 @@ The `Container` component accepts an `accentColor` prop that can be
 used to customize its appearance:
 
 ```tsx title="src/app/commands/styled-container.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { Container, TextDisplay } from 'commandkit';
+import {
+  type ChatInputCommand,
+  Container,
+  TextDisplay,
+} from 'commandkit';
 import { Colors, MessageFlags } from 'discord.js';
 
 export const chatInput: ChatInputCommand = async ({
@@ -69,8 +75,12 @@ export const chatInput: ChatInputCommand = async ({
 You can nest various components inside a Container:
 
 ```tsx title="src/app/commands/nested-container.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { Container, TextDisplay, Separator } from 'commandkit';
+import {
+  type ChatInputCommand,
+  Container,
+  TextDisplay,
+  Separator,
+} from 'commandkit';
 import {
   Colors,
   MessageFlags,
@@ -109,8 +119,11 @@ export const chatInput: ChatInputCommand = async ({
 You can use multiple containers to organize different sections:
 
 ```tsx title="src/app/commands/multi-container.tsx"
-import type { ChatInputCommand } from 'commandkit';
-import { Container, TextDisplay } from 'commandkit';
+import {
+  type ChatInputCommand,
+  Container,
+  TextDisplay,
+} from 'commandkit';
 import { Colors, MessageFlags } from 'discord.js';
 
 export const chatInput: ChatInputCommand = async ({
@@ -119,7 +132,9 @@ export const chatInput: ChatInputCommand = async ({
   const headerContainer = (
     <Container accentColor={Colors.Blue}>
       <TextDisplay content="# Bot Status Report" />
-      <TextDisplay content="*Generated on <t:${Math.floor(Date.now() / 1000)}:F>*" />
+      <TextDisplay
+        content={`Generated on <t:${Math.floor(Date.now() / 1000)}:F>`}
+      />
     </Container>
   );
 

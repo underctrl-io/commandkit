@@ -12,8 +12,16 @@ import {
   Modal,
   ShortInput,
   ParagraphInput,
+  TextDisplay,
+  Container,
+  Separator,
 } from 'commandkit';
-import { ButtonStyle, MessageFlags } from 'discord.js';
+import {
+  ButtonStyle,
+  Colors,
+  MessageFlags,
+  SeparatorSpacingSize,
+} from 'discord.js';
 
 export const command: CommandData = {
   name: 'commandkit',
@@ -48,34 +56,35 @@ export const command: CommandData = {
 //   );
 // }
 
-const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
-  const name = interaction.fields.getTextInputValue('name');
-  const description = interaction.fields.getTextInputValue('description');
-
-  await interaction.reply({
-    content: `**Profile Created!**\n**Name:** ${name}\n**Description:** ${description}`,
-    flags: MessageFlags.Ephemeral,
-  });
-
-  context.dispose();
-};
-
 export const chatInput: ChatInputCommand = async ({ interaction }) => {
-  const modal = (
-    <Modal title="User Profile" onSubmit={handleSubmit}>
-      <ShortInput
-        customId="name"
-        label="Name"
-        placeholder="Enter your name"
-        required
+  const headerContainer = (
+    <Container accentColor={Colors.Blue}>
+      <TextDisplay content="# Bot Status Report" />
+      <TextDisplay
+        content={`Generated on <t:${Math.floor(Date.now() / 1000)}:F>`}
       />
-      <ParagraphInput
-        customId="description"
-        label="Description"
-        placeholder="Tell us about yourself"
-      />
-    </Modal>
+    </Container>
   );
 
-  await interaction.showModal(modal);
+  const statsContainer = (
+    <Container accentColor={Colors.Green}>
+      <TextDisplay content="## Server Statistics" />
+      <TextDisplay content="**Servers:** 50" />
+      <TextDisplay content="**Users:** 15,000" />
+      <TextDisplay content="**Commands executed:** 1,250 today" />
+    </Container>
+  );
+
+  const alertsContainer = (
+    <Container accentColor={Colors.Yellow}>
+      <TextDisplay content="## System Alerts" />
+      <TextDisplay content="⚠️ Scheduled maintenance in 2 hours" />
+      <TextDisplay content="✅ All systems operational" />
+    </Container>
+  );
+
+  await interaction.reply({
+    components: [headerContainer, statsContainer, alertsContainer],
+    flags: MessageFlags.IsComponentsV2,
+  });
 };
