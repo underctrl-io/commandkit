@@ -1,13 +1,16 @@
-name: Publish latest builds
+name: Publish release candidate builds
 
 on:
-  release:
-    types: [created]
   workflow_dispatch:
+    inputs:
+      rc_version:
+        description: 'Release candidate version number (e.g., 1 for -rc1, 2 for -rc2)'
+        required: true
+        type: string
 
 jobs:
   publish:
-    name: Publish latest builds
+    name: Publish release candidate builds
     runs-on: ubuntu-latest
     steps:
       - uses: pnpm/action-setup@v4
@@ -23,6 +26,31 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Validate RC version input
+        run: |
+          if ! [[ "${{ github.event.inputs.rc_version }}" =~ ^[0-9]+$ ]]; then
+            echo "❌ RC version must be a positive integer"
+            exit 1
+          fi
+
+      - name: Update package versions
+        run: |
+          rc_suffix="-rc${{ github.event.inputs.rc_version }}"
+          echo "Adding suffix: $rc_suffix"
+
+          for dir in packages/*; do
+            [ -f "$dir/package.json" ] || continue
+            echo "Updating $dir/package.json..."
+            node -e "
+              const fs = require('fs');
+              const path = './$dir/package.json';
+              const pkg = require(path);
+              pkg.version += '$rc_suffix';
+              fs.writeFileSync(path, JSON.stringify(pkg, null, 2));
+              console.log('Updated ' + pkg.name + ' to version ' + pkg.version);
+            "
+          done
 
       - name: Build packages
         run: pnpm dlx turbo build --filter='./packages/*'
@@ -54,8 +82,8 @@ jobs:
             if npm view "$name@$VERSION" version >/dev/null 2>&1; then
               echo "📦 $name@$VERSION already exists on npm, skipping..."
             else
-              if pnpm --filter="$name" publish --no-git-checks --access public; then
-                echo "✅ Published $name@$VERSION"
+              if pnpm --filter="$name" publish --no-git-checks --access public --tag next; then
+                echo "✅ Published $name@$VERSION under 'next' tag"
               else
                 if npm view "$name@$VERSION" version >/dev/null 2>&1; then
                   echo "📦 $name@$VERSION was published by another process, skipping..."
@@ -66,3 +94,11 @@ jobs:
               fi
             fi
           done
+
+      - name: Summary
+        run: |
+          echo "🎉 Release candidate build completed!"
+          echo "📋 Summary:"
+          echo "   RC Version: ${{ github.event.inputs.rc_version }}"
+          echo "   Tag: next"
+          echo "   Suffix: -rc${{ github.event.inputs.rc_version }}"

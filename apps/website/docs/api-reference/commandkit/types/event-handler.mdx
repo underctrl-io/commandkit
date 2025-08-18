@@ -1,5 +1,5 @@
 ---
-title: "CommandData"
+title: "EventHandler"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,18 +11,14 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## CommandData
+## EventHandler
 
-<GenerationInfo sourceFile="packages/commandkit/src/types.ts" sourceLine="48" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/types.ts" sourceLine="59" packageName="commandkit" />
 
-Represents a command that can be executed by CommandKit.
+Represents an event handler for a specific event.
 
 ```ts title="Signature"
-type CommandData = Prettify<
-  Omit<RESTPostAPIApplicationCommandsJSONBody, 'description'> & {
-    description?: string;
-    guilds?: string[];
-    aliases?: string[];
-  }
->
+type EventHandler<K extends keyof ClientEvents> = (
+  ...args: ClientEvents[K]
+) => void | Promise<void>
 ```

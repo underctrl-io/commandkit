@@ -30,8 +30,7 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "dev": "tsc --watch",
-    "build": "tsc",
-    "publish-package": "npm publish"
+    "build": "tsc"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
