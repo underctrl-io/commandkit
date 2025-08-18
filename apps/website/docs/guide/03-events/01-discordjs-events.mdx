@@ -111,7 +111,7 @@ const handler: EventHandler<'messageUpdate'> = (
   newMessage,
 ) => {
   console.log(
-    `Message from ${oldMessage.author.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
+    `Message from ${oldMessage.author?.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
   );
 };
 
