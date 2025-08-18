@@ -28,6 +28,7 @@ export * from './app/interrupt/signals';
 export type { CommandKitHMREvent } from './utils/dev-hooks';
 export * from './utils/constants';
 export * from './app/events/EventWorkerContext';
+export { CommandKitErrorCodes, isErrorType } from './utils/error-codes';
 export { Collection, type Client } from 'discord.js';
 
 // cli

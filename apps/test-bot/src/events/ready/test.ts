@@ -1,5 +1,9 @@
-import { Logger } from 'commandkit';
+import { type EventHandler, Logger } from 'commandkit';
 
-export default function onReady() {
-  Logger.log('Ready from legacy event handler');
-}
+export const once = true;
+
+const handler: EventHandler<'ready'> = (client, c, commandkit) => {
+  Logger.log(`Ready from legacy event handler: ${client.user.username}`);
+};
+
+export default handler;
