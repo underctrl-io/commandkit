@@ -34,7 +34,7 @@ const config: Config = {
       'classic',
       {
         docs: {
-          lastVersion: 'current',
+          lastVersion: '0.1.10',
           versions: {
             current: {
               label: 'v1',
@@ -44,7 +44,6 @@ const config: Config = {
             '0.1.10': {
               label: 'v0.1.10',
               path: 'v0',
-              banner: 'unmaintained',
             },
           },
           sidebarPath: './sidebars.ts',
@@ -142,7 +141,7 @@ const config: Config = {
           position: 'right',
           versions: {
             current: { label: 'v1' },
-            '0.1.10': { label: 'v0 ⛔' },
+            '0.1.10': { label: 'v0' },
           },
         },
         {
