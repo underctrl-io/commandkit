@@ -285,17 +285,30 @@ export class CommandsRouter {
   private applyMiddlewares() {
     this.commands.forEach((command) => {
       const commandPath = command.parentPath;
-      const samePathMiddlewares = Array.from(this.middlewares.values())
-        .filter((middleware) => {
-          if (middleware.global) return true;
-          if (middleware.command) return middleware.command === command.name;
-          return middleware.parentPath === commandPath;
-        })
+      const allMiddlewares = Array.from(this.middlewares.values());
+
+      const commandSpecificMiddlewares = allMiddlewares
+        .filter((middleware) => middleware.command === command.name)
         .map((middleware) => middleware.id);
 
-      command.middlewares = Array.from(
-        new Set([...command.middlewares, ...samePathMiddlewares]),
-      );
+      const directorySpecificMiddlewares = allMiddlewares
+        .filter(
+          (middleware) =>
+            !middleware.global &&
+            !middleware.command &&
+            middleware.parentPath === commandPath,
+        )
+        .map((middleware) => middleware.id);
+
+      const globalMiddlewares = allMiddlewares
+        .filter((middleware) => middleware.global)
+        .map((middleware) => middleware.id);
+
+      command.middlewares = [
+        ...commandSpecificMiddlewares,
+        ...directorySpecificMiddlewares,
+        ...globalMiddlewares,
+      ];
     });
   }
 
