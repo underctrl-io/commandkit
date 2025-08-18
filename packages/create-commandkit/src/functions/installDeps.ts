@@ -2,7 +2,7 @@ import { type IOType, execSync } from 'node:child_process';
 import ora from 'ora';
 
 import type { Language, PackageManager } from '../types';
-import { getCommandKitVersion } from '../utils';
+import { getCommandKitVersion } from '../utils.js';
 
 const getBaseDependencies = () => [
   `commandkit${getCommandKitVersion()}`,
