@@ -57,5 +57,5 @@ export type CommandData = Prettify<
  * Represents an event handler for a specific event.
  */
 export type EventHandler<K extends keyof ClientEvents> = (
-  ...args: ClientEvents[K]
+  ...args: [...ClientEvents[K], Client<true>, CommandKit]
 ) => void | Promise<void>;

@@ -204,7 +204,7 @@ export class AppEventsHandler {
           async () => {
             for (const listener of onListeners) {
               try {
-                await listener.handler(...args);
+                await listener.handler(...args, client, this.commandkit);
               } catch (e) {
                 // Check if this is a stop propagation signal
                 if (isErrorType(e, CommandKitErrorCodes.StopEvents)) {
@@ -270,7 +270,7 @@ export class AppEventsHandler {
                 // Skip if already executed (shouldn't happen with proper .once registration, but just in case)
                 if (executedOnceListeners.has(listener.handler)) return;
 
-                await listener.handler(...args);
+                await listener.handler(...args, client, this.commandkit);
                 executedOnceListeners.add(listener.handler);
               } catch (e) {
                 // Check if this is a stop propagation signal

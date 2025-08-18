@@ -53,17 +53,17 @@ To create an event handler, create a folder inside the
 Discord.js. This example will use the `"ready"` event.
 
 ```ts title="src/app/events/ready/log.ts"
-import type { Client } from 'commandkit';
+import type { EventHandler } from 'commandkit';
 
-export default function (client: Client<true>) {
+const handler: EventHandler<'ready'> = (client) => {
   console.log(`🤖 ${client.user.displayName} is online!`);
-}
+};
+
+export default handler;
 ```
 
 That's it! CommandKit will automatically detect this file and register
 it as one of the handler functions for the `"ready"` event.
-
-### Event parameters
 
 Just like the Discord.js `client.on()` method, the parameters you
 receive in your event file will be based on what event you're trying
@@ -71,27 +71,54 @@ to handle. In the example above, the `"ready"` event should give you a
 [`Client`](https://discord.js.org/docs/packages/discord.js/main/Client:Class)
 instance.
 
-If you were to, for example, handle the `"messageCreate"` event, you
-would get a
-[`Message`](https://discord.js.org/docs/packages/discord.js/main/Message:Class)
-instance.
+:::tip
 
-### Events with multiple parameters
+By using the
+[`EventHandler`](../../api-reference/commandkit/types/event-handler.mdx)
+type, you can get type safety for the parameters you receive in your
+event file, without having to manually typing each Discord.js type
+definition.
+
+:::
+
+## Once events
+
+You may want to have some events to only get called once. For this,
+you can export a variable called `once` from your event function file.
+
+```ts title="src/app/events/ready/log.ts"
+import type { EventHandler } from 'commandkit';
+
+export const once = true;
+
+const handler: EventHandler<'ready'> = (client) => {
+  console.log(`🤖 ${client.user.displayName} is online!`);
+};
+
+export default handler;
+```
+
+## Events with multiple parameter
 
 Some Discord.js events have multiple parameters, such as the
 `"messageUpdate"` event.
 
 ```ts title="src/app/events/messageUpdate/log-message-update.ts"
-import type { Message } from 'discord.js';
+import type { EventHandler } from 'commandkit';
 
-export default function (oldMessage: Message, newMessage: Message) {
+const handler: EventHandler<'messageUpdate'> = (
+  oldMessage,
+  newMessage,
+) => {
   console.log(
     `Message from ${oldMessage.author.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
   );
-}
+};
+
+export default handler;
 ```
 
-### Additional parameters
+## Additional parameters
 
 Outside of the parameters provided by Discord.js, CommandKit will pass
 additional parameters to the event handler, including a
