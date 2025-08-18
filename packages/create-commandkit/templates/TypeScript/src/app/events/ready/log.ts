@@ -1,6 +1,8 @@
-import type { Client } from 'discord.js';
+import type { EventHandler } from 'commandkit';
 import { Logger } from 'commandkit/logger';
 
-export default function log(client: Client<true>) {
+const handler: EventHandler<'ready'> = async (client) => {
   Logger.info(`Logged in as ${client.user.username}!`);
-}
+};
+
+export default handler;
