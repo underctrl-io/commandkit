@@ -1,19 +1,7 @@
-import {
-  EmbedBuilder,
-  PermissionFlags,
-  PermissionFlagsBits,
-  PermissionResolvable,
-} from 'discord.js';
-import { MiddlewareContext } from '../commands/Context';
+import { EmbedBuilder, MessageFlags } from 'discord.js';
 import { getConfig } from '../../config/config';
-
-const findName = (flags: PermissionFlags, flag: PermissionResolvable) => {
-  if (typeof flag === 'string') return flag;
-
-  return (
-    Object.entries(flags).find(([_, value]) => value === flag)?.[0] ?? `${flag}`
-  );
-};
+import { Logger } from '../../logger/Logger';
+import { MiddlewareContext } from '../commands/Context';
 
 export const middlewareId = crypto.randomUUID();
 
@@ -22,55 +10,85 @@ export const middlewareId = crypto.randomUUID();
  * @ignore
  */
 export async function beforeExecute(ctx: MiddlewareContext) {
-  if (getConfig().disablePermissionsMiddleware) return;
+  if (getConfig().disablePermissionsMiddleware) {
+    return;
+  }
 
-  const { interaction, command } = ctx;
+  const { interaction, message, command } = ctx;
 
-  if (interaction.isAutocomplete()) return;
-  const userPermissions = interaction.memberPermissions;
-  let userPermissionsRequired = command.metadata?.userPermissions;
+  if (interaction && !interaction.isCommand()) {
+    return;
+  }
+
+  if (
+    (interaction && interaction.channel?.isDMBased()) ||
+    (message && message.channel?.isDMBased())
+  ) {
+    const channel = interaction?.channel ?? message?.channel;
+
+    const embed = new EmbedBuilder()
+      .setTitle(':x: Server-only command!')
+      .setDescription('This command can only be used in a server.')
+      .setColor('Red');
+
+    try {
+      if (channel?.isSendable()) {
+        if (interaction && interaction.isRepliable()) {
+          await interaction.reply({
+            embeds: [embed],
+            flags: MessageFlags.Ephemeral,
+          });
+        } else {
+          await message.reply({ embeds: [embed] });
+        }
+      }
+    } catch (error) {
+      Logger.error(
+        `Could not send 'Server-only command' DM to user ${interaction?.user.id ?? message?.author.id} for command ${command.command.name}.`,
+        error,
+      );
+    }
+
+    return ctx.cancel(); // Stop the command from executing
+  }
+
+  const userPermissions =
+    interaction?.memberPermissions ?? message?.member?.permissions;
+  let userPermissionsRequired = command.metadata?.userPermissions ?? [];
   let missingUserPermissions: string[] = [];
 
   if (typeof userPermissionsRequired === 'string') {
     userPermissionsRequired = [userPermissionsRequired];
   }
 
-  const botPermissions = interaction.guild?.members.me?.permissions;
-  let botPermissionsRequired = command.metadata?.botPermissions;
+  const botPermissions =
+    interaction?.guild?.members.me?.permissions ??
+    message?.guild?.members.me?.permissions;
+  let botPermissionsRequired = command.metadata?.botPermissions ?? [];
   let missingBotPermissions: string[] = [];
 
   if (typeof botPermissionsRequired === 'string') {
     botPermissionsRequired = [botPermissionsRequired];
   }
 
-  if (!userPermissionsRequired?.length && !botPermissionsRequired?.length) {
+  if (!userPermissionsRequired.length && !botPermissionsRequired.length) {
     return;
   }
 
-  if (userPermissions && userPermissionsRequired) {
+  if (userPermissionsRequired.length) {
     for (const permission of userPermissionsRequired) {
-      const hasPermission = userPermissions.has(permission);
-
+      const hasPermission = userPermissions?.has(permission);
       if (!hasPermission) {
-        missingUserPermissions.push(
-          typeof permission === 'string'
-            ? permission
-            : findName(PermissionFlagsBits, permission),
-        );
+        missingUserPermissions.push(permission);
       }
     }
   }
 
-  if (botPermissions && botPermissionsRequired) {
+  if (botPermissionsRequired.length) {
     for (const permission of botPermissionsRequired) {
-      const hasPermission = botPermissions.has(permission);
-
+      const hasPermission = botPermissions?.has(permission);
       if (!hasPermission) {
-        missingBotPermissions.push(
-          typeof permission === 'string'
-            ? permission
-            : findName(PermissionFlagsBits, permission),
-        );
+        missingBotPermissions.push(permission);
       }
     }
   }
@@ -79,7 +97,7 @@ export async function beforeExecute(ctx: MiddlewareContext) {
     return;
   }
 
-  // Fix casing. e.g. KickMembers -> Kick Members
+  // Fix permission string. e.g. KickMembers -> Kick Members
   const pattern = /([a-z])([A-Z])|([A-Z]+)([A-Z][a-z])/g;
 
   missingUserPermissions = missingUserPermissions.map((str) =>
@@ -123,6 +141,23 @@ export async function beforeExecute(ctx: MiddlewareContext) {
     .setDescription(embedDescription)
     .setColor('Red');
 
-  await interaction.reply({ embeds: [embed], ephemeral: true });
-  return true;
+  try {
+    if (interaction && interaction.isRepliable()) {
+      await interaction.reply({
+        embeds: [embed],
+        flags: MessageFlags.Ephemeral,
+      });
+    } else if (message && message.channel?.isSendable()) {
+      await message.reply({
+        embeds: [embed],
+      });
+    }
+  } catch (error) {
+    Logger.error(
+      `Could not send 'Not enough permissions' reply to user ${interaction?.user.id ?? message?.author.id} for command ${command.command.name}.`,
+      error,
+    );
+  }
+
+  return ctx.cancel(); // Stop the command from executing
 }

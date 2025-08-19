@@ -4,6 +4,7 @@ import type {
   ClientEvents,
   Interaction,
   PermissionResolvable,
+  PermissionsString,
   RESTPostAPIApplicationCommandsJSONBody,
 } from 'discord.js';
 import type { CommandKit } from './commandkit';
@@ -58,11 +59,11 @@ export interface CommandMetadata {
   /**
    * The user permissions required to execute the command.
    */
-  userPermissions?: PermissionResolvable[];
+  userPermissions?: PermissionsString | PermissionsString[];
   /**
    * The bot permissions required to execute the command.
    */
-  botPermissions?: PermissionResolvable[];
+  botPermissions?: PermissionsString | PermissionsString[];
 }
 
 /**
@@ -71,12 +72,12 @@ export interface CommandMetadata {
 export interface LegacyCommandMetadata {
   /**
    * The aliases of the command.
-   * @deprecated Use `metadata` or `generateMetadata` instead.
+   * @deprecated Use `metadata.aliases` or `generateMetadata` instead.
    */
   aliases?: string[];
   /**
    * The guilds that the command is available in.
-   * @deprecated Use `metadata` or `generateMetadata` instead.
+   * @deprecated Use `metadata.guilds` or `generateMetadata` instead.
    */
   guilds?: string[];
 }

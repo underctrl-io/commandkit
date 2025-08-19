@@ -36,7 +36,7 @@ export function afterExecute(ctx: MiddlewareContext) {
 
 ## Stop command execution
 
-You can stop a command from running by calling `ctx.cancel()` in the
+You can stop a command from running by returning `ctx.cancel()` in the
 `beforeExecute` function.
 
 ```ts title="src/app/commands/+middleware.ts"
@@ -46,7 +46,7 @@ export function beforeExecute(ctx: MiddlewareContext) {
   if (ctx.interaction.user.id !== '1234567890') {
     // Conditionally stop command execution
     console.log(`${ctx.commandName} will not be executed!`);
-    ctx.cancel();
+    return ctx.cancel();
   }
 
   // Continue with command execution

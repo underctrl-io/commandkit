@@ -1,6 +1,7 @@
 import {
   ActionRowBuilder,
   ApplicationCommandOptionType,
+  ApplicationIntegrationType,
   ButtonStyle,
 } from 'discord.js';
 import {
@@ -8,6 +9,8 @@ import {
   ButtonKit,
   ChatInputCommandContext,
   AutocompleteCommandContext,
+  CommandMetadata,
+  MessageCommandContext,
 } from 'commandkit';
 
 export const command: CommandData = {
@@ -22,6 +25,17 @@ export const command: CommandData = {
       required: false,
     },
   ],
+  integration_types: [
+    ApplicationIntegrationType.GuildInstall,
+    ApplicationIntegrationType.UserInstall,
+  ],
+  // guilds: ['1314834483660455938'],
+};
+
+export const metadata: CommandMetadata = {
+  userPermissions: 'Administrator',
+  botPermissions: 'KickMembers',
+  // guilds: ['1314834483660455938'],
 };
 
 const tests = Array.from({ length: 10 }, (_, i) => ({
@@ -41,6 +55,10 @@ export async function autocomplete({
   );
 
   interaction.respond(filtered);
+}
+
+export async function message({ message }: MessageCommandContext) {
+  message.reply('Pong!');
 }
 
 export async function chatInput({

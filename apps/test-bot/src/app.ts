@@ -1,4 +1,4 @@
-import { Client } from 'discord.js';
+import { Client, Partials } from 'discord.js';
 import { Logger, commandkit } from 'commandkit';
 import { setDriver } from '@commandkit/tasks';
 import { SQLiteDriver } from '@commandkit/tasks/sqlite';
@@ -11,7 +11,9 @@ const client = new Client({
     'GuildMessages',
     'MessageContent',
     'GuildMessageTyping',
+    'DirectMessages',
   ],
+  partials: [Partials.Channel, Partials.Message, Partials.User],
 });
 
 setDriver(new SQLiteDriver('./tasks.db'));
