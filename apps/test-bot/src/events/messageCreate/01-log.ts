@@ -3,6 +3,7 @@ import {
   stopEvents,
   isErrorType,
   CommandKitErrorCodes,
+  Logger,
 } from 'commandkit';
 
 const handler: EventHandler<'messageCreate'> = (message) => {
@@ -12,15 +13,15 @@ const handler: EventHandler<'messageCreate'> = (message) => {
     stopEvents(); // conditionally stop the event chain
   } catch (error) {
     if (isErrorType(error, CommandKitErrorCodes.StopEvents)) {
-      console.log('Stopping event chain');
+      Logger.log('Stopping event chain');
       // if stopEvents() is called in the try block, throw it so CommandKit can stop the event chain
       throw error;
     }
 
-    console.log('Not stopping event chain');
+    Logger.log('Not stopping event chain');
     // this means that the code threw the error, and stopEvents() was not called
     // the rest of the event handlers will be executed as normal
-    console.error(error);
+    Logger.error(error);
   }
 };
 

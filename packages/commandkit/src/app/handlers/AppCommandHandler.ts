@@ -1,5 +1,4 @@
 import {
-  ApplicationCommandType,
   AutocompleteInteraction,
   Awaitable,
   Collection,
@@ -13,7 +12,11 @@ import {
 import type { CommandKit } from '../../commandkit';
 import { AsyncFunction, GenericFunction } from '../../context/async-context';
 import { Logger } from '../../logger/Logger';
-import type { CommandData } from '../../types';
+import type {
+  CommandData,
+  CommandMetadata,
+  CommandMetadataFunction,
+} from '../../types';
 import colors from '../../utils/colors';
 import { COMMANDKIT_IS_DEV } from '../../utils/constants';
 import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
@@ -25,6 +28,14 @@ import { MessageCommandParser } from '../commands/MessageCommandParser';
 import { CommandRegistrar } from '../register/CommandRegistrar';
 import { Command, Middleware } from '../router';
 import { getConfig } from '../../config/config';
+import { beforeExecute, middlewareId } from '../middlewares/permissions';
+
+const KNOWN_NON_HANDLER_KEYS = [
+  'command',
+  'generateMetadata',
+  'metadata',
+  'aiConfig',
+];
 
 /**
  * Function type for wrapping command execution with custom logic.
@@ -38,6 +49,8 @@ export type RunCommand = <T extends AsyncFunction>(fn: T) => T;
  */
 export interface AppCommandNative {
   command: CommandData | Record<string, any>;
+  generateMetadata?: CommandMetadataFunction;
+  metadata?: CommandMetadata;
   chatInput?: (ctx: Context) => Awaitable<unknown>;
   autocomplete?: (ctx: Context) => Awaitable<unknown>;
   message?: (ctx: Context) => Awaitable<unknown>;
@@ -73,8 +86,8 @@ interface AppCommandMiddleware {
  */
 export interface LoadedCommand {
   command: Command;
+  metadata: CommandMetadata;
   data: AppCommand;
-  guilds?: string[];
 }
 
 /**
@@ -129,8 +142,22 @@ const commandDataSchema = {
   userContextMenu: (c: unknown) => typeof c === 'function',
 };
 
+/**
+ * @private
+ * @internal
+ */
 export type CommandDataSchema = typeof commandDataSchema;
+
+/**
+ * @private
+ * @internal
+ */
 export type CommandDataSchemaKey = keyof CommandDataSchema;
+
+/**
+ * @private
+ * @internal
+ */
 export type CommandDataSchemaValue = CommandDataSchema[CommandDataSchemaKey];
 
 /**
@@ -444,8 +471,8 @@ export class AppCommandHandler {
 
             if (
               source.guildId &&
-              loadedCommand.guilds?.length &&
-              !loadedCommand.guilds.includes(source.guildId!)
+              loadedCommand.metadata?.guilds?.length &&
+              !loadedCommand.metadata?.guilds.includes(source.guildId!)
             ) {
               return null;
             }
@@ -499,8 +526,8 @@ export class AppCommandHandler {
       (source instanceof CommandInteraction ||
         source instanceof AutocompleteInteraction) &&
       source.guildId &&
-      loadedCommand.guilds?.length &&
-      !loadedCommand.guilds.includes(source.guildId)
+      loadedCommand.metadata?.guilds?.length &&
+      !loadedCommand.metadata?.guilds.includes(source.guildId)
     ) {
       return null;
     }
@@ -514,6 +541,24 @@ export class AppCommandHandler {
       if (middleware) {
         middlewares.push(middleware);
       }
+    }
+
+    if (!getConfig().disablePermissionsMiddleware) {
+      middlewares.push({
+        data: {
+          // @ts-ignore
+          beforeExecute,
+        },
+        middleware: {
+          command: null,
+          global: true,
+          id: middlewareId,
+          name: 'permissions',
+          parentPath: '',
+          path: '',
+          relativePath: '',
+        },
+      });
     }
 
     // No middleware for subcommands since they inherit from parent command
@@ -536,7 +581,7 @@ export class AppCommandHandler {
       }
 
       // Check aliases for prefix commands
-      const aliases = loadedCommand.data.command.aliases;
+      const aliases = loadedCommand.data.metadata?.aliases;
       if (aliases && Array.isArray(aliases) && aliases.includes(name)) {
         return loadedCommand;
       }
@@ -640,7 +685,7 @@ export class AppCommandHandler {
         (v) => v.data.command.name,
       );
       const aliases = Array.from(this.loadedCommands.values()).flatMap(
-        (v) => v.data.command.aliases || [],
+        (v) => v.metadata.aliases || [],
       );
 
       const allNames = [...commandNames, ...aliases];
@@ -698,6 +743,12 @@ export class AppCommandHandler {
       if (command.path === null) {
         this.loadedCommands.set(id, {
           command,
+          metadata: {
+            guilds: [],
+            aliases: [],
+            userPermissions: [],
+            botPermissions: [],
+          },
           data: {
             command: {
               name: command.name,
@@ -719,6 +770,22 @@ export class AppCommandHandler {
         );
       }
 
+      const metadataFunc = commandFileData.generateMetadata;
+      const metadataObj = commandFileData.metadata;
+
+      if (metadataFunc && metadataObj) {
+        throw new Error(
+          'A command may only export either `generateMetadata` or `metadata`, not both',
+        );
+      }
+
+      const metadata = (metadataFunc ? await metadataFunc() : metadataObj) ?? {
+        aliases: [],
+        guilds: [],
+        userPermissions: [],
+        botPermissions: [],
+      };
+
       // Apply the specified logic for name and description
       const commandName = commandFileData.command.name || command.name;
       const commandDescription =
@@ -729,7 +796,6 @@ export class AppCommandHandler {
         ...commandFileData.command,
         name: commandName,
         description: commandDescription,
-        aliases: commandFileData.command.aliases,
       } as CommandData;
 
       let handlerCount = 0;
@@ -747,7 +813,7 @@ export class AppCommandHandler {
             );
           }
 
-          if (key !== 'command') {
+          if (!KNOWN_NON_HANDLER_KEYS.includes(key)) {
             // command file includes a handler function (chatInput, message, etc)
             handlerCount++;
           }
@@ -770,19 +836,53 @@ export class AppCommandHandler {
         }
       });
 
+      const commandJson =
+        'toJSON' in lastUpdated && typeof lastUpdated.toJSON === 'function'
+          ? lastUpdated.toJSON()
+          : lastUpdated;
+
+      if ('guilds' in commandJson || 'aliases' in commandJson) {
+        Logger.warn(
+          `Command \`${command.name}\` uses deprecated metadata properties. Please update to use the new \`metadata\` object or \`generateMetadata\` function.`,
+        );
+      }
+
       this.loadedCommands.set(id, {
         command,
-        guilds: commandFileData.command.guilds,
+        metadata: {
+          guilds: commandJson.guilds,
+          aliases: commandJson.aliases,
+          ...metadata,
+        },
         data: {
           ...commandFileData,
-          command:
-            'toJSON' in lastUpdated && typeof lastUpdated.toJSON === 'function'
-              ? lastUpdated.toJSON()
-              : lastUpdated,
+          metadata: {
+            guilds: commandJson.guilds,
+            aliases: commandJson.aliases,
+            ...metadata,
+          },
+          command: commandJson,
         },
       });
     } catch (error) {
       Logger.error(`Failed to load command ${command.name} (${id})`, error);
     }
+  }
+
+  /**
+   * Gets the metadata for a command.
+   * @param command - The command name to get metadata for
+   * @returns The command metadata or null if not found
+   */
+  public getMetadataFor(command: string): CommandMetadata | null {
+    const loadedCommand = this.findCommandByName(command);
+    if (!loadedCommand) return null;
+
+    return (loadedCommand.metadata ??= {
+      aliases: [],
+      guilds: [],
+      userPermissions: [],
+      botPermissions: [],
+    });
   }
 }

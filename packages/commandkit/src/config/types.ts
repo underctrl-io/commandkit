@@ -105,6 +105,11 @@ export interface CommandKitConfig {
    */
   disablePrefixCommands?: boolean;
   /**
+   * Whether or not to disable the built-in permissions middleware. This only affects `botPermissions` and `userPermissions` in the command metadata.
+   * @default false
+   */
+  disablePermissionsMiddleware?: boolean;
+  /**
    * Whether or not to show a warning when a prefix command is not found. This only affects development mode.
    * @default true
    */

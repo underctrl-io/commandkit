@@ -3,13 +3,17 @@ import {
   type ChatInputCommand,
   type MessageCommand,
   Logger,
+  CommandMetadata,
 } from 'commandkit';
 
 export const command: CommandData = {
   name: 'server',
   description: 'server command',
-  guilds: [process.env.DEV_GUILD_ID!],
+};
+
+export const metadata: CommandMetadata = {
   aliases: ['s', 'serv'],
+  guilds: [process.env.DEV_GUILD_ID!],
 };
 
 export const chatInput: ChatInputCommand = async (ctx) => {
