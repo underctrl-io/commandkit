@@ -74,6 +74,9 @@ export function defineConfig(
       ...defaultConfig.antiCrashScript,
       ...config.antiCrashScript,
     },
+    disablePermissionsMiddleware:
+      config.disablePermissionsMiddleware ??
+      defaultConfig.disablePermissionsMiddleware,
   };
 
   return defined;

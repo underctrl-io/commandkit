@@ -206,7 +206,9 @@ export class LegacyHandlerPlugin extends RuntimePlugin<LegacyHandlerPluginOption
             }),
           command: command.data,
         } as any,
-        guilds: command.options?.guildOnly ? this.options.devGuildIds : [],
+        metadata: {
+          guilds: command.options?.guildOnly ? this.options.devGuildIds : [],
+        },
       };
 
       (data.data as any).__command = command.options;

@@ -1,6 +1,7 @@
 import {
   ChatInputCommand,
   CommandData,
+  CommandMetadataFunction,
   Container,
   MessageCommand,
   TextDisplay,
@@ -10,7 +11,12 @@ import { Colors, MessageFlags } from 'discord.js';
 export const command: CommandData = {
   name: 'components-test',
   description: 'Test components v2 again',
-  aliases: ['ct'],
+};
+
+export const generateMetadata: CommandMetadataFunction = () => {
+  return {
+    aliases: ['ct'],
+  };
 };
 
 export const chatInput: ChatInputCommand = async (ctx) => {

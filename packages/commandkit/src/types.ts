@@ -3,6 +3,7 @@ import type {
   Client,
   ClientEvents,
   Interaction,
+  PermissionResolvable,
   RESTPostAPIApplicationCommandsJSONBody,
 } from 'discord.js';
 import type { CommandKit } from './commandkit';
@@ -43,14 +44,53 @@ export interface CommandContext<
 }
 
 /**
+ * Represents the command metadata.
+ */
+export interface CommandMetadata {
+  /**
+   * The guilds that the command is available in.
+   */
+  guilds?: string[];
+  /**
+   * The aliases of the command.
+   */
+  aliases?: string[];
+  /**
+   * The user permissions required to execute the command.
+   */
+  userPermissions?: PermissionResolvable[];
+  /**
+   * The bot permissions required to execute the command.
+   */
+  botPermissions?: PermissionResolvable[];
+}
+
+/**
+ * @deprecated Use `CommandMetadata` instead.
+ */
+export interface LegacyCommandMetadata {
+  /**
+   * The aliases of the command.
+   * @deprecated Use `metadata` or `generateMetadata` instead.
+   */
+  aliases?: string[];
+  /**
+   * The guilds that the command is available in.
+   * @deprecated Use `metadata` or `generateMetadata` instead.
+   */
+  guilds?: string[];
+}
+
+/**
  * Represents a command that can be executed by CommandKit.
  */
 export type CommandData = Prettify<
   Omit<RESTPostAPIApplicationCommandsJSONBody, 'description'> & {
+    /**
+     * The description of the command.
+     */
     description?: string;
-    guilds?: string[];
-    aliases?: string[];
-  }
+  } & LegacyCommandMetadata
 >;
 
 /**
@@ -59,3 +99,10 @@ export type CommandData = Prettify<
 export type EventHandler<K extends keyof ClientEvents> = (
   ...args: [...ClientEvents[K], Client<true>, CommandKit]
 ) => void | Promise<void>;
+
+/**
+ * The command metadata function
+ */
+export type CommandMetadataFunction = () =>
+  | Promise<CommandMetadata>
+  | CommandMetadata;

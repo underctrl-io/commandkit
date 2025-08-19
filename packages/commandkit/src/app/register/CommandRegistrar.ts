@@ -1,6 +1,6 @@
 import { ApplicationCommandType, REST, Routes } from 'discord.js';
 import { CommandKit } from '../../commandkit';
-import { CommandData } from '../../types';
+import { CommandData, CommandMetadata } from '../../types';
 import { Logger } from '../../logger/Logger';
 
 /**
@@ -37,7 +37,7 @@ export class CommandRegistrar {
   /**
    * Gets the commands data.
    */
-  public getCommandsData(): CommandData[] {
+  public getCommandsData(): (CommandData & { __metadata?: CommandMetadata })[] {
     const handler = this.commandkit.commandHandler;
     // Use the public method instead of accessing private property
     const commands = handler.getCommandsArray();
@@ -48,7 +48,14 @@ export class CommandRegistrar {
           ? cmd.data.command.toJSON()
           : cmd.data.command;
 
-      const collections: CommandData[] = [json];
+      const __metadata = cmd.metadata ?? cmd.data.metadata;
+
+      const collections: (CommandData & { __metadata?: CommandMetadata })[] = [
+        {
+          ...json,
+          __metadata,
+        },
+      ];
 
       // Handle context menu commands
       if (
@@ -62,6 +69,8 @@ export class CommandRegistrar {
           description_localizations: undefined,
           // @ts-ignore
           description: undefined,
+          // @ts-ignore
+          __metadata,
         });
       }
 
@@ -76,6 +85,7 @@ export class CommandRegistrar {
           // @ts-ignore
           description: undefined,
           options: undefined,
+          __metadata,
         });
       }
 
@@ -112,14 +122,14 @@ export class CommandRegistrar {
     }
 
     const guildCommands = commands
-      .filter((command) => command.guilds?.filter(Boolean).length)
+      .filter((command) => command.__metadata?.guilds?.filter(Boolean).length)
       .map((c) => ({
         ...c,
-        guilds: Array.from(new Set(c.guilds?.filter(Boolean))),
+        guilds: Array.from(new Set(c.__metadata?.guilds?.filter(Boolean))),
       }));
 
     const globalCommands = commands.filter(
-      (command) => !command.guilds?.filter(Boolean).length,
+      (command) => !command.__metadata?.guilds?.filter(Boolean).length,
     );
 
     await this.updateGlobalCommands(globalCommands);
@@ -129,7 +139,9 @@ export class CommandRegistrar {
   /**
    * Updates the global commands.
    */
-  public async updateGlobalCommands(commands: CommandData[]) {
+  public async updateGlobalCommands(
+    commands: (CommandData & { __metadata?: CommandMetadata })[],
+  ) {
     if (!commands.length) return;
 
     let prevented = false;
@@ -151,7 +163,7 @@ export class CommandRegistrar {
         {
           body: commands.map((c) => ({
             ...c,
-            guilds: undefined,
+            __metadata: undefined,
           })),
         },
       )) as CommandData[];
@@ -167,7 +179,9 @@ export class CommandRegistrar {
   /**
    * Updates the guild commands.
    */
-  public async updateGuildCommands(commands: CommandData[]) {
+  public async updateGuildCommands(
+    commands: (CommandData & { __metadata?: CommandMetadata })[],
+  ) {
     if (!commands.length) return;
 
     let prevented = false;
@@ -190,9 +204,9 @@ export class CommandRegistrar {
       const guildCommandsMap = new Map<string, CommandData[]>();
 
       commands.forEach((command) => {
-        if (!command.guilds?.length) return;
+        if (!command.__metadata?.guilds?.length) return;
 
-        command.guilds.forEach((guild) => {
+        command.__metadata?.guilds?.forEach((guild) => {
           if (!guildCommandsMap.has(guild)) {
             guildCommandsMap.set(guild, []);
           }
@@ -229,7 +243,7 @@ export class CommandRegistrar {
           {
             body: guildCommands.map((b) => ({
               ...b,
-              guilds: undefined,
+              __metadata: undefined,
             })),
           },
         )) as CommandData[];

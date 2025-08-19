@@ -1,6 +1,7 @@
 import {
   ChatInputCommand,
   CommandData,
+  CommandMetadata,
   MediaGallery,
   MediaGalleryItem,
   TextDisplay,
@@ -10,6 +11,11 @@ import { MessageFlags } from 'discord.js';
 export const command: CommandData = {
   name: 'gallery',
   description: 'Test components v2 gallery',
+};
+
+export const metadata: CommandMetadata = {
+  botPermissions: ['BanMembers'],
+  userPermissions: ['Administrator'],
 };
 
 const mediaItems: string[] = Array.from(

@@ -28,6 +28,7 @@ export const defaultConfig: ResolvedCommandKitConfig = {
   },
   typedCommands: true,
   disablePrefixCommands: false,
+  disablePermissionsMiddleware: false,
   showUnknownPrefixCommandsWarning: true,
   antiCrashScript: {
     development: true,
