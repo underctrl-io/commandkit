@@ -13,6 +13,7 @@ import {
   MessageCommandContext,
   stopMiddlewares,
   Logger,
+  after,
 } from 'commandkit';
 
 export const command: CommandData = {
@@ -101,6 +102,7 @@ export async function chatInput({
       message.edit({ components: [row] });
     });
 
-  Logger.debug('calling stopMiddlewares');
-  stopMiddlewares();
+  after(() => {
+    Logger.debug('after called in ping');
+  });
 }

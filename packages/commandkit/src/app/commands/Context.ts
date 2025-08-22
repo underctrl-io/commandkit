@@ -1,30 +1,29 @@
 import {
   AutocompleteInteraction,
-  ChatInputCommandInteraction,
-  MessageContextMenuCommandInteraction,
-  Message,
-  Locale,
-  Interaction,
-  UserContextMenuCommandInteraction,
-  Client,
   Awaitable,
+  ChatInputCommandInteraction,
+  Client,
   Guild,
+  Interaction,
+  Locale,
+  Message,
+  MessageContextMenuCommandInteraction,
   TextBasedChannel,
+  UserContextMenuCommandInteraction,
 } from 'discord.js';
 import { CommandKit } from '../../commandkit';
-import {
-  MessageCommandOptions,
-  MessageCommandParser,
-} from './MessageCommandParser';
-import { CommandKitEnvironment } from '../../context/environment';
 import { GenericFunction, getContext } from '../../context/async-context';
-import { stopMiddlewares, redirect } from '../interrupt/signals';
+import { CommandKitEnvironment } from '../../context/environment';
 import {
   LoadedCommand,
   ResolvableCommand,
   RunCommand,
 } from '../handlers/AppCommandHandler';
-import { CommandKitErrorCodes } from '../../utils/error-codes';
+import { redirect } from '../interrupt/signals';
+import {
+  MessageCommandOptions,
+  MessageCommandParser,
+} from './MessageCommandParser';
 
 /**
  * Enumeration of different command execution modes supported by CommandKit.
