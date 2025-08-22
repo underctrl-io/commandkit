@@ -67,9 +67,6 @@ export async function chatInput({
   interaction,
   client,
 }: ChatInputCommandContext) {
-  Logger.debug('calling stopMiddlewares');
-  stopMiddlewares();
-
   if (!interaction.channel) return;
 
   const button = new ButtonKit()
@@ -103,4 +100,7 @@ export async function chatInput({
       button.setDisabled(true);
       message.edit({ components: [row] });
     });
+
+  Logger.debug('calling stopMiddlewares');
+  stopMiddlewares();
 }
