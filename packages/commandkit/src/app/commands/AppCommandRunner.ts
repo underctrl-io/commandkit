@@ -1,22 +1,22 @@
 import { ChatInputCommandInteraction, Interaction, Message } from 'discord.js';
+import { AnalyticsEvents } from '../../analytics/constants';
+import {
+  makeContextAwareFunction,
+  provideContext,
+  useEnvironment,
+} from '../../context/async-context';
 import {
   CommandKitEnvironment,
   CommandKitEnvironmentType,
 } from '../../context/environment';
 import { Logger } from '../../logger/Logger';
+import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
 import {
   AppCommandHandler,
   PreparedAppCommandExecution,
   RunCommand,
 } from '../handlers/AppCommandHandler';
 import { CommandExecutionMode, MiddlewareContext } from './Context';
-import {
-  makeContextAwareFunction,
-  provideContext,
-  useEnvironment,
-} from '../../context/async-context';
-import { CommandKitErrorCodes, isErrorType } from '../../utils/error-codes';
-import { AnalyticsEvents } from '../../analytics/constants';
 
 /**
  * Options for running a command in CommandKit.
@@ -53,6 +53,7 @@ export class AppCommandRunner {
    * Handles the complete command lifecycle including before/after middleware execution.
    * @param prepared - The prepared command execution data
    * @param source - The source interaction or message that triggered the command
+   * @param options - The options for running the command
    */
   public async runCommand(
     prepared: PreparedAppCommandExecution,
@@ -74,7 +75,7 @@ export class AppCommandRunner {
     env.variables.set('execHandlerKind', executionMode);
     env.variables.set('customHandler', options?.handler ?? null);
 
-    const ctx = new MiddlewareContext(commandkit, {
+    const middlewareCtx = new MiddlewareContext(commandkit, {
       command: prepared.command,
       environment: env,
       executionMode,
@@ -91,19 +92,25 @@ export class AppCommandRunner {
       messageCommandParser: prepared.messageCommandParser,
     });
 
-    let middlewaresCanceled = false;
+    const beforeMiddlewares = prepared.middlewares.filter(
+      (m) => m.data.beforeExecute,
+    );
+
+    let beforeMiddlewaresStopped = false;
 
     // Run middleware before command execution
-    if (prepared.middlewares.length) {
+    if (beforeMiddlewares.length) {
       await provideContext(env, async () => {
-        for (const middleware of prepared.middlewares) {
-          if (!middleware.data.beforeExecute) continue;
+        for (const middleware of beforeMiddlewares) {
           try {
-            await middleware.data.beforeExecute(ctx);
+            await middleware.data.beforeExecute(middlewareCtx);
           } catch (e) {
-            if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
-              middlewaresCanceled = true;
-              return;
+            if (isErrorType(e, CommandKitErrorCodes.StopMiddlewares)) {
+              beforeMiddlewaresStopped = true;
+              Logger.debug(
+                `Middleware propagation stopped for command "${middlewareCtx.commandName}". stopMiddlewares() was called inside a beforeExecute function at "${middleware.middleware.relativePath}"`,
+              );
+              break; // Stop the middleware loop if `stopMiddlewares()` is called.
             }
 
             if (
@@ -123,8 +130,10 @@ export class AppCommandRunner {
 
     let result: any;
 
-    if (!ctx.cancelled) {
-      // Determine which function to run based on whether we're executing a command or subcommand
+    let stopMiddlewaresCalledInCmd = false;
+
+    // If no `stopMiddlewares()` was called in a `beforeExecute` middleware, try to run the command
+    if (!beforeMiddlewaresStopped) {
       const targetData = prepared.command.data;
       const fn = targetData[options?.handler || executionMode];
 
@@ -190,7 +199,7 @@ export class AppCommandRunner {
                 });
               });
 
-              return fn(ctx.clone());
+              return fn(middlewareCtx.clone());
             },
             this.#finalizer.bind(this),
           );
@@ -216,14 +225,17 @@ export class AppCommandRunner {
             result = await executeCommand();
           }
         } catch (e) {
-          if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
-            middlewaresCanceled = true;
+          if (isErrorType(e, CommandKitErrorCodes.StopMiddlewares)) {
+            stopMiddlewaresCalledInCmd = true;
+            Logger.debug(
+              `Middleware propagation stopped for command "${middlewareCtx.commandName}". stopMiddlewares() was called by the command itself`,
+            );
           }
 
           if (
             !isErrorType(e, [
               CommandKitErrorCodes.ForwardedCommand,
-              CommandKitErrorCodes.ExitMiddleware,
+              CommandKitErrorCodes.StopMiddlewares,
             ])
           ) {
             if (shouldThrowOnError) {
@@ -241,18 +253,28 @@ export class AppCommandRunner {
       };
     }
 
-    // Run middleware after command execution
-    if (!middlewaresCanceled && prepared.middlewares.length) {
-      await provideContext(env, async () => {
-        for (const middleware of prepared.middlewares) {
-          if (!middleware.data.afterExecute) continue;
-          try {
-            await middleware.data.afterExecute(ctx);
-          } catch (e) {
-            if (isErrorType(e, CommandKitErrorCodes.ExitMiddleware)) {
-              return;
-            }
+    const afterMiddlewares = prepared.middlewares.filter(
+      (m) => m.data.afterExecute,
+    );
 
+    // Run middleware after command execution only if `stopMiddlewares()` wasn't
+    // called in either `beforeExecute` middleware or in the command itself
+    if (
+      !beforeMiddlewaresStopped &&
+      !stopMiddlewaresCalledInCmd &&
+      afterMiddlewares.length
+    ) {
+      await provideContext(env, async () => {
+        for (const middleware of afterMiddlewares) {
+          try {
+            await middleware.data.afterExecute(middlewareCtx);
+          } catch (e) {
+            if (isErrorType(e, CommandKitErrorCodes.StopMiddlewares)) {
+              Logger.debug(
+                `Middleware propagation stopped for command "${middlewareCtx.commandName}". stopMiddlewares() was called inside an afterExecute function at "${middleware.middleware.relativePath}"`,
+              );
+              break; // Stop the afterExecute middleware loop if `stopMiddlewares()` is called.
+            }
             throw e;
           }
         }

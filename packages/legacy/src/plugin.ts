@@ -13,6 +13,7 @@ import {
   HMREventType,
   getSourceDirectories,
   CommandKitEventDispatch,
+  stopMiddlewares,
 } from 'commandkit';
 import { join, resolve } from 'node:path';
 import { loadLegacyValidations } from './loadLegacyValidations.js';
@@ -254,7 +255,7 @@ export class LegacyHandlerPlugin extends RuntimePlugin<LegacyHandlerPluginOption
                 handler: ctx.commandkit,
               });
 
-              if (result === true) return ctx.cancel();
+              if (result === true) stopMiddlewares();
             },
           } as any,
           middleware: {

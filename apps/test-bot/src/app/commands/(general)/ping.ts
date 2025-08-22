@@ -11,6 +11,7 @@ import {
   AutocompleteCommandContext,
   CommandMetadata,
   MessageCommandContext,
+  stopMiddlewares,
 } from 'commandkit';
 
 export const command: CommandData = {
@@ -33,8 +34,8 @@ export const command: CommandData = {
 };
 
 export const metadata: CommandMetadata = {
-  userPermissions: 'Administrator',
-  botPermissions: 'KickMembers',
+  // userPermissions: 'Administrator',
+  // botPermissions: 'KickMembers',
   // guilds: ['1314834483660455938'],
 };
 
@@ -98,4 +99,6 @@ export async function chatInput({
       button.setDisabled(true);
       message.edit({ components: [row] });
     });
+
+  stopMiddlewares();
 }

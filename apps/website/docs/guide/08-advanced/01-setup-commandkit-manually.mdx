@@ -114,16 +114,16 @@ Learn more
 To register and handle events emitted by your discord.js client,
 create a folder inside the `src/app` directory called `events` and
 create a folder with the name of the discord.js event you'd like to
-handle (e.g. ready, messageCreate, etc). This example will use the
-`ready` event.
+handle (e.g. clientReady, messageCreate, etc). This example will use
+the `clientReady` event.
 
-In the `src/app/events/ready` directory, you can create files which
-will export default functions that will be called when the respective
-event is emitted by discord.js. Following the `ready` event example
-mentioned above, you may want to log when your bot comes online. The
-function for that will look like so:
+In the `src/app/events/clientReady` directory, you can create files
+which will export default functions that will be called when the
+respective event is emitted by discord.js. Following the `clientReady`
+event example mentioned above, you may want to log when your bot comes
+online. The function for that will look like so:
 
-```ts title="src/app/events/log.ts"
+```ts title="src/app/events/clientReady/log.ts"
 import type { Client } from 'discord.js';
 
 export default function (client: Client<true>) {

@@ -8,25 +8,25 @@ import TabItem from '@theme/TabItem';
 
 # Events Setup
 
-This is a simple overview of how to set up a simple function that is called when the "ready" event is triggered. All this code does is log to the console when the bot is ready.
+This is a simple overview of how to set up a simple function that is called when the "clientReady" event is triggered. All this code does is log to the console when the bot is ready.
 
 <Tabs>
   <TabItem value='cjs' label='CommonJS' default>
-    ```js title="src/events/ready/console-log.js"
+    ```js title="src/events/clientReady/console-log.js"
     module.exports = (c, client, handler) => {
       console.log(`${c.user.username} is ready!`);
     };
     ```
   </TabItem>
   <TabItem value='esm' label='ESM'>
-    ```js title="src/events/ready/console-log.js"
+    ```js title="src/events/clientReady/console-log.js"
     export default function (c, client, handler) {
       console.log(`${c.user.username} is ready!`);
     };
     ```
   </TabItem>
   <TabItem value='ts' label='TypeScript'>
-    ```ts title="src/events/ready/console-log.ts"
+    ```ts title="src/events/clientReady/console-log.ts"
     import type { Client } from 'discord.js';
     import type { CommandKit } from 'commandkit';
 
@@ -41,7 +41,7 @@ This is a simple overview of how to set up a simple function that is called when
 
 ## Parameters explained
 
-The parameters might look a bit confusing at first, but they're actually quite simple. The first parameter `c` is the client object that was returned as a parameter when the "ready" event was triggered. The second parameter `client` is the Discord.js client that was instantiated in your main entry point file. Finally, the `handler` parameter is the current CommandKit instance.
+The parameters might look a bit confusing at first, but they're actually quite simple. The first parameter `c` is the client object that was returned as a parameter when the "clientReady" event was triggered. The second parameter `client` is the Discord.js client that was instantiated in your main entry point file. Finally, the `handler` parameter is the current CommandKit instance.
 
 To better understand how the parameters work, here's another example but with the "messageCreate" event listener.
 

@@ -2,6 +2,7 @@ import { EmbedBuilder, MessageFlags } from 'discord.js';
 import { getConfig } from '../../config/config';
 import { Logger } from '../../logger/Logger';
 import { MiddlewareContext } from '../commands/Context';
+import { stopMiddlewares } from '../interrupt/signals';
 
 export const middlewareId = crypto.randomUUID();
 
@@ -49,7 +50,7 @@ export async function beforeExecute(ctx: MiddlewareContext) {
       );
     }
 
-    return ctx.cancel(); // Stop the command from executing
+    stopMiddlewares(); // Stop the command from executing
   }
 
   const userPermissions =
@@ -159,5 +160,5 @@ export async function beforeExecute(ctx: MiddlewareContext) {
     );
   }
 
-  return ctx.cancel(); // Stop the command from executing
+  stopMiddlewares(); // Stop the command from executing
 }

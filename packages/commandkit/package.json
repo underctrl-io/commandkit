@@ -54,75 +54,85 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./jsx-runtime": {
-      "require": "./jsx-runtime.cjs",
-      "import": "./jsx-runtime.cjs",
-      "types": "./jsx-runtime.d.ts"
-    },
-    "./hooks": {
-      "require": "./hooks.cjs",
-      "import": "./hooks.cjs",
-      "types": "./hooks.d.ts"
-    },
-    "./plugin": {
-      "require": "./plugin.cjs",
-      "import": "./plugin.cjs",
-      "types": "./plugin.d.ts"
-    },
-    "./config": {
-      "require": "./config.cjs",
-      "import": "./config.cjs",
-      "types": "./config.d.ts"
-    },
-    "./components": {
-      "require": "./components.cjs",
-      "import": "./components.cjs",
-      "types": "./components.d.ts"
-    },
-    "./flag": {
-      "require": "./flag.cjs",
-      "import": "./flag.cjs",
-      "types": "./flag.d.ts"
-    },
-    "./cache": {
-      "require": "./cache.cjs",
-      "import": "./cache.cjs",
-      "types": "./cache.d.ts"
-    },
-    "./i18n": {
-      "require": "./i18n.cjs",
-      "import": "./i18n.cjs",
-      "types": "./i18n.d.ts"
-    },
-    "./logger": {
-      "require": "./logger.cjs",
-      "import": "./logger.cjs",
-      "types": "./logger.d.ts"
-    },
-    "./events": {
-      "require": "./events.cjs",
-      "import": "./events.cjs",
-      "types": "./events.d.ts"
+    "./ai": {
+      "require": "./ai.cjs",
+      "import": "./ai.cjs",
+      "types": "./ai.d.ts"
     },
     "./analytics": {
       "require": "./analytics.cjs",
       "import": "./analytics.cjs",
       "types": "./analytics.d.ts"
     },
-    "./ai": {
-      "require": "./ai.cjs",
-      "import": "./ai.cjs",
-      "types": "./ai.d.ts"
+    "./async-queue": {
+      "require": "./async-queue.cjs",
+      "import": "./async-queue.cjs",
+      "types": "./async-queue.d.ts"
+    },
+    "./cache": {
+      "require": "./cache.cjs",
+      "import": "./cache.cjs",
+      "types": "./cache.d.ts"
+    },
+    "./components": {
+      "require": "./components.cjs",
+      "import": "./components.cjs",
+      "types": "./components.d.ts"
+    },
+    "./config": {
+      "require": "./config.cjs",
+      "import": "./config.cjs",
+      "types": "./config.d.ts"
     },
     "./env": {
       "require": "./env.cjs",
       "import": "./env.cjs",
       "types": "./env.d.ts"
     },
-    "./async-queue": {
-      "require": "./async-queue.cjs",
-      "import": "./async-queue.cjs",
-      "types": "./async-queue.d.ts"
+    "./events": {
+      "require": "./events.cjs",
+      "import": "./events.cjs",
+      "types": "./events.d.ts"
+    },
+    "./flag": {
+      "require": "./flag.cjs",
+      "import": "./flag.cjs",
+      "types": "./flag.d.ts"
+    },
+    "./hooks": {
+      "require": "./hooks.cjs",
+      "import": "./hooks.cjs",
+      "types": "./hooks.d.ts"
+    },
+    "./i18n": {
+      "require": "./i18n.cjs",
+      "import": "./i18n.cjs",
+      "types": "./i18n.d.ts"
+    },
+    "./jsx-runtime": {
+      "require": "./jsx-runtime.cjs",
+      "import": "./jsx-runtime.cjs",
+      "types": "./jsx-runtime.d.ts"
+    },
+    "./kv": {
+      "require": "./kv.cjs",
+      "import": "./kv.cjs",
+      "types": "./kv.d.ts"
+    },
+    "./logger": {
+      "require": "./logger.cjs",
+      "import": "./logger.cjs",
+      "types": "./logger.d.ts"
+    },
+    "./mutex": {
+      "require": "./mutex.cjs",
+      "import": "./mutex.cjs",
+      "types": "./mutex.d.ts"
+    },
+    "./plugin": {
+      "require": "./plugin.cjs",
+      "import": "./plugin.cjs",
+      "types": "./plugin.d.ts"
     },
     "./ratelimit": {
       "require": "./ratelimit.cjs",
@@ -133,21 +143,10 @@
       "require": "./semaphore.cjs",
       "import": "./semaphore.cjs",
       "types": "./semaphore.d.ts"
-    },
-    "./mutex": {
-      "require": "./mutex.cjs",
-      "import": "./mutex.cjs",
-      "types": "./mutex.d.ts"
-    },
-    "./kv": {
-      "require": "./kv.cjs",
-      "import": "./kv.cjs",
-      "types": "./kv.d.ts"
     }
   },
   "scripts": {
     "check-types": "tsc --noEmit",
-    "dev": "pnpm run --filter=test-bot dev",
     "build": "tsdown",
     "test": "vitest"
   },
@@ -160,7 +159,9 @@
   "keywords": [
     "discord.js",
     "command handler",
-    "event handler"
+    "event handler",
+    "framework",
+    "discord.js 14"
   ],
   "dependencies": {
     "@rollup/plugin-json": "^6.1.0",

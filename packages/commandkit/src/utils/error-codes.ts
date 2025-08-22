@@ -5,7 +5,7 @@ export const CommandKitErrorCodes = {
   /**
    * Error code for exiting middleware.
    */
-  ExitMiddleware: Symbol('kExitMiddleware'),
+  StopMiddlewares: Symbol('kStopMiddlewares'),
   /**
    * Error code for forwarded commands.
    */

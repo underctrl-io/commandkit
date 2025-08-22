@@ -6,13 +6,11 @@ import {
 import { eventWorkerContext } from '../events/EventWorkerContext';
 
 /**
- * Cancel upcoming middleware execution.
- * If this is called inside pre-stage middleware, the next run will be the actual command, skipping all other pre-stage middlewares.
- * If this is called inside a command itself, it will skip all post-stage middlewares.
- * If this is called inside post-stage middleware, it will skip all other post-stage middlewares.
+ * Stop upcoming middleware and command execution.
+ * This will **not** stop any `after()` callbacks inside the command.
  */
-export function exitMiddleware(): never {
-  throw createCommandKitError(CommandKitErrorCodes.ExitMiddleware);
+export function stopMiddlewares(): never {
+  throw createCommandKitError(CommandKitErrorCodes.StopMiddlewares);
 }
 
 /**
