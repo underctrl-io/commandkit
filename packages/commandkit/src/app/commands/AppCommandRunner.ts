@@ -230,18 +230,10 @@ export class AppCommandRunner {
             Logger.debug(
               `Middleware propagation stopped for command "${middlewareCtx.commandName}". stopMiddlewares() was called by the command itself`,
             );
-          }
-
-          if (
-            !isErrorType(e, [
-              CommandKitErrorCodes.ForwardedCommand,
-              CommandKitErrorCodes.StopMiddlewares,
-            ])
-          ) {
+          } else if (!isErrorType(e, CommandKitErrorCodes.ForwardedCommand)) {
             if (shouldThrowOnError) {
               throw e;
             }
-
             Logger.error(e);
           }
         }
@@ -249,7 +241,8 @@ export class AppCommandRunner {
     } else {
       result = {
         error: true,
-        message: 'Command execution was cancelled by the middleware.',
+        message:
+          'Command execution was cancelled by a beforeExecute middleware.',
       };
     }
 
@@ -258,7 +251,7 @@ export class AppCommandRunner {
     );
 
     // Run middleware after command execution only if `stopMiddlewares()` wasn't
-    // called in either `beforeExecute` middleware or in the command itself
+    // called in either `beforeExecute` middleware or in the command itself.
     if (
       !beforeMiddlewaresStopped &&
       !stopMiddlewaresCalledInCmd &&
