@@ -1,6 +1,7 @@
-import { Logger } from 'commandkit';
-import { Client } from 'discord.js';
+import { EventHandler, Logger } from 'commandkit';
 
-export default function ReadyEvent(client: Client<true>) {
+const handler: EventHandler<'clientReady'> = (client) => {
   Logger.log(`Successfully logged in as ${client.user?.tag}`);
-}
+};
+
+export default handler;

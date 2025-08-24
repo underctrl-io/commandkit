@@ -1,6 +1,8 @@
 import { getContext } from '../context/async-context';
 import colors from '../utils/colors';
+import { COMMANDKIT_IS_DEV } from '../utils/constants';
 import { ILogger } from './ILogger';
+import { inspect } from 'util';
 
 /**
  * Log levels for the logger.
@@ -132,7 +134,7 @@ export class DefaultLogger implements ILogger {
     return `${label}${colors.dim(BoxChars.vertical)} ${colors.dim(timestamp)}`;
   }
 
-  private _log(level: LogLevel, ...args: any[]): void {
+  private _log(level: LogLevel, message: any): void {
     const prefix = this._getPrefix(level);
     const context = this._getContext();
     const colorFn = TextColorMap[level];
@@ -140,53 +142,139 @@ export class DefaultLogger implements ILogger {
     if (context) {
       this.logger.log(
         `${prefix}\n${context} ${colors.dim(BoxChars.corner)}`,
-        ...args.map((arg) => colorFn(arg)),
+        colorFn(message),
       );
     } else {
       this.logger.log(
         `${prefix} ${colors.dim(BoxChars.corner)}`,
-        ...args.map((arg) => colorFn(arg)),
+        colorFn(message),
+      );
+    }
+  }
+
+  private _logTemplate(
+    level: LogLevel,
+    strings: TemplateStringsArray,
+    ...values: any[]
+  ): void {
+    const prefix = this._getPrefix(level);
+    const context = this._getContext();
+    const colorFn = TextColorMap[level];
+
+    let result = '';
+    for (let i = 0; i < strings.length; i++) {
+      result += strings[i];
+      if (i < values.length) {
+        result += inspect(values[i], {
+          colors: COMMANDKIT_IS_DEV,
+          depth: 2,
+        });
+      }
+    }
+
+    if (context) {
+      this.logger.log(
+        `${prefix}\n${context} ${colors.dim(BoxChars.corner)}`,
+        colorFn(result),
+      );
+    } else {
+      this.logger.log(
+        `${prefix} ${colors.dim(BoxChars.corner)}`,
+        colorFn(result),
       );
     }
   }
 
   /**
    * Logs a debug message.
-   * @param args The message arguments to log.
+   * @param message The message to log.
    */
-  public debug(...args: any[]): void {
-    this._log(LogLevel.DEBUG, ...args);
+  public debug(message: any): void;
+  public debug(strings: TemplateStringsArray, ...values: any[]): void;
+  public debug(
+    messageOrStrings: any | TemplateStringsArray,
+    ...values: any[]
+  ): void {
+    if (this._isTemplateStringsArray(messageOrStrings)) {
+      this._logTemplate(LogLevel.DEBUG, messageOrStrings, ...values);
+    } else {
+      this._log(LogLevel.DEBUG, messageOrStrings);
+    }
   }
 
   /**
    * Logs an error message.
-   * @param args The message arguments to log.
+   * @param message The error message to log.
    */
-  public error(...args: any[]): void {
-    this._log(LogLevel.ERROR, ...args);
+  public error(message: any): void;
+  public error(strings: TemplateStringsArray, ...values: any[]): void;
+  public error(
+    messageOrStrings: any | TemplateStringsArray,
+    ...values: any[]
+  ): void {
+    if (this._isTemplateStringsArray(messageOrStrings)) {
+      this._logTemplate(LogLevel.ERROR, messageOrStrings, ...values);
+    } else {
+      this._log(LogLevel.ERROR, messageOrStrings);
+    }
   }
 
   /**
    * Logs a default message.
-   * @param args The message arguments to log.
+   * @param message The message to log.
    */
-  public log(...args: any[]): void {
-    this._log(LogLevel.DEFAULT, ...args);
+  public log(message: any): void;
+  public log(strings: TemplateStringsArray, ...values: any[]): void;
+  public log(
+    messageOrStrings: any | TemplateStringsArray,
+    ...values: any[]
+  ): void {
+    if (this._isTemplateStringsArray(messageOrStrings)) {
+      this._logTemplate(LogLevel.DEFAULT, messageOrStrings, ...values);
+    } else {
+      this._log(LogLevel.DEFAULT, messageOrStrings);
+    }
   }
 
   /**
    * Logs an info message.
-   * @param args The message arguments to log.
+   * @param message The informational message to log.
    */
-  public info(...args: any[]): void {
-    this._log(LogLevel.INFO, ...args);
+  public info(message: any): void;
+  public info(strings: TemplateStringsArray, ...values: any[]): void;
+  public info(
+    messageOrStrings: any | TemplateStringsArray,
+    ...values: any[]
+  ): void {
+    if (this._isTemplateStringsArray(messageOrStrings)) {
+      this._logTemplate(LogLevel.INFO, messageOrStrings, ...values);
+    } else {
+      this._log(LogLevel.INFO, messageOrStrings);
+    }
   }
 
   /**
    * Logs a warning message.
-   * @param args The message arguments to log.
+   * @param message The warning message to log.
    */
-  public warn(...args: any[]): void {
-    this._log(LogLevel.WARN, ...args);
+  public warn(message: any): void;
+  public warn(strings: TemplateStringsArray, ...values: any[]): void;
+  public warn(
+    messageOrStrings: any | TemplateStringsArray,
+    ...values: any[]
+  ): void {
+    if (this._isTemplateStringsArray(messageOrStrings)) {
+      this._logTemplate(LogLevel.WARN, messageOrStrings, ...values);
+    } else {
+      this._log(LogLevel.WARN, messageOrStrings);
+    }
+  }
+
+  private _isTemplateStringsArray(value: any): value is TemplateStringsArray {
+    return (
+      Array.isArray(value) &&
+      'raw' in value &&
+      Array.isArray((value as any).raw)
+    );
   }
 }
