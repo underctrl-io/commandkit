@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AppCommandNative
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="39" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="50" packageName="commandkit" />
 
 Represents a native command structure used in CommandKit.
 This structure includes the command definition and various handlers for different interaction types.
@@ -22,6 +22,8 @@ It can be used to define slash commands, context menu commands, and message comm
 ```ts title="Signature"
 interface AppCommandNative {
     command: CommandData | Record<string, any>;
+    generateMetadata?: CommandMetadataFunction;
+    metadata?: CommandMetadata;
     chatInput?: (ctx: Context) => Awaitable<unknown>;
     autocomplete?: (ctx: Context) => Awaitable<unknown>;
     message?: (ctx: Context) => Awaitable<unknown>;
@@ -35,6 +37,16 @@ interface AppCommandNative {
 ### command
 
 <MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/command-data#commanddata'>CommandData</a> | Record&#60;string, any&#62;`}   />
+
+
+### generateMetadata
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/command-metadata-function#commandmetadatafunction'>CommandMetadataFunction</a>`}   />
+
+
+### metadata
+
+<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/command-metadata#commandmetadata'>CommandMetadata</a>`}   />
 
 
 ### chatInput

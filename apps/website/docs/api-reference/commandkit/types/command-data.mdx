@@ -13,16 +13,17 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandData
 
-<GenerationInfo sourceFile="packages/commandkit/src/types.ts" sourceLine="48" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/types.ts" sourceLine="88" packageName="commandkit" />
 
 Represents a command that can be executed by CommandKit.
 
 ```ts title="Signature"
 type CommandData = Prettify<
   Omit<RESTPostAPIApplicationCommandsJSONBody, 'description'> & {
+    /**
+     * The description of the command.
+     */
     description?: string;
-    guilds?: string[];
-    aliases?: string[];
-  }
+  } & LegacyCommandMetadata
 >
 ```

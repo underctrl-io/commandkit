@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AppCommandHandler
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="149" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="176" packageName="commandkit" />
 
 Handles application commands for CommandKit, including loading, registration, and execution.
 Manages both slash commands and message commands with middleware support.
@@ -35,6 +35,7 @@ class AppCommandHandler {
     registerExternalLoadedMiddleware(data: LoadedMiddleware[]) => ;
     registerExternalLoadedCommands(data: LoadedCommand[]) => ;
     loadCommands() => ;
+    getMetadataFor(command: string) => CommandMetadata | null;
 }
 ```
 
@@ -115,6 +116,11 @@ Registers externally loaded commands.
 <MemberInfo kind="method" type={`() => `}   />
 
 Loads all commands and middleware from the router.
+### getMetadataFor
+
+<MemberInfo kind="method" type={`(command: string) => <a href='/docs/next/api-reference/commandkit/interfaces/command-metadata#commandmetadata'>CommandMetadata</a> | null`}   />
+
+Gets the metadata for a command.
 
 
 </div>

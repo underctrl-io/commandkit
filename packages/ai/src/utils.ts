@@ -1,4 +1,7 @@
-import { TextBasedChannel } from 'discord.js';
+import { ApplicationCommandOptionType, TextBasedChannel } from 'discord.js';
+import { AiConfig } from './plugin';
+import { CommandData } from 'commandkit';
+import z from 'zod';
 
 /**
  * @private
@@ -25,4 +28,47 @@ export async function createTypingIndicator(
     stopped = true;
     clearInterval(typingInterval);
   };
+}
+
+/**
+ * Generates AI config from a CommandKit command data.
+ * @experimental
+ */
+export function experimental_createConfig(command: CommandData): AiConfig {
+  const inputSchema = z.object({
+    ...Object.fromEntries(
+      command.options?.map((option) => [
+        option.name,
+        (() => {
+          const { type, required, description } = option;
+
+          const t = (() => {
+            switch (type) {
+              case ApplicationCommandOptionType.String:
+                return z.string();
+              case ApplicationCommandOptionType.Number:
+                return z.number();
+              case ApplicationCommandOptionType.Boolean:
+                return z.boolean();
+              case ApplicationCommandOptionType.Integer:
+                return z.int();
+              default:
+                throw new Error(`Unsupported option type: ${type}`);
+            }
+          })().describe(description);
+
+          if (!required) {
+            return t.optional();
+          }
+
+          return t;
+        })(),
+      ]) ?? [],
+    ),
+  });
+
+  return {
+    description: command.description ?? `${command.name} command tool`,
+    inputSchema,
+  } satisfies AiConfig;
 }

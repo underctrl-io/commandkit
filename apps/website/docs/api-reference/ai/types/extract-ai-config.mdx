@@ -13,10 +13,10 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ExtractAiConfig
 
-<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="46" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/types.ts" sourceLine="49" packageName="@commandkit/ai" />
 
 Extracts the AI configuration params.
 
 ```ts title="Signature"
-type ExtractAiConfig<T extends Record<string, unknown>> = T extends AiConfig ? InferParameters<T['parameters']> : T
+type ExtractAiConfig<T extends Record<string, unknown>> = T extends AiConfig ? InferParameters<T['inputSchema']> : T
 ```

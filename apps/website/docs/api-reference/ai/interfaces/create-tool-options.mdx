@@ -21,7 +21,7 @@ Configuration options for creating an AI tool.
 interface CreateToolOptions<T extends ToolParameterType, R = unknown> {
     name: string;
     description: string;
-    parameters: T;
+    inputSchema: T;
     execute: ToolExecuteFunction<T, R>;
 }
 ```
@@ -38,7 +38,7 @@ The unique name identifier for the tool
 <MemberInfo kind="property" type={`string`}   />
 
 A human-readable description of what the tool does
-### parameters
+### inputSchema
 
 <MemberInfo kind="property" type={`T`}   />
 

@@ -1,0 +1,53 @@
+---
+title: "CommandMetadata"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## CommandMetadata
+
+<GenerationInfo sourceFile="packages/commandkit/src/types.ts" sourceLine="50" packageName="commandkit" />
+
+Represents the command metadata.
+
+```ts title="Signature"
+interface CommandMetadata {
+    guilds?: string[];
+    aliases?: string[];
+    userPermissions?: PermissionsString | PermissionsString[];
+    botPermissions?: PermissionsString | PermissionsString[];
+}
+```
+
+<div className="members-wrapper">
+
+### guilds
+
+<MemberInfo kind="property" type={`string[]`}   />
+
+The guilds that the command is available in.
+### aliases
+
+<MemberInfo kind="property" type={`string[]`}   />
+
+The aliases of the command.
+### userPermissions
+
+<MemberInfo kind="property" type={`PermissionsString | PermissionsString[]`}   />
+
+The user permissions required to execute the command.
+### botPermissions
+
+<MemberInfo kind="property" type={`PermissionsString | PermissionsString[]`}   />
+
+The bot permissions required to execute the command.
+
+
+</div>
