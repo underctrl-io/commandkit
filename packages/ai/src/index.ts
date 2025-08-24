@@ -60,3 +60,4 @@ export * from './configure';
 export * from './types';
 export * from './system-prompt';
 export * from './tools/common/index';
+export { experimental_createConfig } from './utils';

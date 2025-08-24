@@ -17,7 +17,7 @@ import { ToolParameterType } from './tools/common';
 /**
  * Represents the configuration options for the AI plugin scoped to a specific command.
  */
-export interface AiConfig {
+export interface AiConfig<T extends ToolParameterType = ToolParameterType> {
   /**
    * A description of the AI functionality provided by this command. If not given, the command's description will be used.
    */
@@ -25,7 +25,7 @@ export interface AiConfig {
   /**
    * A zod schema defining the parameters that the AI command accepts.
    */
-  inputSchema: ToolParameterType;
+  inputSchema: T;
 }
 
 const defaultTools: Record<string, Tool> = {
@@ -100,13 +100,8 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
     await runInAiWorkerContext(ctx, message, async () => {
       const systemPrompt = await prepareSystemPrompt(ctx, message);
       const prompt = await preparePrompt(ctx, message);
-      const {
-        model,
-        abortSignal,
-        stopWhen,
-        prompt: _prompt,
-        ...modelOptions
-      } = await selectAiModel(ctx, message);
+      const { model, abortSignal, stopWhen, ...modelOptions } =
+        await selectAiModel(ctx, message);
 
       const promptOrMessage = (
         typeof prompt === 'string' ? { prompt } : { messages: prompt }

@@ -13,12 +13,12 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## EventHandler
 
-<GenerationInfo sourceFile="packages/commandkit/src/types.ts" sourceLine="59" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/types.ts" sourceLine="100" packageName="commandkit" />
 
 Represents an event handler for a specific event.
 
 ```ts title="Signature"
 type EventHandler<K extends keyof ClientEvents> = (
-  ...args: ClientEvents[K]
+  ...args: [...ClientEvents[K], Client<true>, CommandKit]
 ) => void | Promise<void>
 ```

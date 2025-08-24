@@ -30,7 +30,10 @@ export type SelectAiModel = (
   message: Message,
 ) => Promise<SelectAiModelResult>;
 
-export type SelectAiModelResult = Parameters<typeof generateText>[0];
+export type SelectAiModelResult = Omit<
+  Parameters<typeof generateText>[0],
+  'messages' | 'prompt'
+>;
 
 export type CommandTool = LoadedCommand & {
   tool: Tool;
