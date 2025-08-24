@@ -168,7 +168,7 @@ const AIConfig: Required<ConfigureAI> = {
     }
   },
   onError: async (_ctx, message, error) => {
-    Logger.error(`Error processing AI message: ${error}`);
+    Logger.error`Error processing AI message: ${error}`;
     const channel = message.channel as TextChannel;
 
     if (channel.isSendable()) {
@@ -177,7 +177,7 @@ const AIConfig: Required<ConfigureAI> = {
           content: 'An error occurred while processing your request.',
           allowedMentions: { parse: [] },
         })
-        .catch((e) => Logger.error(`Failed to send error message: ${e}`));
+        .catch((e) => Logger.error`Failed to send error message: ${e}`);
     }
   },
 };

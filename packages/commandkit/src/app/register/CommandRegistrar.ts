@@ -172,7 +172,7 @@ export class CommandRegistrar {
         `✨ Refreshed ${data.length} global application (/) commands`,
       );
     } catch (e) {
-      Logger.error('Failed to update global application (/) commands', e);
+      Logger.error`Failed to update global application (/) commands ${e}`;
     }
   }
 
@@ -253,7 +253,7 @@ export class CommandRegistrar {
 
       Logger.info(`✨ Refreshed ${count} guild application (/) commands`);
     } catch (e) {
-      Logger.error('Failed to update guild application (/) commands', e);
+      Logger.error`Failed to update guild application (/) commands ${e}`;
     }
   }
 }

@@ -209,9 +209,7 @@ export class CompilerPluginRuntime {
           },
         );
       } catch (e: any) {
-        console.error(
-          `Plugin ${plugin.name} failed to activate with ${e?.stack || e}`,
-        );
+        Logger.error`Plugin ${plugin.name} failed to activate with ${e}`;
       }
     }
 
@@ -237,9 +235,7 @@ export class CompilerPluginRuntime {
           },
         );
       } catch (e: any) {
-        console.error(
-          `Plugin ${plugin.name} failed to deactivate with ${e?.stack || e}`,
-        );
+        Logger.error`Plugin ${plugin.name} failed to deactivate with ${e}`;
       }
     }
 

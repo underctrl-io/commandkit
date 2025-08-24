@@ -83,10 +83,7 @@ export class AnalyticsEngine {
     try {
       await this.#provider!.identify?.(this, event);
     } catch (error) {
-      Logger.error(
-        `Error identifying with provider ${this.#provider!.name}`,
-        error,
-      );
+      Logger.error`Error identifying with provider ${this.#provider!.name} ${error}`;
     }
   }
 
@@ -102,10 +99,7 @@ export class AnalyticsEngine {
       if (await this.#doNotTrack(event)) return;
       await this.#provider!.track(this, event);
     } catch (error) {
-      Logger.error(
-        `Error tracking ${event.name} event with provider ${this.#provider!.name}`,
-        error,
-      );
+      Logger.error`Error tracking ${event.name} event with provider ${this.#provider!.name} ${error}`;
     }
   }
 

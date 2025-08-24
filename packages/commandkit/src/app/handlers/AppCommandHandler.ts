@@ -462,9 +462,7 @@ export class AppCommandHandler {
                 COMMANDKIT_IS_DEV &&
                 this.commandkit.config.showUnknownPrefixCommandsWarning
               ) {
-                Logger.error(
-                  `Prefix command "${command}" was not found.\nNote: This warning is only shown in development mode as an alert to help you find the command. If you wish to remove this warning, set \`showUnknownPrefixCommandsWarning\` to \`false\` in your commandkit config.`,
-                );
+                Logger.error`Prefix command "${command}" was not found.\nNote: This warning is only shown in development mode as an alert to help you find the command. If you wish to remove this warning, set \`showUnknownPrefixCommandsWarning\` to \`false\` in your commandkit config.`;
               }
               return null;
             }
@@ -502,7 +500,7 @@ export class AppCommandHandler {
           if (isErrorType(e, CommandKitErrorCodes.InvalidCommandPrefix)) {
             return null;
           }
-          Logger.error(e);
+          Logger.error`${e}`;
           return null;
         }
       } else {
@@ -729,7 +727,7 @@ export class AppCommandHandler {
 
       this.loadedMiddlewares.set(id, { middleware, data });
     } catch (error) {
-      Logger.error(`Failed to load middleware ${id}`, error);
+      Logger.error`Failed to load middleware ${id}\n${error}`;
     }
   }
 
@@ -865,7 +863,7 @@ export class AppCommandHandler {
         },
       });
     } catch (error) {
-      Logger.error(`Failed to load command ${command.name} (${id})`, error);
+      Logger.error`Failed to load command ${command.name} (${id})\n${error}`;
     }
   }
 

@@ -44,10 +44,7 @@ export async function beforeExecute(ctx: MiddlewareContext) {
         }
       }
     } catch (error) {
-      Logger.error(
-        `Could not send 'Server-only command' DM to user ${interaction?.user.id ?? message?.author.id} for command ${command.command.name}.`,
-        error,
-      );
+      Logger.error`Could not send 'Server-only command' DM to user ${interaction?.user.id ?? message?.author.id} for command ${command.command.name}. ${error}`;
     }
 
     stopMiddlewares(); // Stop the command from executing
@@ -154,10 +151,7 @@ export async function beforeExecute(ctx: MiddlewareContext) {
       });
     }
   } catch (error) {
-    Logger.error(
-      `Could not send 'Not enough permissions' reply to user ${interaction?.user.id ?? message?.author.id} for command ${command.command.name}.`,
-      error,
-    );
+    Logger.error`Could not send 'Not enough permissions' reply to user ${interaction?.user.id ?? message?.author.id} for command ${command.command.name}. ${error}`;
   }
 
   stopMiddlewares(); // Stop the command from executing

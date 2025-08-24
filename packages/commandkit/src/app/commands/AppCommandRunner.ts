@@ -158,9 +158,7 @@ export class AppCommandRunner {
                   const time = `${env.getExecutionTime().toFixed(2)}ms`;
 
                   if (error) {
-                    Logger.error(
-                      `[${marker} - ${time}] Error executing command: ${error.stack || error}`,
-                    );
+                    Logger.error`[${marker} - ${time}] Error executing command: ${error}`;
 
                     const commandName =
                       prepared.command?.data?.command?.name ??
@@ -237,7 +235,7 @@ export class AppCommandRunner {
               if (shouldThrowOnError) {
                 throw e;
               }
-              Logger.error(e);
+              Logger.error`${e}`;
             }
           }
         }

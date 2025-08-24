@@ -352,9 +352,7 @@ export class FeatureFlag<R, T> {
           }
         }
       } catch (error) {
-        Logger.error(
-          `Error fetching flag provider configuration for "${this.options.key}": ${error}`,
-        );
+        Logger.error`Error fetching flag provider configuration for "${this.options.key}": ${error}`;
         // continue with local decision if provider fails
       }
     }

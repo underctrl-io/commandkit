@@ -105,9 +105,7 @@ export class AppEventsHandler {
         const handler = await import(toFileURL(listener, true));
 
         if (!handler.default || typeof handler.default !== 'function') {
-          Logger.error(
-            `Event handler for ${event.event}${event.namespace ? ` of namespace ${event.namespace}` : ''} does not have a default export or is not a function`,
-          );
+          Logger.error`Event handler for ${event.event}${event.namespace ? ` of namespace ${event.namespace}` : ''} does not have a default export or is not a function`;
         }
 
         listeners.push({
@@ -217,12 +215,9 @@ export class AppEventsHandler {
                 }
 
                 // Otherwise log the error as usual
-                Logger.error(
-                  `Error handling event ${name}${
-                    namespace ? ` of namespace ${namespace}` : ''
-                  }`,
-                  e,
-                );
+                Logger.error`Error handling event ${name}${
+                  namespace ? ` of namespace ${namespace}` : ''
+                } ${e}`;
               }
             }
           },
@@ -284,12 +279,9 @@ export class AppEventsHandler {
                 }
 
                 // Otherwise log the error as usual
-                Logger.error(
-                  `Error handling event ${name}${
-                    namespace ? ` of namespace ${namespace}` : ''
-                  }`,
-                  e,
-                );
+                Logger.error`Error handling event ${name}${
+                  namespace ? ` of namespace ${namespace}` : ''
+                } ${e}`;
               }
             },
           );
