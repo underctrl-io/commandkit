@@ -4,27 +4,57 @@
 export interface ILogger {
   /**
    * Logs a message with the default log level.
-   * @param args The message to log.
+   * @param message The message to log.
    */
-  log(...args: any[]): void;
+  log(message: any): void;
+  /**
+   * Logs a message with the default log level using template literals.
+   * @param strings The template literal strings.
+   * @param values The values to interpolate.
+   */
+  log(strings: TemplateStringsArray, ...values: any[]): void;
   /**
    * Logs an error message.
-   * @param args The error message to log.
+   * @param message The error message to log.
    */
-  error(...args: any[]): void;
+  error(message: any): void;
+  /**
+   * Logs an error message using template literals.
+   * @param strings The template literal strings.
+   * @param values The values to interpolate.
+   */
+  error(strings: TemplateStringsArray, ...values: any[]): void;
   /**
    * Logs a warning message.
-   * @param args The warning message to log.
+   * @param message The warning message to log.
    */
-  warn(...args: any[]): void;
+  warn(message: any): void;
+  /**
+   * Logs a warning message using template literals.
+   * @param strings The template literal strings.
+   * @param values The values to interpolate.
+   */
+  warn(strings: TemplateStringsArray, ...values: any[]): void;
   /**
    * Logs an informational message.
-   * @param args The informational message to log.
+   * @param message The informational message to log.
    */
-  info(...args: any[]): void;
+  info(message: any): void;
+  /**
+   * Logs an informational message using template literals.
+   * @param strings The template literal strings.
+   * @param values The values to interpolate.
+   */
+  info(strings: TemplateStringsArray, ...values: any[]): void;
   /**
    * Logs a debug message.
-   * @param args The debug message to log.
+   * @param message The debug message to log.
    */
-  debug(...args: any[]): void;
+  debug(message: any): void;
+  /**
+   * Logs a debug message using template literals.
+   * @param strings The template literal strings.
+   * @param values The values to interpolate.
+   */
+  debug(strings: TemplateStringsArray, ...values: any[]): void;
 }
