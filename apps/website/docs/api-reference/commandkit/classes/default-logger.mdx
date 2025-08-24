@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## DefaultLogger
 
-<GenerationInfo sourceFile="packages/commandkit/src/logger/DefaultLogger.ts" sourceLine="52" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/logger/DefaultLogger.ts" sourceLine="54" packageName="commandkit" />
 
 Default logger implementation that logs messages to the console.
 It formats the log messages with timestamps, log levels, and context information.
@@ -21,11 +21,21 @@ It formats the log messages with timestamps, log levels, and context information
 ```ts title="Signature"
 class DefaultLogger implements ILogger {
     constructor(stdout:  = process.stdout, stderr:  = process.stderr)
-    debug(args: any[]) => void;
-    error(args: any[]) => void;
-    log(args: any[]) => void;
-    info(args: any[]) => void;
-    warn(args: any[]) => void;
+    debug(message: any) => void;
+    debug(strings: TemplateStringsArray, values: any[]) => void;
+    debug(messageOrStrings: any | TemplateStringsArray, values: any[]) => void;
+    error(message: any) => void;
+    error(strings: TemplateStringsArray, values: any[]) => void;
+    error(messageOrStrings: any | TemplateStringsArray, values: any[]) => void;
+    log(message: any) => void;
+    log(strings: TemplateStringsArray, values: any[]) => void;
+    log(messageOrStrings: any | TemplateStringsArray, values: any[]) => void;
+    info(message: any) => void;
+    info(strings: TemplateStringsArray, values: any[]) => void;
+    info(messageOrStrings: any | TemplateStringsArray, values: any[]) => void;
+    warn(message: any) => void;
+    warn(strings: TemplateStringsArray, values: any[]) => void;
+    warn(messageOrStrings: any | TemplateStringsArray, values: any[]) => void;
 }
 ```
 * Implements: <code><a href='/docs/next/api-reference/commandkit/interfaces/ilogger#ilogger'>ILogger</a></code>
@@ -41,29 +51,79 @@ class DefaultLogger implements ILogger {
 Creates a new instance of DefaultLogger.
 ### debug
 
-<MemberInfo kind="method" type={`(args: any[]) => void`}   />
+<MemberInfo kind="method" type={`(message: any) => void`}   />
 
 Logs a debug message.
+### debug
+
+<MemberInfo kind="method" type={`(strings: TemplateStringsArray, values: any[]) => void`}   />
+
+
+### debug
+
+<MemberInfo kind="method" type={`(messageOrStrings: any | TemplateStringsArray, values: any[]) => void`}   />
+
+
 ### error
 
-<MemberInfo kind="method" type={`(args: any[]) => void`}   />
+<MemberInfo kind="method" type={`(message: any) => void`}   />
 
 Logs an error message.
+### error
+
+<MemberInfo kind="method" type={`(strings: TemplateStringsArray, values: any[]) => void`}   />
+
+
+### error
+
+<MemberInfo kind="method" type={`(messageOrStrings: any | TemplateStringsArray, values: any[]) => void`}   />
+
+
 ### log
 
-<MemberInfo kind="method" type={`(args: any[]) => void`}   />
+<MemberInfo kind="method" type={`(message: any) => void`}   />
 
 Logs a default message.
+### log
+
+<MemberInfo kind="method" type={`(strings: TemplateStringsArray, values: any[]) => void`}   />
+
+
+### log
+
+<MemberInfo kind="method" type={`(messageOrStrings: any | TemplateStringsArray, values: any[]) => void`}   />
+
+
 ### info
 
-<MemberInfo kind="method" type={`(args: any[]) => void`}   />
+<MemberInfo kind="method" type={`(message: any) => void`}   />
 
 Logs an info message.
+### info
+
+<MemberInfo kind="method" type={`(strings: TemplateStringsArray, values: any[]) => void`}   />
+
+
+### info
+
+<MemberInfo kind="method" type={`(messageOrStrings: any | TemplateStringsArray, values: any[]) => void`}   />
+
+
 ### warn
 
-<MemberInfo kind="method" type={`(args: any[]) => void`}   />
+<MemberInfo kind="method" type={`(message: any) => void`}   />
 
 Logs a warning message.
+### warn
+
+<MemberInfo kind="method" type={`(strings: TemplateStringsArray, values: any[]) => void`}   />
+
+
+### warn
+
+<MemberInfo kind="method" type={`(messageOrStrings: any | TemplateStringsArray, values: any[]) => void`}   />
+
+
 
 
 </div>
