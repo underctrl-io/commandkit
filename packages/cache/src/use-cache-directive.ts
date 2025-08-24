@@ -2,7 +2,6 @@ import {
   CommonDirectiveTransformer,
   CommonDirectiveTransformerOptions,
   CompilerPluginRuntime,
-  Logger,
 } from 'commandkit';
 
 /**
@@ -26,6 +25,5 @@ export class UseCacheDirectivePlugin extends CommonDirectiveTransformer {
 
   public async activate(ctx: CompilerPluginRuntime): Promise<void> {
     super.activate(ctx);
-    Logger.info('"use cache" directive compiler plugin activated');
   }
 }
