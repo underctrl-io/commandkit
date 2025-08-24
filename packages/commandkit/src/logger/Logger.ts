@@ -43,8 +43,9 @@ export function createLogger(options: CommandKitLoggerOptions): LoggerImpl {
   } as LoggerImpl;
 
   for (const method of methods) {
-    impl[method] = (...args: any[]) => {
-      opt.provider[method](...args);
+    impl[method] = (...message: any) => {
+      // @ts-ignore
+      opt.provider[method](...message);
     };
   }
 
