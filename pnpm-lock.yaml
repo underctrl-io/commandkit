@@ -11,7 +11,7 @@ catalogs:
       version: 5.9.2
   discordjs:
     discord.js:
-      specifier: ^14.21.0
+      specifier: ^14.22.1
       version: 14.22.1
 
 overrides:
@@ -13983,7 +13983,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 24.3.0
+      '@types/node': 22.17.2
 
   '@types/ws@8.5.13':
     dependencies:
