@@ -14,7 +14,7 @@ type Awaitable<T> = T | Promise<T>;
  * Type representing the parameters schema for AI tools.
  * Extracted from the first parameter of the `tool` function from the 'ai' library.
  */
-export type ToolParameterType = Parameters<typeof tool>[0]['parameters'];
+export type ToolParameterType = z.ZodType | Schema<any>;
 
 /**
  * Utility type that infers the TypeScript type from a tool parameter schema.
@@ -39,7 +39,7 @@ export interface CreateToolOptions<T extends ToolParameterType, R = unknown> {
   /** A human-readable description of what the tool does */
   description: string;
   /** The parameter schema that defines the tool's input structure */
-  parameters: T;
+  inputSchema: T;
   /** The function that executes when the tool is called */
   execute: ToolExecuteFunction<T, R>;
 }
@@ -49,12 +49,12 @@ export interface CreateToolOptions<T extends ToolParameterType, R = unknown> {
  * @template T - The parameter schema type
  * @template R - The return type of the function
  * @param ctx - The AI context containing request and response information
- * @param parameters - The validated parameters passed to the tool
+ * @param inputSchema - The validated inputSchema passed to the tool
  * @returns The result of the tool execution, which can be synchronous or asynchronous
  */
 export type ToolExecuteFunction<T extends ToolParameterType, R> = (
   ctx: AiContext,
-  parameters: InferParameters<T>,
+  inputSchema: InferParameters<T>,
 ) => Awaitable<R>;
 
 /**
@@ -92,11 +92,11 @@ export function createTool<T extends ToolParameterType, R = unknown>(
   const _tool = tool<T, R>({
     name: options.name,
     description: options.description,
-    parameters: options.parameters,
+    inputSchema: options.inputSchema,
     async execute(params) {
       const { ctx } = getAiWorkerContext();
 
-      ctx.setParams(params);
+      ctx.setParams(params as Record<string, unknown>);
 
       return options.execute(ctx, params as InferParameters<T>);
     },

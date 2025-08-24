@@ -44,7 +44,7 @@ export interface AiPluginOptions {}
  * Extracts the AI configuration params.
  */
 export type ExtractAiConfig<T extends Record<string, unknown>> =
-  T extends AiConfig ? InferParameters<T['parameters']> : T;
+  T extends AiConfig ? InferParameters<T['inputSchema']> : T;
 
 /**
  * Represents the context in which an AI command is executed.

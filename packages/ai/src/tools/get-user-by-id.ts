@@ -5,7 +5,7 @@ import { Logger } from 'commandkit';
 export const getUserById = createTool({
   description: 'Get a user by their ID.',
   name: 'getUserById',
-  parameters: z.object({
+  inputSchema: z.object({
     userId: z.string().describe('The ID of the user to retrieve.'),
   }),
   async execute(ctx, params) {

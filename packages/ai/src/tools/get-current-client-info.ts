@@ -4,7 +4,7 @@ import { createTool } from './common';
 export const getCurrentClientInfo = createTool({
   name: 'getCurrentClientInfo',
   description: 'Get information about the current discord bot user',
-  parameters: z.object({}),
+  inputSchema: z.object({}),
   execute: async (ctx, params) => {
     const { client } = ctx;
     const user = client.user;
