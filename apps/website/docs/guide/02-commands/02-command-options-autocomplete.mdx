@@ -47,9 +47,7 @@ const pets = Array.from({ length: 20 }, (_, i) => ({
   value: `petId_${i}`,
 }));
 
-export const autocomplete: AutocompleteCommand = async ({
-  interaction,
-}) => {
+export const autocomplete: AutocompleteCommand = async ({ interaction }) => {
   try {
     // Get the input value of your autocomplete option
     const input = interaction.options.getString('name', false);
@@ -69,9 +67,7 @@ export const autocomplete: AutocompleteCommand = async ({
   }
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const chosenPetId = interaction.options.getString('name', true);
   const chosenPet = pets.find((pet) => pet.value === chosenPetId);
 

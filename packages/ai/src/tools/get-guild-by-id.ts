@@ -5,7 +5,7 @@ import { Logger } from 'commandkit';
 export const getGuildById = createTool({
   description: 'Get a guild by its ID.',
   name: 'getGuildById',
-  parameters: z.object({
+  inputSchema: z.object({
     guildId: z.string().describe('The ID of the guild to retrieve.'),
   }),
   async execute(ctx, params) {

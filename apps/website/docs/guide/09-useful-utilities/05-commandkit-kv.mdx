@@ -92,9 +92,7 @@ kv.set('user:123', {
 
 // Access nested properties
 const theme = kv.get('user:123.settings.theme'); // 'dark'
-const emailNotifications = kv.get(
-  'user:123.settings.notifications.email',
-); // true
+const emailNotifications = kv.get('user:123.settings.notifications.email'); // true
 
 // Set nested properties
 kv.set('user:123.settings.theme', 'light');
@@ -147,11 +145,7 @@ Set automatic expiration for temporary data:
 
 ```typescript
 // Set data with expiration (1 hour)
-kv.setex(
-  'session:123',
-  { userId: 123, token: 'abc123' },
-  60 * 60 * 1000,
-);
+kv.setex('session:123', { userId: 123, token: 'abc123' }, 60 * 60 * 1000);
 
 // Set expiration for existing keys
 kv.set('user:123', { name: 'John' });
@@ -208,9 +202,7 @@ for (const [key, value] of kv) {
 }
 
 // Filter entries
-const userEntries = [...kv].filter(([key]) =>
-  key.startsWith('user:'),
-);
+const userEntries = [...kv].filter(([key]) => key.startsWith('user:'));
 
 // Check existence
 if (kv.has('user:123')) {

@@ -107,10 +107,7 @@ Some Discord.js events have multiple parameters, such as the
 ```ts title="src/app/events/messageUpdate/log-message-update.ts"
 import type { EventHandler } from 'commandkit';
 
-const handler: EventHandler<'messageUpdate'> = (
-  oldMessage,
-  newMessage,
-) => {
+const handler: EventHandler<'messageUpdate'> = (oldMessage, newMessage) => {
   console.log(
     `Message from ${oldMessage.author?.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
   );
@@ -136,9 +133,7 @@ const handler: EventHandler<'messageCreate'> = (
   client,
   commandkit,
 ) => {
-  console.log(
-    `Message from ${message.author.username}: ${message.content}`,
-  );
+  console.log(`Message from ${message.author.username}: ${message.content}`);
 };
 
 export default handler;
@@ -172,9 +167,7 @@ export default handler;
 import type { EventHandler } from 'commandkit';
 
 const handler: EventHandler<'messageCreate'> = (message) => {
-  console.log(
-    `Message from ${message.author.username}: ${message.content}`,
-  );
+  console.log(`Message from ${message.author.username}: ${message.content}`);
 };
 
 export default handler;

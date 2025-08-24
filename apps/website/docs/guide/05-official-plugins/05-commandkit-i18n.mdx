@@ -349,9 +349,7 @@ export default async function onMessageCreate(message: Message) {
   const { t } = locale(message.guild?.preferredLocale);
 
   if (message.content.toLowerCase() === 'hello') {
-    await message.reply(
-      t('greeting', { user: message.author.displayName }),
-    );
+    await message.reply(t('greeting', { user: message.author.displayName }));
   }
 
   if (message.content.toLowerCase() === 'help') {
@@ -646,8 +644,7 @@ Here's how to migrate an existing legacy command to use i18n:
 
 ```ts title="src/app/commands/legacy/userinfo.js"
 export async function run({ interaction }) {
-  const user =
-    interaction.options.getUser('user') || interaction.user;
+  const user = interaction.options.getUser('user') || interaction.user;
   const member = interaction.guild?.members.cache.get(user.id);
 
   const embed = {
@@ -704,8 +701,7 @@ import { locale } from '@commandkit/i18n';
 export async function run({ interaction }) {
   const { t } = locale();
 
-  const user =
-    interaction.options.getUser('user') || interaction.user;
+  const user = interaction.options.getUser('user') || interaction.user;
   const member = interaction.guild?.members.cache.get(user.id);
 
   const embed = {

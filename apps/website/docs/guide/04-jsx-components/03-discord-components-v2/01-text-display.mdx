@@ -11,9 +11,7 @@ you to show text content in your Discord messages.
 import { type ChatInputCommand, TextDisplay } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const textComponent = <TextDisplay content="Hello, world!" />;
 
   await interaction.reply({

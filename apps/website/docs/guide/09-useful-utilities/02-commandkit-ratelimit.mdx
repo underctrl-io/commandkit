@@ -48,18 +48,13 @@ You can check how many requests a user has left and when the limit
 resets:
 
 ```typescript
-import {
-  getRemainingRequests,
-  getResetTime,
-} from 'commandkit/ratelimit';
+import { getRemainingRequests, getResetTime } from 'commandkit/ratelimit';
 
 const remaining = await getRemainingRequests('user:123');
 const resetTime = await getResetTime('user:123');
 
 console.log(`${remaining} requests remaining`);
-console.log(
-  `Limit resets in ${Math.round(resetTime / 1000)} seconds`,
-);
+console.log(`Limit resets in ${Math.round(resetTime / 1000)} seconds`);
 ```
 
 ### Manual reset
@@ -88,11 +83,7 @@ import { Redis } from 'ioredis';
 const redis = new Redis();
 
 // Use Redis-based rate limit storage
-const limiter = new RateLimiter(
-  10,
-  60000,
-  new RedisRateLimitStorage(redis),
-);
+const limiter = new RateLimiter(10, 60000, new RedisRateLimitStorage(redis));
 ```
 
 You can also use the convenience function:

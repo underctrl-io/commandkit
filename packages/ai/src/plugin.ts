@@ -3,20 +3,21 @@ import { AiPluginOptions, CommandTool } from './types';
 import CommandKit, { getCommandKit, Logger } from 'commandkit';
 import { AiContext } from './context';
 import { Collection, Events, Message } from 'discord.js';
-import { tool, Tool, generateText } from 'ai';
+import { tool, Tool, generateText, stepCountIs, ModelMessage } from 'ai';
 import { getAiWorkerContext, runInAiWorkerContext } from './ai-context-worker';
 import { getAvailableCommands } from './tools/get-available-commands';
 import { getChannelById } from './tools/get-channel-by-id';
 import { getCurrentClientInfo } from './tools/get-current-client-info';
 import { getGuildById } from './tools/get-guild-by-id';
 import { getUserById } from './tools/get-user-by-id';
-import { AiMessage, getAIConfig } from './configure';
+import { getAIConfig } from './configure';
 import { augmentCommandKit } from './augmentation';
+import { ToolParameterType } from './tools/common';
 
 /**
  * Represents the configuration options for the AI plugin scoped to a specific command.
  */
-export interface AiConfig {
+export interface AiConfig<T extends ToolParameterType = ToolParameterType> {
   /**
    * A description of the AI functionality provided by this command. If not given, the command's description will be used.
    */
@@ -24,7 +25,7 @@ export interface AiConfig {
   /**
    * A zod schema defining the parameters that the AI command accepts.
    */
-  parameters: any;
+  inputSchema: T;
 }
 
 const defaultTools: Record<string, Tool> = {
@@ -99,11 +100,14 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
     await runInAiWorkerContext(ctx, message, async () => {
       const systemPrompt = await prepareSystemPrompt(ctx, message);
       const prompt = await preparePrompt(ctx, message);
-      const { model, abortSignal, maxSteps, ...modelOptions } =
+      const { model, abortSignal, stopWhen, ...modelOptions } =
         await selectAiModel(ctx, message);
 
-      const promptOrMessage =
-        typeof prompt === 'string' ? { prompt } : { messages: prompt };
+      const promptOrMessage = (
+        typeof prompt === 'string' ? { prompt } : { messages: prompt }
+      ) as
+        | { prompt: string; messages: never }
+        | { messages: ModelMessage[]; prompt: never };
 
       await onProcessingStart(ctx, message);
 
@@ -112,7 +116,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
           model,
           abortSignal: abortSignal ?? AbortSignal.timeout(60_000),
           system: systemPrompt,
-          maxSteps: maxSteps ?? 5,
+          stopWhen: stopWhen ?? stepCountIs(5),
           ...modelOptions,
           tools: {
             // Include built-in least significant tools if not disabled
@@ -181,12 +185,12 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
 
       const cmdTool = tool({
         description,
-        parameters: cmd.data.aiConfig.parameters,
+        inputSchema: cmd.data.aiConfig.inputSchema,
         async execute(params) {
           const config = getAIConfig();
           const ctx = getAiWorkerContext();
 
-          ctx.ctx.setParams(params);
+          ctx.ctx.setParams(params as Record<string, unknown>);
 
           try {
             const target = await commandkit.commandHandler.prepareCommandRun(

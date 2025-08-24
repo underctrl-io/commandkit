@@ -10,9 +10,7 @@ components like buttons and select menus together in a single row.
 ```tsx title="src/app/commands/example.tsx"
 import { type ChatInputCommand, ActionRow, Button } from 'commandkit';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const row = (
     <ActionRow>
       <Button customId="button-1">Click me!</Button>
@@ -37,9 +35,7 @@ import {
   StringSelectMenuOption,
 } from 'commandkit';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const row = (
     <ActionRow>
       <StringSelectMenu placeholder="Choose an option">
@@ -65,9 +61,7 @@ components:
 import { type ChatInputCommand, ActionRow, Button } from 'commandkit';
 import { ButtonStyle } from 'discord.js';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const firstRow = (
     <ActionRow>
       <Button style={ButtonStyle.Primary} customId="button-1">

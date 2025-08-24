@@ -20,6 +20,6 @@ Type definition for a tool's execute function.
 ```ts title="Signature"
 type ToolExecuteFunction<T extends ToolParameterType, R> = (
   ctx: AiContext,
-  parameters: InferParameters<T>,
+  inputSchema: InferParameters<T>,
 ) => Awaitable<R>
 ```

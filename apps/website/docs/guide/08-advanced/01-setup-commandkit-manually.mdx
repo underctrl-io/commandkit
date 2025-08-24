@@ -76,20 +76,14 @@ example will use a simple ping/pong command which will register as a
 chat input (slash) and message command.
 
 ```ts title="src/app/commands/ping.ts"
-import type {
-  ChatInputCommand,
-  CommandData,
-  MessageCommand,
-} from 'commandkit';
+import type { ChatInputCommand, CommandData, MessageCommand } from 'commandkit';
 
 export const command: CommandData = {
   name: 'ping',
   description: 'Pong!',
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   await interaction.reply('Pong!');
 };
 

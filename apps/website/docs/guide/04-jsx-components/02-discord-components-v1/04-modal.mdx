@@ -17,13 +17,9 @@ import {
 } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
-const handleSubmit: OnModalKitSubmit = async (
-  interaction,
-  context,
-) => {
+const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
   const name = interaction.fields.getTextInputValue('name');
-  const description =
-    interaction.fields.getTextInputValue('description');
+  const description = interaction.fields.getTextInputValue('description');
 
   await interaction.reply({
     content: `**Profile Created!**\n**Name:** ${name}\n**Description:** ${description}`,
@@ -34,9 +30,7 @@ const handleSubmit: OnModalKitSubmit = async (
   context.dispose();
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const modal = (
     <Modal title="User Profile" onSubmit={handleSubmit}>
       <ShortInput

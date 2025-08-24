@@ -54,21 +54,15 @@ async function fetchWeatherData(city: string) {
   'use cache';
 
   // This expensive API call will only run once for each unique city
-  const response = await fetch(
-    `https://api.weather.com/v1/current?q=${city}`,
-  );
+  const response = await fetch(`https://api.weather.com/v1/current?q=${city}`);
   return response.json();
 }
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const city = interaction.options.getString('city', true);
   const weather = await fetchWeatherData(city);
 
-  await interaction.reply(
-    `Weather in ${city}: ${weather.description}`,
-  );
+  await interaction.reply(`Weather in ${city}: ${weather.description}`);
 };
 ```
 
@@ -163,9 +157,7 @@ async function fetchGameStats(gameId: string) {
   cacheTag(`game:${gameId}`);
   cacheLife('30m'); // API updates every 30 minutes
 
-  const response = await fetch(
-    `https://api.game.com/stats/${gameId}`,
-  );
+  const response = await fetch(`https://api.game.com/stats/${gameId}`);
   return response.json();
 }
 ```

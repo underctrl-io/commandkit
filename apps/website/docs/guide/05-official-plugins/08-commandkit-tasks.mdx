@@ -417,12 +417,9 @@ export default task({
     const processedData = await processData(data);
 
     // Step 3: Send notification
-    const channel =
-      ctx.commandkit.client.channels.cache.get('log-channel');
+    const channel = ctx.commandkit.client.channels.cache.get('log-channel');
     if (channel?.isTextBased()) {
-      await channel.send(
-        `Data processing completed for ID: ${data.id}`,
-      );
+      await channel.send(`Data processing completed for ID: ${data.id}`);
     }
   },
 });
@@ -497,8 +494,7 @@ export default task({
     ctx.commandkit.store.set('last-run', Date.now());
 
     // Get or initialize counter
-    const counter =
-      ctx.commandkit.store.get('execution-counter') || 0;
+    const counter = ctx.commandkit.store.get('execution-counter') || 0;
     ctx.commandkit.store.set('execution-counter', counter + 1);
 
     console.log(`Task executed ${counter + 1} times`);
@@ -631,10 +627,7 @@ export default task({
         await performFallbackOperation();
         console.log('Fallback operation succeeded');
       } catch (fallbackError) {
-        console.error(
-          'Fallback operation also failed:',
-          fallbackError,
-        );
+        console.error('Fallback operation also failed:', fallbackError);
 
         // Log the failure for manual intervention
         const channel =

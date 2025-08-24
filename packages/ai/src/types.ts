@@ -30,7 +30,10 @@ export type SelectAiModel = (
   message: Message,
 ) => Promise<SelectAiModelResult>;
 
-export type SelectAiModelResult = Parameters<typeof generateText>[0];
+export type SelectAiModelResult = Omit<
+  Parameters<typeof generateText>[0],
+  'messages' | 'prompt'
+>;
 
 export type CommandTool = LoadedCommand & {
   tool: Tool;
@@ -44,7 +47,7 @@ export interface AiPluginOptions {}
  * Extracts the AI configuration params.
  */
 export type ExtractAiConfig<T extends Record<string, unknown>> =
-  T extends AiConfig ? InferParameters<T['parameters']> : T;
+  T extends AiConfig ? InferParameters<T['inputSchema']> : T;
 
 /**
  * Represents the context in which an AI command is executed.

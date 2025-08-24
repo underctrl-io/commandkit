@@ -4,7 +4,7 @@ import { createTool } from './common';
 export const getAvailableCommands = createTool({
   description: 'Get a list of all available commands.',
   name: 'getAvailableCommands',
-  parameters: z.object({}),
+  inputSchema: z.object({}),
   execute(ctx, params) {
     const { commandkit } = ctx;
 

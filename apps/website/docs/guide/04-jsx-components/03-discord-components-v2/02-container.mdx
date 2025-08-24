@@ -8,16 +8,10 @@ organize and style multiple components together.
 ## Basic usage
 
 ```tsx title="src/app/commands/container-example.tsx"
-import {
-  type ChatInputCommand,
-  Container,
-  TextDisplay,
-} from 'commandkit';
+import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
 import { Colors, MessageFlags } from 'discord.js';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const container = (
     <Container accentColor={Colors.Blue}>
       <TextDisplay content="Welcome to my bot!" />
@@ -38,16 +32,10 @@ The `Container` component accepts an `accentColor` prop that can be
 used to customize its appearance:
 
 ```tsx title="src/app/commands/styled-container.tsx"
-import {
-  type ChatInputCommand,
-  Container,
-  TextDisplay,
-} from 'commandkit';
+import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
 import { Colors, MessageFlags } from 'discord.js';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const containers = [
     <Container accentColor={Colors.Red}>
       <TextDisplay content="🔴 Red accent container" />
@@ -81,15 +69,9 @@ import {
   TextDisplay,
   Separator,
 } from 'commandkit';
-import {
-  Colors,
-  MessageFlags,
-  SeparatorSpacingSize,
-} from 'discord.js';
+import { Colors, MessageFlags, SeparatorSpacingSize } from 'discord.js';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const container = (
     <Container accentColor={Colors.Purple}>
       <TextDisplay content="# Main Title" />
@@ -119,16 +101,10 @@ export const chatInput: ChatInputCommand = async ({
 You can use multiple containers to organize different sections:
 
 ```tsx title="src/app/commands/multi-container.tsx"
-import {
-  type ChatInputCommand,
-  Container,
-  TextDisplay,
-} from 'commandkit';
+import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
 import { Colors, MessageFlags } from 'discord.js';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const headerContainer = (
     <Container accentColor={Colors.Blue}>
       <TextDisplay content="# Bot Status Report" />

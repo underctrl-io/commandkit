@@ -34,12 +34,9 @@ const semaphore = createSemaphore({
   timeout: 60000, // 60 second timeout
 });
 
-const result = await semaphore.withPermit(
-  'api-endpoint',
-  async () => {
-    return await apiCall();
-  },
-);
+const result = await semaphore.withPermit('api-endpoint', async () => {
+  return await apiCall();
+});
 ```
 
 ## Advanced usage
@@ -105,17 +102,12 @@ You can check how many permits are being used and how many are
 available:
 
 ```typescript
-import {
-  getAvailablePermits,
-  getAcquiredPermits,
-} from 'commandkit/semaphore';
+import { getAvailablePermits, getAcquiredPermits } from 'commandkit/semaphore';
 
 const available = await getAvailablePermits('database');
 const acquired = await getAcquiredPermits('database');
 
-console.log(
-  `Database connections: ${acquired} active, ${available} available`,
-);
+console.log(`Database connections: ${acquired} active, ${available} available`);
 ```
 
 ### Using external storage

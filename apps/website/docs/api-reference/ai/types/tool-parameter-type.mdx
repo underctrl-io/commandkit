@@ -19,5 +19,5 @@ Type representing the parameters schema for AI tools.
 Extracted from the first parameter of the `tool` function from the 'ai' library.
 
 ```ts title="Signature"
-type ToolParameterType = Parameters<typeof tool>[0]['parameters']
+type ToolParameterType = z.ZodType | Schema<any>
 ```

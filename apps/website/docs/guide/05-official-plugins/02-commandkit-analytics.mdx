@@ -117,9 +117,7 @@ export const command: CommandData = {
   ],
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const user = interaction.options.getUser('user', true);
 
   // Perform the ban
@@ -220,10 +218,7 @@ class CustomAnalyticsProvider implements AnalyticsProvider {
 
   constructor(private readonly analytics: YourAnalyticsService) {}
 
-  async track(
-    engine: AnalyticsEngine,
-    event: AnalyticsEvent,
-  ): Promise<void> {
+  async track(engine: AnalyticsEngine, event: AnalyticsEvent): Promise<void> {
     // Implement your tracking logic here
     const { name, data } = event;
 
@@ -240,10 +235,7 @@ class CustomAnalyticsProvider implements AnalyticsProvider {
     });
   }
 
-  async identify(
-    engine: AnalyticsEngine,
-    event: IdentifyEvent,
-  ): Promise<void> {
+  async identify(engine: AnalyticsEngine, event: IdentifyEvent): Promise<void> {
     // Implement anonymous session identification
     await this.analytics.identify({
       // Use anonymous session identifiers
@@ -268,10 +260,7 @@ class CustomAnalyticsProvider implements AnalyticsProvider {
 Create a plugin class that extends `RuntimePlugin`:
 
 ```ts title="src/plugins/custom-analytics-plugin.ts"
-import {
-  CommandKitPluginRuntime,
-  RuntimePlugin,
-} from 'commandkit/plugin';
+import { CommandKitPluginRuntime, RuntimePlugin } from 'commandkit/plugin';
 import { CustomAnalyticsProvider } from '../providers/custom-analytics';
 
 export interface CustomAnalyticsPluginOptions {
@@ -297,9 +286,7 @@ export class CustomAnalyticsPlugin extends RuntimePlugin<CustomAnalyticsPluginOp
     ctx.commandkit.analytics.registerProvider(this.provider);
   }
 
-  public async deactivate(
-    ctx: CommandKitPluginRuntime,
-  ): Promise<void> {
+  public async deactivate(ctx: CommandKitPluginRuntime): Promise<void> {
     if (!this.provider) return;
 
     // Cleanup if needed
