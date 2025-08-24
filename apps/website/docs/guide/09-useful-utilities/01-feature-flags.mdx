@@ -1,7 +1,6 @@
 ---
 title: Feature Flags
-description:
-  Control feature visibility with CommandKit's built-in feature flag
+description: Control feature visibility with CommandKit's built-in feature flag
   system
 ---
 
@@ -51,8 +50,7 @@ export const embedColorFlag = flag({
   description: 'Show red color instead of blue in embeds',
   identify(ctx) {
     const command = ctx.command;
-    const id =
-      command?.interaction?.user.id ?? command?.message?.author.id;
+    const id = command?.interaction?.user.id ?? command?.message?.author.id;
 
     return { id: id ?? null };
   },
@@ -142,9 +140,8 @@ export const embedColorFlag = flag<boolean, Entity>({
     } else if (ctx.event) {
       // handle event specific context
       if (ctx.event.event === 'guildMemberUpdate') {
-        const [_oldMember, newMember] = ctx.event.argumentsAs(
-          'guildMemberUpdate',
-        );
+        const [_oldMember, newMember] =
+          ctx.event.argumentsAs('guildMemberUpdate');
 
         member = newMember as GuildMember;
       }
@@ -237,10 +234,7 @@ export class LaunchDarklyProvider implements FlagProvider {
     console.log('LaunchDarkly provider initialized');
   }
 
-  async getFlag(
-    key: string,
-    context?: any,
-  ): Promise<FlagConfiguration | null> {
+  async getFlag(key: string, context?: any): Promise<FlagConfiguration | null> {
     try {
       // Fetch flag from LaunchDarkly
       // const variation = await this.client.variation(key, context, false);
@@ -257,10 +251,7 @@ export class LaunchDarklyProvider implements FlagProvider {
         },
       };
     } catch (error) {
-      console.error(
-        `LaunchDarkly flag evaluation failed for ${key}:`,
-        error,
-      );
+      console.error(`LaunchDarkly flag evaluation failed for ${key}:`, error);
       return null;
     }
   }
@@ -283,9 +274,7 @@ export class LaunchDarklyProvider implements FlagProvider {
 import { setFlagProvider } from 'commandkit';
 import { LaunchDarklyProvider } from './providers/LaunchDarklyProvider';
 
-const provider = new LaunchDarklyProvider(
-  process.env.LAUNCHDARKLY_API_KEY!,
-);
+const provider = new LaunchDarklyProvider(process.env.LAUNCHDARKLY_API_KEY!);
 
 // Initialize and set the global provider
 await provider.initialize();
@@ -300,12 +289,10 @@ import murmurhash from 'murmurhash';
 
 export const embedColorFlag = flag({
   key: 'embed-color-flag',
-  description:
-    'Show different embed colors based on external configuration',
+  description: 'Show different embed colors based on external configuration',
   identify(ctx) {
     const command = ctx.command;
-    const id =
-      command?.interaction?.user.id ?? command?.message?.author.id;
+    const id = command?.interaction?.user.id ?? command?.message?.author.id;
     return { id: id ?? null };
   },
   decide({ entities, provider }) {
@@ -412,10 +399,7 @@ import { FlagProvider, FlagConfiguration } from 'commandkit';
 export class MultiProvider implements FlagProvider {
   constructor(private providers: FlagProvider[]) {}
 
-  async getFlag(
-    key: string,
-    context?: any,
-  ): Promise<FlagConfiguration | null> {
+  async getFlag(key: string, context?: any): Promise<FlagConfiguration | null> {
     // Try providers in order, return first successful result
     for (const provider of this.providers) {
       try {

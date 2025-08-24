@@ -34,15 +34,10 @@ const handleSelect: OnStringSelectMenuKitSubmit = async (
   context.dispose();
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const selectMenu = (
     <ActionRow>
-      <StringSelectMenu
-        placeholder="Choose an option"
-        onSelect={handleSelect}
-      >
+      <StringSelectMenu placeholder="Choose an option" onSelect={handleSelect}>
         <StringSelectMenuOption
           label="Option 1"
           value="1"
@@ -99,9 +94,7 @@ const handleSelect: OnChannelSelectMenuKitSubmit = async (
   context.dispose();
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const selectMenu = (
     <ActionRow>
       <ChannelSelectMenu
@@ -145,15 +138,10 @@ const handleSelect: OnRoleSelectMenuKitSubmit = async (
   context.dispose();
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const selectMenu = (
     <ActionRow>
-      <RoleSelectMenu
-        placeholder="Choose a role"
-        onSelect={handleSelect}
-      />
+      <RoleSelectMenu placeholder="Choose a role" onSelect={handleSelect} />
     </ActionRow>
   );
 
@@ -191,15 +179,10 @@ const handleSelect: OnUserSelectMenuKitSubmit = async (
   context.dispose();
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const selectMenu = (
     <ActionRow>
-      <UserSelectMenu
-        placeholder="Choose a user"
-        onSelect={handleSelect}
-      />
+      <UserSelectMenu placeholder="Choose a user" onSelect={handleSelect} />
     </ActionRow>
   );
 
@@ -237,9 +220,7 @@ const handleSelect: OnMentionableSelectMenuKitSubmit = async (
   context.dispose();
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const selectMenu = (
     <ActionRow>
       <MentionableSelectMenu
@@ -285,9 +266,7 @@ const handleSelect: OnStringSelectMenuKitSubmit = async (
   context.dispose();
 };
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const selectMenu = (
     <ActionRow>
       <StringSelectMenu
@@ -296,26 +275,10 @@ export const chatInput: ChatInputCommand = async ({
         maxValues={3}
         onSelect={handleSelect}
       >
-        <StringSelectMenuOption
-          label="Pizza"
-          value="pizza"
-          emoji="🍕"
-        />
-        <StringSelectMenuOption
-          label="Burger"
-          value="burger"
-          emoji="🍔"
-        />
-        <StringSelectMenuOption
-          label="Pasta"
-          value="pasta"
-          emoji="🍝"
-        />
-        <StringSelectMenuOption
-          label="Sushi"
-          value="sushi"
-          emoji="🍣"
-        />
+        <StringSelectMenuOption label="Pizza" value="pizza" emoji="🍕" />
+        <StringSelectMenuOption label="Burger" value="burger" emoji="🍔" />
+        <StringSelectMenuOption label="Pasta" value="pasta" emoji="🍝" />
+        <StringSelectMenuOption label="Sushi" value="sushi" emoji="🍣" />
       </StringSelectMenu>
     </ActionRow>
   );

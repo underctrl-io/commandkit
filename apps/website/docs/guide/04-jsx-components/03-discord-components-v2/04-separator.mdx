@@ -14,15 +14,9 @@ import {
   TextDisplay,
   Separator,
 } from 'commandkit';
-import {
-  Colors,
-  MessageFlags,
-  SeparatorSpacingSize,
-} from 'discord.js';
+import { Colors, MessageFlags, SeparatorSpacingSize } from 'discord.js';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const container = (
     <Container accentColor={Colors.Blue}>
       <TextDisplay content="# First Section" />
