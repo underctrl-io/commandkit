@@ -22,16 +22,11 @@ Here's a basic example of a runtime plugin that logs when the bot logs
 in:
 
 ```ts title="my-runtime-plugin.ts"
-import {
-  type CommandKitPluginRuntime,
-  RuntimePlugin,
-} from 'commandkit';
+import { type CommandKitPluginRuntime, RuntimePlugin } from 'commandkit';
 
 export class MyRuntimePlugin extends RuntimePlugin {
   // Override any hooks you want to use
-  async onAfterClientLogin(
-    ctx: CommandKitPluginRuntime,
-  ): Promise<void> {
+  async onAfterClientLogin(ctx: CommandKitPluginRuntime): Promise<void> {
     console.log('Bot has logged in!');
   }
 }
@@ -516,9 +511,7 @@ import type { Interaction, Message } from 'discord.js';
 export class LoggingPlugin extends RuntimePlugin {
   private commandUsage = new Map<string, number>();
 
-  async onAfterClientLogin(
-    ctx: CommandKitPluginRuntime,
-  ): Promise<void> {
+  async onAfterClientLogin(ctx: CommandKitPluginRuntime): Promise<void> {
     console.log(`Bot logged in as ${ctx.client.user?.tag}!`);
     console.log(`Serving ${ctx.client.guilds.cache.size} guilds`);
   }
@@ -548,9 +541,7 @@ export class LoggingPlugin extends RuntimePlugin {
 
     // Log execution time
     const execTime = Date.now() - startTime;
-    console.log(
-      `Command "${command.name}" executed in ${execTime}ms`,
-    );
+    console.log(`Command "${command.name}" executed in ${execTime}ms`);
 
     // Track usage
     this.commandUsage.set(

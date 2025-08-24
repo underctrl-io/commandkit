@@ -16,9 +16,7 @@ import {
 } from 'commandkit';
 import { AttachmentBuilder, Colors, MessageFlags } from 'discord.js';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const fileContent = '# Hello World\nThis is a test markdown file.';
 
   const container = (

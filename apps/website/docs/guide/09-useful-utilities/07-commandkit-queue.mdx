@@ -232,10 +232,7 @@ await send('shard-communication', {
 // In shard 1 (receiving)
 await receive('shard-communication', (message) => {
   if (message.toShard === 1) {
-    console.log(
-      `Received from shard ${message.fromShard}:`,
-      message.data,
-    );
+    console.log(`Received from shard ${message.fromShard}:`, message.data);
   }
 });
 ```
@@ -293,11 +290,7 @@ await receive('voice-updates', (message) => {
   );
 
   // Notify other users
-  notifyVoiceChannelUsers(
-    message.guildId,
-    message.channelId,
-    message,
-  );
+  notifyVoiceChannelUsers(message.guildId, message.channelId, message);
 });
 ```
 
@@ -378,10 +371,7 @@ await receive('user-events', async (message) => {
     console.log(`Processed event for user ${message.userId}`);
   } catch (error) {
     // Log error but don't crash
-    console.error(
-      `Failed to process event for user ${message.userId}:`,
-      error,
-    );
+    console.error(`Failed to process event for user ${message.userId}:`, error);
 
     // Optionally retry or send to dead letter queue
     await handleFailedMessage(message, error);

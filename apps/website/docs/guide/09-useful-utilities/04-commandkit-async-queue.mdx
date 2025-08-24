@@ -136,9 +136,7 @@ const processItem = async (item: number) => {
 };
 
 // Add all items to queue
-const promises = items.map((item) =>
-  queue.add(() => processItem(item)),
-);
+const promises = items.map((item) => queue.add(() => processItem(item)));
 
 // Wait for all to complete
 const results = await Promise.all(promises);

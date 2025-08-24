@@ -5,7 +5,7 @@ import { Logger } from 'commandkit';
 export const getChannelById = createTool({
   description: 'Get a channel by its ID.',
   name: 'getChannelById',
-  parameters: z.object({
+  inputSchema: z.object({
     channelId: z.string().describe('The ID of the channel to retrieve.'),
   }),
   async execute(ctx, params) {

@@ -68,10 +68,7 @@ can register custom templates to be used by the `commandkit create`
 command.
 
 ```ts title="my-compiler-plugin.ts"
-import {
-  type CompilerPluginRuntime,
-  CompilerPlugin,
-} from 'commandkit';
+import { type CompilerPluginRuntime, CompilerPlugin } from 'commandkit';
 
 export class MyPlugin extends CompilerPlugin {
   public readonly name = 'my-plugin';

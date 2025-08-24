@@ -21,9 +21,7 @@ import { MiddlewareContext } from 'commandkit';
 
 export function beforeExecute(ctx: MiddlewareContext) {
   // This function will be executed before the command is executed
-  console.log(
-    `User ${ctx.interaction.user.id} is about to execute a command`,
-  );
+  console.log(`User ${ctx.interaction.user.id} is about to execute a command`);
 }
 
 export function afterExecute(ctx: MiddlewareContext) {
@@ -68,9 +66,7 @@ import type { MiddlewareContext } from 'commandkit';
 export function beforeExecute(ctx: MiddlewareContext) {
   // This middleware will run before any moderation command
   if (!ctx.interaction.member.permissions.has('KickMembers')) {
-    throw new Error(
-      'You need moderation permissions to use this command',
-    );
+    throw new Error('You need moderation permissions to use this command');
   }
 }
 ```
