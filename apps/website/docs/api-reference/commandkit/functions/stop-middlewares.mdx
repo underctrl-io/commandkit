@@ -1,5 +1,5 @@
 ---
-title: "MiddlewareId"
+title: "StopMiddlewares"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,9 +11,13 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## middlewareId
+## stopMiddlewares
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/middlewares/permissions.ts" sourceLine="7" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/interrupt/signals.ts" sourceLine="12" packageName="commandkit" />
 
+Stop upcoming middleware and command execution.
+This will **not** stop any `after()` callbacks inside the command.
 
-
+```ts title="Signature"
+function stopMiddlewares(): never
+```

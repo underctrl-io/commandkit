@@ -19,8 +19,6 @@ Extended context class for middleware execution with additional control methods.
 
 ```ts title="Signature"
 class MiddlewareContext<T extends CommandExecutionMode = CommandExecutionMode> extends Context<T, MiddlewareContextArgs> {
-    cancelled: boolean
-    cancel() => void;
     setCommandRunner(fn: RunCommand) => void;
 }
 ```
@@ -30,16 +28,6 @@ class MiddlewareContext<T extends CommandExecutionMode = CommandExecutionMode> e
 
 <div className="members-wrapper">
 
-### cancelled
-
-<MemberInfo kind="property" type={`boolean`}   />
-
-Whether the command execution was cancelled.
-### cancel
-
-<MemberInfo kind="method" type={`() => void`}   />
-
-Cancels the command execution.
 ### setCommandRunner
 
 <MemberInfo kind="method" type={`(fn: <a href='/docs/next/api-reference/commandkit/types/run-command#runcommand'>RunCommand</a>) => void`}   />

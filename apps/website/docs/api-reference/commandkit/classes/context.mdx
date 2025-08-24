@@ -49,7 +49,6 @@ class Context<ExecutionMode extends CommandExecutionMode = CommandExecutionMode,
     clone(config?: Partial<ContextParameters<ExecutionMode>>) => Context<ExecutionMode>;
     isMiddleware() => this is MiddlewareContext<ExecutionMode>;
     args() => string[];
-    exit() => never;
 }
 ```
 
@@ -201,14 +200,6 @@ Checks if this context is a middleware context.
 <MemberInfo kind="method" type={`() => string[]`}   />
 
 Gets the command arguments (only available for message commands).
-### exit
-
-<MemberInfo kind="method" type={`() => never`}   />
-
-Stops upcoming middleware or current command execution.
-If this is called inside pre-stage middleware, the next run will be the actual command, skipping all other pre-stage middlewares.
-If this is called inside a command itself, it will skip all post-stage middlewares.
-If this is called inside post-stage middleware, it will skip all other post-stage middlewares.
 
 
 </div>
