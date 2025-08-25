@@ -19,7 +19,7 @@ Inside each event directory, you can create multiple handler files
 that will all execute when that event is triggered.
 
 Here's how your project structure might look with the
-`"messageCreate"` and `"ready"` events:
+`"messageCreate"` and `"clientReady"` events:
 
 ```title="" {4-9}
 .
@@ -29,7 +29,7 @@ Here's how your project structure might look with the
 │   │       ├── messageCreate/
 │   │       │   ├── give-xp.ts
 │   │       │   └── log-message.ts
-│   │       └── ready/
+│   │       └── clientReady/
 │   │           └── log.ts
 │   └── app.ts
 ├── .env
@@ -50,12 +50,12 @@ You can see what events are available in Discord.js by checking the
 
 To create an event handler, create a folder inside the
 `src/app/events` directory which should match the event name from
-Discord.js. This example will use the `"ready"` event.
+Discord.js. This example will use the `"clientReady"` event.
 
-```ts title="src/app/events/ready/log.ts"
+```ts title="src/app/events/clientReady/log.ts"
 import type { EventHandler } from 'commandkit';
 
-const handler: EventHandler<'ready'> = (client) => {
+const handler: EventHandler<'clientReady'> = (client) => {
   console.log(`🤖 ${client.user.displayName} is online!`);
 };
 
@@ -63,11 +63,12 @@ export default handler;
 ```
 
 That's it! CommandKit will automatically detect this file and register
-it as one of the handler functions for the `"ready"` event.
+it as one of the handler functions for the `"clientReady"` event.
 
 Just like the Discord.js `client.on()` method, the parameters you
 receive in your event file will be based on what event you're trying
-to handle. In the example above, the `"ready"` event should give you a
+to handle. In the example above, the `"clientReady"` event should give
+you a
 [`Client`](https://discord.js.org/docs/packages/discord.js/main/Client:Class)
 instance.
 
@@ -86,12 +87,12 @@ definition.
 You may want to have some events to only get called once. For this,
 you can export a variable called `once` from your event function file.
 
-```ts title="src/app/events/ready/log.ts"
+```ts title="src/app/events/clientReady/log.ts"
 import type { EventHandler } from 'commandkit';
 
 export const once = true;
 
-const handler: EventHandler<'ready'> = (client) => {
+const handler: EventHandler<'clientReady'> = (client) => {
   console.log(`🤖 ${client.user.displayName} is online!`);
 };
 

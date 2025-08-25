@@ -254,7 +254,7 @@ export class CommandKit extends EventEmitter {
       } catch (e) {
         // ignore
         if (process.env.COMMANDKIT_DEBUG_TYPEGEN) {
-          Logger.error(e);
+          Logger.error`${e}`;
         }
       }
     }

@@ -1,29 +1,29 @@
 import {
   AutocompleteInteraction,
-  ChatInputCommandInteraction,
-  MessageContextMenuCommandInteraction,
-  Message,
-  Locale,
-  Interaction,
-  UserContextMenuCommandInteraction,
-  Client,
   Awaitable,
+  ChatInputCommandInteraction,
+  Client,
   Guild,
+  Interaction,
+  Locale,
+  Message,
+  MessageContextMenuCommandInteraction,
   TextBasedChannel,
+  UserContextMenuCommandInteraction,
 } from 'discord.js';
 import { CommandKit } from '../../commandkit';
-import {
-  MessageCommandOptions,
-  MessageCommandParser,
-} from './MessageCommandParser';
-import { CommandKitEnvironment } from '../../context/environment';
 import { GenericFunction, getContext } from '../../context/async-context';
-import { exitMiddleware, redirect } from '../interrupt/signals';
+import { CommandKitEnvironment } from '../../context/environment';
 import {
   LoadedCommand,
   ResolvableCommand,
   RunCommand,
 } from '../handlers/AppCommandHandler';
+import { redirect } from '../interrupt/signals';
+import {
+  MessageCommandOptions,
+  MessageCommandParser,
+} from './MessageCommandParser';
 
 /**
  * Enumeration of different command execution modes supported by CommandKit.
@@ -551,15 +551,15 @@ export class Context<
     return [];
   }
 
-  /**
-   * Stops upcoming middleware or current command execution.
-   * If this is called inside pre-stage middleware, the next run will be the actual command, skipping all other pre-stage middlewares.
-   * If this is called inside a command itself, it will skip all post-stage middlewares.
-   * If this is called inside post-stage middleware, it will skip all other post-stage middlewares.
-   */
-  public exit(): never {
-    exitMiddleware();
-  }
+  // /**
+  //  * Stops upcoming middleware or current command execution.
+  //  * If this is called inside pre-stage middleware, the next run will be the actual command, skipping all other pre-stage middlewares.
+  //  * If this is called inside a command itself, it will skip all post-stage middlewares.
+  //  * If this is called inside post-stage middleware, it will skip all other post-stage middlewares.
+  //  */
+  // public exit(): never {
+  //   stopMiddlewares();
+  // }
 }
 
 /**
@@ -568,26 +568,6 @@ export class Context<
 export class MiddlewareContext<
   T extends CommandExecutionMode = CommandExecutionMode,
 > extends Context<T, MiddlewareContextArgs> {
-  /**
-   * @private
-   * @internal
-   */
-  #cancel = false;
-
-  /**
-   * Whether the command execution was cancelled.
-   */
-  public get cancelled(): boolean {
-    return this.#cancel;
-  }
-
-  /**
-   * Cancels the command execution.
-   */
-  public cancel(): void {
-    this.#cancel = true;
-  }
-
   /**
    * Sets command runner function to wrap the command execution.
    * @param fn The function to set.

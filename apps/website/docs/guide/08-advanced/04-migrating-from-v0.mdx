@@ -58,7 +58,7 @@ enables advanced features like automatic route discovery.
       │   │   ├── commands/
       │   │   │   └── ping.ts
       │   │   └── events/
-      │   │       └── ready/
+      │   │       └── clientReady/
       │   │           └── log.ts
       │   └── app.ts
       ├── .env
@@ -75,7 +75,7 @@ enables advanced features like automatic route discovery.
       │   ├── commands/
       │   │   └── ping.ts
       │   ├── events/
-      │   │   └── ready/
+      │   │   └── clientReady/
       │   │       └── log.ts
       │   └── index.ts
       ├── .env
@@ -241,7 +241,7 @@ control over command execution.
 <Tabs>
   <TabItem value="v1" label="v1 (Middleware System) ✅" default>
       ```ts title='src/app/commands/+global-middleware.ts'
-      import type { MiddlewareContext } from 'commandkit';
+      import type { MiddlewareContext, stopMiddlewares } from 'commandkit';
 
       export function beforeExecute(ctx: MiddlewareContext) {
         // Example: Block command execution based on conditions
@@ -249,7 +249,7 @@ control over command execution.
           ctx.interaction.reply('Access denied: Command execution blocked.');
         }
 
-        ctx.cancel(); // Prevents command execution
+        stopMiddlewares(); // Prevents command execution
       }
       ```
 

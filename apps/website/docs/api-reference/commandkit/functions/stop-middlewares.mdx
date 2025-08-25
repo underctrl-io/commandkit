@@ -1,5 +1,5 @@
 ---
-title: "FilterFunction"
+title: "StopMiddlewares"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,15 +11,12 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## FilterFunction
+## stopMiddlewares
 
-<GenerationInfo sourceFile="packages/commandkit/src/analytics/analytics-engine.ts" sourceLine="16" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/interrupt/signals.ts" sourceLine="11" packageName="commandkit" />
 
-Filter function type for analytics events.
+Stop upcoming middlewares and command execution.
 
 ```ts title="Signature"
-type FilterFunction = (
-  engine: AnalyticsEngine,
-  event: AnalyticsEvent,
-) => boolean
+function stopMiddlewares(): never
 ```

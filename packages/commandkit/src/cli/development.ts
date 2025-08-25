@@ -164,7 +164,7 @@ export async function bootstrapDevelopmentServer(configPath?: string) {
     }
 
     return false;
-  }, 300);
+  }, 700);
 
   const isConfigUpdate = (path: string) => {
     const isConfig = configPaths.some((configPath) => path === configPath);

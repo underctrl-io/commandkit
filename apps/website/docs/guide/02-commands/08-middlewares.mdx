@@ -34,8 +34,8 @@ export function afterExecute(ctx: MiddlewareContext) {
 
 ## Stop command execution
 
-You can stop a command from running by returning `ctx.cancel()` in the
-`beforeExecute` function.
+You can stop a command from running by calling `stopMiddlewares()` in
+the `beforeExecute` function.
 
 ```ts title="src/app/commands/+middleware.ts"
 import type { MiddlewareContext } from 'commandkit';
@@ -44,13 +44,56 @@ export function beforeExecute(ctx: MiddlewareContext) {
   if (ctx.interaction.user.id !== '1234567890') {
     // Conditionally stop command execution
     console.log(`${ctx.commandName} will not be executed!`);
-    return ctx.cancel();
+    stopMiddlewares();
   }
 
   // Continue with command execution
   console.log(`${ctx.commandName} will be executed!`);
 }
 ```
+
+:::tip
+
+You can also use `stopMiddlewares()` inside a command function to stop
+any `afterExecute` middlewares from running.
+
+In addition, you can also use `stopMiddlewares()` inside any
+`afterExecute` middleware function to stop any remaining middlewares
+from running.
+
+:::
+
+:::warning
+
+Calling `stopMiddlewares()` in a try/catch block may lead to
+unexpected behavior.
+
+If you still want to use `stopMiddlewares()` in a try/catch block, you
+can use the `isErrorType` function to check if the error is an
+instance of the `CommandKitErrorCodes.StopMiddlewares` error.
+
+```ts title="src/app/commands/+middleware.ts"
+import type { MiddlewareContext } from 'commandkit';
+
+export function beforeExecute(ctx: MiddlewareContext) {
+  try {
+    // code that may throw an error
+
+    stopMiddlewares(); // conditionally stop the middleware chain
+  } catch (error) {
+    if (isErrorType(error, CommandKitErrorCodes.StopMiddlewares)) {
+      // if stopMiddlewares() is called in the try block, throw it so CommandKit can stop the middleware chain
+      throw error;
+    }
+
+    // this means that the code threw the error, and stopMiddlewares() was not called
+    // the rest of the middlewares will be executed as normal
+    console.error(error);
+  }
+}
+```
+
+:::
 
 ## Middleware types
 

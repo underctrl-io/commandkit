@@ -70,6 +70,9 @@ export function makeContextAwareFunction<
       } catch (e) {
         if (!isCommandKitError(e)) {
           env.setExecutionError(e as Error);
+        } else {
+          // rethrow commandkit errors so they can be handled by the caller
+          throw e;
         }
       } finally {
         if (typeof finalizer === 'function') {

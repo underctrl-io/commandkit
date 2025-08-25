@@ -1,16 +1,17 @@
-import { build, Options } from 'tsdown';
-import { CompilerPlugin, CompilerPluginRuntime } from '../plugins';
-import { loadConfigFile } from '../config/loader';
+import { existsSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { DevEnv, devEnvFileArgs, ProdEnv, prodEnvFileArgs } from './env';
 import { rimraf } from 'rimraf';
-import { performTypeCheck } from './type-checker';
-import { copyLocaleFiles } from './common';
+import { build, Options } from 'tsdown';
+
 import { MaybeArray } from '../components';
-import { COMMANDKIT_CWD } from '../utils/constants';
+import { loadConfigFile } from '../config/loader';
 import { mergeDeep } from '../config/utils';
-import { existsSync } from 'node:fs';
+import { CompilerPlugin, CompilerPluginRuntime } from '../plugins';
+import { COMMANDKIT_CWD } from '../utils/constants';
+import { copyLocaleFiles } from './common';
+import { devEnvFileArgs, prodEnvFileArgs } from './env';
+import { performTypeCheck } from './type-checker';
 
 /**
  * @private

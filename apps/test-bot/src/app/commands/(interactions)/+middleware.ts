@@ -1,4 +1,4 @@
-import { Logger, MiddlewareContext } from 'commandkit';
+import { Logger, MiddlewareContext, stopMiddlewares } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
 export function beforeExecute(ctx: MiddlewareContext) {
@@ -18,7 +18,7 @@ export function beforeExecute(ctx: MiddlewareContext) {
       ctx.message.reply('You are not allowed to use this command.');
     }
 
-    ctx.cancel();
+    stopMiddlewares();
   }
 }
 

@@ -105,9 +105,7 @@ export class AppEventsHandler {
         const handler = await import(toFileURL(listener, true));
 
         if (!handler.default || typeof handler.default !== 'function') {
-          Logger.error(
-            `Event handler for ${event.event}${event.namespace ? ` of namespace ${event.namespace}` : ''} does not have a default export or is not a function`,
-          );
+          Logger.error`Event handler for ${event.event}${event.namespace ? ` of namespace ${event.namespace}` : ''} does not have a default export or is not a function`;
         }
 
         listeners.push({

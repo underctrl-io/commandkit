@@ -1,5 +1,5 @@
 import { ChatInputCommandContext, CommandData } from 'commandkit';
-import { database } from '@/database/store.ts';
+import { database } from '@/database/store';
 import { cacheTag } from '@commandkit/cache';
 import { AiCommand, AiConfig } from '@commandkit/ai';
 import { z } from 'zod';
@@ -11,7 +11,7 @@ export const command: CommandData = {
 
 export const aiConfig = {
   description: 'Get the XP of a user in a guild.',
-  parameters: z.object({
+  inputSchema: z.object({
     guildId: z.string().describe('The ID of the guild.'),
     userId: z.string().describe('The ID of the user.'),
   }),

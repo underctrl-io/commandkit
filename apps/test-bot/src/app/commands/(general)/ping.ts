@@ -11,6 +11,10 @@ import {
   AutocompleteCommandContext,
   CommandMetadata,
   MessageCommandContext,
+  stopMiddlewares,
+  Logger,
+  unstable_after as after,
+  CommandMetadataFunction,
 } from 'commandkit';
 
 export const command: CommandData = {
@@ -32,10 +36,25 @@ export const command: CommandData = {
   // guilds: ['1314834483660455938'],
 };
 
-export const metadata: CommandMetadata = {
-  userPermissions: 'Administrator',
-  botPermissions: 'KickMembers',
-  // guilds: ['1314834483660455938'],
+// export const metadata: CommandMetadata = {
+//   // userPermissions: 'Administrator',
+//   // botPermissions: 'KickMembers',
+//   // guilds: ['1314834483660455938'],
+//   aliases: [''],
+//   userPermissions: 'Administrator',
+//   botPermissions: 'KickMembers',
+//   guilds: ['1314834483660455938'],
+// };
+
+export const generateMetadata: CommandMetadataFunction = async () => {
+  // Dynamically determine the metadata for the command
+
+  return {
+    userPermissions: 'Administrator',
+    botPermissions: ['KickMembers', 'BanMembers'],
+    // guilds: ['1234567890', '1234567891'],
+    aliases: ['p', 'pong'],
+  };
 };
 
 const tests = Array.from({ length: 10 }, (_, i) => ({
@@ -98,4 +117,8 @@ export async function chatInput({
       button.setDisabled(true);
       message.edit({ components: [row] });
     });
+
+  after(() => {
+    Logger.debug('after called in ping');
+  });
 }

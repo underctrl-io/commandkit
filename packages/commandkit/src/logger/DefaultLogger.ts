@@ -139,15 +139,20 @@ export class DefaultLogger implements ILogger {
     const context = this._getContext();
     const colorFn = TextColorMap[level];
 
+    let processedMessage = message;
+    if (message instanceof Error) {
+      processedMessage = `${message.message}\n${message.stack}`;
+    }
+
     if (context) {
       this.logger.log(
         `${prefix}\n${context} ${colors.dim(BoxChars.corner)}`,
-        colorFn(message),
+        colorFn(processedMessage),
       );
     } else {
       this.logger.log(
         `${prefix} ${colors.dim(BoxChars.corner)}`,
-        colorFn(message),
+        colorFn(processedMessage),
       );
     }
   }
@@ -165,10 +170,14 @@ export class DefaultLogger implements ILogger {
     for (let i = 0; i < strings.length; i++) {
       result += strings[i];
       if (i < values.length) {
-        result += inspect(values[i], {
-          colors: COMMANDKIT_IS_DEV,
-          depth: 2,
-        });
+        const value = values[i];
+        if (value instanceof Error) {
+          result += `${value.message}\n${value.stack}`;
+        } else if (value !== null && typeof value === 'object') {
+          result += inspect(value, { colors: true, depth: 2 });
+        } else {
+          result += value;
+        }
       }
     }
 
