@@ -1,0 +1,98 @@
+---
+title: Command Metadata
+---
+
+Command metadata is a way to add additional information to your
+commands that CommandKit will handle.
+
+To get started, you can export a `metadata` object from your command:
+
+```ts title="src/app/commands/ping.ts" {8-10}
+import type { CommandData, CommandMetadata } from 'commandkit';
+
+export const command: CommandData = {
+  name: 'ping',
+  description: 'Replies with Pong!',
+};
+
+export const metadata: CommandMetadata = {
+  // Add your metadata here
+};
+```
+
+## Metadata properties
+
+### `userPermissions`
+
+This is a string, or array of user permission strings that will be
+required by the person executing the command.
+
+```ts title="src/app/commands/ping.ts"
+export const metadata: CommandMetadata = {
+  // If the user does not have the Administrator permission, CommandKit will let them know
+  userPermissions: 'Administrator',
+};
+```
+
+### `botPermissions`
+
+This is a string, or array of bot permission strings that will be
+required by your bot to execute the command. This is useful for
+commands where your bot needs to have certain permissions in a guild
+e.g. moderation commands.
+
+```ts title="src/app/commands/ping.ts"
+export const metadata: CommandMetadata = {
+  // If the bot does not have these permissions, CommandKit will let them know
+  botPermissions: ['KickMembers', 'BanMembers'],
+};
+```
+
+### `guilds`
+
+This is an array of guild IDs that the command will be registered in,
+or be available to be executed (message commands).
+
+```ts title="src/app/commands/ping.ts"
+export const metadata: CommandMetadata = {
+  guilds: ['1234567890', '1234567891'],
+};
+```
+
+### `aliases`
+
+This is an array of alternative command names that will be available
+for users to use to execute the command.
+
+:::warning
+
+This only works for [message commands](./04-message-commands.mdx).
+
+:::
+
+```ts title="src/app/commands/ping.ts"
+export const metadata: CommandMetadata = {
+  aliases: ['p', 'pong'],
+};
+```
+
+## Generated metadata
+
+If you'd like to generate metadata dynamically, you can export a
+`generateMetadata` function from your command file that should return
+a `CommandMetadata` object.
+
+```ts title="src/app/commands/ping.ts"
+import type { CommandMetadataFunction } from 'commandkit';
+
+export const generateMetadata: CommandMetadataFunction = async () => {
+  // Dynamically determine the metadata for the command
+
+  return {
+    userPermissions: 'Administrator',
+    botPermissions: ['KickMembers', 'BanMembers'],
+    guilds: ['1234567890', '1234567891'],
+    aliases: ['p', 'pong'],
+  };
+};
+```

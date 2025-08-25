@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## InferParameters
 
-<GenerationInfo sourceFile="packages/ai/src/tools/common/index.ts" sourceLine="24" packageName="@commandkit/ai" />
+<GenerationInfo sourceFile="packages/ai/src/tools/common/index.ts" sourceLine="25" packageName="@commandkit/ai" />
 
 Utility type that infers the TypeScript type from a tool parameter schema.
 Supports both Zod schemas and AI library schemas.
@@ -23,5 +23,7 @@ type InferParameters<T extends ToolParameterType> = T extends Schema<any>
     ? T['_type']
     : T extends z.ZodTypeAny
       ? z.infer<T>
-      : never
+      : T extends z3.ZodTypeAny
+        ? z3.infer<T>
+        : never
 ```

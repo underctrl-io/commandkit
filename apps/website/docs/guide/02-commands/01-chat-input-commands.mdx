@@ -49,19 +49,3 @@ supports. Learn more about
 [context menu commands](./03-context-menu-commands.mdx).
 
 :::
-
-## Guild-based commands
-
-You can register your chat input command to specific guilds by using
-the `guilds` property in the `command` object which accepts an array
-of guild IDs.
-
-```ts title="src/app/commands/ping.ts" {6}
-import type { CommandData } from 'commandkit';
-
-export const command: CommandData = {
-  name: 'ping',
-  description: 'Replies with Pong!',
-  guilds: ['1055188344188973066'],
-};
-```
