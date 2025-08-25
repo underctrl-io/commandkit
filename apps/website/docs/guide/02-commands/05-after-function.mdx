@@ -2,6 +2,13 @@
 title: after Function
 ---
 
+:::warning UNSTABLE
+
+The `after()` function is currently marked as unstable and may change
+in the future.
+
+:::
+
 The `after()` function allows you to execute a callback after a
 command has been executed. This is useful for performing actions that
 should occur after the command has completed, such as logging or
@@ -10,13 +17,18 @@ cleanup tasks.
 ## Usage
 
 ```ts title="src/app/commands/ping.ts"
-import { type CommandData, type ChatInputCommand, after } from 'commandkit';
+import {
+  type CommandData,
+  type ChatInputCommand,
+  unstable_after as after,
+} from 'commandkit';
 
 export const command: CommandData = {};
 
 export const chatInput: ChatInputCommand = async (ctx) => {
   after(() => {
     // This code will be executed after the command has been executed
+    // Perform any cleanup here
     console.log('Command has been executed');
   });
 
