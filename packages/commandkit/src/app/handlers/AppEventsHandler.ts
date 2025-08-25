@@ -217,12 +217,9 @@ export class AppEventsHandler {
                 }
 
                 // Otherwise log the error as usual
-                Logger.error(
-                  `Error handling event ${name}${
-                    namespace ? ` of namespace ${namespace}` : ''
-                  }`,
-                  e,
-                );
+                Logger.error`Error handling event ${name}${
+                  namespace ? ` of namespace ${namespace}` : ''
+                }: ${e}`;
               }
             }
           },
@@ -284,12 +281,9 @@ export class AppEventsHandler {
                 }
 
                 // Otherwise log the error as usual
-                Logger.error(
-                  `Error handling event ${name}${
-                    namespace ? ` of namespace ${namespace}` : ''
-                  }`,
-                  e,
-                );
+                Logger.error`Error handling event ${name}${
+                  namespace ? ` of namespace ${namespace}` : ''
+                }: ${e}`;
               }
             },
           );

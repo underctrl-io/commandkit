@@ -144,7 +144,7 @@ export class CommandKitPluginRuntime {
           return true;
         }
 
-        Logger.error(`Plugin "${plugin.name}" failed`, e?.stack || e);
+        Logger.error`Plugin "${plugin.name}" failed: ${e?.stack || e}`;
       }
     }
 

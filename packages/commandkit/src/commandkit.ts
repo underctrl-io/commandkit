@@ -207,7 +207,7 @@ export class CommandKit extends EventEmitter {
       try {
         await hook(this);
       } catch (e) {
-        Logger.error('Error while executing bootstrap hook: ', e);
+        Logger.error`Error while executing bootstrap hook: ${e}`;
       } finally {
         bootstrapHooks.delete(hook);
       }
@@ -222,7 +222,7 @@ export class CommandKit extends EventEmitter {
       try {
         await hook(this);
       } catch (e) {
-        Logger.error('Error while executing application bootstrap hook: ', e);
+        Logger.error`Error while executing application bootstrap hook: ${e}`;
       } finally {
         onApplicationBootstrapHooks.delete(hook);
       }
