@@ -48,12 +48,12 @@ export async function startServer(
             attemptToListen();
           } else {
             // For other errors or if we've exceeded max retries
-            Logger.error('Server failed to start:', error);
+            Logger.error`Server failed to start: ${error}`;
             reject(error);
           }
         });
       } catch (error) {
-        Logger.error('Unexpected error starting server:', error);
+        Logger.error`Unexpected error starting server: ${error}`;
         reject(error);
       }
     }
