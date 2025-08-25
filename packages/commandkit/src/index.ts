@@ -10,7 +10,7 @@ export {
   type CommandKitEnvironmentInternalData,
   CommandKitEnvironment,
   CommandKitEnvironmentType,
-  cancelAfter,
+  cancelAfter as unstable_cancelAfter,
   after as unstable_after,
 } from './context/environment';
 export * from './app/index';

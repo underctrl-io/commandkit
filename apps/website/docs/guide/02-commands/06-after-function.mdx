@@ -45,3 +45,27 @@ The `after()` function will always be called, regardless of whether
 the command execution was successful or not.
 
 :::
+
+## Cancelling the after function
+
+You can cancel the after function by calling the `cancelAfter`
+function with the ID of the after function.
+
+```ts title="src/app/commands/ping.ts"
+import {
+  unstable_after as after,
+  unstable_cancelAfter as cancelAfter,
+} from 'commandkit';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const id = after(() => {
+    console.log(
+      'This will run after the command has finished executing.',
+    );
+  });
+
+  if (something) {
+    cancelAfter(id);
+  }
+};
+```
