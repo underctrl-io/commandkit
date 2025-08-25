@@ -6,7 +6,7 @@ import {
   OnButtonKitClick,
 } from 'commandkit';
 import { ButtonStyle, MessageFlags } from 'discord.js';
-import { AiConfig, AiCommand } from '@commandkit/ai';
+import { AiConfig, AiCommand, ToolParameterType } from '@commandkit/ai';
 import { z } from 'zod';
 
 export const command: CommandData = {
@@ -15,7 +15,7 @@ export const command: CommandData = {
 };
 
 export const aiConfig = {
-  parameters: z.object({
+  inputSchema: z.object({
     message: z
       .string()
       .describe('The message to be shown in the confirmation.'),

@@ -568,28 +568,6 @@ export class Context<
 export class MiddlewareContext<
   T extends CommandExecutionMode = CommandExecutionMode,
 > extends Context<T, MiddlewareContextArgs> {
-  // /**
-  //  * @private
-  //  * @internal
-  //  */
-  // #cancel = false;
-
-  // /**
-  //  * Whether the command execution was cancelled.
-  //  */
-  // public get cancelled(): boolean {
-  //   return this.#cancel;
-  // }
-
-  // /**
-  //  * Cancels upcoming middleware and command execution.
-  //  * This will **not** stop any `after()` callbacks inside the command.
-  //  */
-  // public cancel(): void {
-  //   this.#cancel = true;
-  //   stopMiddlewares();
-  // }
-
   /**
    * Sets command runner function to wrap the command execution.
    * @param fn The function to set.

@@ -1,4 +1,8 @@
-import { CommandData, after, ChatInputCommand } from 'commandkit';
+import {
+  CommandData,
+  unstable_after as after,
+  ChatInputCommand,
+} from 'commandkit';
 
 export const command: CommandData = {
   name: 'run-after',

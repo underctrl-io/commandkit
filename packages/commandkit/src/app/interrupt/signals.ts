@@ -6,8 +6,7 @@ import {
 import { eventWorkerContext } from '../events/EventWorkerContext';
 
 /**
- * Stop upcoming middleware and command execution.
- * This will **not** stop any `after()` callbacks inside the command.
+ * Stop upcoming middlewares and command execution.
  */
 export function stopMiddlewares(): never {
   throw createCommandKitError(CommandKitErrorCodes.StopMiddlewares);

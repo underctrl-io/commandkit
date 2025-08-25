@@ -6,7 +6,13 @@ export * from './commandkit';
 export * from './components';
 export * from './config/config';
 export * from './context/async-context';
-export * from './context/environment';
+export {
+  type CommandKitEnvironmentInternalData,
+  CommandKitEnvironment,
+  CommandKitEnvironmentType,
+  cancelAfter,
+  after as unstable_after,
+} from './context/environment';
 export * from './app/index';
 export * from './logger/DefaultLogger';
 export * from './logger/ILogger';

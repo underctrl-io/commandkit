@@ -13,7 +13,7 @@ import {
   MessageCommandContext,
   stopMiddlewares,
   Logger,
-  after,
+  unstable_after as after,
 } from 'commandkit';
 
 export const command: CommandData = {

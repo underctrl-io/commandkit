@@ -1,5 +1,5 @@
 import {
-  after,
+  unstable_after as after,
   Logger,
   type MiddlewareContext,
   stopMiddlewares,
