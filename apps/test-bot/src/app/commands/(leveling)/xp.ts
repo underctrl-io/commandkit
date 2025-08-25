@@ -1,5 +1,5 @@
 import { ChatInputCommandContext, CommandData } from 'commandkit';
-import { database } from '@/database/store.ts';
+import { database } from '@/database/store';
 import { cacheTag } from '@commandkit/cache';
 import { AiCommand, AiConfig } from '@commandkit/ai';
 import { z } from 'zod';

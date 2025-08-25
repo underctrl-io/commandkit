@@ -52,7 +52,7 @@ export const generateMetadata: CommandMetadataFunction = async () => {
   return {
     userPermissions: 'Administrator',
     botPermissions: ['KickMembers', 'BanMembers'],
-    guilds: ['1234567890', '1234567891'],
+    // guilds: ['1234567890', '1234567891'],
     aliases: ['p', 'pong'],
   };
 };
