@@ -190,7 +190,7 @@ importers:
     dependencies:
       ai:
         specifier: ^5.0.22
-        version: 5.0.23(zod@4.1.1)
+        version: 5.0.22(zod@4.1.1)
       zod:
         specifier: ^4.1.0
         version: 4.1.1
@@ -643,8 +643,8 @@ importers:
 
 packages:
 
-  '@ai-sdk/gateway@1.0.12':
-    resolution: {integrity: sha512-IH7bBrirbzUDUhPzl5fsXLaMKxbezXnoTTZEAtbRrL6AiYycH//B9U1u+FHuteISndbDArp0b5ujpW2mhHWceA==}
+  '@ai-sdk/gateway@1.0.11':
+    resolution: {integrity: sha512-ErwWS3sPOuWy42eE3AVxlKkTa1XjjKBEtNCOylVKMO5KNyz5qie8QVlLYbULOG56dtxX4zTKX3rQNJudplhcmQ==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -4034,8 +4034,8 @@ packages:
     resolution: {integrity: sha512-4I7Td01quW/RpocfNayFdFVk1qSuoh0E7JrbRJ16nH01HhKFQ88INq9Sd+nd72zqRySlr9BmDA8xlEJ6vJMrYA==}
     engines: {node: '>=8'}
 
-  ai@5.0.23:
-    resolution: {integrity: sha512-1zUF0o1zRI7UmSd8u5CKc2iHNhv21tM95Oka81c0CF77GnTbq5RvrAqVuLI+gMyKcIgs99yxA+xc5hJXvh6V+w==}
+  ai@5.0.22:
+    resolution: {integrity: sha512-RZiYhj7Ux7hrLtXkHPcxzdiSZt4NOiC69O5AkNfMCsz3twwz/KRkl9ASptosoOsg833s5yRcTSdIu5z53Sl6Pw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -9336,7 +9336,7 @@ packages:
 
 snapshots:
 
-  '@ai-sdk/gateway@1.0.12(zod@4.1.1)':
+  '@ai-sdk/gateway@1.0.11(zod@4.1.1)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
       '@ai-sdk/provider-utils': 3.0.5(zod@4.1.1)
@@ -9347,14 +9347,6 @@ snapshots:
       '@ai-sdk/provider': 2.0.0
       '@ai-sdk/provider-utils': 3.0.5(zod@4.1.1)
       zod: 4.1.1
-
-  '@ai-sdk/provider-utils@3.0.5(zod@3.25.76)':
-    dependencies:
-      '@ai-sdk/provider': 2.0.0
-      '@standard-schema/spec': 1.0.0
-      eventsource-parser: 3.0.5
-      zod: 3.25.76
-      zod-to-json-schema: 3.24.6(zod@3.25.76)
 
   '@ai-sdk/provider-utils@3.0.5(zod@4.1.1)':
     dependencies:
@@ -11848,7 +11840,7 @@ snapshots:
 
   '@docusaurus/react-loadable@6.0.0(react@19.1.1)':
     dependencies:
-      '@types/react': 19.1.8
+      '@types/react': 19.1.11
       react: 19.1.1
 
   '@docusaurus/remark-plugin-npm2yarn@3.8.1':
@@ -13983,7 +13975,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 22.17.2
+      '@types/node': 24.3.0
 
   '@types/ws@8.5.13':
     dependencies:
@@ -14253,9 +14245,9 @@ snapshots:
       clean-stack: 2.2.0
       indent-string: 4.0.0
 
-  ai@5.0.23(zod@4.1.1):
+  ai@5.0.22(zod@4.1.1):
     dependencies:
-      '@ai-sdk/gateway': 1.0.12(zod@4.1.1)
+      '@ai-sdk/gateway': 1.0.11(zod@4.1.1)
       '@ai-sdk/provider': 2.0.0
       '@ai-sdk/provider-utils': 3.0.5(zod@4.1.1)
       '@opentelemetry/api': 1.9.0
@@ -20442,17 +20434,11 @@ snapshots:
 
   yocto-queue@1.2.1: {}
 
-  zod-to-json-schema@3.24.6(zod@3.25.76):
-    dependencies:
-      zod: 3.25.76
-
   zod-to-json-schema@3.24.6(zod@4.1.1):
     dependencies:
       zod: 4.1.1
 
   zod@3.25.76: {}
-
-  zod@4.1.1: {}
 
   zod@4.1.1: {}
 

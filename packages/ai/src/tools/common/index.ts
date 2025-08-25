@@ -2,6 +2,7 @@ import { Schema, tool } from 'ai';
 import { AiContext } from '../../context';
 import { getAiWorkerContext } from '../../ai-context-worker';
 import { z } from 'zod';
+import { z as z3 } from 'zod/v3';
 
 /**
  * Utility type that represents a value that can be either synchronous or asynchronous.
@@ -14,7 +15,7 @@ type Awaitable<T> = T | Promise<T>;
  * Type representing the parameters schema for AI tools.
  * Extracted from the first parameter of the `tool` function from the 'ai' library.
  */
-export type ToolParameterType = z.ZodType | Schema<any>;
+export type ToolParameterType = z.ZodType | z3.ZodType | Schema<any>;
 
 /**
  * Utility type that infers the TypeScript type from a tool parameter schema.
@@ -26,8 +27,9 @@ export type InferParameters<T extends ToolParameterType> =
     ? T['_type']
     : T extends z.ZodTypeAny
       ? z.infer<T>
-      : never;
-
+      : T extends z3.ZodTypeAny
+        ? z3.infer<T>
+        : never;
 /**
  * Configuration options for creating an AI tool.
  * @template T - The parameter schema type for the tool
