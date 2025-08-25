@@ -124,9 +124,12 @@ export const command: CommandData = {
 };
 
 export const aiConfig: AiConfig = {
-  parameters: z.object({
+  inputSchema: z.object({
     username: z.string().describe('The username to greet'),
-    message: z.string().optional().describe('Optional custom greeting message'),
+    message: z
+      .string()
+      .optional()
+      .describe('Optional custom greeting message'),
   }),
 };
 
@@ -282,8 +285,10 @@ import { z } from 'zod';
 export const getWeather = createTool({
   name: 'getWeather',
   description: 'Get current weather information for a location',
-  parameters: z.object({
-    location: z.string().describe('The city or location to get weather for'),
+  inputSchema: z.object({
+    location: z
+      .string()
+      .describe('The city or location to get weather for'),
     units: z.enum(['celsius', 'fahrenheit']).default('celsius'),
   }),
   async execute(ctx, params) {
@@ -422,7 +427,9 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
   // Validate AI-generated parameters
   if (action === 'ban' && !isModeratorRole(ctx.message.member)) {
-    await ctx.message.reply('❌ Only moderators can perform ban actions.');
+    await ctx.message.reply(
+      '❌ Only moderators can perform ban actions.',
+    );
     return;
   }
 
@@ -528,7 +535,9 @@ configureAI({
       await message.reply(`Debug Error: ${error.message}`);
     } else {
       // Generic error in production
-      await message.reply('An error occurred while processing your request.');
+      await message.reply(
+        'An error occurred while processing your request.',
+      );
     }
   },
 });
