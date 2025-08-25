@@ -727,7 +727,7 @@ export class AppCommandHandler {
 
       this.loadedMiddlewares.set(id, { middleware, data });
     } catch (error) {
-      Logger.error`Failed to load middleware ${id}\n${error}`;
+      Logger.error`Failed to load middleware ${id}: ${error}`;
     }
   }
 
@@ -863,7 +863,7 @@ export class AppCommandHandler {
         },
       });
     } catch (error) {
-      Logger.error`Failed to load command ${command.name} (${id})\n${error}`;
+      Logger.error`Failed to load command ${command.name} (${id}): ${error}`;
     }
   }
 

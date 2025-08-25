@@ -217,7 +217,7 @@ export class AppEventsHandler {
                 // Otherwise log the error as usual
                 Logger.error`Error handling event ${name}${
                   namespace ? ` of namespace ${namespace}` : ''
-                } ${e}`;
+                }: ${e}`;
               }
             }
           },
@@ -281,7 +281,7 @@ export class AppEventsHandler {
                 // Otherwise log the error as usual
                 Logger.error`Error handling event ${name}${
                   namespace ? ` of namespace ${namespace}` : ''
-                } ${e}`;
+                }: ${e}`;
               }
             },
           );
