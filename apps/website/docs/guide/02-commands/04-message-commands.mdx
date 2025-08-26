@@ -2,6 +2,9 @@
 title: Message Commands
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Message commands, which are generally considered 'Legacy', are a way
 to run commands on Discord bots using regular messages. Before the
 introduction of
@@ -25,17 +28,41 @@ Message commands, like all the other command types, live in your
 message command, just export the `message` function from your command
 file.
 
-```ts title="src/app/commands/ping.ts"
-import type { CommandData, MessageCommand } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts"
+    import type { CommandData, MessageCommand } from 'commandkit';
 
-export const command: CommandData = {
-  name: 'ping',
-};
+    export const command: CommandData = {
+      name: 'ping',
+    };
 
-export const message: MessageCommand = async (ctx) => {
-  await ctx.message.reply('Pong!');
-};
-```
+    export const message: MessageCommand = async (ctx) => {
+      await ctx.message.reply('Pong!');
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').MessageCommand} MessageCommand
+     */
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'ping',
+    };
+
+    /** @type {MessageCommand} */
+    export const message = async (ctx) => {
+      await ctx.message.reply('Pong!');
+    };
+    ```
+
+  </TabItem>
+</Tabs>
 
 ## Message command options (arguments)
 
@@ -45,17 +72,41 @@ idea of message command options will be different compared to
 getting parsed data, you'll essentially be dealing with string
 'arguments'.
 
-```ts title="src/app/commands/ping.ts" {8}
-import type { CommandData, MessageCommand } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts" {8}
+    import type { CommandData, MessageCommand } from 'commandkit';
 
-export const command: CommandData = {
-  name: 'ping',
-};
+    export const command: CommandData = {
+      name: 'ping',
+    };
 
-export const message: MessageCommand = async (ctx) => {
-  const args = ctx.args(); // string[]
-};
-```
+    export const message: MessageCommand = async (ctx) => {
+      const args = ctx.args(); // string[]
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js" {13}
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').MessageCommand} MessageCommand
+     */
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'ping',
+    };
+
+    /** @type {MessageCommand} */
+    export const message = async (ctx) => {
+      const args = ctx.args(); // string[]
+    };
+    ```
+
+  </TabItem>
+</Tabs>
 
 With the above command as an example, if a user on Discord runs
 `!ping john jack jane`, the value of `args` will equal
@@ -66,13 +117,28 @@ With the above command as an example, if a user on Discord runs
 The simplest way to set a custom prefix is using the
 `setPrefixResolver` method on the `commandkit` instance:
 
-```ts title="src/app.ts"
-import { commandkit } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app.ts"
+    import { commandkit } from 'commandkit';
 
-commandkit.setPrefixResolver(async (message) => {
-  return '?';
-});
-```
+    commandkit.setPrefixResolver(async (message) => {
+      return '?';
+    });
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app.js"
+    import { commandkit } from 'commandkit';
+
+    commandkit.setPrefixResolver(async (message) => {
+      return '?';
+    });
+    ```
+
+  </TabItem>
+</Tabs>
 
 This sets a global prefix of `?` for all message commands. Your bot
 will now respond to commands like `?help` or `?ping`.
@@ -82,7 +148,7 @@ will now respond to commands like `?help` or `?ping`.
 You can return an array of strings to support multiple prefixes
 simultaneously:
 
-```ts
+```js
 return ['?', '!', '>'];
 ```
 
@@ -93,27 +159,56 @@ return ['?', '!', '>'];
 For a more dynamic approach, you might want different prefixes for
 different guilds. Here's how to implement that:
 
-```ts title="src/app.ts"
-import { commandkit } from 'commandkit';
-import { database } from '../database'; // This is a mock database
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app.ts"
+    import { commandkit } from 'commandkit';
+    import { database } from '../database'; // This is a mock database
 
-commandkit.setPrefixResolver(async (message) => {
-  if (!message.guildId) {
-    return '!'; // Fallback to '!' if command is used in a DM
-  }
+    commandkit.setPrefixResolver(async (message) => {
+      if (!message.guildId) {
+        return '!'; // Fallback to '!' if command is used in a DM
+      }
 
-  const guildSettings = await database.findUnique({
-    where: {
-      guildId: message.guildId,
-    },
-    select: {
-      prefix: true,
-    },
-  });
+      const guildSettings = await database.findUnique({
+        where: {
+          guildId: message.guildId,
+        },
+        select: {
+          prefix: true,
+        },
+      });
 
-  return guildSettings?.prefix ?? '!'; // Fallback to '!' if no prefix is found
-});
-```
+      return guildSettings?.prefix ?? '!'; // Fallback to '!' if no prefix is found
+    });
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app.js"
+    import { commandkit } from 'commandkit';
+    import { database } from '../database'; // This is a mock database
+
+    commandkit.setPrefixResolver(async (message) => {
+      if (!message.guildId) {
+        return '!'; // Fallback to '!' if command is used in a DM
+      }
+
+      const guildSettings = await database.findUnique({
+        where: {
+          guildId: message.guildId,
+        },
+        select: {
+          prefix: true,
+        },
+      });
+
+      return guildSettings?.prefix ?? '!'; // Fallback to '!' if no prefix is found
+    });
+    ```
+
+  </TabItem>
+</Tabs>
 
 :::warning
 

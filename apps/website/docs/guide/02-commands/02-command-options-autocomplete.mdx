@@ -2,6 +2,9 @@
 title: Options Autocomplete
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 :::warning
 
 This feature is only available for
@@ -24,61 +27,131 @@ and managing your own `interactionCreate` event listener.
 To begin, export the `autocomplete` function from the command where
 you have an option with `autocomplete` set to `true`.
 
-```ts title="src/app/commands/pet.ts"
-import type { CommandData, AutocompleteCommand } from 'commandkit';
-import { ApplicationCommandOptionType } from 'discord.js';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/pet.ts"
+    import type { CommandData, AutocompleteCommand, ChatInputCommand } from 'commandkit';
+    import { ApplicationCommandOptionType } from 'discord.js';
 
-export const command: CommandData = {
-  name: 'pet',
-  description: 'Check in one of your pets.',
-  options: [
-    {
-      name: 'name',
-      description: 'The name of your pet',
-      type: ApplicationCommandOptionType.String,
-      autocomplete: true,
-      required: true,
-    },
-  ],
-};
+    export const command: CommandData = {
+      name: 'pet',
+      description: 'Check in one of your pets.',
+      options: [
+        {
+          name: 'name',
+          description: 'The name of your pet',
+          type: ApplicationCommandOptionType.String,
+          autocomplete: true,
+          required: true,
+        },
+      ],
+    };
 
-const pets = Array.from({ length: 20 }, (_, i) => ({
-  name: `Pet ${i + 1}`, // e.g. Pet 1, Pet 2, Pet 3, etc.
-  value: `petId_${i}`,
-}));
+    const pets = Array.from({ length: 20 }, (_, i) => ({
+      name: `Pet ${i + 1}`, // e.g. Pet 1, Pet 2, Pet 3, etc.
+      value: `petId_${i}`,
+    }));
 
-export const autocomplete: AutocompleteCommand = async ({ interaction }) => {
-  try {
-    // Get the input value of your autocomplete option
-    const input = interaction.options.getString('name', false);
-    if (!input) {
-      interaction.respond(pets);
-      return;
-    }
+    export const autocomplete: AutocompleteCommand = async ({ interaction }) => {
+      try {
+        // Get the input value of your autocomplete option
+        const input = interaction.options.getString('name', false);
+        if (!input) {
+          interaction.respond(pets);
+          return;
+        }
 
-    const filteredPets = pets.filter((pet) =>
-      pet.name.toLowerCase().includes(input.toLowerCase()),
-    );
+        const filteredPets = pets.filter((pet) =>
+          pet.name.toLowerCase().includes(input.toLowerCase()),
+        );
 
-    // Respond with what you think the user may trying to find
-    interaction.respond(filteredPets);
-  } catch (error) {
-    console.error('Autocomplete error', error);
-  }
-};
+        // Respond with what you think the user may trying to find
+        interaction.respond(filteredPets);
+      } catch (error) {
+        console.error('Autocomplete error', error);
+      }
+    };
 
-export const chatInput: ChatInputCommand = async ({ interaction }) => {
-  const chosenPetId = interaction.options.getString('name', true);
-  const chosenPet = pets.find((pet) => pet.value === chosenPetId);
+    export const chatInput: ChatInputCommand = async ({ interaction }) => {
+      const chosenPetId = interaction.options.getString('name', true);
+      const chosenPet = pets.find((pet) => pet.value === chosenPetId);
 
-  if (!chosenPet) {
-    interaction.reply('Pet not found.');
-    return;
-  }
+      if (!chosenPet) {
+        interaction.reply('Pet not found.');
+        return;
+      }
 
-  interaction.reply(`You chose ${chosenPet.name}`);
-};
-```
+      interaction.reply(`You chose ${chosenPet.name}`);
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/pet.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').AutocompleteCommand} AutocompleteCommand
+     * @typedef {import('commandkit').ChatInputCommand} ChatInputCommand
+     */
+    import { ApplicationCommandOptionType } from 'discord.js';
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'pet',
+      description: 'Check in one of your pets.',
+      options: [
+        {
+          name: 'name',
+          description: 'The name of your pet',
+          type: ApplicationCommandOptionType.String,
+          autocomplete: true,
+          required: true,
+        },
+      ],
+    };
+
+    const pets = Array.from({ length: 20 }, (_, i) => ({
+      name: `Pet ${i + 1}`, // e.g. Pet 1, Pet 2, Pet 3, etc.
+      value: `petId_${i}`,
+    }));
+
+    /** @type {AutocompleteCommand} */
+    export const autocomplete = async ({ interaction }) => {
+      try {
+        // Get the input value of your autocomplete option
+        const input = interaction.options.getString('name', false);
+        if (!input) {
+          interaction.respond(pets);
+          return;
+        }
+
+        const filteredPets = pets.filter((pet) =>
+          pet.name.toLowerCase().includes(input.toLowerCase()),
+        );
+
+        // Respond with what you think the user may trying to find
+        interaction.respond(filteredPets);
+      } catch (error) {
+        console.error('Autocomplete error', error);
+      }
+    };
+
+    /** @type {ChatInputCommand} */
+    export const chatInput = async ({ interaction }) => {
+      const chosenPetId = interaction.options.getString('name', true);
+      const chosenPet = pets.find((pet) => pet.value === chosenPetId);
+
+      if (!chosenPet) {
+        interaction.reply('Pet not found.');
+        return;
+      }
+
+      interaction.reply(`You chose ${chosenPet.name}`);
+    };
+    ```
+
+  </TabItem>
+</Tabs>
 
 :::warning
 

@@ -2,23 +2,51 @@
 title: Command Metadata
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Command metadata is a way to add additional information to your
 commands that CommandKit will handle.
 
 To get started, you can export a `metadata` object from your command:
 
-```ts title="src/app/commands/ping.ts" {8-10}
-import type { CommandData, CommandMetadata } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts" {8-10}
+    import type { CommandData, CommandMetadata } from 'commandkit';
 
-export const command: CommandData = {
-  name: 'ping',
-  description: 'Replies with Pong!',
-};
+    export const command: CommandData = {
+      name: 'ping',
+      description: 'Replies with Pong!',
+    };
 
-export const metadata: CommandMetadata = {
-  // Add your metadata here
-};
-```
+    export const metadata: CommandMetadata = {
+      // Add your metadata here
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js" {13-15}
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').CommandMetadata} CommandMetadata
+     */
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'ping',
+      description: 'Replies with Pong!',
+    };
+
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      // Add your metadata here
+    };
+    ```
+
+  </TabItem>
+</Tabs>
 
 ## Metadata properties
 
@@ -27,12 +55,25 @@ export const metadata: CommandMetadata = {
 This is a string, or array of user permission strings that will be
 required by the person executing the command.
 
-```ts title="src/app/commands/ping.ts"
-export const metadata: CommandMetadata = {
-  // If the user does not have the Administrator permission, CommandKit will let them know
-  userPermissions: 'Administrator',
-};
-```
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts"
+    export const metadata: CommandMetadata = {
+      // If the user does not have the Administrator permission, CommandKit will let them know
+      userPermissions: 'Administrator',
+    };
+    ```
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      // If the user does not have the Administrator permission, CommandKit will let them know
+      userPermissions: 'Administrator',
+    };
+    ```
+  </TabItem>
+</Tabs>
 
 ### `botPermissions`
 
@@ -41,23 +82,48 @@ required by your bot to execute the command. This is useful for
 commands where your bot needs to have certain permissions in a guild
 e.g. moderation commands.
 
-```ts title="src/app/commands/ping.ts"
-export const metadata: CommandMetadata = {
-  // If the bot does not have these permissions, CommandKit will let them know
-  botPermissions: ['KickMembers', 'BanMembers'],
-};
-```
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts"
+    export const metadata: CommandMetadata = {
+      // If the bot does not have these permissions, CommandKit will let them know
+      botPermissions: ['KickMembers', 'BanMembers'],
+    };
+    ```
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      // If the bot does not have these permissions, CommandKit will let them know
+      botPermissions: ['KickMembers', 'BanMembers'],
+    };
+    ```
+  </TabItem>
+</Tabs>
 
 ### `guilds`
 
 This is an array of guild IDs that the command will be registered in,
 or be available to be executed (message commands).
 
-```ts title="src/app/commands/ping.ts"
-export const metadata: CommandMetadata = {
-  guilds: ['1234567890', '1234567891'],
-};
-```
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts"
+    export const metadata: CommandMetadata = {
+      guilds: ['1234567890', '1234567891'],
+    };
+    ```
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      guilds: ['1234567890', '1234567891'],
+    };
+    ```
+  </TabItem>
+</Tabs>
 
 ### `aliases`
 
@@ -70,11 +136,23 @@ This only works for [message commands](./04-message-commands.mdx).
 
 :::
 
-```ts title="src/app/commands/ping.ts"
-export const metadata: CommandMetadata = {
-  aliases: ['p', 'pong'],
-};
-```
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts"
+    export const metadata: CommandMetadata = {
+      aliases: ['p', 'pong'],
+    };
+    ```
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      aliases: ['p', 'pong'],
+    };
+    ```
+  </TabItem>
+</Tabs>
 
 ## Generated metadata
 
@@ -82,17 +160,42 @@ If you'd like to generate metadata dynamically, you can export a
 `generateMetadata` function from your command file that should return
 a `CommandMetadata` object.
 
-```ts title="src/app/commands/ping.ts"
-import type { CommandMetadataFunction } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts"
+    import type { CommandMetadataFunction } from 'commandkit';
 
-export const generateMetadata: CommandMetadataFunction = async () => {
-  // Dynamically determine the metadata for the command
+    export const generateMetadata: CommandMetadataFunction = async () => {
+      // Dynamically determine the metadata for the command
 
-  return {
-    userPermissions: 'Administrator',
-    botPermissions: ['KickMembers', 'BanMembers'],
-    guilds: ['1234567890', '1234567891'],
-    aliases: ['p', 'pong'],
-  };
-};
-```
+      return {
+        userPermissions: 'Administrator',
+        botPermissions: ['KickMembers', 'BanMembers'],
+        guilds: ['1234567890', '1234567891'],
+        aliases: ['p', 'pong'],
+      };
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /**
+     * @typedef {import('commandkit').CommandMetadataFunction} CommandMetadataFunction
+     */
+
+    /** @type {CommandMetadataFunction} */
+    export const generateMetadata = async () => {
+      // Dynamically determine the metadata for the command
+
+      return {
+        userPermissions: 'Administrator',
+        botPermissions: ['KickMembers', 'BanMembers'],
+        guilds: ['1234567890', '1234567891'],
+        aliases: ['p', 'pong'],
+      };
+    };
+    ```
+
+  </TabItem>
+</Tabs>

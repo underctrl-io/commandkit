@@ -2,6 +2,9 @@
 title: Middlewares
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Middlewares in CommandKit allow you to execute code before and after
 command execution. This is incredibly powerful for implementing
 features like logging, authentication, permission checks, or any other
@@ -16,41 +19,101 @@ All middleware files follow the same export pattern. You can export
 `beforeExecute` and `afterExecute` functions that will run at their
 respective times during command execution.
 
-```ts title="src/app/commands/+middleware.ts"
-import { MiddlewareContext } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/+middleware.ts"
+    import { MiddlewareContext } from 'commandkit';
 
-export function beforeExecute(ctx: MiddlewareContext) {
-  // This function will be executed before the command is executed
-  console.log(`User ${ctx.interaction.user.id} is about to execute a command`);
-}
+    export function beforeExecute(ctx: MiddlewareContext) {
+      // This function will be executed before the command is executed
+      console.log(`User ${ctx.interaction.user.id} is about to execute a command`);
+    }
 
-export function afterExecute(ctx: MiddlewareContext) {
-  // This function will be executed after the command is executed
-  console.log(
-    `Command execution completed for user ${ctx.interaction.user.id}`,
-  );
-}
-```
+    export function afterExecute(ctx: MiddlewareContext) {
+      // This function will be executed after the command is executed
+      console.log(
+        `Command execution completed for user ${ctx.interaction.user.id}`,
+      );
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/+middleware.js"
+    /**
+     * @typedef {import('commandkit').MiddlewareContext} MiddlewareContext
+     */
+
+    /**
+     * Executed before command execution
+     * @param {MiddlewareContext} ctx - The middleware context
+     */
+    export function beforeExecute(ctx) {
+      // This function will be executed before the command is executed
+      console.log(`User ${ctx.interaction.user.id} is about to execute a command`);
+    }
+
+    /**
+     * Executed after command execution
+     * @param {MiddlewareContext} ctx - The middleware context
+     */
+    export function afterExecute(ctx) {
+      // This function will be executed after the command is executed
+      console.log(
+        `Command execution completed for user ${ctx.interaction.user.id}`,
+      );
+    }
+    ```
+
+  </TabItem>
+</Tabs>
 
 ## Stop command execution
 
 You can stop a command from running by calling `stopMiddlewares()` in
 the `beforeExecute` function.
 
-```ts title="src/app/commands/+middleware.ts"
-import type { MiddlewareContext } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/+middleware.ts"
+    import type { MiddlewareContext } from 'commandkit';
 
-export function beforeExecute(ctx: MiddlewareContext) {
-  if (ctx.interaction.user.id !== '1234567890') {
-    // Conditionally stop command execution
-    console.log(`${ctx.commandName} will not be executed!`);
-    stopMiddlewares();
-  }
+    export function beforeExecute(ctx: MiddlewareContext) {
+      if (ctx.interaction.user.id !== '1234567890') {
+        // Conditionally stop command execution
+        console.log(`${ctx.commandName} will not be executed!`);
+        stopMiddlewares();
+      }
 
-  // Continue with command execution
-  console.log(`${ctx.commandName} will be executed!`);
-}
-```
+      // Continue with command execution
+      console.log(`${ctx.commandName} will be executed!`);
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/+middleware.js"
+    /**
+     * @typedef {import('commandkit').MiddlewareContext} MiddlewareContext
+     */
+
+    /**
+     * @param {MiddlewareContext} ctx - The middleware context
+     */
+    export function beforeExecute(ctx) {
+      if (ctx.interaction.user.id !== '1234567890') {
+        // Conditionally stop command execution
+        console.log(`${ctx.commandName} will not be executed!`);
+        stopMiddlewares();
+      }
+
+      // Continue with command execution
+      console.log(`${ctx.commandName} will be executed!`);
+    }
+    ```
+
+  </TabItem>
+</Tabs>
 
 :::tip
 
@@ -72,26 +135,59 @@ If you still want to use `stopMiddlewares()` in a try/catch block, you
 can use the `isErrorType` function to check if the error is an
 instance of the `CommandKitErrorCodes.StopMiddlewares` error.
 
-```ts title="src/app/commands/+middleware.ts"
-import type { MiddlewareContext } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/+middleware.ts"
+    import type { MiddlewareContext } from 'commandkit';
 
-export function beforeExecute(ctx: MiddlewareContext) {
-  try {
-    // code that may throw an error
+    export function beforeExecute(ctx: MiddlewareContext) {
+      try {
+        // code that may throw an error
 
-    stopMiddlewares(); // conditionally stop the middleware chain
-  } catch (error) {
-    if (isErrorType(error, CommandKitErrorCodes.StopMiddlewares)) {
-      // if stopMiddlewares() is called in the try block, throw it so CommandKit can stop the middleware chain
-      throw error;
+        stopMiddlewares(); // conditionally stop the middleware chain
+      } catch (error) {
+        if (isErrorType(error, CommandKitErrorCodes.StopMiddlewares)) {
+          // if stopMiddlewares() is called in the try block, throw it so CommandKit can stop the middleware chain
+          throw error;
+        }
+
+        // this means that the code threw the error, and stopMiddlewares() was not called
+        // the rest of the middlewares will be executed as normal
+        console.error(error);
+      }
     }
+    ```
 
-    // this means that the code threw the error, and stopMiddlewares() was not called
-    // the rest of the middlewares will be executed as normal
-    console.error(error);
-  }
-}
-```
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/+middleware.js"
+    /**
+     * @typedef {import('commandkit').MiddlewareContext} MiddlewareContext
+     */
+
+    /**
+     * @param {MiddlewareContext} ctx - The middleware context
+     */
+    export function beforeExecute(ctx) {
+      try {
+        // code that may throw an error
+
+        stopMiddlewares(); // conditionally stop the middleware chain
+      } catch (error) {
+        if (isErrorType(error, CommandKitErrorCodes.StopMiddlewares)) {
+          // if stopMiddlewares() is called in the try block, throw it so CommandKit can stop the middleware chain
+          throw error;
+        }
+
+        // this means that the code threw the error, and stopMiddlewares() was not called
+        // the rest of the middlewares will be executed as normal
+        console.error(error);
+      }
+    }
+    ```
+
+  </TabItem>
+</Tabs>
 
 :::
 
@@ -103,16 +199,39 @@ Create a `+middleware.ts` file in any commands directory to apply
 middleware to all commands within that directory and its
 subdirectories.
 
-```ts title="src/app/commands/(Moderation)/+middleware.ts"
-import type { MiddlewareContext } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/(Moderation)/+middleware.ts"
+    import type { MiddlewareContext } from 'commandkit';
 
-export function beforeExecute(ctx: MiddlewareContext) {
-  // This middleware will run before any moderation command
-  if (!ctx.interaction.member.permissions.has('KickMembers')) {
-    throw new Error('You need moderation permissions to use this command');
-  }
-}
-```
+    export function beforeExecute(ctx: MiddlewareContext) {
+      // This middleware will run before any moderation command
+      if (!ctx.interaction.member.permissions.has('KickMembers')) {
+        throw new Error('You need moderation permissions to use this command');
+      }
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/(Moderation)/+middleware.js"
+    /**
+     * @typedef {import('commandkit').MiddlewareContext} MiddlewareContext
+     */
+
+    /**
+     * @param {MiddlewareContext} ctx - The middleware context
+     */
+    export function beforeExecute(ctx) {
+      // This middleware will run before any moderation command
+      if (!ctx.interaction.member.permissions.has('KickMembers')) {
+        throw new Error('You need moderation permissions to use this command');
+      }
+    }
+    ```
+
+  </TabItem>
+</Tabs>
 
 ### Command-specific middleware
 
@@ -120,30 +239,74 @@ For command-specific middleware, create a file named
 `+<command-name>.middleware.ts` where `<command-name>` matches your
 command file name.
 
-```ts title="src/app/commands/+ban.middleware.ts"
-import type { MiddlewareContext } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/+ban.middleware.ts"
+    import type { MiddlewareContext } from 'commandkit';
 
-export function beforeExecute(ctx: MiddlewareContext) {
-  // This middleware only runs before the ban command
-  console.log('Ban command is about to be executed');
-}
-```
+    export function beforeExecute(ctx: MiddlewareContext) {
+      // This middleware only runs before the ban command
+      console.log('Ban command is about to be executed');
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/+ban.middleware.js"
+    /**
+     * @typedef {import('commandkit').MiddlewareContext} MiddlewareContext
+     */
+
+    /**
+     * @param {MiddlewareContext} ctx - The middleware context
+     */
+    export function beforeExecute(ctx) {
+      // This middleware only runs before the ban command
+      console.log('Ban command is about to be executed');
+    }
+    ```
+
+  </TabItem>
+</Tabs>
 
 ### Global middleware
 
 Create a `+global-middleware.ts` file in your commands directory to
 apply middleware to every command in your entire Discord bot.
 
-```ts title="src/app/commands/+global-middleware.ts"
-import type { MiddlewareContext } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/+global-middleware.ts"
+    import type { MiddlewareContext } from 'commandkit';
 
-export function beforeExecute(ctx: MiddlewareContext) {
-  // This middleware runs before ANY command in your bot
-  console.log(
-    `Command executed by ${ctx.interaction.user.tag} in ${ctx.interaction.guild?.name || 'DMs'}`,
-  );
-}
-```
+    export function beforeExecute(ctx: MiddlewareContext) {
+      // This middleware runs before ANY command in your bot
+      console.log(
+        `Command executed by ${ctx.interaction.user.tag} in ${ctx.interaction.guild?.name || 'DMs'}`,
+      );
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/+global-middleware.js"
+    /**
+     * @typedef {import('commandkit').MiddlewareContext} MiddlewareContext
+     */
+
+    /**
+     * @param {MiddlewareContext} ctx - The middleware context
+     */
+    export function beforeExecute(ctx) {
+      // This middleware runs before ANY command in your bot
+      console.log(
+        `Command executed by ${ctx.interaction.user.tag} in ${ctx.interaction.guild?.name || 'DMs'}`,
+      );
+    }
+    ```
+
+  </TabItem>
+</Tabs>
 
 :::tip
 

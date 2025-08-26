@@ -2,6 +2,9 @@
 title: Discord.js Events
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Events allow your Discord bot to react to various actions happening on
 Discord, such as when users send messages, join guilds, or when your
 bot comes online.
@@ -52,15 +55,35 @@ To create an event handler, create a folder inside the
 `src/app/events` directory which should match the event name from
 Discord.js. This example will use the `"clientReady"` event.
 
-```ts title="src/app/events/clientReady/log.ts"
-import type { EventHandler } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/events/clientReady/log.ts"
+    import type { EventHandler } from 'commandkit';
 
-const handler: EventHandler<'clientReady'> = (client) => {
-  console.log(`🤖 ${client.user.displayName} is online!`);
-};
+    const handler: EventHandler<'clientReady'> = (client) => {
+      console.log(`🤖 ${client.user.displayName} is online!`);
+    };
 
-export default handler;
-```
+    export default handler;
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/events/clientReady/log.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'clientReady'>} ClientReadyHandler
+     */
+
+    /** @type {ClientReadyHandler} */
+    const handler = (client) => {
+      console.log(`🤖 ${client.user.displayName} is online!`);
+    };
+
+    export default handler;
+    ```
+
+  </TabItem>
+</Tabs>
 
 That's it! CommandKit will automatically detect this file and register
 it as one of the handler functions for the `"clientReady"` event.
@@ -87,34 +110,78 @@ definition.
 You may want to have some events to only get called once. For this,
 you can export a variable called `once` from your event function file.
 
-```ts title="src/app/events/clientReady/log.ts"
-import type { EventHandler } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/events/clientReady/log.ts"
+    import type { EventHandler } from 'commandkit';
 
-export const once = true;
+    export const once = true;
 
-const handler: EventHandler<'clientReady'> = (client) => {
-  console.log(`🤖 ${client.user.displayName} is online!`);
-};
+    const handler: EventHandler<'clientReady'> = (client) => {
+      console.log(`🤖 ${client.user.displayName} is online!`);
+    };
 
-export default handler;
-```
+    export default handler;
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/events/clientReady/log.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'clientReady'>} ClientReadyHandler
+     */
+
+    export const once = true;
+
+    /** @type {ClientReadyHandler} */
+    const handler = (client) => {
+      console.log(`🤖 ${client.user.displayName} is online!`);
+    };
+
+    export default handler;
+    ```
+
+  </TabItem>
+</Tabs>
 
 ## Events with multiple parameter
 
 Some Discord.js events have multiple parameters, such as the
 `"messageUpdate"` event.
 
-```ts title="src/app/events/messageUpdate/log-message-update.ts"
-import type { EventHandler } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/events/messageUpdate/log-message-update.ts"
+    import type { EventHandler } from 'commandkit';
 
-const handler: EventHandler<'messageUpdate'> = (oldMessage, newMessage) => {
-  console.log(
-    `Message from ${oldMessage.author?.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
-  );
-};
+    const handler: EventHandler<'messageUpdate'> = (oldMessage, newMessage) => {
+      console.log(
+        `Message from ${oldMessage.author?.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
+      );
+    };
 
-export default handler;
-```
+    export default handler;
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/events/messageUpdate/log-message-update.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'messageUpdate'>} MessageUpdateHandler
+     */
+
+    /** @type {MessageUpdateHandler} */
+    const handler = (oldMessage, newMessage) => {
+      console.log(
+        `Message from ${oldMessage.author?.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
+      );
+    };
+
+    export default handler;
+    ```
+
+  </TabItem>
+</Tabs>
 
 ## Additional parameters
 
@@ -125,19 +192,39 @@ and
 [`CommandKit`](../../api-reference/commandkit/classes/command-kit.mdx)
 instance.
 
-```ts title="src/app/events/messageCreate/log.ts"
-import type { EventHandler } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/events/messageCreate/log.ts"
+    import type { EventHandler } from 'commandkit';
 
-const handler: EventHandler<'messageCreate'> = (
-  message,
-  client,
-  commandkit,
-) => {
-  console.log(`Message from ${message.author.username}: ${message.content}`);
-};
+    const handler: EventHandler<'messageCreate'> = (
+      message,
+      client,
+      commandkit,
+    ) => {
+      console.log(`Message from ${message.author.username}: ${message.content}`);
+    };
 
-export default handler;
-```
+    export default handler;
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/events/messageCreate/log.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'messageCreate'>} MessageCreateHandler
+     */
+
+    /** @type {MessageCreateHandler} */
+    const handler = (message, client, commandkit) => {
+      console.log(`Message from ${message.author.username}: ${message.content}`);
+    };
+
+    export default handler;
+    ```
+
+  </TabItem>
+</Tabs>
 
 ## Multiple handlers for the same event
 
@@ -149,29 +236,73 @@ is called.
 For example, you might want to do several things when a message is
 created:
 
-```ts title="src/app/events/messageCreate/give-xp.ts"
-import type { EventHandler } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/events/messageCreate/give-xp.ts"
+    import type { EventHandler } from 'commandkit';
 
-const handler: EventHandler<'messageCreate'> = (message) => {
-  // Don't give XP to bots
-  if (message.author.bot) return;
+    const handler: EventHandler<'messageCreate'> = (message) => {
+      // Don't give XP to bots
+      if (message.author.bot) return;
 
-  // Give XP to the user
-  console.log(`Giving XP to ${message.author.username}`);
-};
+      // Give XP to the user
+      console.log(`Giving XP to ${message.author.username}`);
+    };
 
-export default handler;
-```
+    export default handler;
+    ```
 
-```ts title="src/app/events/messageCreate/log-message.ts"
-import type { EventHandler } from 'commandkit';
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/events/messageCreate/give-xp.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'messageCreate'>} MessageCreateHandler
+     */
 
-const handler: EventHandler<'messageCreate'> = (message) => {
-  console.log(`Message from ${message.author.username}: ${message.content}`);
-};
+    /** @type {MessageCreateHandler} */
+    const handler = (message) => {
+      // Don't give XP to bots
+      if (message.author.bot) return;
 
-export default handler;
-```
+      // Give XP to the user
+      console.log(`Giving XP to ${message.author.username}`);
+    };
+
+    export default handler;
+    ```
+
+  </TabItem>
+</Tabs>
+
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/events/messageCreate/log-message.ts"
+    import type { EventHandler } from 'commandkit';
+
+    const handler: EventHandler<'messageCreate'> = (message) => {
+      console.log(`Message from ${message.author.username}: ${message.content}`);
+    };
+
+    export default handler;
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/events/messageCreate/log-message.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'messageCreate'>} MessageCreateHandler
+     */
+
+    /** @type {MessageCreateHandler} */
+    const handler = (message) => {
+      console.log(`Message from ${message.author.username}: ${message.content}`);
+    };
+
+    export default handler;
+    ```
+
+  </TabItem>
+</Tabs>
 
 Both handler functions will be called whenever a message is sent in
 Discord.
