@@ -19,6 +19,8 @@ export abstract class RuntimePlugin<
   T extends PluginOptions = PluginOptions,
 > extends PluginCommon<T, CommandKitPluginRuntime> {
   public readonly type = PluginType.Runtime;
+  public readonly preload = new Set<string>();
+
   /**
    * Called before commands are loaded
    */

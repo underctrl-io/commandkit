@@ -8,6 +8,8 @@ import {
 } from '../../utils/error-codes';
 import { Logger } from '../../logger/Logger';
 import { AsyncFunction } from '../../context/async-context';
+import { getCurrentDirectory } from '../../utils/utilities';
+import { toFileURL } from '../../utils/resolve-file-url';
 
 /**
  * Represents the runtime environment for CommandKit plugins.
@@ -48,6 +50,16 @@ export class CommandKitPluginRuntime {
   }
 
   /**
+   * Pre-loads the specified entrypoints for the given plugin.
+   * @param plugin The plugin to pre-load.
+   */
+  public async preload(plugin: RuntimePlugin) {
+    for (const entrypoint of plugin.preload) {
+      await import(toFileURL(`${getCurrentDirectory()}/${entrypoint}`));
+    }
+  }
+
+  /**
    * Soft registers a plugin in the runtime.
    * @param plugin The plugin to be registered.
    */
@@ -57,9 +69,11 @@ export class CommandKitPluginRuntime {
     if (this.plugins.has(pluginName)) return;
 
     try {
+      await this.preload(plugin);
       await plugin.activate(this);
       this.plugins.set(pluginName, plugin);
     } catch (e: any) {
+      this.plugins.delete(pluginName);
       throw new Error(
         `Failed to activate plugin "${pluginName}": ${e?.stack || e}`,
       );
@@ -79,9 +93,11 @@ export class CommandKitPluginRuntime {
     }
 
     try {
+      await this.preload(plugin);
       await plugin.activate(this);
       this.plugins.set(pluginName, plugin);
     } catch (e: any) {
+      this.plugins.delete(pluginName);
       throw new Error(
         `Failed to activate plugin "${pluginName}": ${e?.stack || e}`,
       );

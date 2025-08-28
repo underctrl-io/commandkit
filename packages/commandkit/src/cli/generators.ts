@@ -79,6 +79,39 @@ export const message = async (ctx) => {
  * @private
  * @internal
  */
+function TS_EVENT_SOURCE(name: string) {
+  const eventName = name[0].toUpperCase() + name.slice(1);
+  return `import type { EventHandler } from 'commandkit';
+
+const ${eventName}: EventHandler<'${name}'> = async () => {
+  console.log('${name} event fired!');
+};
+
+export default ${eventName};
+`;
+}
+
+/**
+ * @private
+ * @internal
+ */
+function JS_EVENT_SOURCE(name: string) {
+  const eventName = `on${name[0].toUpperCase() + name.slice(1)}`;
+  return `/**
+ * @type {import('commandkit').EventHandler<'${name}'>}
+ */
+const ${eventName} = async () => {
+  console.log('${name} event fired!');
+};
+
+export default ${eventName};
+`;
+}
+
+/**
+ * @private
+ * @internal
+ */
 export async function generateCommand(name: string, customPath?: string) {
   const cmdPath = join(customPath || COMMANDS_DIR);
   if (!existsSync(cmdPath)) await mkdir(cmdPath, { recursive: true });
@@ -114,6 +147,7 @@ export async function generateEvent(name: string, customPath?: string) {
   if (!existsSync(eventPath)) await mkdir(eventPath, { recursive: true });
 
   const ext = determineExtension();
+  const isTypeScript = ext === 'ts';
 
   let filename = `event.${ext}`;
 
@@ -122,11 +156,9 @@ export async function generateEvent(name: string, customPath?: string) {
     filename = `${String(count).padStart(2, '0')}_${filename}`;
   }
 
-  const eventFile = `
-export default async function on${name[0].toUpperCase() + name.slice(1)}() {
-  console.log('${name} event fired!');
-};
-`.trim();
+  const eventFile = isTypeScript
+    ? TS_EVENT_SOURCE(name)
+    : JS_EVENT_SOURCE(name);
 
   await writeFile(join(eventPath, filename), eventFile);
 

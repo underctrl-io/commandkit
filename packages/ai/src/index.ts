@@ -4,6 +4,7 @@ import { AiPluginOptions } from './types';
 import { getAiWorkerContext } from './ai-context-worker';
 import { getCommandKit } from 'commandkit';
 import type { Message } from 'discord.js';
+import { AiCliPlugin } from './cli-plugin';
 
 /**
  * Retrieves the AI context.
@@ -50,7 +51,7 @@ export function executeAI(message: Message): Promise<void> {
  * @returns The AI plugin instance
  */
 export function ai(options?: AiPluginOptions) {
-  return new AiPlugin(options ?? {});
+  return [new AiPlugin(options ?? {}), new AiCliPlugin({})];
 }
 
 export * from './types';

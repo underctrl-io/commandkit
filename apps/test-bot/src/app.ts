@@ -2,7 +2,6 @@ import { Client, Partials } from 'discord.js';
 import { Logger, commandkit } from 'commandkit';
 import { setDriver } from '@commandkit/tasks';
 import { SQLiteDriver } from '@commandkit/tasks/sqlite';
-import './ai.ts';
 
 const client = new Client({
   intents: [
