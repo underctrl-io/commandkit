@@ -20,6 +20,7 @@ CommandKit plugin that runs at the runtime.
 ```ts title="Signature"
 class RuntimePlugin<T extends PluginOptions = PluginOptions> extends PluginCommon<T, CommandKitPluginRuntime> {
     public readonly type = PluginType.Runtime;
+    public readonly preload = new Set<string>();
     onBeforeCommandsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
     onAfterCommandsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
     onBeforeEventsLoad(ctx: CommandKitPluginRuntime) => Promise<void>;
@@ -48,6 +49,11 @@ class RuntimePlugin<T extends PluginOptions = PluginOptions> extends PluginCommo
 <div className="members-wrapper">
 
 ### type
+
+<MemberInfo kind="property" type={``}   />
+
+
+### preload
 
 <MemberInfo kind="property" type={``}   />
 
