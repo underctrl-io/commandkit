@@ -1,9 +1,12 @@
 name: Publish latest builds
 
 on:
-  release:
-    types: [created]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.2.3)'
+        required: true
+        type: string
 
 jobs:
   publish:
@@ -23,6 +26,31 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Validate version input
+        run: |
+          if ! [[ "${{ github.event.inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Version must be in semantic version format (e.g., 1.2.3)"
+            exit 1
+          fi
+
+      - name: Update package versions
+        run: |
+          target_version="${{ github.event.inputs.version }}"
+          echo "Setting version to: $target_version"
+
+          for dir in packages/*; do
+            [ -f "$dir/package.json" ] || continue
+            echo "Updating $dir/package.json..."
+            node -e "
+              const fs = require('fs');
+              const path = './$dir/package.json';
+              const pkg = require(path);
+              pkg.version = '$target_version';
+              fs.writeFileSync(path, JSON.stringify(pkg, null, 2));
+              console.log('Updated ' + pkg.name + ' to version ' + pkg.version);
+            "
+          done
 
       - name: Build packages
         run: pnpm dlx turbo build --filter='./packages/*'
