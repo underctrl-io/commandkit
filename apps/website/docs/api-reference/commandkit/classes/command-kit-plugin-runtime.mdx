@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKitPluginRuntime
 
-<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts" sourceLine="15" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/plugins/plugin-runtime/CommandKitPluginRuntime.ts" sourceLine="17" packageName="commandkit" />
 
 Represents the runtime environment for CommandKit plugins.
 
@@ -23,6 +23,7 @@ class CommandKitPluginRuntime {
     getPlugins() => ;
     getPlugin(pluginName: string) => RuntimePlugin | null;
     get(plugin: T) => InstanceType<T> | null;
+    preload(plugin: RuntimePlugin) => ;
     softRegisterPlugin(plugin: RuntimePlugin) => ;
     registerPlugin(plugin: RuntimePlugin) => ;
     unregisterPlugin(plugin: RuntimePlugin) => ;
@@ -54,6 +55,11 @@ Checks if there are no plugins registered in this runtime.
 <MemberInfo kind="method" type={`(plugin: T) => InstanceType&#60;T&#62; | null`}   />
 
 Fetches the given plugin
+### preload
+
+<MemberInfo kind="method" type={`(plugin: <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>) => `}   />
+
+Pre-loads the specified entrypoints for the given plugin.
 ### softRegisterPlugin
 
 <MemberInfo kind="method" type={`(plugin: <a href='/docs/next/api-reference/commandkit/classes/runtime-plugin#runtimeplugin'>RuntimePlugin</a>) => `}   />
