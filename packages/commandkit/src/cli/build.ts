@@ -140,6 +140,9 @@ export async function buildApplication({
               ...(config.entrypoints ?? []),
             ]),
           ),
+          outputOptions: {
+            sanitizeFileName: (name) => name,
+          },
           unbundle: isDev
             ? true
             : (config.compilerOptions?.disableChunking ?? false),
