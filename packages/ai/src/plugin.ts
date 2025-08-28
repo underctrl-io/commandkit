@@ -13,6 +13,8 @@ import { getUserById } from './tools/get-user-by-id';
 import { getAIConfig } from './configure';
 import { augmentCommandKit } from './augmentation';
 import { ToolParameterType } from './tools/common';
+import { getMemberById } from './tools/get-member-by-id';
+import { createEmbed } from './tools/create-embed';
 
 /**
  * Represents the configuration options for the AI plugin scoped to a specific command.
@@ -34,6 +36,8 @@ const defaultTools: Record<string, Tool> = {
   getCurrentClientInfo,
   getGuildById,
   getUserById,
+  getMemberById,
+  createEmbed,
 };
 
 export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
@@ -44,6 +48,7 @@ export class AiPlugin extends RuntimePlugin<AiPluginOptions> {
 
   public constructor(options: AiPluginOptions) {
     super(options);
+    this.preload.add('ai.js');
   }
 
   public async activate(ctx: CommandKitPluginRuntime): Promise<void> {
