@@ -39,6 +39,7 @@ overrides:
   tmp@<=0.2.3: '>=0.2.4'
   mermaid@>=11.1.0 <11.10.0: '>=11.10.0'
   mermaid@>=11.0.0-alpha.1 <11.10.0: '>=11.10.0'
+  devalue@<5.3.2: '>=5.3.2'
 
 importers:
 
@@ -5080,8 +5081,8 @@ packages:
     engines: {node: '>= 4.0.0'}
     hasBin: true
 
-  devalue@5.1.1:
-    resolution: {integrity: sha512-maua5KUiapvEwiEAe+XnlZ3Rh0GD+qI1J/nb9vrJc3muPXvcF/8gXYTWF76+5DAqHyDUtOIImEuo0YKE9mshVw==}
+  devalue@5.3.2:
+    resolution: {integrity: sha512-UDsjUbpQn9kvm68slnrs+mfxwFkIflOhkanmyabZ8zOYk8SMEIbJ3TK+88g70hSIeytu4y18f0z/hYHMTrXIWw==}
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
@@ -15409,7 +15410,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  devalue@5.1.1: {}
+  devalue@5.3.2: {}
 
   devlop@1.1.0:
     dependencies:
@@ -20022,7 +20023,7 @@ snapshots:
       '@babel/traverse': 7.28.0
       '@babel/types': 7.28.2
       '@types/babel__core': 7.20.5
-      devalue: 5.1.1
+      devalue: 5.3.2
     transitivePeerDependencies:
       - supports-color
 
