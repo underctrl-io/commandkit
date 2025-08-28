@@ -2,6 +2,9 @@
 title: Chat Input Commands
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Chat input commands, more commonly known as 'Slash Commands', are a
 way for users on Discord to perform actions using your bot.
 
@@ -14,18 +17,43 @@ To create a new chat input command, create a new file in the
 will create a basic ping command which will respond with "Pong!" when
 executed.
 
-```ts title="src/app/commands/ping.ts"
-import type { CommandData, ChatInputCommand } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts"
+    import type { CommandData, ChatInputCommand } from 'commandkit';
 
-export const command: CommandData = {
-  name: 'ping',
-  description: 'Replies with Pong!',
-};
+    export const command: CommandData = {
+      name: 'ping',
+      description: 'Replies with Pong!',
+    };
 
-export const chatInput: ChatInputCommand = async (ctx) => {
-  await ctx.interaction.reply('Pong!');
-};
-```
+    export const chatInput: ChatInputCommand = async (ctx) => {
+      await ctx.interaction.reply('Pong!');
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').ChatInputCommand} ChatInputCommand
+     */
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'ping',
+      description: 'Replies with Pong!',
+    };
+
+    /** @type {ChatInputCommand} */
+    export const chatInput = async (ctx) => {
+      await ctx.interaction.reply('Pong!');
+    };
+    ```
+
+  </TabItem>
+</Tabs>
 
 ## Exports explained
 

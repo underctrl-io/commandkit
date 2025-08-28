@@ -2,6 +2,9 @@
 title: Context Menu Commands
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Context menu commands allows users on Discord to run commands by
 either referencing a message or a user. Context menu commands can be
 grouped to either 'Message' or 'User' context menu commands.
@@ -19,28 +22,61 @@ understanding the nature of these context menu commands easier.
 
 ## Message context menu command
 
-```ts title="src/app/commands/report-message.ts"
-import type { CommandData, MessageContextMenuCommand } from 'commandkit';
-import { MessageFlags } from 'discord.js';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/report-message.ts"
+    import type { CommandData, MessageContextMenuCommand } from 'commandkit';
+    import { MessageFlags } from 'discord.js';
 
-export const command: CommandData = {
-  name: 'report-message',
-  description: 'Report a message to moderators.',
-};
+    export const command: CommandData = {
+      name: 'report-message',
+      description: 'Report a message to moderators.',
+    };
 
-export const messageContextMenu: MessageContextMenuCommand = async ({
-  interaction,
-}) => {
-  const content = interaction.targetMessage.content;
+    export const messageContextMenu: MessageContextMenuCommand = async ({
+      interaction,
+    }) => {
+      const content = interaction.targetMessage.content;
 
-  // you could add your message reporting logic here
+      // you could add your message reporting logic here
 
-  await interaction.reply({
-    content: `You have reported the following message: ${content}`,
-    flags: MessageFlags.Ephemeral,
-  });
-};
-```
+      await interaction.reply({
+        content: `You have reported the following message: ${content}`,
+        flags: MessageFlags.Ephemeral,
+      });
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/report-message.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').MessageContextMenuCommand} MessageContextMenuCommand
+     */
+    import { MessageFlags } from 'discord.js';
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'report-message',
+      description: 'Report a message to moderators.',
+    };
+
+    /** @type {MessageContextMenuCommand} */
+    export const messageContextMenu = async ({ interaction }) => {
+      const content = interaction.targetMessage.content;
+
+      // you could add your message reporting logic here
+
+      await interaction.reply({
+        content: `You have reported the following message: ${content}`,
+        flags: MessageFlags.Ephemeral,
+      });
+    };
+    ```
+
+  </TabItem>
+</Tabs>
 
 By just exporting the `messageContextMenu` function from your command
 file, CommandKit will properly update your command type before
@@ -53,25 +89,58 @@ handlers.
 The logic for registering and handling user context menu commands is
 very similar to message context menu commands.
 
-```ts title="src/app/commands/report-user.ts"
-import type { CommandData, UserContextMenuCommand } from 'commandkit';
-import { MessageFlags } from 'discord.js';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/report-user.ts"
+    import type { CommandData, UserContextMenuCommand } from 'commandkit';
+    import { MessageFlags } from 'discord.js';
 
-export const command: CommandData = {
-  name: 'report-user',
-  description: 'Report a user to moderators.',
-};
+    export const command: CommandData = {
+      name: 'report-user',
+      description: 'Report a user to moderators.',
+    };
 
-export const userContextMenu: UserContextMenuCommand = async ({
-  interaction,
-}) => {
-  const userId = interaction.targetUser.id;
+    export const userContextMenu: UserContextMenuCommand = async ({
+      interaction,
+    }) => {
+      const userId = interaction.targetUser.id;
 
-  // you could add your user reporting logic here
+      // you could add your user reporting logic here
 
-  await interaction.reply({
-    content: `You have reported a user with the ID: ${userId}`,
-    flags: MessageFlags.Ephemeral,
-  });
-};
-```
+      await interaction.reply({
+        content: `You have reported a user with the ID: ${userId}`,
+        flags: MessageFlags.Ephemeral,
+      });
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/report-user.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').UserContextMenuCommand} UserContextMenuCommand
+     */
+    import { MessageFlags } from 'discord.js';
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'report-user',
+      description: 'Report a user to moderators.',
+    };
+
+    /** @type {UserContextMenuCommand} */
+    export const userContextMenu = async ({ interaction }) => {
+      const userId = interaction.targetUser.id;
+
+      // you could add your user reporting logic here
+
+      await interaction.reply({
+        content: `You have reported a user with the ID: ${userId}`,
+        flags: MessageFlags.Ephemeral,
+      });
+    };
+    ```
+
+  </TabItem>
+</Tabs>

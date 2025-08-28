@@ -3,6 +3,9 @@ title: Setup CommandKit
 description: Setup a new CommandKit project using the create-commandkit CLI
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 :::info
 
 - CommandKit requires at least [Node.js](https://nodejs.org/) v24
@@ -52,18 +55,38 @@ The `src/app.ts` file is the main entry point for your application.
 This file default exports the discord.js client instance which
 CommandKit loads at runtime.
 
-```ts title="src/app.ts"
-import { Client } from 'discord.js';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app.ts"
+    import { Client } from 'discord.js';
 
-const client = new Client({
-  intents: ['Guilds', 'GuildMessages', 'MessageContent'],
-});
+    const client = new Client({
+      intents: ['Guilds', 'GuildMessages', 'MessageContent'],
+    });
 
-// Optional: Setting up the token manually
-client.token = process.env.MY_BOT_TOKEN;
+    // Optional: Setting up the token manually
+    client.token = process.env.MY_BOT_TOKEN;
 
-export default client;
-```
+    export default client;
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app.js"
+    import { Client } from 'discord.js';
+
+    const client = new Client({
+      intents: ['Guilds', 'GuildMessages', 'MessageContent'],
+    });
+
+    // Optional: Setting up the token manually
+    client.token = process.env.MY_BOT_TOKEN;
+
+    export default client;
+    ```
+
+  </TabItem>
+</Tabs>
 
 Notice how there's no `client.login()` in this file. This is because
 CommandKit will automatically handle the login process for you when

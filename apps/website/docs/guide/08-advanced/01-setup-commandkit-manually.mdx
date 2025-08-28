@@ -29,32 +29,64 @@ npm install commandkit@next
 
 ## Configuration file
 
-To get started, create a file called `commandkit.config.ts` at the
-root of your project. This file is used to configure CommandKit and
-optionally its plugins.
+To get started, create a configuration file at the root of your
+project. This file is used to configure CommandKit and optionally its
+plugins.
 
-```ts title="commandkit.config.ts"
-import { defineConfig } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="commandkit.config.ts"
+    import { defineConfig } from 'commandkit';
 
-export default defineConfig({});
-```
+    export default defineConfig({});
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="commandkit.config.js"
+    import { defineConfig } from 'commandkit';
+
+    export default defineConfig({});
+    ```
+
+  </TabItem>
+</Tabs>
 
 ## Entrypoint file
 
-Then, create a folder called `src`, followed by a file called `app.ts`
-inside it. The file should look like this:
+Then, create a folder called `src`, followed by an app file inside it.
+The file should look like this:
 
-```ts title="src/app.ts"
-import { Client } from 'discord.js';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app.ts"
+    import { Client } from 'discord.js';
 
-const client = new Client({
-  intents: ['Guilds'],
-});
+    const client = new Client({
+      intents: ['Guilds'],
+    });
 
-client.token = '...'; // Optional: Manually set a bot token
+    client.token = '...'; // Optional: Manually set a bot token
 
-export default client;
-```
+    export default client;
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app.js"
+    import { Client } from 'discord.js';
+
+    const client = new Client({
+      intents: ['Guilds'],
+    });
+
+    client.token = '...'; // Optional: Manually set a bot token
+
+    export default client;
+    ```
+
+  </TabItem>
+</Tabs>
 
 With the current entrypoint file created, it's important to understand
 that:
@@ -71,26 +103,57 @@ that:
 ## Adding commands
 
 To add a command, create a folder inside the `src/app` directory
-called `commands` and create your command file (e.g. `ping.ts`). This
-example will use a simple ping/pong command which will register as a
-chat input (slash) and message command.
+called `commands` and create your command file. This example will use
+a simple ping/pong command which will register as a chat input (slash)
+and message command.
 
-```ts title="src/app/commands/ping.ts"
-import type { ChatInputCommand, CommandData, MessageCommand } from 'commandkit';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/ping.ts"
+    import type { ChatInputCommand, CommandData, MessageCommand } from 'commandkit';
 
-export const command: CommandData = {
-  name: 'ping',
-  description: 'Pong!',
-};
+    export const command: CommandData = {
+      name: 'ping',
+      description: 'Pong!',
+    };
 
-export const chatInput: ChatInputCommand = async ({ interaction }) => {
-  await interaction.reply('Pong!');
-};
+    export const chatInput: ChatInputCommand = async ({ interaction }) => {
+      await interaction.reply('Pong!');
+    };
 
-export const message: MessageCommand = async ({ message }) => {
-  await message.reply('Pong!');
-};
-```
+    export const message: MessageCommand = async ({ message }) => {
+      await message.reply('Pong!');
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /**
+     * @typedef {import('commandkit').ChatInputCommand} ChatInputCommand
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').MessageCommand} MessageCommand
+     */
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'ping',
+      description: 'Pong!',
+    };
+
+    /** @type {ChatInputCommand} */
+    export const chatInput = async ({ interaction }) => {
+      await interaction.reply('Pong!');
+    };
+
+    /** @type {MessageCommand} */
+    export const message = async ({ message }) => {
+      await message.reply('Pong!');
+    };
+    ```
+
+  </TabItem>
+</Tabs>
 
 This command will reply with "Pong!" when the user runs the `/ping`
 slash command, or sends `!ping` in the chat.
@@ -117,13 +180,29 @@ respective event is emitted by discord.js. Following the `clientReady`
 event example mentioned above, you may want to log when your bot comes
 online. The function for that will look like so:
 
-```ts title="src/app/events/clientReady/log.ts"
-import type { Client } from 'discord.js';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/events/clientReady/log.ts"
+    import type { Client } from 'discord.js';
 
-export default function (client: Client<true>) {
-  console.log(`Logged in as ${client.user.username}!`);
-}
-```
+    export default function (client: Client<true>) {
+      console.log(`Logged in as ${client.user.username}!`);
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/events/clientReady/log.js"
+    /**
+     * Event handler for when the bot is ready
+     * @param {import('discord.js').Client<true>} client - The Discord client instance
+     */
+    export default function (client) {
+      console.log(`Logged in as ${client.user.username}!`);
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 :::tip
 

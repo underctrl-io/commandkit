@@ -2,6 +2,9 @@
 title: Using JSX
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 CommandKit provides first-class JSX support for both TypeScript and
 JavaScript projects. This allows you to write Discord message
 components using a familiar and intuitive syntax if you're already
@@ -11,16 +14,30 @@ familiar with React.
 
 CommandKit automatically configures JSX support in your project. If
 you are doing a manual setup, ensure you have the following in your
-`tsconfig.json` or `jsconfig.json`:
+configuration:
 
-```json
-{
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "commandkit"
-  }
-}
-```
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```json title="tsconfig.json"
+    {
+      "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "commandkit"
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```json title="jsconfig.json"
+    {
+      "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "commandkit"
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 ## Available components
 
@@ -39,38 +56,83 @@ builders:
 
 ## Example usage
 
-```tsx
-import { Container, TextDisplay, ActionRow, Button } from 'commandkit';
-import { ButtonStyle } from 'discord.js';
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```tsx title="example.tsx"
+    import { Container, TextDisplay, ActionRow, Button } from 'commandkit';
+    import { ButtonStyle } from 'discord.js';
 
-const message = (
-  <Container>
-    <TextDisplay>Welcome to our server!</TextDisplay>
-    <ActionRow>
-      <Button style={ButtonStyle.Primary}>Click me!</Button>
-    </ActionRow>
-  </Container>
-);
+    const message = (
+      <Container>
+        <TextDisplay>Welcome to our server!</TextDisplay>
+        <ActionRow>
+          <Button style={ButtonStyle.Primary}>Click me!</Button>
+        </ActionRow>
+      </Container>
+    );
 
-interaction.reply({
-  components: [message],
-});
-```
+    interaction.reply({
+      components: [message],
+    });
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```jsx title="example.jsx"
+    import { Container, TextDisplay, ActionRow, Button } from 'commandkit';
+    import { ButtonStyle } from 'discord.js';
+
+    const message = (
+      <Container>
+        <TextDisplay>Welcome to our server!</TextDisplay>
+        <ActionRow>
+          <Button style={ButtonStyle.Primary}>Click me!</Button>
+        </ActionRow>
+      </Container>
+    );
+
+    interaction.reply({
+      components: [message],
+    });
+    ```
+
+  </TabItem>
+</Tabs>
 
 ## JSX fragments
 
 CommandKit fully supports JSX fragments for grouping multiple elements
 without adding extra nodes:
 
-```tsx
-const elements = (
-  <>
-    <TextDisplay>First message</TextDisplay>
-    <TextDisplay>Second message</TextDisplay>
-  </>
-);
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```tsx title="fragments.tsx"
+    const elements = (
+      <>
+        <TextDisplay>First message</TextDisplay>
+        <TextDisplay>Second message</TextDisplay>
+      </>
+    );
 
-interaction.reply({
-  components: elements,
-});
-```
+    interaction.reply({
+      components: elements,
+    });
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```jsx title="fragments.jsx"
+    const elements = (
+      <>
+        <TextDisplay>First message</TextDisplay>
+        <TextDisplay>Second message</TextDisplay>
+      </>
+    );
+
+    interaction.reply({
+      components: elements,
+    });
+    ```
+
+  </TabItem>
+</Tabs>
