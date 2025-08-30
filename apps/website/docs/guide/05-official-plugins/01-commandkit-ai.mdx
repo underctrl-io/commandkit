@@ -67,7 +67,19 @@ export default defineConfig({
 });
 ```
 
-Then create an AI configuration file to set up your AI model:
+Then create an AI configuration file to set up your AI model. This can be done in two ways, one via CLI and another manually.
+
+### With CLI
+
+Use the following command to automatically generate `ai.ts` (or js) file in the project:
+
+```sh
+commandkit create ai
+```
+
+This command creates `ai.ts` (or js) file inside the `src` directory with openai o3-mini model. You can change it to any other supported models if needed.
+
+### Manual
 
 ```ts title="src/ai.ts"
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
@@ -91,22 +103,7 @@ configureAI({
 });
 ```
 
-Finally, import the configuration in your main application file:
-
-```ts title="src/app.ts"
-import { Client, GatewayIntentBits } from 'discord.js';
-import './ai'; // Import AI configuration
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent, // Required for AI to read message content
-  ],
-});
-
-export default client;
-```
+The AI plugin will load the `ai.ts` (or js) file automatically.
 
 ## Creating AI commands
 
