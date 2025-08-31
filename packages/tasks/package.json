@@ -53,6 +53,6 @@
     "typescript": "catalog:build"
   },
   "dependencies": {
-    "cron-parser": "^4.9.0"
+    "cron-parser": "^5.0.0"
   }
 }
