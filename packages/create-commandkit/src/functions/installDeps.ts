@@ -12,7 +12,7 @@ const getBaseDependencies = () => [
 const getDependencies = () => ({
   js: {
     dependencies: getBaseDependencies(),
-    devDependencies: ['prettier'],
+    devDependencies: ['prettier', 'typescript'],
   },
   ts: {
     dependencies: getBaseDependencies(),
