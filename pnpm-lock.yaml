@@ -624,8 +624,8 @@ importers:
   packages/tasks:
     dependencies:
       cron-parser:
-        specifier: ^4.9.0
-        version: 4.9.0
+        specifier: ^5.0.0
+        version: 5.3.1
     devDependencies:
       bullmq:
         specifier: ^5.56.5
@@ -4662,6 +4662,10 @@ packages:
   cron-parser@4.9.0:
     resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
     engines: {node: '>=12.0.0'}
+
+  cron-parser@5.3.1:
+    resolution: {integrity: sha512-Mu5Jk1b4cUfY8u34+thI9TZxvQiuhaMBS2Ag84rOSoHlU33xtIPkXwr6lWuw3XPmxSxq317B+hl0o4J+LdhwNg==}
+    engines: {node: '>=18'}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -13922,7 +13926,7 @@ snapshots:
   '@types/react-router@5.1.20':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.1.8
+      '@types/react': 19.1.11
 
   '@types/react@19.1.10':
     dependencies:
@@ -14966,6 +14970,10 @@ snapshots:
   create-require@1.1.1: {}
 
   cron-parser@4.9.0:
+    dependencies:
+      luxon: 3.7.1
+
+  cron-parser@5.3.1:
     dependencies:
       luxon: 3.7.1
 
