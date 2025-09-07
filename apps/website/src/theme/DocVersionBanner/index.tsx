@@ -112,7 +112,33 @@ export default function DocVersionBannerWrapper(
       );
     }
 
-    case '0.1.10':
+    case '0.1.10': {
+      return (
+        <div
+          className={clsx(
+            ThemeClassNames.docs.docVersionBanner,
+            'alert alert--warning margin-bottom--md space-y-2',
+          )}
+          role="warning"
+        >
+          <p>
+            You are looking at documentation for CommandKit version{' '}
+            <strong>0.1.10</strong> which is no longer actively maintained. We
+            highly recommend you to upgrade to CommandKit v1.
+          </p>
+          <ul className="list-inside list-disc">
+            <li>
+              To go to the v1 documentation,{' '}
+              <Link href="/docs/guide/getting-started/introduction">
+                click here
+              </Link>
+              .
+            </li>
+          </ul>
+        </div>
+      );
+    }
+
     default: {
       return <DocVersionBanner {...props} />;
     }
