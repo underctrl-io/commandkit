@@ -1,5 +1,5 @@
 import type { CommandKit } from 'commandkit';
-import { Client, Message } from 'discord.js';
+import { Client, Collection, Message } from 'discord.js';
 
 /**
  * Options for the AI context.
@@ -48,7 +48,7 @@ export class AiContext<
   /**
    * A key-value store to hold additional data.
    */
-  public store = new Map<string, any>();
+  public store = new Collection<any, any>();
 
   /**
    * Creates a new instance of AiContext.

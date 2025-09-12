@@ -1,4 +1,4 @@
-import type { CommandKit, Client } from 'commandkit';
+import { type CommandKit, type Client, Collection } from 'commandkit';
 import { Task } from './task';
 
 /**
@@ -70,7 +70,7 @@ export class TaskContext<T extends Record<string, any> = Record<string, any>> {
    * });
    * ```
    */
-  public readonly store = new Map<string, any>();
+  public readonly store = new Collection<any, any>();
 
   /**
    * Creates a new task execution context.

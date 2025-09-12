@@ -76,14 +76,15 @@ export async function autocomplete({
   interaction.respond(filtered);
 }
 
-export async function message({ message }: MessageCommandContext) {
-  message.reply('Pong!');
+export async function message(ctx: MessageCommandContext) {
+  Logger.debug`Store data ${ctx.store.get('foo')} | ${ctx.store}`;
+  ctx.message.reply('Pong!');
 }
 
-export async function chatInput({
-  interaction,
-  client,
-}: ChatInputCommandContext) {
+export async function chatInput(ctx: ChatInputCommandContext) {
+  const { interaction } = ctx;
+  Logger.debug`Store data ${ctx.store.get('foo')} | ${ctx.store}`;
+
   if (!interaction.channel) return;
 
   const button = new ButtonKit()

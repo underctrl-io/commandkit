@@ -1,5 +1,6 @@
 const {
   useEnvironment,
+  useStore,
   getContext,
   getCommandKit,
 } = require('./dist/context/async-context.js');
@@ -51,6 +52,7 @@ function useEvent() {
 
 module.exports = {
   useAnyEnvironment,
+  useStore,
   useClient,
   useCommandKit,
   useCommand,

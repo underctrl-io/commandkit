@@ -2,6 +2,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { CommandKitEnvironment } from './environment';
 import { CommandKit } from '../commandkit';
 import { isCommandKitError } from '../utils/error-codes';
+import { Collection } from 'discord.js';
 
 const kCommandWorker = Symbol('commandkitCommandWorker');
 const context = new AsyncLocalStorage<CommandKitEnvironment>();
@@ -131,4 +132,11 @@ export function useEnvironment(): CommandKitEnvironment {
   }
 
   return ctx;
+}
+
+/**
+ * Use the shared data store in the current environment. Throws an error if no context is found.
+ */
+export function useStore(): Collection<any, any> {
+  return useEnvironment().store;
 }

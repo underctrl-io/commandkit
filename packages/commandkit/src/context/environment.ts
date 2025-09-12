@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { CommandKit } from '../commandkit';
-import { GenericFunction, getContext } from './async-context';
+import { GenericFunction, getContext, useEnvironment } from './async-context';
 import type { Context } from '../app';
+import { Collection } from 'discord.js';
 
 /**
  * Represents the internal data structure for the CommandKit environment.
@@ -45,6 +46,10 @@ export interface CommandKitEnvironmentInternalData {
    * This can be used to access request-specific data or application state.
    */
   context: Context | null;
+  /**
+   * Shared collection instance for arbitrary data storage
+   */
+  store: Collection<any, any>;
 }
 
 /**
@@ -60,6 +65,7 @@ export class CommandKitEnvironment {
     markStart: 0,
     markEnd: 0,
     context: null,
+    store: new Collection(),
   };
 
   /**
@@ -132,6 +138,13 @@ export class CommandKitEnvironment {
    */
   public get variables(): Map<string, any> {
     return this.#data.variables;
+  }
+
+  /**
+   * The shared store for this environment
+   */
+  public get store(): Collection<any, any> {
+    return this.#data.store;
   }
 
   /**
