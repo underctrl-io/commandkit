@@ -3,6 +3,7 @@ import {
   Awaitable,
   ChatInputCommandInteraction,
   Client,
+  Collection,
   Guild,
   Interaction,
   Locale,
@@ -64,7 +65,7 @@ export interface ContextParameters<
   message: T extends 'message' ? Message : never;
   forwarded?: boolean;
   messageCommandParser?: T extends 'message' ? MessageCommandParser : never;
-  store?: Map<string, any>;
+  store?: Collection<string, any>;
   customArgs?: Args;
 }
 
@@ -244,7 +245,7 @@ export class Context<
    * @private
    * @internal
    */
-  #store: Map<string, any>;
+  #store: Collection<any, any>;
 
   /**
    * @private
@@ -265,7 +266,7 @@ export class Context<
     this.interaction = config.interaction;
     this.message = config.message;
     this.client = commandkit.client;
-    this.#store = config.store ?? new Map();
+    this.#store = config.environment?.store ?? config.store ?? new Collection();
     this.command = config.command;
 
     if (config.interaction) {
@@ -292,7 +293,7 @@ export class Context<
    * This store is shared across all contexts in the same command execution, including the cloned contexts and middleware contexts.
    */
   public get store() {
-    return this.#store;
+    return this.config.environment?.store ?? this.#store;
   }
 
   /**

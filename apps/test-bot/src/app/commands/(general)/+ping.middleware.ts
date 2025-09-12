@@ -10,16 +10,18 @@ export function beforeExecute(ctx: MiddlewareContext) {
   //   `Command-scoped middleware: ${ctx.commandName} will be executed!`,
   // );
 
-  Logger.info(`Command-scoped middleware: ${ctx.commandName} will be stopped!`);
-  Logger.info(
-    'None of the other beforeExecute middlewares are supposed to be executed',
-  );
+  ctx.store.set('foo', 'bar');
 
-  after(() => {
-    Logger.info(`after() has been called in command-scoped middleware: ping`);
-  });
+  // Logger.info(`Command-scoped middleware: ${ctx.commandName} will be stopped!`);
+  // Logger.info(
+  //   'None of the other beforeExecute middlewares are supposed to be executed',
+  // );
 
-  stopMiddlewares();
+  // after(() => {
+  //   Logger.info(`after() has been called in command-scoped middleware: ping`);
+  // });
+
+  // stopMiddlewares();
 }
 
 export function afterExecute(ctx: MiddlewareContext) {
