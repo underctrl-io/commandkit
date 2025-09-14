@@ -64,6 +64,10 @@ export interface CommandMetadata {
    * The bot permissions required to execute the command.
    */
   botPermissions?: PermissionsString | PermissionsString[];
+  /**
+   * The name aliases for the `user` and `message` context menu commands. When i18n plugin is in use, this option will be ignored if the translation for the context menu command name is provided.
+   */
+  nameAliases?: Record<'user' | 'message', string>;
 }
 
 /**

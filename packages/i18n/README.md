@@ -66,11 +66,19 @@ If your translation file contains `$command` key with localization object, it wi
       }
     ]
   },
+  "$command:user-ctx": {
+    "name": "Ping"
+  },
+  "$command:message-ctx": {
+    "name": "Ping"
+  },
   "response": "Pong! The latency is {{latency}}ms"
 }
 ```
 
 The `$command` key defines localization for the command name and description (or options). These properties are later merged with the actual command to build the final command object with localizations that Discord understands. Anything else in the translation file is used to localize the command response.
+
+The `$command:user-ctx` and `$command:message-ctx` keys define localization for the user context menu and message context menu command names.
 
 This plugin adds `locale()` function to your command context. You can use it to localize your command responses.
 
