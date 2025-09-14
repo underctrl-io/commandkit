@@ -428,6 +428,10 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
           command.name_localizations ??= {};
           command.name_localizations[locale] = translationBasic.name;
         }
+
+        // context menu commands don't have a description
+        delete command.description;
+        delete command.description_localizations;
       }
     }
   }

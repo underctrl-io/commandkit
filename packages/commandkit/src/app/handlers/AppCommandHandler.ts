@@ -29,6 +29,7 @@ import { CommandRegistrar } from '../register/CommandRegistrar';
 import { Command, Middleware } from '../router';
 import { getConfig } from '../../config/config';
 import { beforeExecute, middlewareId } from '../middlewares/permissions';
+import { isInteractionSource } from '../commands/helpers';
 
 const KNOWN_NON_HANDLER_KEYS = [
   'command',
@@ -516,7 +517,14 @@ export class AppCommandHandler {
     }
 
     // Find the command by name
-    const loadedCommand = this.findCommandByName(cmdName);
+    const hint = isInteractionSource(source)
+      ? source.isUserContextMenuCommand()
+        ? 'user'
+        : source.isMessageContextMenuCommand()
+          ? 'message'
+          : undefined
+      : undefined;
+    const loadedCommand = this.findCommandByName(cmdName, hint);
     if (!loadedCommand) return null;
 
     // If this is a guild specific command, check if we're in the right guild
@@ -570,10 +578,22 @@ export class AppCommandHandler {
   /**
    * Finds a command by name.
    * @param name - The command name to search for
+   * @param hint - The hint for the command type (user or message)
    * @returns The loaded command or null if not found
    */
-  private findCommandByName(name: string): LoadedCommand | null {
+  private findCommandByName(
+    name: string,
+    hint?: 'user' | 'message',
+  ): LoadedCommand | null {
     for (const [, loadedCommand] of this.loadedCommands) {
+      if (hint) {
+        const nameAliases = loadedCommand.data.metadata?.nameAliases;
+
+        if (nameAliases && nameAliases[hint] === name) {
+          return loadedCommand;
+        }
+      }
+
       if (loadedCommand.data.command.name === name) {
         return loadedCommand;
       }
@@ -584,6 +604,7 @@ export class AppCommandHandler {
         return loadedCommand;
       }
     }
+
     return null;
   }
 
@@ -870,10 +891,14 @@ export class AppCommandHandler {
   /**
    * Gets the metadata for a command.
    * @param command - The command name to get metadata for
+   * @param hint - The hint for the command type (user or message)
    * @returns The command metadata or null if not found
    */
-  public getMetadataFor(command: string): CommandMetadata | null {
-    const loadedCommand = this.findCommandByName(command);
+  public getMetadataFor(
+    command: string,
+    hint?: 'user' | 'message',
+  ): CommandMetadata | null {
+    const loadedCommand = this.findCommandByName(command, hint);
     if (!loadedCommand) return null;
 
     return (loadedCommand.metadata ??= {
