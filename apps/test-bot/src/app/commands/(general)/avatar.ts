@@ -3,6 +3,7 @@ import {
   ChatInputCommand,
   UserContextMenuCommand,
   MessageContextMenuCommand,
+  CommandMetadata,
 } from 'commandkit';
 import { ApplicationCommandOptionType } from 'discord.js';
 
@@ -16,6 +17,13 @@ export const command = {
       type: ApplicationCommandOptionType.User,
     },
   ],
+};
+
+export const metadata: CommandMetadata = {
+  nameAliases: {
+    user: 'View Avatar',
+    message: "View Author's Avatar",
+  },
 };
 
 export const userContextMenu: UserContextMenuCommand = async (ctx) => {
