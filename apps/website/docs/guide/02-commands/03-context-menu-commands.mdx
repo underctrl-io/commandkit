@@ -144,3 +144,57 @@ very similar to message context menu commands.
 
   </TabItem>
 </Tabs>
+
+You may have noticed that the context menu command names are the same as the message command names.
+This is because the context menu command names are borrowed from the non-context menu command names.
+
+In order to change the context menu command name, you can use the `nameAliases` option in the `CommandMetadata` object.
+
+:::warning
+
+If you are using the [i18n plugin](../05-official-plugins/05-commandkit-i18n.mdx), the plugin will add `name_localizations` to the `nameAliases` option if localization for the context menu command name is provided.
+
+```json title="src/app/locales/en/command.json"
+{
+  "$command": {
+    "name": "Report", // this will add `name_localizations` to the regular command name
+    "description": "Report a message or user to moderators." // this will add `description_localizations` to the regular command description
+  },
+  "$command:user-ctx": {
+    "name": "Report User" // this will add `name_localizations` to the `nameAliases.user` option
+  },
+  "$command:message-ctx": {
+    "name": "Report Message" // this will add `name_localizations` to the `nameAliases.message` option
+  }
+}
+```
+
+:::
+
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/report-user.ts"
+    import type { CommandMetadata } from 'commandkit';
+    import { MessageFlags } from 'discord.js';
+
+    export const metadata: CommandMetadata = {
+      nameAliases: {
+        user: 'Report User',
+        message: 'Report Message',
+      }
+    };
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/report-user.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      nameAliases: {
+        user: 'Report User',
+        message: 'Report Message',
+      }
+    };
+    ```
+  </TabItem>
+</Tabs>

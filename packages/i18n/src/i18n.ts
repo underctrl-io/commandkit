@@ -20,14 +20,24 @@ import CommandKit, {
   CommandKitHMREvent,
   getCommandKit,
   COMMANDKIT_CWD,
+  PreRegisterCommandsEvent,
 } from 'commandkit';
 import FsBackend from 'i18next-fs-backend';
 import { basename, extname, join } from 'path';
 import { FsBackendOptions } from 'i18next-fs-backend';
-import { Locale } from 'discord.js';
+import { ApplicationCommandType, Locale } from 'discord.js';
 import { existsSync } from 'fs';
-import { CommandTranslation, CommandTranslationMetadata } from './types';
-import { COMMAND_METADATA_KEY, DISCORD_LOCALES } from './constants';
+import {
+  BasicCommandTranslationMetadata,
+  CommandTranslation,
+  CommandTranslationMetadata,
+} from './types';
+import {
+  COMMAND_METADATA_KEY,
+  DISCORD_LOCALES,
+  MESSAGE_CTX_COMMAND_METADATA_KEY,
+  USER_CTX_COMMAND_METADATA_KEY,
+} from './constants';
 import { applyTranslations } from './utils';
 import { readdir, readFile } from 'fs/promises';
 
@@ -330,9 +340,19 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
       if (!translation) return;
 
       const metadata = translation[COMMAND_METADATA_KEY];
+      const userCtxMetadata = translation[USER_CTX_COMMAND_METADATA_KEY];
+      const messageCtxMetadata = translation[MESSAGE_CTX_COMMAND_METADATA_KEY];
 
       if (metadata) {
         this.metadata.set(`${locale}:${name}`, metadata);
+      }
+
+      if (userCtxMetadata) {
+        this.metadata.set(`${locale}:${name}:user-ctx`, userCtxMetadata);
+      }
+
+      if (messageCtxMetadata) {
+        this.metadata.set(`${locale}:${name}:message-ctx`, messageCtxMetadata);
       }
     } catch {}
   }
@@ -382,5 +402,33 @@ export class I18nPlugin extends RuntimePlugin<LocalizationPluginOptions> {
     }
 
     return data;
+  }
+
+  public async onBeforeRegisterCommands(
+    ctx: CommandKitPluginRuntime,
+    event: PreRegisterCommandsEvent,
+  ): Promise<void> {
+    const { commands } = event;
+    const validTypes = [
+      ApplicationCommandType.User,
+      ApplicationCommandType.Message,
+    ];
+
+    for (const command of commands) {
+      if (!validTypes.includes(command.type!)) continue;
+
+      for (const locale of DISCORD_LOCALES) {
+        const translationBasic = (
+          command.type === ApplicationCommandType.User
+            ? this.metadata.get(`${locale}:${command.name}:user-ctx`)
+            : this.metadata.get(`${locale}:${command.name}:message-ctx`)
+        ) as BasicCommandTranslationMetadata;
+
+        if (translationBasic?.name) {
+          command.name_localizations ??= {};
+          command.name_localizations[locale] = translationBasic.name;
+        }
+      }
+    }
   }
 }

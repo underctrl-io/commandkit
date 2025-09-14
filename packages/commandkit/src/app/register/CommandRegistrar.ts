@@ -64,6 +64,7 @@ export class CommandRegistrar {
       ) {
         collections.push({
           ...json,
+          name: __metadata?.nameAliases?.user ?? json.name,
           type: ApplicationCommandType.User,
           options: undefined,
           description_localizations: undefined,
@@ -80,6 +81,7 @@ export class CommandRegistrar {
       ) {
         collections.push({
           ...json,
+          name: __metadata?.nameAliases?.message ?? json.name,
           type: ApplicationCommandType.Message,
           description_localizations: undefined,
           // @ts-ignore
