@@ -5,7 +5,7 @@ import type {
   CommandKitEnvironment,
   EventWorkerContext,
 } from './dist/index.js';
-import type { Client } from 'discord.js';
+import type { Client, Collection } from 'discord.js';
 
 export function useAnyEnvironment(): CommandKitEnvironment | EventWorkerContext;
 
@@ -16,3 +16,5 @@ export function useCommandKit(): CommandKit;
 export function useCommand(): LoadedCommand;
 
 export function useEvent(): ParsedEvent;
+
+export function useStore<K = any, V = any>(): Collection<K, V>;

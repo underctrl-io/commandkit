@@ -370,7 +370,13 @@ export class CommandKit extends EventEmitter {
 
   async #init() {
     const appDir = this.getAppDirectory();
-    if (!appDir) return;
+    if (!appDir) {
+      throw new Error(
+        'CommandKit could not determine the application directory. ' +
+          'This issue is common when you are not using the `commandkit dev` command to start the project. ' +
+          'You can either use `commandkit dev` to start the project, or set the `COMMANDKIT_IS_CLI=true` environment variable (Note that adding this to `.env` file may not work).',
+      );
+    }
 
     const commandsPath = this.getPath('commands')!;
     const events = this.getPath('events')!;
