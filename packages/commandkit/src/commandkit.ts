@@ -374,7 +374,8 @@ export class CommandKit extends EventEmitter {
       throw new Error(
         'CommandKit could not determine the application directory. ' +
           'This issue is common when you are not using the `commandkit dev` command to start the project. ' +
-          'You can either use `commandkit dev` to start the project, or set the `COMMANDKIT_IS_CLI=true` environment variable (Note that adding this to `.env` file may not work).',
+          'You can either use `commandkit dev` to start the project, or set the `COMMANDKIT_IS_CLI=true` environment variable (Note that adding this to `.env` file may not work). ' +
+          'If you are trying to start the production build, make sure your current working directory is the directory where `commandkit.config.ts` file is located.',
       );
     }
 
