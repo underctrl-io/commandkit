@@ -305,9 +305,9 @@ export class CommandsRouter {
         .map((middleware) => middleware.id);
 
       command.middlewares = [
-        ...commandSpecificMiddlewares,
-        ...directorySpecificMiddlewares,
         ...globalMiddlewares,
+        ...directorySpecificMiddlewares,
+        ...commandSpecificMiddlewares,
       ];
     });
   }
