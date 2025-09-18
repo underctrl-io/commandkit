@@ -450,11 +450,20 @@ export class AppCommandHandler {
         const prefix =
           await this.commandkit.appConfig.getMessageCommandPrefix(source);
 
-        if (!prefix || !prefix.length) return null;
+        if (
+          !prefix ||
+          ((typeof prefix === 'string' || Array.isArray(prefix)) &&
+            !prefix.length)
+        )
+          return null;
 
         parser = new MessageCommandParser(
           source,
-          Array.isArray(prefix) ? prefix : [prefix],
+          prefix instanceof RegExp
+            ? prefix
+            : Array.isArray(prefix)
+              ? prefix
+              : [prefix],
           (command: string) => {
             // Find the command by name
             const loadedCommand = this.findCommandByName(command);

@@ -56,12 +56,12 @@ export class MessageCommandParser {
   /**
    * Creates a new message command parser.
    * @param message - The Discord message to parse
-   * @param prefix - Array of valid command prefixes
+   * @param prefix - Array of valid command prefixes or a regular expression
    * @param schema - Function that returns the options schema for a command
    */
   public constructor(
     public message: Message,
-    private prefix: string[],
+    private prefix: string[] | RegExp,
     private schema: (command: string) => MessageCommandOptionsSchema,
   ) {}
 
@@ -123,6 +123,11 @@ export class MessageCommandParser {
    * @returns The matched prefix or undefined
    */
   public getPrefix() {
+    if (this.prefix instanceof RegExp) {
+      const match = this.message.content.match(this.prefix);
+      return match?.[0];
+    }
+
     for (const p of this.prefix) {
       if (this.message.content.startsWith(p)) {
         return p;
