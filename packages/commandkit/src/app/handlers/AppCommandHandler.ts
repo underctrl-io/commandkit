@@ -10,6 +10,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import type { CommandKit } from '../../commandkit';
+import { getConfig } from '../../config/config';
 import { AsyncFunction, GenericFunction } from '../../context/async-context';
 import { Logger } from '../../logger/Logger';
 import type {
@@ -24,12 +25,14 @@ import { toFileURL } from '../../utils/resolve-file-url';
 import { rewriteCommandDeclaration } from '../../utils/types-package';
 import { AppCommandRunner } from '../commands/AppCommandRunner';
 import { Context } from '../commands/Context';
+import { isInteractionSource } from '../commands/helpers';
 import { MessageCommandParser } from '../commands/MessageCommandParser';
+import {
+  beforeExecute as permissions_beforeExecute,
+  middlewareId as permissions_middlewareId,
+} from '../middlewares/permissions';
 import { CommandRegistrar } from '../register/CommandRegistrar';
 import { Command, Middleware } from '../router';
-import { getConfig } from '../../config/config';
-import { beforeExecute, middlewareId } from '../middlewares/permissions';
-import { isInteractionSource } from '../commands/helpers';
 
 const KNOWN_NON_HANDLER_KEYS = [
   'command',
@@ -547,6 +550,19 @@ export class AppCommandHandler {
       return null;
     }
 
+    if (source instanceof Message) {
+      if (!source.guildId) {
+        return null; // command is being called in a dm
+      }
+
+      if (
+        loadedCommand.metadata?.guilds &&
+        !loadedCommand.metadata.guilds.includes(source.guildId)
+      ) {
+        return null; // command is being called in a guild that is not in the metadata
+      }
+    }
+
     // Collect all applicable middleware
     const middlewares: LoadedMiddleware[] = [];
 
@@ -562,12 +578,12 @@ export class AppCommandHandler {
       middlewares.push({
         data: {
           // @ts-ignore
-          beforeExecute,
+          beforeExecute: permissions_beforeExecute,
         },
         middleware: {
           command: null,
           global: true,
-          id: middlewareId,
+          id: permissions_middlewareId,
           name: 'permissions',
           parentPath: '',
           path: '',
