@@ -8,6 +8,7 @@ import { execSync } from 'node:child_process';
 import { COMMANDKIT_CWD } from '../utils/constants';
 
 let ts: typeof import('typescript') | undefined;
+let tsdown: typeof import('tsdown') | undefined;
 
 /**
  * @private
@@ -233,4 +234,16 @@ export async function copyLocaleFiles(_from: string, _to: string) {
       force: true,
     });
   }
+}
+
+/**
+ * @private
+ * @internal
+ */
+export async function loadTsdown(): Promise<typeof import('tsdown')> {
+  if (tsdown) return tsdown;
+
+  tsdown = await import('tsdown');
+
+  return tsdown;
 }

@@ -2,6 +2,7 @@ import { Client, Partials } from 'discord.js';
 import { Logger, commandkit } from 'commandkit';
 import { setDriver } from '@commandkit/tasks';
 import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+import config from './config.json' with { type: 'json' };
 
 const client = new Client({
   intents: [
@@ -27,5 +28,7 @@ commandkit.setPrefixResolver((message) => {
     '?',
   ];
 });
+
+console.dir({ importedConfig: config }, { depth: null });
 
 export default client;
