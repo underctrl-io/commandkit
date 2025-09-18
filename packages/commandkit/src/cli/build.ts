@@ -2,14 +2,14 @@ import { existsSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { rimraf } from 'rimraf';
-import { build, Options } from 'tsdown';
+import type { Options } from 'tsdown';
 
 import { MaybeArray } from '../components';
 import { loadConfigFile } from '../config/loader';
 import { mergeDeep } from '../config/utils';
 import { CompilerPlugin, CompilerPluginRuntime } from '../plugins';
 import { COMMANDKIT_CWD } from '../utils/constants';
-import { copyLocaleFiles } from './common';
+import { copyLocaleFiles, loadTsdown } from './common';
 import { devEnvFileArgs, prodEnvFileArgs } from './env';
 import { performTypeCheck } from './type-checker';
 
@@ -65,6 +65,7 @@ export async function buildApplication({
   isDev,
   configPath,
 }: ApplicationBuildOptions) {
+  const { build } = await loadTsdown();
   const config = await loadConfigFile(configPath);
 
   if (!isDev && !config?.typescript?.ignoreBuildErrors) {
@@ -118,7 +119,7 @@ export async function buildApplication({
               return defaultLog(level, log);
             },
             moduleTypes: {
-              '.json': 'js',
+              '.json': 'json',
               '.node': 'binary',
             },
           },
