@@ -47,46 +47,46 @@ interface ConfigureAI {
 Whether to disable the built-in tools. Default is false.
 ### messageFilter
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/ai/types/message-filter#messagefilter'>MessageFilter</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/ai/types/message-filter#messagefilter'>MessageFilter</a>`}   />
 
 A filter function that determines whether a message should be processed by the AI.
 CommandKit invokes this function before processing the message.
 ### selectAiModel
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/ai/types/select-ai-model#selectaimodel'>SelectAiModel</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/ai/types/select-ai-model#selectaimodel'>SelectAiModel</a>`}   />
 
 A function that selects the AI model to use based on the message.
 This function should return a promise that resolves to an object containing the model and options.
 ### prepareSystemPrompt
 
-<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;string&#62;`}   />
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;string&#62;`}   />
 
 A function that generates a system prompt based on the message.
 This function should return a promise that resolves to a string containing the system prompt.
 If not provided, a default system prompt will be used.
 ### preparePrompt
 
-<MemberInfo kind="property" type={`(     ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>,     message: Message,   ) =&#62; Promise&#60;string | <a href='/docs/next/api-reference/ai/types/ai-message#aimessage'>AiMessage</a>&#62;`}   />
+<MemberInfo kind="property" type={`(     ctx: <a href='/docs/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>,     message: Message,   ) =&#62; Promise&#60;string | <a href='/docs/api-reference/ai/types/ai-message#aimessage'>AiMessage</a>&#62;`}   />
 
 A function that prepares the prompt for the AI model.
 ### onProcessingStart
 
-<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;void&#62;`}   />
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;void&#62;`}   />
 
 A function that gets called when the AI starts processing a message.
 ### onProcessingFinish
 
-<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;void&#62;`}   />
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message) =&#62; Promise&#60;void&#62;`}   />
 
 A function that gets called when the AI finishes processing a message.
 ### onResult
 
-<MemberInfo kind="property" type={`(     ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>,     message: Message,     result: <a href='/docs/next/api-reference/ai/types/aigenerate-result#aigenerateresult'>AIGenerateResult</a>,   ) =&#62; Promise&#60;void&#62;`}   />
+<MemberInfo kind="property" type={`(     ctx: <a href='/docs/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>,     message: Message,     result: <a href='/docs/api-reference/ai/types/aigenerate-result#aigenerateresult'>AIGenerateResult</a>,   ) =&#62; Promise&#60;void&#62;`}   />
 
 A function that gets called upon receiving the result from the AI model.
 ### onError
 
-<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message, error: Error) =&#62; Promise&#60;void&#62;`}   />
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/api-reference/ai/classes/ai-context#aicontext'>AiContext</a>, message: Message, error: Error) =&#62; Promise&#60;void&#62;`}   />
 
 A function that gets called when error occurs.
 

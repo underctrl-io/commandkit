@@ -20,7 +20,9 @@ Configurations for the CommandKit instance.
 ```ts title="Signature"
 interface CommandKitConfiguration {
     defaultLocale: Locale;
-    getMessageCommandPrefix: (message: Message) => Awaitable<string | string[]>;
+    getMessageCommandPrefix: (
+    message: Message,
+  ) => Awaitable<string | string[] | RegExp>;
 }
 ```
 
@@ -33,7 +35,7 @@ interface CommandKitConfiguration {
 The default locale for the CommandKit instance. This will be used to infer the locale of the guild or user if it has not been set explicitly.
 ### getMessageCommandPrefix
 
-<MemberInfo kind="property" type={`(message: Message) =&#62; Awaitable&#60;string | string[]&#62;`}   />
+<MemberInfo kind="property" type={`(     message: Message,   ) =&#62; Awaitable&#60;string | string[] | RegExp&#62;`}   />
 
 A function that returns the command prefix for a given message.
 This is used to determine how to parse commands from messages.

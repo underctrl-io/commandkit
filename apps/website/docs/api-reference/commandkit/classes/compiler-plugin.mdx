@@ -23,7 +23,7 @@ class CompilerPlugin<T extends PluginOptions = PluginOptions> extends PluginComm
     transform(params: PluginTransformParameters) => Promise<MaybeFalsey<TransformedResult>>;
 }
 ```
-* Extends: <code><a href='/docs/next/api-reference/commandkit/classes/plugin-common#plugincommon'>PluginCommon</a>&#60;T, <a href='/docs/next/api-reference/commandkit/classes/compiler-plugin-runtime#compilerpluginruntime'>CompilerPluginRuntime</a>&#62;</code>
+* Extends: <code><a href='/docs/api-reference/commandkit/classes/plugin-common#plugincommon'>PluginCommon</a>&#60;T, <a href='/docs/api-reference/commandkit/classes/compiler-plugin-runtime#compilerpluginruntime'>CompilerPluginRuntime</a>&#62;</code>
 
 
 
@@ -36,7 +36,7 @@ class CompilerPlugin<T extends PluginOptions = PluginOptions> extends PluginComm
 The type of the plugin, which is Compiler.
 ### transform
 
-<MemberInfo kind="method" type={`(params: <a href='/docs/next/api-reference/commandkit/interfaces/plugin-transform-parameters#plugintransformparameters'>PluginTransformParameters</a>) => Promise&#60;MaybeFalsey&#60;<a href='/docs/next/api-reference/commandkit/interfaces/transformed-result#transformedresult'>TransformedResult</a>&#62;&#62;`}   />
+<MemberInfo kind="method" type={`(params: <a href='/docs/api-reference/commandkit/interfaces/plugin-transform-parameters#plugintransformparameters'>PluginTransformParameters</a>) => Promise&#60;MaybeFalsey&#60;<a href='/docs/api-reference/commandkit/interfaces/transformed-result#transformedresult'>TransformedResult</a>&#62;&#62;`}   />
 
 Called when transformation is requested to this plugin
 

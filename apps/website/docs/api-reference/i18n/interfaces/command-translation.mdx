@@ -13,13 +13,15 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandTranslation
 
-<GenerationInfo sourceFile="packages/i18n/src/types.ts" sourceLine="27" packageName="@commandkit/i18n" />
+<GenerationInfo sourceFile="packages/i18n/src/types.ts" sourceLine="41" packageName="@commandkit/i18n" />
 
 Represents a command translation, including its metadata and translations.
 
 ```ts title="Signature"
 interface CommandTranslation {
     [COMMAND_METADATA_KEY]: CommandTranslationMetadata;
+    [USER_CTX_COMMAND_METADATA_KEY]: BasicCommandTranslationMetadata;
+    [MESSAGE_CTX_COMMAND_METADATA_KEY]: BasicCommandTranslationMetadata;
     translations: Record<string, any>;
 }
 ```
@@ -28,9 +30,19 @@ interface CommandTranslation {
 
 ### \[COMMAND_METADATA_KEY]
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/i18n/interfaces/command-translation-metadata#commandtranslationmetadata'>CommandTranslationMetadata</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/i18n/interfaces/command-translation-metadata#commandtranslationmetadata'>CommandTranslationMetadata</a>`}   />
 
 The metadata for the command translation.
+### \[USER_CTX_COMMAND_METADATA_KEY]
+
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/i18n/interfaces/basic-command-translation-metadata#basiccommandtranslationmetadata'>BasicCommandTranslationMetadata</a>`}   />
+
+The metadata for the user context menu command translation.
+### \[MESSAGE_CTX_COMMAND_METADATA_KEY]
+
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/i18n/interfaces/basic-command-translation-metadata#basiccommandtranslationmetadata'>BasicCommandTranslationMetadata</a>`}   />
+
+The metadata for the message context menu command translation.
 ### translations
 
 <MemberInfo kind="property" type={`Record&#60;string, any&#62;`}   />

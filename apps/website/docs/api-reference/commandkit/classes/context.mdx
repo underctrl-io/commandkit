@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## Context
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="199" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="200" packageName="commandkit" />
 
 Represents the execution context for a command, providing access to Discord.js objects,
 command metadata, and various utility methods for command execution.
@@ -56,12 +56,12 @@ class Context<ExecutionMode extends CommandExecutionMode = CommandExecutionMode,
 
 ### interaction
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode&#62;['interaction']`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode&#62;['interaction']`}   />
 
 The interaction that triggered the command.
 ### message
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode&#62;['message']`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode&#62;['message']`}   />
 
 The message that triggered the command.
 ### guild
@@ -91,12 +91,12 @@ The channel id where the command was triggered.
 The client instance.
 ### command
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>`}   />
 
 The command that this context belongs to.
 ### constructor
 
-<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>, config: <a href='/docs/next/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode, Args&#62;) => Context`}   />
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>, config: <a href='/docs/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode, Args&#62;) => Context`}   />
 
 Creates a new command context.
 ### store
@@ -112,7 +112,7 @@ This store is shared across all contexts in the same command execution, includin
 Gets the name of the current command.
 ### options
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/types/command-context-options#commandcontextoptions'>CommandContextOptions</a>&#60;ExecutionMode&#62;`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/types/command-context-options#commandcontextoptions'>CommandContextOptions</a>&#60;ExecutionMode&#62;`}   />
 
 Gets the command options based on the execution mode.
 ### forwarded
@@ -132,32 +132,32 @@ Forwards the context to another command. The target handler will be the same as 
 The execution mode of the command.
 ### isInteraction
 
-<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/interaction-command-context#interactioncommandcontext'>InteractionCommandContext</a>`}   />
+<MemberInfo kind="method" type={`() => this is <a href='/docs/api-reference/commandkit/types/interaction-command-context#interactioncommandcontext'>InteractionCommandContext</a>`}   />
 
 Whether the command was triggered by an interaction.
 ### isChatInputCommand
 
-<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/chat-input-command-context#chatinputcommandcontext'>ChatInputCommandContext</a>`}   />
+<MemberInfo kind="method" type={`() => this is <a href='/docs/api-reference/commandkit/types/chat-input-command-context#chatinputcommandcontext'>ChatInputCommandContext</a>`}   />
 
 Whether the command was triggered by a slash command interaction.
 ### isAutocomplete
 
-<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/autocomplete-command-context#autocompletecommandcontext'>AutocompleteCommandContext</a>`}   />
+<MemberInfo kind="method" type={`() => this is <a href='/docs/api-reference/commandkit/types/autocomplete-command-context#autocompletecommandcontext'>AutocompleteCommandContext</a>`}   />
 
 Whether the command was triggered by an autocomplete interaction.
 ### isMessageContextMenu
 
-<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/message-context-menu-command-context#messagecontextmenucommandcontext'>MessageContextMenuCommandContext</a>`}   />
+<MemberInfo kind="method" type={`() => this is <a href='/docs/api-reference/commandkit/types/message-context-menu-command-context#messagecontextmenucommandcontext'>MessageContextMenuCommandContext</a>`}   />
 
 Whether the command was triggered by a message context menu interaction.
 ### isUserContextMenu
 
-<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/types/user-context-menu-command-context#usercontextmenucommandcontext'>UserContextMenuCommandContext</a>`}   />
+<MemberInfo kind="method" type={`() => this is <a href='/docs/api-reference/commandkit/types/user-context-menu-command-context#usercontextmenucommandcontext'>UserContextMenuCommandContext</a>`}   />
 
 Whether the command was triggered by a user context menu interaction.
 ### isMessage
 
-<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a>&#60;'message'&#62;`}   />
+<MemberInfo kind="method" type={`() => this is <a href='/docs/api-reference/commandkit/classes/context#context'>Context</a>&#60;'message'&#62;`}   />
 
 Whether the command was triggered by a message.
 ### getCommandIdentifier
@@ -187,12 +187,12 @@ Returns the locale for this command.
 Sets the locale for this command.
 ### clone
 
-<MemberInfo kind="method" type={`(config?: Partial&#60;<a href='/docs/next/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode&#62;&#62;) => <a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a>&#60;ExecutionMode&#62;`}   />
+<MemberInfo kind="method" type={`(config?: Partial&#60;<a href='/docs/api-reference/commandkit/interfaces/context-parameters#contextparameters'>ContextParameters</a>&#60;ExecutionMode&#62;&#62;) => <a href='/docs/api-reference/commandkit/classes/context#context'>Context</a>&#60;ExecutionMode&#62;`}   />
 
 Creates a clone of this context
 ### isMiddleware
 
-<MemberInfo kind="method" type={`() => this is <a href='/docs/next/api-reference/commandkit/classes/middleware-context#middlewarecontext'>MiddlewareContext</a>&#60;ExecutionMode&#62;`}   />
+<MemberInfo kind="method" type={`() => this is <a href='/docs/api-reference/commandkit/classes/middleware-context#middlewarecontext'>MiddlewareContext</a>&#60;ExecutionMode&#62;`}   />
 
 Checks if this context is a middleware context.
 ### args

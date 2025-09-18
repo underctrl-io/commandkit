@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKitEnvironmentInternalData
 
-<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="9" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="10" packageName="commandkit" />
 
 Represents the internal data structure for the CommandKit environment.
 
@@ -27,6 +27,7 @@ interface CommandKitEnvironmentInternalData {
     markStart: number;
     markEnd: number;
     context: Context | null;
+    store: Collection<any, any>;
 }
 ```
 
@@ -40,7 +41,7 @@ The error that occurred during command execution, if any.
 This is set when an error occurs during the execution of a command.
 ### type
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/enums/command-kit-environment-type#commandkitenvironmenttype'>CommandKitEnvironmentType</a> | null`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/enums/command-kit-environment-type#commandkitenvironmenttype'>CommandKitEnvironmentType</a> | null`}   />
 
 The type of the environment, which can be used to differentiate between
 different execution contexts (e.g., command handler, event handler, etc.).
@@ -52,7 +53,7 @@ A map of variables that can be used to store and retrieve data during command ex
 This allows for sharing data between different parts of the command execution process.
 ### deferredFunctions
 
-<MemberInfo kind="property" type={`Map&#60;string, <a href='/docs/next/api-reference/commandkit/types/generic-function#genericfunction'>GenericFunction</a>&#60;[<a href='/docs/next/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>]&#62;&#62;`}   />
+<MemberInfo kind="property" type={`Map&#60;string, <a href='/docs/api-reference/commandkit/types/generic-function#genericfunction'>GenericFunction</a>&#60;[<a href='/docs/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>]&#62;&#62;`}   />
 
 A map of deferred functions that will be executed after the command has finished executing.
 This is useful for running cleanup tasks or additional processing after the main command logic.
@@ -74,10 +75,15 @@ The start time of the command execution.
 The end time of the command execution.
 ### context
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a> | null`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/classes/context#context'>Context</a> | null`}   />
 
 The context associated with the command execution.
 This can be used to access request-specific data or application state.
+### store
+
+<MemberInfo kind="property" type={`Collection&#60;any, any&#62;`}   />
+
+Shared collection instance for arbitrary data storage
 
 
 </div>

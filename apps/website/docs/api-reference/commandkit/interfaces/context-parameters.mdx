@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ContextParameters
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="48" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="49" packageName="commandkit" />
 
 Parameters required to create a command context.
 
@@ -34,7 +34,7 @@ interface ContextParameters<T extends CommandExecutionMode, Args = Record<string
     message: T extends 'message' ? Message : never;
     forwarded?: boolean;
     messageCommandParser?: T extends 'message' ? MessageCommandParser : never;
-    store?: Map<string, any>;
+    store?: Collection<string, any>;
     customArgs?: Args;
 }
 ```
@@ -43,12 +43,12 @@ interface ContextParameters<T extends CommandExecutionMode, Args = Record<string
 
 ### command
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>`}   />
 
 
 ### environment
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/classes/command-kit-environment#commandkitenvironment'>CommandKitEnvironment</a>`}   />
 
 
 ### executionMode
@@ -73,12 +73,12 @@ interface ContextParameters<T extends CommandExecutionMode, Args = Record<string
 
 ### messageCommandParser
 
-<MemberInfo kind="property" type={`T extends 'message' ? <a href='/docs/next/api-reference/commandkit/classes/message-command-parser#messagecommandparser'>MessageCommandParser</a> : never`}   />
+<MemberInfo kind="property" type={`T extends 'message' ? <a href='/docs/api-reference/commandkit/classes/message-command-parser#messagecommandparser'>MessageCommandParser</a> : never`}   />
 
 
 ### store
 
-<MemberInfo kind="property" type={`Map&#60;string, any&#62;`}   />
+<MemberInfo kind="property" type={`Collection&#60;string, any&#62;`}   />
 
 
 ### customArgs

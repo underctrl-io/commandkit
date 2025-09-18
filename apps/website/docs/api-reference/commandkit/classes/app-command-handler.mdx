@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AppCommandHandler
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="176" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="177" packageName="commandkit" />
 
 Handles application commands for CommandKit, including loading, registration, and execution.
 Manages both slash commands and message commands with middleware support.
@@ -35,7 +35,7 @@ class AppCommandHandler {
     registerExternalLoadedMiddleware(data: LoadedMiddleware[]) => ;
     registerExternalLoadedCommands(data: LoadedCommand[]) => ;
     loadCommands() => ;
-    getMetadataFor(command: string) => CommandMetadata | null;
+    getMetadataFor(command: string, hint?: 'user' | 'message') => CommandMetadata | null;
 }
 ```
 
@@ -43,7 +43,7 @@ class AppCommandHandler {
 
 ### registrar
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-registrar#commandregistrar'>CommandRegistrar</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/classes/command-registrar#commandregistrar'>CommandRegistrar</a>`}   />
 
 Command registrar for handling Discord API registration.
 ### commandRunner
@@ -63,7 +63,7 @@ External command data storage.
 External middleware data storage.
 ### constructor
 
-<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => AppCommandHandler`}   />
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => AppCommandHandler`}   />
 
 Creates a new AppCommandHandler instance.
 ### printBanner
@@ -83,7 +83,7 @@ Gets an array of all loaded commands.
 Registers event handlers for Discord interactions and messages.
 ### prepareCommandRun
 
-<MemberInfo kind="method" type={`(source: Interaction | Message, cmdName?: string) => Promise&#60;<a href='/docs/next/api-reference/commandkit/interfaces/prepared-app-command-execution#preparedappcommandexecution'>PreparedAppCommandExecution</a> | null&#62;`}   />
+<MemberInfo kind="method" type={`(source: Interaction | Message, cmdName?: string) => Promise&#60;<a href='/docs/api-reference/commandkit/interfaces/prepared-app-command-execution#preparedappcommandexecution'>PreparedAppCommandExecution</a> | null&#62;`}   />
 
 Prepares a command for execution by resolving the command and its middleware.
 ### reloadCommands
@@ -93,12 +93,12 @@ Prepares a command for execution by resolving the command and its middleware.
 Reloads all commands and middleware from scratch.
 ### addExternalMiddleware
 
-<MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/commandkit/interfaces/middleware#middleware'>Middleware</a>[]) => `}   />
+<MemberInfo kind="method" type={`(data: <a href='/docs/api-reference/commandkit/interfaces/middleware#middleware'>Middleware</a>[]) => `}   />
 
 Adds external middleware data to be loaded.
 ### addExternalCommands
 
-<MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/commandkit/interfaces/command#command'>Command</a>[]) => `}   />
+<MemberInfo kind="method" type={`(data: <a href='/docs/api-reference/commandkit/interfaces/command#command'>Command</a>[]) => `}   />
 
 Adds external command data to be loaded.
 ### registerExternalLoadedMiddleware
@@ -108,7 +108,7 @@ Adds external command data to be loaded.
 Registers externally loaded middleware.
 ### registerExternalLoadedCommands
 
-<MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>[]) => `}   />
+<MemberInfo kind="method" type={`(data: <a href='/docs/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>[]) => `}   />
 
 Registers externally loaded commands.
 ### loadCommands
@@ -118,7 +118,7 @@ Registers externally loaded commands.
 Loads all commands and middleware from the router.
 ### getMetadataFor
 
-<MemberInfo kind="method" type={`(command: string) => <a href='/docs/next/api-reference/commandkit/interfaces/command-metadata#commandmetadata'>CommandMetadata</a> | null`}   />
+<MemberInfo kind="method" type={`(command: string, hint?: 'user' | 'message') => <a href='/docs/api-reference/commandkit/interfaces/command-metadata#commandmetadata'>CommandMetadata</a> | null`}   />
 
 Gets the metadata for a command.
 

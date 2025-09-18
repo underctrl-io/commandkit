@@ -61,7 +61,7 @@ class Task<T extends Record<string, any> = Record<string, any>> {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(data: <a href='/docs/next/api-reference/tasks/interfaces/task-definition#taskdefinition'>TaskDefinition</a>&#60;T&#62;) => Task`}   />
+<MemberInfo kind="method" type={`(data: <a href='/docs/api-reference/tasks/interfaces/task-definition#taskdefinition'>TaskDefinition</a>&#60;T&#62;) => Task`}   />
 
 Creates a new task instance.
 ### immediate
@@ -77,7 +77,7 @@ Only applicable to cron tasks, defaults to false.
 The unique identifier for this task.
 ### schedule
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/types/task-schedule#taskschedule'>TaskSchedule</a> | null`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/tasks/types/task-schedule#taskschedule'>TaskSchedule</a> | null`}   />
 
 The schedule configuration for this task.
 Returns null if no schedule is defined (manual execution only).
@@ -99,7 +99,7 @@ The timezone for the task schedule.
 Returns undefined if no timezone is defined.
 ### prepare
 
-<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) => Promise&#60;boolean&#62;`}   />
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) => Promise&#60;boolean&#62;`}   />
 
 Determines if the task is ready to be executed.
 
@@ -107,7 +107,7 @@ This method calls the optional prepare function if defined. If no prepare
 function is provided, the task is always ready to execute.
 ### execute
 
-<MemberInfo kind="method" type={`(ctx: <a href='/docs/next/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) => Promise&#60;void&#62;`}   />
+<MemberInfo kind="method" type={`(ctx: <a href='/docs/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) => Promise&#60;void&#62;`}   />
 
 Executes the task's main logic.
 

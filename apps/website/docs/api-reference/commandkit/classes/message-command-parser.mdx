@@ -19,7 +19,7 @@ Parses message content into structured command data with options and subcommands
 
 ```ts title="Signature"
 class MessageCommandParser {
-    constructor(message: Message, prefix: string[], schema: (command: string) => MessageCommandOptionsSchema)
+    constructor(message: Message, prefix: string[] | RegExp, schema: (command: string) => MessageCommandOptionsSchema)
     getArgs() => ;
     options: void
     getOption(name: string) => T | undefined;
@@ -36,7 +36,7 @@ class MessageCommandParser {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(message: Message, prefix: string[], schema: (command: string) =&#62; <a href='/docs/next/api-reference/commandkit/types/message-command-options-schema#messagecommandoptionsschema'>MessageCommandOptionsSchema</a>) => MessageCommandParser`}   />
+<MemberInfo kind="method" type={`(message: Message, prefix: string[] | RegExp, schema: (command: string) =&#62; <a href='/docs/api-reference/commandkit/types/message-command-options-schema#messagecommandoptionsschema'>MessageCommandOptionsSchema</a>) => MessageCommandParser`}   />
 
 Creates a new message command parser.
 ### getArgs
@@ -81,7 +81,7 @@ Gets the prefix used in the message.
 Gets the full command including subcommand group and subcommand.
 ### parse
 
-<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/parsed-message-command#parsedmessagecommand'>ParsedMessageCommand</a>`}   />
+<MemberInfo kind="method" type={`() => <a href='/docs/api-reference/commandkit/interfaces/parsed-message-command#parsedmessagecommand'>ParsedMessageCommand</a>`}   />
 
 Parses the message content into structured command data.
 

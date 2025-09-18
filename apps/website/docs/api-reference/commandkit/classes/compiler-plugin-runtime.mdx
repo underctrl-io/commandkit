@@ -43,7 +43,7 @@ class CompilerPluginRuntime {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(plugins: <a href='/docs/next/api-reference/commandkit/classes/compiler-plugin#compilerplugin'>CompilerPlugin</a>[]) => CompilerPluginRuntime`}   />
+<MemberInfo kind="method" type={`(plugins: <a href='/docs/api-reference/commandkit/classes/compiler-plugin#compilerplugin'>CompilerPlugin</a>[]) => CompilerPluginRuntime`}   />
 
 Creates a new instance of CompilerPluginRuntime.
 ### getPlugins
@@ -58,7 +58,7 @@ Returns the plugins managed by this runtime.
 Checks if there are no plugins registered in this runtime.
 ### registerTemplate
 
-<MemberInfo kind="method" type={`(name: string, handler: <a href='/docs/next/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a>) => `}   />
+<MemberInfo kind="method" type={`(name: string, handler: <a href='/docs/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a>) => `}   />
 
 Registers a template handler for a given name.
 This method must be called inside the activate() method of a plugin.
@@ -70,12 +70,12 @@ Unregister a template handler for a given name.
 This method must be called inside the deactivate() method of a plugin.
 ### getTemplate
 
-<MemberInfo kind="method" type={`(name: string) => <a href='/docs/next/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a> | undefined`}   />
+<MemberInfo kind="method" type={`(name: string) => <a href='/docs/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a> | undefined`}   />
 
 Retrieves a template handler by its name.
 ### getTemplates
 
-<MemberInfo kind="method" type={`() => Map&#60;string, <a href='/docs/next/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a>&#62;`}   />
+<MemberInfo kind="method" type={`() => Map&#60;string, <a href='/docs/api-reference/commandkit/types/template-handler#templatehandler'>TemplateHandler</a>&#62;`}   />
 
 Returns a map of all registered templates with their handlers.
 The keys are the template names and the values are the template handlers.
