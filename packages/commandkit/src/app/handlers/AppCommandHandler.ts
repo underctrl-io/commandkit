@@ -556,7 +556,7 @@ export class AppCommandHandler {
       }
 
       if (
-        loadedCommand.metadata?.guilds &&
+        loadedCommand.metadata?.guilds?.length &&
         !loadedCommand.metadata.guilds.includes(source.guildId)
       ) {
         return null; // command is being called in a guild that is not in the metadata
