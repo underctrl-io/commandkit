@@ -69,11 +69,17 @@ const AIConfig: Required<ConfigureAI> = {
     const prefixOrPrefixes =
       await commandkit.appConfig.getMessageCommandPrefix(message);
 
-    const prefixes = Array.isArray(prefixOrPrefixes)
-      ? prefixOrPrefixes
-      : [prefixOrPrefixes];
+    const prefixes =
+      prefixOrPrefixes instanceof RegExp
+        ? prefixOrPrefixes
+        : Array.isArray(prefixOrPrefixes)
+          ? prefixOrPrefixes
+          : [prefixOrPrefixes];
 
-    const possiblyCommand = prefixes.some((p) => message.content.startsWith(p));
+    const possiblyCommand =
+      prefixes instanceof RegExp
+        ? prefixes.test(message.content)
+        : prefixes.some((p) => message.content.startsWith(p));
 
     // TODO: figure out a workaround for mention prefixes
     return (

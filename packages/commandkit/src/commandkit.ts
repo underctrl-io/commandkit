@@ -39,7 +39,9 @@ export interface CommandKitConfiguration {
    * @param message The message to get the command prefix for.
    * @returns The command prefix or an array of prefixes.
    */
-  getMessageCommandPrefix: (message: Message) => Awaitable<string | string[]>;
+  getMessageCommandPrefix: (
+    message: Message,
+  ) => Awaitable<string | string[] | RegExp>;
 }
 
 /**
@@ -321,7 +323,7 @@ export class CommandKit extends EventEmitter {
    * @param resolver The resolver function.
    */
   setPrefixResolver(
-    resolver: (message: Message) => Awaitable<string | string[]>,
+    resolver: (message: Message) => Awaitable<string | string[] | RegExp>,
   ) {
     this.appConfig.getMessageCommandPrefix = resolver;
     return this;
