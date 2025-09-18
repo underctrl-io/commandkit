@@ -1,5 +1,5 @@
 ---
-title: "SerializedValue"
+title: "BasicCommandTranslationMetadata"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,31 +11,25 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## SerializedValue
+## BasicCommandTranslationMetadata
 
-<GenerationInfo sourceFile="packages/commandkit/src/kv/serde.ts" sourceLine="3" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/i18n/src/types.ts" sourceLine="31" packageName="@commandkit/i18n" />
 
-
+Represents the metadata for basic command translations.
 
 ```ts title="Signature"
-interface SerializedValue {
-    t: SerializerType;
-    v: any;
+interface BasicCommandTranslationMetadata {
+    name?: string;
 }
 ```
 
 <div className="members-wrapper">
 
-### t
+### name
 
-<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/enums/serializer-type#serializertype'>SerializerType</a>`}   />
+<MemberInfo kind="property" type={`string`}   />
 
-
-### v
-
-<MemberInfo kind="property" type={`any`}   />
-
-
+The name of the command.
 
 
 </div>

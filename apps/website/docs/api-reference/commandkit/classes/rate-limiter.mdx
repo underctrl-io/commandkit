@@ -35,17 +35,17 @@ class RateLimiter {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(maxRequests: number = DEFAULT_MAX_REQUESTS, interval: number = DEFAULT_TIMEOUT, storage: <a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a> = new MemoryRateLimitStorage()) => RateLimiter`}   />
+<MemberInfo kind="method" type={`(maxRequests: number = DEFAULT_MAX_REQUESTS, interval: number = DEFAULT_TIMEOUT, storage: <a href='/docs/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a> = new MemoryRateLimitStorage()) => RateLimiter`}   />
 
 Creates a new rate limiter instance
 ### setStorage
 
-<MemberInfo kind="method" type={`(storage: <a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a>) => `}   />
+<MemberInfo kind="method" type={`(storage: <a href='/docs/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a>) => `}   />
 
 Sets the storage implementation for the rate limiter
 ### getStorage
 
-<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a>`}   />
+<MemberInfo kind="method" type={`() => <a href='/docs/api-reference/commandkit/interfaces/rate-limit-storage#ratelimitstorage'>RateLimitStorage</a>`}   />
 
 Gets the storage implementation for the rate limiter
 ### limit
@@ -70,7 +70,7 @@ Gets the time until the rate limit resets for a given key
 Resets the rate limit for a given key
 ### getConfig
 
-<MemberInfo kind="method" type={`() => Omit&#60;<a href='/docs/next/api-reference/commandkit/interfaces/rate-limit-options#ratelimitoptions'>RateLimitOptions</a>, 'storage'&#62;`}   />
+<MemberInfo kind="method" type={`() => Omit&#60;<a href='/docs/api-reference/commandkit/interfaces/rate-limit-options#ratelimitoptions'>RateLimitOptions</a>, 'storage'&#62;`}   />
 
 Gets the current configuration of the rate limiter
 

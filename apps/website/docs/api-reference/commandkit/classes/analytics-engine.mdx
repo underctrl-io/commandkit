@@ -34,12 +34,12 @@ class AnalyticsEngine {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => AnalyticsEngine`}   />
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => AnalyticsEngine`}   />
 
 Creates an instance of the AnalyticsEngine.
 ### setFilter
 
-<MemberInfo kind="method" type={`(filter: <a href='/docs/next/api-reference/commandkit/types/filter-function#filterfunction'>FilterFunction</a> | null) => `}   />
+<MemberInfo kind="method" type={`(filter: <a href='/docs/api-reference/commandkit/types/filter-function#filterfunction'>FilterFunction</a> | null) => `}   />
 
 Sets a filter function for analytics events.
 This function will be called before tracking an event to determine if it should be tracked.
@@ -47,30 +47,30 @@ If the filter returns `false`, the event will not be tracked.
 If the filter is set to `null`, all events will be tracked unless `doNotTrack` is enabled.
 ### registerProvider
 
-<MemberInfo kind="method" type={`(provider: <a href='/docs/next/api-reference/commandkit/interfaces/analytics-provider#analyticsprovider'>AnalyticsProvider</a>) => `}   />
+<MemberInfo kind="method" type={`(provider: <a href='/docs/api-reference/commandkit/interfaces/analytics-provider#analyticsprovider'>AnalyticsProvider</a>) => `}   />
 
 Registers an analytics provider.
 This provider will be used to track and identify events.
 If a provider is already registered, it will be replaced with the new one.
 ### removeProvider
 
-<MemberInfo kind="method" type={`(provider: <a href='/docs/next/api-reference/commandkit/interfaces/analytics-provider#analyticsprovider'>AnalyticsProvider</a>) => `}   />
+<MemberInfo kind="method" type={`(provider: <a href='/docs/api-reference/commandkit/interfaces/analytics-provider#analyticsprovider'>AnalyticsProvider</a>) => `}   />
 
 Removes the currently registered analytics provider.
 ### getProvider
 
-<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/interfaces/analytics-provider#analyticsprovider'>AnalyticsProvider</a> | null`}   />
+<MemberInfo kind="method" type={`() => <a href='/docs/api-reference/commandkit/interfaces/analytics-provider#analyticsprovider'>AnalyticsProvider</a> | null`}   />
 
 Retrieves the currently registered analytics provider.
 ### identify
 
-<MemberInfo kind="method" type={`(event: <a href='/docs/next/api-reference/commandkit/types/identify-event#identifyevent'>IdentifyEvent</a>) => `}   />
+<MemberInfo kind="method" type={`(event: <a href='/docs/api-reference/commandkit/types/identify-event#identifyevent'>IdentifyEvent</a>) => `}   />
 
 Identifies a user with the analytics provider.
 This method sends an identify event to the provider, which can be used to associate user data with events.
 ### track
 
-<MemberInfo kind="method" type={`(event: <a href='/docs/next/api-reference/commandkit/types/analytics-event#analyticsevent'>AnalyticsEvent</a>) => `}   />
+<MemberInfo kind="method" type={`(event: <a href='/docs/api-reference/commandkit/types/analytics-event#analyticsevent'>AnalyticsEvent</a>) => `}   />
 
 Tracks an analytics event with the registered provider.
 This method sends the event to the provider, which can then process it as needed.

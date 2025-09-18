@@ -1,5 +1,5 @@
 ---
-title: "UserContextMenuCommandContext"
+title: "UseStore"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,12 +11,12 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## UserContextMenuCommandContext
+## useStore
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/commands/Context.ts" sourceLine="131" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/context/async-context.ts" sourceLine="140" packageName="commandkit" />
 
-Context for user context menu commands.
+Use the shared data store in the current environment. Throws an error if no context is found.
 
 ```ts title="Signature"
-type UserContextMenuCommandContext = Context<'userContextMenu'>
+function useStore(): Collection<any, any>
 ```

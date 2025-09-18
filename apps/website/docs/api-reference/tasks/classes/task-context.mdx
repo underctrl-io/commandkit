@@ -46,7 +46,7 @@ export default task({
 
 ```ts title="Signature"
 class TaskContext<T extends Record<string, any> = Record<string, any>> {
-    public readonly store = new Map<string, any>();
+    public readonly store = new Collection<any, any>();
     constructor(_data: TaskContextData<T>)
     task: Task
     client: Client
@@ -88,12 +88,12 @@ export default task({
 ```
 ### constructor
 
-<MemberInfo kind="method" type={`(_data: <a href='/docs/next/api-reference/tasks/interfaces/task-context-data#taskcontextdata'>TaskContextData</a>&#60;T&#62;) => TaskContext`}   />
+<MemberInfo kind="method" type={`(_data: <a href='/docs/api-reference/tasks/interfaces/task-context-data#taskcontextdata'>TaskContextData</a>&#60;T&#62;) => TaskContext`}   />
 
 Creates a new task execution context.
 ### task
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/classes/task#task'>Task</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/tasks/classes/task#task'>Task</a>`}   />
 
 Gets the task instance being executed.
 ### client
@@ -108,7 +108,7 @@ Gets the Discord.js client.
 Gets the custom data passed to the task execution.
 ### commandkit
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
 
 Gets the CommandKit instance for accessing bot functionality.
 

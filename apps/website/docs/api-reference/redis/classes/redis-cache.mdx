@@ -46,7 +46,7 @@ class RedisCache extends CacheProvider {
     expire(key: string, ttl: number) => Promise<void>;
 }
 ```
-* Extends: <code><a href='/docs/next/api-reference/cache/classes/cache-provider#cacheprovider'>CacheProvider</a></code>
+* Extends: <code><a href='/docs/api-reference/cache/classes/cache-provider#cacheprovider'>CacheProvider</a></code>
 
 
 
@@ -59,13 +59,13 @@ class RedisCache extends CacheProvider {
 
 ### serialize
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/redis/types/serialize-function#serializefunction'>SerializeFunction</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/redis/types/serialize-function#serializefunction'>SerializeFunction</a>`}   />
 
 Serialize function used to serialize values before storing them in the cache.
 By default, it uses `JSON.stringify`.
 ### deserialize
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/redis/types/deserialize-function#deserializefunction'>DeserializeFunction</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/redis/types/deserialize-function#deserializefunction'>DeserializeFunction</a>`}   />
 
 Deserialize function used to deserialize values before returning them from the cache.
 By default, it uses `JSON.parse`.
@@ -91,7 +91,7 @@ Create a new RedisCache instance with the provided Redis options.
 
 ### get
 
-<MemberInfo kind="method" type={`(key: string) => Promise&#60;<a href='/docs/next/api-reference/cache/interfaces/cache-entry#cacheentry'>CacheEntry</a>&#60;T&#62; | undefined&#62;`}   />
+<MemberInfo kind="method" type={`(key: string) => Promise&#60;<a href='/docs/api-reference/cache/interfaces/cache-entry#cacheentry'>CacheEntry</a>&#60;T&#62; | undefined&#62;`}   />
 
 Retrieve a value from the cache.
 ### set

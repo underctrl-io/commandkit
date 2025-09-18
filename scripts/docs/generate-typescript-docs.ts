@@ -119,7 +119,7 @@ function generateTypescriptDocs(
         }
 
         const kindDir = getKindDirectory(declaration.kind);
-        const pathToTypeDoc = `docs/next/api-reference/${outputPath ? `${outputPath}/` : ''}${
+        const pathToTypeDoc = `docs/api-reference/${outputPath ? `${outputPath}/` : ''}${
           category
             ? category.map((part) => normalizeForUrlPart(part)).join('/') + '/'
             : ''

@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## CommandKitEnvironment
 
-<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="53" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/context/environment.ts" sourceLine="58" packageName="commandkit" />
 
 Represents the execution environment for CommandKit commands.
 
@@ -23,6 +23,7 @@ class CommandKitEnvironment {
     setContext(context: Context) => void;
     getType() => CommandKitEnvironmentType;
     variables: Map<string, any>
+    store: Collection<any, any>
 }
 ```
 
@@ -30,17 +31,17 @@ class CommandKitEnvironment {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(commandkit: <a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => CommandKitEnvironment`}   />
+<MemberInfo kind="method" type={`(commandkit: <a href='/docs/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>) => CommandKitEnvironment`}   />
 
 Creates the commandkit execution environment.
 ### setContext
 
-<MemberInfo kind="method" type={`(context: <a href='/docs/next/api-reference/commandkit/classes/context#context'>Context</a>) => void`}   />
+<MemberInfo kind="method" type={`(context: <a href='/docs/api-reference/commandkit/classes/context#context'>Context</a>) => void`}   />
 
 Set the context.
 ### getType
 
-<MemberInfo kind="method" type={`() => <a href='/docs/next/api-reference/commandkit/enums/command-kit-environment-type#commandkitenvironmenttype'>CommandKitEnvironmentType</a>`}   />
+<MemberInfo kind="method" type={`() => <a href='/docs/api-reference/commandkit/enums/command-kit-environment-type#commandkitenvironmenttype'>CommandKitEnvironmentType</a>`}   />
 
 Get the environment type.
 ### variables
@@ -48,6 +49,11 @@ Get the environment type.
 <MemberInfo kind="property" type={`Map&#60;string, any&#62;`}   />
 
 The variables store for this environment.
+### store
+
+<MemberInfo kind="property" type={`Collection&#60;any, any&#62;`}   />
+
+The shared store for this environment
 
 
 </div>

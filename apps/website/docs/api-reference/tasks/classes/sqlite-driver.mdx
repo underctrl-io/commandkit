@@ -42,7 +42,7 @@ class SQLiteDriver implements TaskDriver {
     setTaskRunner(runner: TaskRunner) => Promise<void>;
 }
 ```
-* Implements: <code><a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a></code>
+* Implements: <code><a href='/docs/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a></code>
 
 
 
@@ -60,7 +60,7 @@ Create a new SQLiteDriver instance.
 Destroy the SQLite driver and stop the polling loop.
 ### create
 
-<MemberInfo kind="method" type={`(task: <a href='/docs/next/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
+<MemberInfo kind="method" type={`(task: <a href='/docs/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
 
 Schedule a new job.
 ### delete
@@ -70,7 +70,7 @@ Schedule a new job.
 Delete a scheduled job by its ID.
 ### setTaskRunner
 
-<MemberInfo kind="method" type={`(runner: <a href='/docs/next/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
+<MemberInfo kind="method" type={`(runner: <a href='/docs/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
 
 Set the task runner function to be called when a job is due.
 

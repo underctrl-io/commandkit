@@ -61,7 +61,7 @@ class BullMQDriver implements TaskDriver {
     setTaskRunner(runner: TaskRunner) => Promise<void>;
 }
 ```
-* Implements: <code><a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a></code>
+* Implements: <code><a href='/docs/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a></code>
 
 
 
@@ -84,7 +84,7 @@ The BullMQ worker instance for processing tasks
 Creates a new BullMQ driver instance.
 ### create
 
-<MemberInfo kind="method" type={`(task: <a href='/docs/next/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
+<MemberInfo kind="method" type={`(task: <a href='/docs/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
 
 Creates a new scheduled task in BullMQ.
 
@@ -99,7 +99,7 @@ Deletes a scheduled task from BullMQ.
 This removes the job and all its children (for repeating jobs) from the queue.
 ### setTaskRunner
 
-<MemberInfo kind="method" type={`(runner: <a href='/docs/next/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
+<MemberInfo kind="method" type={`(runner: <a href='/docs/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
 
 Sets the task execution runner function.
 

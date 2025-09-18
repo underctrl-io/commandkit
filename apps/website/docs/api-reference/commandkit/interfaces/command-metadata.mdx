@@ -23,6 +23,7 @@ interface CommandMetadata {
     aliases?: string[];
     userPermissions?: PermissionsString | PermissionsString[];
     botPermissions?: PermissionsString | PermissionsString[];
+    nameAliases?: Record<'user' | 'message', string>;
 }
 ```
 
@@ -48,6 +49,11 @@ The user permissions required to execute the command.
 <MemberInfo kind="property" type={`PermissionsString | PermissionsString[]`}   />
 
 The bot permissions required to execute the command.
+### nameAliases
+
+<MemberInfo kind="property" type={`Record&#60;'user' | 'message', string&#62;`}   />
+
+The name aliases for the `user` and `message` context menu commands. When i18n plugin is in use, this option will be ignored if the translation for the context menu command name is provided.
 
 
 </div>

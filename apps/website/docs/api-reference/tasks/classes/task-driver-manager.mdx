@@ -53,12 +53,12 @@ class TaskDriverManager {
 
 ### driver
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a> | null`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a> | null`}   />
 
 
 ### setDriver
 
-<MemberInfo kind="method" type={`(driver: <a href='/docs/next/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a>) => void`}   />
+<MemberInfo kind="method" type={`(driver: <a href='/docs/api-reference/tasks/interfaces/task-driver#taskdriver'>TaskDriver</a>) => void`}   />
 
 Sets the active task driver.
 
@@ -66,7 +66,7 @@ This method must be called before any task operations can be performed.
 The driver handles all scheduling, persistence, and execution timing.
 ### createTask
 
-<MemberInfo kind="method" type={`(task: <a href='/docs/next/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
+<MemberInfo kind="method" type={`(task: <a href='/docs/api-reference/tasks/interfaces/task-data#taskdata'>TaskData</a>) => Promise&#60;string&#62;`}   />
 
 Creates a new scheduled task.
 
@@ -82,7 +82,7 @@ This method delegates to the active driver to remove the task from the
 scheduling system and cancel any pending executions.
 ### setTaskRunner
 
-<MemberInfo kind="method" type={`(runner: <a href='/docs/next/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
+<MemberInfo kind="method" type={`(runner: <a href='/docs/api-reference/tasks/types/task-runner#taskrunner'>TaskRunner</a>) => Promise&#60;void&#62;`}   />
 
 Sets the task execution runner function.
 

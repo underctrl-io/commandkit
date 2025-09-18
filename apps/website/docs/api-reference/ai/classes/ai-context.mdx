@@ -25,7 +25,7 @@ class AiContext<T extends Record<string, unknown> = Record<string, unknown>> {
     public message!: Message;
     public client!: Client;
     public commandkit!: CommandKit;
-    public store = new Map<string, any>();
+    public store = new Collection<any, any>();
     constructor(options: AiContextOptions<T>)
     setParams(params: T) => void;
 }
@@ -50,7 +50,7 @@ The message that triggered the AI command.
 The client instance associated with the AI command.
 ### commandkit
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
 
 The CommandKit instance associated with the AI command.
 ### store
@@ -60,7 +60,7 @@ The CommandKit instance associated with the AI command.
 A key-value store to hold additional data.
 ### constructor
 
-<MemberInfo kind="method" type={`(options: <a href='/docs/next/api-reference/ai/interfaces/ai-context-options#aicontextoptions'>AiContextOptions</a>&#60;T&#62;) => AiContext`}   />
+<MemberInfo kind="method" type={`(options: <a href='/docs/api-reference/ai/interfaces/ai-context-options#aicontextoptions'>AiContextOptions</a>&#60;T&#62;) => AiContext`}   />
 
 Creates a new instance of AiContext.
 ### setParams

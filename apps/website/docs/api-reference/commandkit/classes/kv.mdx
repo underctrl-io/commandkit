@@ -81,7 +81,7 @@ class KV implements Disposable, AsyncDisposable {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(path: string | Buffer | URL | DatabaseSync, options: <a href='/docs/next/api-reference/commandkit/interfaces/kv-options#kvoptions'>KvOptions</a> = {
+<MemberInfo kind="method" type={`(path: string | Buffer | URL | DatabaseSync, options: <a href='/docs/api-reference/commandkit/interfaces/kv-options#kvoptions'>KvOptions</a> = {
       enableWAL: true,
       namespace: 'commandkit_kv',
     }) => KV`}   />
@@ -189,7 +189,7 @@ kv.setex('user:123.temp_settings', { theme: 'light' }, 30 * 60 * 1000);
 ```
 ### math
 
-<MemberInfo kind="method" type={`(key: string, operator: <a href='/docs/next/api-reference/commandkit/types/kv-math-operator#kvmathoperator'>KvMathOperator</a>, value: number | bigint) => number | bigint`}   />
+<MemberInfo kind="method" type={`(key: string, operator: <a href='/docs/api-reference/commandkit/types/kv-math-operator#kvmathoperator'>KvMathOperator</a>, value: number | bigint) => number | bigint`}   />
 
 Performs mathematical operations on numeric values in the KV store
 
@@ -377,7 +377,7 @@ console.log('Available namespaces:', namespaces);
 Gets the current namespace name
 ### namespace
 
-<MemberInfo kind="method" type={`(namespace: string) => <a href='/docs/next/api-reference/commandkit/classes/kv#kv'>KV</a>`}   />
+<MemberInfo kind="method" type={`(namespace: string) => <a href='/docs/api-reference/commandkit/classes/kv#kv'>KV</a>`}   />
 
 Creates a new KV instance with a different namespace
 

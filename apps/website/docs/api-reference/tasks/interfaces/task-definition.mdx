@@ -40,7 +40,7 @@ interface TaskDefinition<T extends Record<string, any> = Record<string, any>> {
 Unique identifier for the task
 ### schedule
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/tasks/types/task-schedule#taskschedule'>TaskSchedule</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/tasks/types/task-schedule#taskschedule'>TaskSchedule</a>`}   />
 
 Optional schedule configuration for recurring or delayed execution
 ### timezone
@@ -55,13 +55,13 @@ Optional timezone for the schedule
 Whether the task should run immediately when created (only for cron tasks)
 ### prepare
 
-<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) =&#62; Promise&#60;boolean&#62;`}   />
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) =&#62; Promise&#60;boolean&#62;`}   />
 
 Optional preparation function that determines if the task should execute.
 Return false to skip execution for this run.
 ### execute
 
-<MemberInfo kind="property" type={`(ctx: <a href='/docs/next/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) =&#62; Promise&#60;void&#62;`}   />
+<MemberInfo kind="property" type={`(ctx: <a href='/docs/api-reference/tasks/classes/task-context#taskcontext'>TaskContext</a>&#60;T&#62;) =&#62; Promise&#60;void&#62;`}   />
 
 The main execution function that performs the task work.
 This is called when the task is scheduled to run.

@@ -64,13 +64,13 @@ The Discord client instance.
 This is the main entry point for interacting with the Discord API.
 ### commandkit
 
-<MemberInfo kind="property" type={`<a href='/docs/next/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/classes/command-kit#commandkit'>CommandKit</a>`}   />
 
 The CommandKit instance, which provides access to the command framework.
 This includes commands, events, and other features of CommandKit.
 ### command
 
-<MemberInfo kind="property" type={`{     /**      * The interaction object if the command was invoked via an interaction.      * This can be a ChatInputCommandInteraction, AutocompleteInteraction, or ContextMenuCommandInteraction.      */     interaction?:       | ChatInputCommandInteraction       | AutocompleteInteraction       | ContextMenuCommandInteraction;     /**      * The message object if the command was invoked via a message.      */     message?: Message;     /**      * The guild where the command was invoked, if applicable.      * This will be null for commands invoked in DMs.      */     guild: Guild | null;     /**      * The channel where the command was invoked.      * This can be a text channel, DM channel, or any other type of text-based channel.      */     channel: TextBasedChannel | null;     /**      * The loaded command instance that is being executed.      * This contains the command's metadata and logic.      */     command: <a href='/docs/next/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>;   }`}   />
+<MemberInfo kind="property" type={`{     /**      * The interaction object if the command was invoked via an interaction.      * This can be a ChatInputCommandInteraction, AutocompleteInteraction, or ContextMenuCommandInteraction.      */     interaction?:       | ChatInputCommandInteraction       | AutocompleteInteraction       | ContextMenuCommandInteraction;     /**      * The message object if the command was invoked via a message.      */     message?: Message;     /**      * The guild where the command was invoked, if applicable.      * This will be null for commands invoked in DMs.      */     guild: Guild | null;     /**      * The channel where the command was invoked.      * This can be a text channel, DM channel, or any other type of text-based channel.      */     channel: TextBasedChannel | null;     /**      * The loaded command instance that is being executed.      * This contains the command's metadata and logic.      */     command: <a href='/docs/api-reference/commandkit/interfaces/loaded-command#loadedcommand'>LoadedCommand</a>;   }`}   />
 
 The command context, which includes information about the command being executed.
 This can include the interaction, message, guild, channel, and the loaded command.
