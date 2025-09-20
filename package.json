@@ -2,7 +2,7 @@
   "name": "commandkit",
   "version": "0.0.0",
   "private": true,
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "workspaces": [
     "packages/*",
     "apps/*"

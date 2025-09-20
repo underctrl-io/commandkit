@@ -23,7 +23,7 @@
     "Twilight <hello@twlite.dev>",
     "Avraj <avraj@underctrl.io>"
   ],
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/underctrl-io/commandkit/issues"
   },

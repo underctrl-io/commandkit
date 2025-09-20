@@ -174,7 +174,3 @@ setDriver(new BullMQDriver({
   port: 6379,
 }));
 ```
-
-## License
-
-MIT

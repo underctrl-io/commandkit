@@ -175,7 +175,7 @@ const config: Config = {
       </a>
       <br/>
       <br/>
-      MIT © ${new Date().getFullYear()} CommandKit`,
+      GPL-3.0-or-later © ${new Date().getFullYear()} Avraj Sahota`,
     },
     prism: {
       theme: prismThemes.vsLight,

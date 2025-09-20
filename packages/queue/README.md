@@ -48,7 +48,3 @@ await receive('topic', (m) => {
 
 ## Documentation
 https://commandkit.dev/docs/next/api-reference/queue
-
-## License
-
-MIT © Avraj Sahota
