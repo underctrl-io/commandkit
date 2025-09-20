@@ -173,7 +173,6 @@ export class CommandKit extends EventEmitter {
   /**
    * Create a new command and event handler with CommandKit.
    * @param options - The default CommandKit configuration.
-   * @see {@link https://commandkit.js.org/docs/guide/commandkit-setup}
    */
   constructor(options: CommandKitOptions = {}) {
     if (CommandKit.instance) {
