@@ -2,7 +2,7 @@
   "name": "test-bot",
   "version": "1.0.0",
   "type": "module",
-  "license": "GPL-3.0-or-later",
+  "license": "GPL-3.0-only",
   "scripts": {
     "commandkit": "commandkit",
     "dev": "commandkit dev",

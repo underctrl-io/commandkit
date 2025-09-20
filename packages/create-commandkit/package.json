@@ -6,7 +6,7 @@
   "module": "./dist/index.js",
   "bin": "./dist/index.js",
   "type": "module",
-  "license": "GPL-3.0-or-later",
+  "license": "GPL-3.0-only",
   "keywords": [
     "commandkit",
     "create-commandkit",
