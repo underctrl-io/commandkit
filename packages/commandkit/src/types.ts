@@ -71,22 +71,6 @@ export interface CommandMetadata {
 }
 
 /**
- * @deprecated Use `CommandMetadata` instead.
- */
-export interface LegacyCommandMetadata {
-  /**
-   * The aliases of the command.
-   * @deprecated Use `metadata.aliases` or `generateMetadata` instead.
-   */
-  aliases?: string[];
-  /**
-   * The guilds that the command is available in.
-   * @deprecated Use `metadata.guilds` or `generateMetadata` instead.
-   */
-  guilds?: string[];
-}
-
-/**
  * Represents a command that can be executed by CommandKit.
  */
 export type CommandData = Prettify<
@@ -95,7 +79,7 @@ export type CommandData = Prettify<
      * The description of the command.
      */
     description?: string;
-  } & LegacyCommandMetadata
+  }
 >;
 
 /**

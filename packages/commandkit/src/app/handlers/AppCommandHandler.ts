@@ -832,8 +832,14 @@ export class AppCommandHandler {
 
       // Apply the specified logic for name and description
       const commandName = commandFileData.command.name || command.name;
-      const commandDescription =
-        commandFileData.command.description || `${commandName} command`;
+      let commandDescription = commandFileData.command.description as
+        | string
+        | undefined;
+
+      // since `description` is optional in `CommandData` type, set a fallback description if none is provided
+      if (!commandDescription && commandFileData.chatInput) {
+        commandDescription = 'No command description set.';
+      }
 
       // Update the command data with resolved name and description
       const updatedCommandData = {
