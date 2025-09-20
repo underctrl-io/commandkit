@@ -1,4 +1,5 @@
 import {
+  ApplicationCommandType,
   AutocompleteInteraction,
   Awaitable,
   Collection,
@@ -796,8 +797,8 @@ export class AppCommandHandler {
           data: {
             command: {
               name: command.name,
-              description: `${command.name} command`,
-              type: 1,
+              description: 'No command description set.',
+              type: ApplicationCommandType.ChatInput,
             },
           },
         });
@@ -836,7 +837,7 @@ export class AppCommandHandler {
         | string
         | undefined;
 
-      // since `description` is optional in `CommandData` type, set a fallback description if none is provided
+      // since `CommandData.description` is optional, set a fallback description if none provided
       if (!commandDescription && commandFileData.chatInput) {
         commandDescription = 'No command description set.';
       }

@@ -9,7 +9,7 @@ import { tasks } from '@commandkit/tasks';
 export default defineConfig({
   plugins: [
     i18n(),
-    legacy({ skipBuiltInValidations: true }),
+    // legacy({ skipBuiltInValidations: true }),
     devtools(),
     cache(),
     ai(),
