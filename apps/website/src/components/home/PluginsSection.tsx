@@ -98,7 +98,7 @@ export default function PluginsSection(): React.JSX.Element {
           <h2 className="text-3xl font-bold mb-4">Powerful Plugin Ecosystem</h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             Extend CommandKit with plugins that add specialized functionality to
-            your Discord bots. From AI integration to analytics, CommandKiti has
+            your Discord bots. From AI integration to analytics, CommandKit has
             you covered.
           </p>
         </div>
