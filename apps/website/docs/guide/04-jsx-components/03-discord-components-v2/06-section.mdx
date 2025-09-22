@@ -16,9 +16,7 @@ import {
 } from 'commandkit';
 import { MessageFlags } from 'discord.js';
 
-export const chatInput: ChatInputCommand = async ({
-  interaction,
-}) => {
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
   const section = (
     <Section>
       <TextDisplay content="Here's a text component (1)" />
