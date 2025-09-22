@@ -50,41 +50,37 @@ export class CommandRegistrar {
 
       const __metadata = cmd.metadata ?? cmd.data.metadata;
 
-      const collections: (CommandData & { __metadata?: CommandMetadata })[] = [
-        {
+      const collections: (CommandData & { __metadata?: CommandMetadata })[] =
+        [];
+
+      if (cmd.data.chatInput) {
+        collections.push({
           ...json,
+          type: ApplicationCommandType.ChatInput,
+          description: json.description ?? 'No command description set.',
           __metadata,
-        },
-      ];
+        });
+      }
 
       // Handle context menu commands
-      if (
-        cmd.data.userContextMenu &&
-        json.type !== ApplicationCommandType.User
-      ) {
+      if (cmd.data.userContextMenu) {
         collections.push({
           ...json,
           name: __metadata?.nameAliases?.user ?? json.name,
           type: ApplicationCommandType.User,
           options: undefined,
           description_localizations: undefined,
-          // @ts-ignore
           description: undefined,
-          // @ts-ignore
           __metadata,
         });
       }
 
-      if (
-        cmd.data.messageContextMenu &&
-        json.type !== ApplicationCommandType.Message
-      ) {
+      if (cmd.data.messageContextMenu) {
         collections.push({
           ...json,
           name: __metadata?.nameAliases?.message ?? json.name,
           type: ApplicationCommandType.Message,
           description_localizations: undefined,
-          // @ts-ignore
           description: undefined,
           options: undefined,
           __metadata,
