@@ -57,6 +57,7 @@ export class CommandRegistrar {
         collections.push({
           ...json,
           type: ApplicationCommandType.ChatInput,
+          description: json.description ?? 'No command description set.',
           __metadata,
         });
       }

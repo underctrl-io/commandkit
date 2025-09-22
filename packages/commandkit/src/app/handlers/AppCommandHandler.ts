@@ -784,7 +784,7 @@ export class AppCommandHandler {
    */
   private async loadCommand(id: string, command: Command) {
     try {
-      // Skip if path is null (directory-only command group)
+      // Skip if path is null (directory-only command group) - external plugins
       if (command.path === null) {
         this.loadedCommands.set(id, {
           command,
@@ -797,8 +797,6 @@ export class AppCommandHandler {
           data: {
             command: {
               name: command.name,
-              description: 'No command description set.',
-              type: ApplicationCommandType.ChatInput,
             },
           },
         });
