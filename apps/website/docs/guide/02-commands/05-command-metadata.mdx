@@ -154,6 +154,79 @@ This only works for [message commands](./04-message-commands.mdx).
   </TabItem>
 </Tabs>
 
+### `nameAliases`
+
+This is a way to use a different context menu command name from the
+one defined in your `command` object. This is helpful when you want a
+different name compared to your chat input or message command while
+still using the same command file to handle them.
+
+:::warning
+
+When the
+[@commandkit/i18n](../05-official-plugins/05-commandkit-i18n.mdx)
+plugin is in use and a translation for the context menu command is
+provided, this option will be ignored.
+
+:::
+
+<Tabs>
+  <TabItem value="ts" label="TypeScript" default>
+    ```ts title="src/app/commands/avatar.ts"
+    export const command: CommandData = {
+      name: 'avatar'
+    }
+
+    export const metadata: CommandMetadata = {
+      nameAliases: {
+        message: 'author-avatar',
+        user: 'profile-picture'
+      }
+    };
+
+    // this slash command will run using the name `avatar`
+    export const chatInput: ChatInputCommand = () => {};
+
+    // this message command will run using the name `avatar`
+    export const message: MessageCommand = () => {};
+
+    // this message context menu command will run using the name `author-avatar`
+    export const messageContextMenu: MessageContextMenuCommand = () => {};
+
+    // this user context menu command will run using the name `profile-picture`
+    export const userContextMenu: UserContextMenuCommand = () => {};
+    ```
+
+  </TabItem>
+  <TabItem value="js" label="JavaScript">
+    ```js title="src/app/commands/avatar.js"
+    export const command = {
+      name: 'avatar'
+    }
+
+    export const metadata = {
+      nameAliases: {
+        message: 'author-avatar',
+        user: 'profile-picture'
+      }
+    };
+
+    // this slash command will run using the name `avatar`
+    export const chatInput = () => {};
+
+    // this message command will run using the name `avatar`
+    export const message = () => {};
+
+    // this message context menu command will run using the name `author-avatar`
+    export const messageContextMenu = () => {};
+
+    // this user context menu command will run using the name `profile-picture`
+    export const userContextMenu = () => {};
+    ```
+
+  </TabItem>
+</Tabs>
+
 ## Generated metadata
 
 If you'd like to generate metadata dynamically, you can export a
