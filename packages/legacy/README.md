@@ -1,3 +1,7 @@
+# ❌ DEPRECATED: This package is deprecated and will be removed in the future.
+
+---
+
 # `@commandkit/legacy`
 
 Legacy command handler plugin for CommandKit.

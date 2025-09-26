@@ -53,7 +53,6 @@ jobs:
           PACKAGES=(
             "commandkit:packages/commandkit"
             "create-commandkit:packages/create-commandkit"
-            "@commandkit/legacy:packages/legacy"
             "@commandkit/redis:packages/redis"
             "@commandkit/i18n:packages/i18n"
             "@commandkit/devtools:packages/devtools"
@@ -77,7 +76,6 @@ jobs:
           PACKAGES=(
             "commandkit"
             "create-commandkit"
-            "@commandkit/legacy"
             "@commandkit/redis"
             "@commandkit/i18n"
             "@commandkit/devtools"
