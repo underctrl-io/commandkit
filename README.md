@@ -25,7 +25,6 @@ If you are looking for support or want to provide suggestions, check out the [Di
 - [@commandkit/cache](./packages/cache)
 - [@commandkit/devtools](./packages/devtools)
 - [@commandkit/i18n](./packages/i18n)
-- [@commandkit/legacy](./packages/legacy)
 - [@commandkit/queue](./packages/queue)
 - [@commandkit/redis](./packages/redis)
 - [@commandkit/tasks](./packages/tasks)
