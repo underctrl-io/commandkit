@@ -166,7 +166,7 @@ still using the same command file to handle them.
 When the
 [@commandkit/i18n](../05-official-plugins/05-commandkit-i18n.mdx)
 plugin is in use and a translation for the context menu command is
-provided, this option will be ignored.
+provided, this will be taken as base name and translations will be applied on top of it.
 
 :::
 
@@ -179,8 +179,8 @@ provided, this option will be ignored.
 
     export const metadata: CommandMetadata = {
       nameAliases: {
-        message: 'author-avatar',
-        user: 'profile-picture'
+        message: 'Author Avatar',
+        user: 'Profile Picture'
       }
     };
 
