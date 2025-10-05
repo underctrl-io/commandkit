@@ -23,6 +23,8 @@ Future versions may support customizing the tasks directory path and HMR behavio
 ```ts title="Signature"
 interface TasksPluginOptions {
     initializeDefaultDriver?: boolean;
+    sqliteDriverPollingInterval?: number;
+    sqliteDriverDatabasePath?: string;
 }
 ```
 
@@ -36,6 +38,18 @@ Whether to initialize the default driver.
 
 If true, the plugin will initialize the default driver.
 If false, the plugin will not initialize the default driver.
+### sqliteDriverPollingInterval
+
+<MemberInfo kind="property" type={`number`} default={`5_000`}   />
+
+The polling interval for the default sqlite driver.
+Default is 5_000.
+### sqliteDriverDatabasePath
+
+<MemberInfo kind="property" type={`string`} default={`'./<a href='/docs/api-reference/commandkit/variables/commandkit#commandkit'>commandkit</a>-<a href='/docs/api-reference/tasks/functions/tasks#tasks'>tasks</a>.db'`}   />
+
+The path to the sqlite database file for the default sqlite driver.
+Default is './commandkit-tasks.db' but `:memory:` can be used for an in-memory database.
 
 
 </div>

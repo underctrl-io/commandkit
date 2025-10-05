@@ -2,6 +2,7 @@ import { TaskDriver, TaskRunner } from '../driver';
 import { TaskData } from '../types';
 import { DatabaseSync, StatementSync } from 'node:sqlite';
 import cronParser from 'cron-parser';
+import { defer } from 'commandkit';
 
 /**
  * SQLite-based persistent job queue manager for CommandKit tasks.
@@ -28,15 +29,37 @@ export class SQLiteDriver implements TaskDriver {
     delete: StatementSync;
     updateNextRun: StatementSync;
     updateCompleted: StatementSync;
+    findCronByName: StatementSync;
+    deleteByName: StatementSync;
   };
 
   /**
    * Create a new SQLiteDriver instance.
    * @param dbPath Path to the SQLite database file (default: './commandkit-tasks.db'). Use `:memory:` for an in-memory database.
+   * @param pollingInterval The interval in milliseconds to poll for jobs (default: 5_000).
    */
-  constructor(dbPath = './commandkit-tasks.db') {
+  constructor(
+    dbPath = './commandkit-tasks.db',
+    private pollingInterval = 5_000,
+  ) {
     this.db = new DatabaseSync(dbPath, { open: true });
     this.init();
+  }
+
+  /**
+   * Get the polling interval.
+   * @returns The polling interval in milliseconds.
+   */
+  public getPollingInterval() {
+    return this.pollingInterval;
+  }
+
+  /**
+   * Set the polling interval.
+   * @param pollingInterval The interval in milliseconds to poll for jobs.
+   */
+  public setPollingInterval(pollingInterval: number) {
+    this.pollingInterval = pollingInterval;
   }
 
   /**
@@ -81,6 +104,12 @@ export class SQLiteDriver implements TaskDriver {
       updateCompleted: this.db.prepare(
         /* sql */ `UPDATE jobs SET status = 'completed', last_run = ? WHERE id = ?`,
       ),
+      findCronByName: this.db.prepare(
+        /* sql */ `SELECT id FROM jobs WHERE name = ? AND schedule_type = 'cron' AND status = 'pending'`,
+      ),
+      deleteByName: this.db.prepare(
+        /* sql */ `DELETE FROM jobs WHERE name = ? AND schedule_type = 'cron'`,
+      ),
     };
 
     this.startPolling();
@@ -110,6 +139,15 @@ export class SQLiteDriver implements TaskDriver {
       nextRun = typeof schedule === 'number' ? schedule : schedule.getTime();
     }
 
+    if (scheduleType === 'cron') {
+      const existingTask = this.statements.findCronByName.get(name) as
+        | { id: number }
+        | undefined;
+      if (existingTask) {
+        this.statements.deleteByName.run(name);
+      }
+    }
+
     const result = this.statements.insert.run(
       name,
       JSON.stringify(data ?? {}),
@@ -120,11 +158,13 @@ export class SQLiteDriver implements TaskDriver {
       Date.now(),
     );
 
-    if (task.immediate) {
-      await this.runner?.({
-        name,
-        data,
-        timestamp: Date.now(),
+    if (task.immediate && scheduleType === 'cron') {
+      defer(() => {
+        return this.runner?.({
+          name,
+          data,
+          timestamp: Date.now(),
+        });
       });
     }
 
@@ -153,7 +193,10 @@ export class SQLiteDriver implements TaskDriver {
    */
   private startPolling() {
     if (this.interval) clearInterval(this.interval);
-    this.interval = setInterval(() => this.pollJobs(), 1000).unref();
+    this.interval = setInterval(
+      () => this.pollJobs(),
+      this.pollingInterval,
+    ).unref();
     // Run immediately on startup
     this.pollJobs();
   }

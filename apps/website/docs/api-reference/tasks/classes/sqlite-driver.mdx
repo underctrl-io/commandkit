@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## SQLiteDriver
 
-<GenerationInfo sourceFile="packages/tasks/src/drivers/sqlite.ts" sourceLine="20" packageName="@commandkit/tasks" />
+<GenerationInfo sourceFile="packages/tasks/src/drivers/sqlite.ts" sourceLine="21" packageName="@commandkit/tasks" />
 
 SQLite-based persistent job queue manager for CommandKit tasks.
 
@@ -35,7 +35,9 @@ setDriver(driver);
 
 ```ts title="Signature"
 class SQLiteDriver implements TaskDriver {
-    constructor(dbPath:  = './commandkit-tasks.db')
+    constructor(dbPath:  = './commandkit-tasks.db', pollingInterval:  = 5_000)
+    getPollingInterval() => ;
+    setPollingInterval(pollingInterval: number) => ;
     destroy() => ;
     create(task: TaskData) => Promise<string>;
     delete(identifier: string) => Promise<void>;
@@ -50,9 +52,19 @@ class SQLiteDriver implements TaskDriver {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(dbPath:  = './commandkit-tasks.db') => SQLiteDriver`}   />
+<MemberInfo kind="method" type={`(dbPath:  = './commandkit-tasks.db', pollingInterval:  = 5_000) => SQLiteDriver`}   />
 
 Create a new SQLiteDriver instance.
+### getPollingInterval
+
+<MemberInfo kind="method" type={`() => `}   />
+
+Get the polling interval.
+### setPollingInterval
+
+<MemberInfo kind="method" type={`(pollingInterval: number) => `}   />
+
+Set the polling interval.
 ### destroy
 
 <MemberInfo kind="method" type={`() => `}   />

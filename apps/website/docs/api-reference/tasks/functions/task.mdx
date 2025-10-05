@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## task
 
-<GenerationInfo sourceFile="packages/tasks/src/task.ts" sourceLine="139" packageName="@commandkit/tasks" />
+<GenerationInfo sourceFile="packages/tasks/src/task.ts" sourceLine="140" packageName="@commandkit/tasks" />
 
 Creates a new task definition.
 
@@ -31,7 +31,7 @@ import { task } from '@commandkit/tasks';
 // Simple scheduled task
 export default task({
   name: 'daily-backup',
-  schedule: { type: 'cron', value: '0 0 * * *' },
+  schedule: '0 0 * * *',
   async execute(ctx) {
     await performBackup();
   },
