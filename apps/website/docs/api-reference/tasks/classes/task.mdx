@@ -30,7 +30,7 @@ import { task } from '@commandkit/tasks';
 
 export default task({
   name: 'cleanup-old-data',
-  schedule: { type: 'cron', value: '0 2 * * *' }, // Daily at 2 AM
+  schedule: '0 2 * * *', // Daily at 2 AM
   async prepare(ctx) {
     // Only run if there's old data to clean
     return await hasOldData();
