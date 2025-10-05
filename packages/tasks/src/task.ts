@@ -1,5 +1,5 @@
 import { TaskContext } from './context';
-import { TaskDefinition, TaskSchedule } from './types';
+import { TaskData, TaskDefinition, TaskSchedule } from './types';
 
 /**
  * Represents a task instance with execution logic and metadata.
@@ -14,7 +14,7 @@ import { TaskDefinition, TaskSchedule } from './types';
  *
  * export default task({
  *   name: 'cleanup-old-data',
- *   schedule: { type: 'cron', value: '0 2 * * *' }, // Daily at 2 AM
+ *   schedule: '0 2 * * *', // Daily at 2 AM
  *   async prepare(ctx) {
  *     // Only run if there's old data to clean
  *     return await hasOldData();
@@ -40,7 +40,8 @@ export class Task<T extends Record<string, any> = Record<string, any>> {
    * Only applicable to cron tasks, defaults to false.
    */
   public get immediate(): boolean {
-    return this.data.immediate ?? false;
+    if (this.isCron()) return !!this.data.immediate;
+    return false;
   }
 
   /**
@@ -126,7 +127,7 @@ export class Task<T extends Record<string, any> = Record<string, any>> {
  * // Simple scheduled task
  * export default task({
  *   name: 'daily-backup',
- *   schedule: { type: 'cron', value: '0 0 * * *' },
+ *   schedule: '0 0 * * *',
  *   async execute(ctx) {
  *     await performBackup();
  *   },

@@ -13,6 +13,9 @@ export default defineConfig({
     devtools(),
     cache(),
     ai(),
-    tasks(),
+    tasks({
+      initializeDefaultDriver: true,
+      sqliteDriverDatabasePath: './tasks.db',
+    }),
   ],
 });

@@ -31,6 +31,18 @@ export interface TasksPluginOptions {
    * @default true
    */
   initializeDefaultDriver?: boolean;
+  /**
+   * The polling interval for the default sqlite driver.
+   * Default is 5_000.
+   * @default 5_000
+   */
+  sqliteDriverPollingInterval?: number;
+  /**
+   * The path to the sqlite database file for the default sqlite driver.
+   * Default is './commandkit-tasks.db' but `:memory:` can be used for an in-memory database.
+   * @default './commandkit-tasks.db'
+   */
+  sqliteDriverDatabasePath?: string;
 }
 
 /**
@@ -74,7 +86,12 @@ export class TasksPlugin extends RuntimePlugin<TasksPluginOptions> {
         const { SQLiteDriver } =
           require('./drivers/sqlite') as typeof import('./drivers/sqlite');
 
-        taskDriverManager.setDriver(new SQLiteDriver());
+        taskDriverManager.setDriver(
+          new SQLiteDriver(
+            this.options.sqliteDriverDatabasePath ?? './commandkit-tasks.db',
+            this.options.sqliteDriverPollingInterval ?? 5_000,
+          ),
+        );
       } catch (e: any) {
         Logger.error(
           `Failed to initialize the default driver for tasks plugin: ${e?.stack || e}`,
@@ -182,6 +199,8 @@ export class TasksPlugin extends RuntimePlugin<TasksPluginOptions> {
           name: task.name,
           data: {},
           schedule: task.schedule,
+          immediate: task.immediate,
+          timezone: task.timezone,
         });
       }
 
@@ -225,14 +244,22 @@ export class TasksPlugin extends RuntimePlugin<TasksPluginOptions> {
     if (!taskData || !(taskData instanceof Task)) return;
 
     if (this.tasks.has(taskData.name)) {
-      Logger.info(`Reloading task: ${taskData.name}`);
-      await taskDriverManager.deleteTask(taskData.name);
+      if (taskData.isCron()) {
+        Logger.info(`Replacing cron task: ${taskData.name}`);
+        // For cron tasks, the SQLiteDriver.create() method will handle the replacement
+        // No need to manually delete the existing task
+      } else {
+        Logger.info(`Reloading task: ${taskData.name}`);
+        await taskDriverManager.deleteTask(taskData.name);
+      }
       this.tasks.set(taskData.name, taskData);
       if (taskData.schedule) {
         await taskDriverManager.createTask({
           name: taskData.name,
           data: {},
           schedule: taskData.schedule,
+          immediate: taskData.immediate,
+          timezone: taskData.timezone,
         });
       }
     } else {
@@ -243,6 +270,8 @@ export class TasksPlugin extends RuntimePlugin<TasksPluginOptions> {
           name: taskData.name,
           data: {},
           schedule: taskData.schedule,
+          immediate: taskData.immediate,
+          timezone: taskData.timezone,
         });
       }
     }
