@@ -23,10 +23,14 @@ export const chatInput: ChatInputCommand = async (ctx) => {
   const botVersion = $botVersion();
 
   let i = 1;
-  const commands = ctx.commandkit.commandsRouter
-    .getData()
-    .commands.map((c) => {
-      return `${i++}. **\`/${c.name}\`** - ${c.category}`;
+  const commands = ctx.commandkit.commandHandler
+    .getCommandsArray()
+    .map((c) => {
+      const cmdName = c.data.command.name;
+      const cmd = c.discordId
+        ? `</${cmdName}:${c.discordId}>`
+        : `**\`/${cmdName}\`**`;
+      return `${i++}. ${cmd} - ${c.command.category ?? 'N/A'}`;
     })
     .join('\n');
 

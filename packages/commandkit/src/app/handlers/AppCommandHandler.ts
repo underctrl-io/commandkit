@@ -90,8 +90,22 @@ interface AppCommandMiddleware {
  * Represents a loaded command with its metadata and configuration.
  */
 export interface LoadedCommand {
+  /**
+   * The associated discord snowflake id for this command.
+   * If the information is not yet available, this will be `null`.
+   */
+  discordId: string | null;
+  /**
+   * The command data.
+   */
   command: Command;
+  /**
+   * The metadata for this command.
+   */
   metadata: CommandMetadata;
+  /**
+   * The data for this command.
+   */
   data: AppCommand;
 }
 
@@ -787,6 +801,7 @@ export class AppCommandHandler {
       // Skip if path is null (directory-only command group) - external plugins
       if (command.path === null) {
         this.loadedCommands.set(id, {
+          discordId: null,
           command,
           metadata: {
             guilds: [],
@@ -897,6 +912,7 @@ export class AppCommandHandler {
       }
 
       this.loadedCommands.set(id, {
+        discordId: null,
         command,
         metadata: {
           guilds: commandJson.guilds,
