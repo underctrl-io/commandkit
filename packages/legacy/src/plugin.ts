@@ -167,6 +167,7 @@ export class LegacyHandlerPlugin extends RuntimePlugin<LegacyHandlerPluginOption
 
     for (const command of commands) {
       const data: LoadedCommand = {
+        discordId: null,
         command: {
           category: command.category,
           id: crypto.randomUUID(),
