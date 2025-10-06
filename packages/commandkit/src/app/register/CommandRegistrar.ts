@@ -37,7 +37,10 @@ export class CommandRegistrar {
   /**
    * Gets the commands data.
    */
-  public getCommandsData(): (CommandData & { __metadata?: CommandMetadata })[] {
+  public getCommandsData(): (CommandData & {
+    __metadata?: CommandMetadata;
+    __applyId(id: string): void;
+  })[] {
     const handler = this.commandkit.commandHandler;
     // Use the public method instead of accessing private property
     const commands = handler.getCommandsArray();
@@ -50,8 +53,10 @@ export class CommandRegistrar {
 
       const __metadata = cmd.metadata ?? cmd.data.metadata;
 
-      const collections: (CommandData & { __metadata?: CommandMetadata })[] =
-        [];
+      const collections: (CommandData & {
+        __metadata?: CommandMetadata;
+        __applyId(id: string): void;
+      })[] = [];
 
       if (cmd.data.chatInput) {
         collections.push({
@@ -59,6 +64,9 @@ export class CommandRegistrar {
           type: ApplicationCommandType.ChatInput,
           description: json.description ?? 'No command description set.',
           __metadata,
+          __applyId: (id: string) => {
+            cmd.discordId = id;
+          },
         });
       }
 
@@ -72,6 +80,9 @@ export class CommandRegistrar {
           description_localizations: undefined,
           description: undefined,
           __metadata,
+          __applyId: (id: string) => {
+            cmd.discordId = id;
+          },
         });
       }
 
@@ -84,6 +95,9 @@ export class CommandRegistrar {
           description: undefined,
           options: undefined,
           __metadata,
+          __applyId: (id: string) => {
+            cmd.discordId = id;
+          },
         });
       }
 
@@ -138,7 +152,10 @@ export class CommandRegistrar {
    * Updates the global commands.
    */
   public async updateGlobalCommands(
-    commands: (CommandData & { __metadata?: CommandMetadata })[],
+    commands: (CommandData & {
+      __metadata?: CommandMetadata;
+      __applyId(id: string): void;
+    })[],
   ) {
     if (!commands.length) return;
 
@@ -162,9 +179,20 @@ export class CommandRegistrar {
           body: commands.map((c) => ({
             ...c,
             __metadata: undefined,
+            __applyId: undefined,
           })),
         },
-      )) as CommandData[];
+      )) as (CommandData & { id: string })[];
+
+      // inject the command id into the command
+      data.forEach((c) => {
+        if (!c.id) return;
+        const cmd = commands.find(
+          (co) => co.name === c.name && co.type === c.type,
+        );
+        if (!cmd) return;
+        cmd.__applyId?.(c.id);
+      });
 
       Logger.info(
         `✨ Refreshed ${data.length} global application (/) commands`,
@@ -178,7 +206,10 @@ export class CommandRegistrar {
    * Updates the guild commands.
    */
   public async updateGuildCommands(
-    commands: (CommandData & { __metadata?: CommandMetadata })[],
+    commands: (CommandData & {
+      __metadata?: CommandMetadata;
+      __applyId(id: string): void;
+    })[],
   ) {
     if (!commands.length) return;
 
@@ -242,9 +273,19 @@ export class CommandRegistrar {
             body: guildCommands.map((b) => ({
               ...b,
               __metadata: undefined,
+              __applyId: undefined,
             })),
           },
-        )) as CommandData[];
+        )) as (CommandData & { id: string })[];
+
+        data.forEach((c) => {
+          if (!c.id) return;
+          const cmd = commands.find(
+            (co) => co.name === c.name && co.type === c.type,
+          );
+          if (!cmd) return;
+          cmd.__applyId?.(c.id);
+        });
 
         count += data.length;
       }
