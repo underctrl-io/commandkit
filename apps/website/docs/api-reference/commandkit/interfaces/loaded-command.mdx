@@ -19,6 +19,7 @@ Represents a loaded command with its metadata and configuration.
 
 ```ts title="Signature"
 interface LoadedCommand {
+    discordId: string | null;
     command: Command;
     metadata: CommandMetadata;
     data: AppCommand;
@@ -27,21 +28,27 @@ interface LoadedCommand {
 
 <div className="members-wrapper">
 
+### discordId
+
+<MemberInfo kind="property" type={`string | null`}   />
+
+The associated discord snowflake id for this command.
+If the information is not yet available, this will be `null`.
 ### command
 
 <MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/interfaces/command#command'>Command</a>`}   />
 
-
+The command data.
 ### metadata
 
 <MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/interfaces/command-metadata#commandmetadata'>CommandMetadata</a>`}   />
 
-
+The metadata for this command.
 ### data
 
 <MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/types/app-command#appcommand'>AppCommand</a>`}   />
 
-
+The data for this command.
 
 
 </div>
