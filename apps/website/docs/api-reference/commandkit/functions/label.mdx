@@ -1,0 +1,40 @@
+---
+title: "Label"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## Label
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/display/label.ts" sourceLine="31" packageName="commandkit" />
+
+The label component wraps modal components with text as a label and optional description.
+
+
+
+*Example*
+
+```tsx
+import { Label } from 'commandkit';
+
+const label = <Label label="Name" description="Enter your name">
+<ShortInput customId="name" label="Name" placeholder="John" required />
+</Label>;
+```
+
+```ts title="Signature"
+function Label(props: LabelProps): void
+```
+Parameters
+
+### props
+
+<MemberInfo kind="parameter" type={`<a href='/docs/api-reference/commandkit/interfaces/label-props#labelprops'>LabelProps</a>`} />
+

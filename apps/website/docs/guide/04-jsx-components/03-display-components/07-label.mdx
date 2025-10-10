@@ -36,12 +36,11 @@ const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
 export const chatInput: ChatInputCommandContext = async (ctx) => {
   const modal = (
     <Modal title="User Information" onSubmit={handleSubmit}>
-      <Label label="Personal Details" description="Enter your personal information">
-        <ShortInput
-          customId="name"
-          placeholder="John Doe"
-          required
-        />
+      <Label
+        label="Personal Details"
+        description="Enter your personal information"
+      >
+        <ShortInput customId="name" placeholder="John Doe" required />
       </Label>
     </Modal>
   );
@@ -86,21 +85,14 @@ const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
 export const chatInput: ChatInputCommandContext = async (ctx) => {
   const modal = (
     <Modal title="Profile Setup" onSubmit={handleSubmit}>
-      <Label 
-        label="Account Information" 
+      <Label
+        label="Account Information"
         description="This information will be visible to other users"
       >
-        <ShortInput
-          customId="username"
-          placeholder="cooluser123"
-          required
-        />
+        <ShortInput customId="username" placeholder="cooluser123" required />
       </Label>
-      
-      <Label 
-        label="About You" 
-        description="Tell others about yourself"
-      >
+
+      <Label label="About You" description="Tell others about yourself">
         <ParagraphInput
           customId="bio"
           placeholder="Write a short description about yourself..."
@@ -152,26 +144,14 @@ export const chatInput: ChatInputCommandContext = async (ctx) => {
   const modal = (
     <Modal title="Contact Form" onSubmit={handleSubmit}>
       <Label label="Personal Information">
-        <ShortInput
-          customId="firstName"
-          placeholder="John"
-          required
-        />
-        <ShortInput
-          customId="lastName"
-          placeholder="Doe"
-          required
-        />
+        <ShortInput customId="firstName" placeholder="John" required />
+        <ShortInput customId="lastName" placeholder="Doe" required />
       </Label>
-      
+
       <Label label="Contact Details">
-        <ShortInput
-          customId="email"
-          placeholder="john@example.com"
-          required
-        />
+        <ShortInput customId="email" placeholder="john@example.com" required />
       </Label>
-      
+
       <Label label="Message" description="What would you like to tell us?">
         <ParagraphInput
           customId="message"

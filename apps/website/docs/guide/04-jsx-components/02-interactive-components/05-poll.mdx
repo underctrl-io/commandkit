@@ -122,7 +122,9 @@ export const command: CommandData = {
 export const chatInput: ChatInputCommand = async (ctx) => {
   const poll: PollData = (
     <Poll duration={48} allowMultiselect={true}>
-      <PollQuestion>Which social media platforms do you use? (Select all that apply)</PollQuestion>
+      <PollQuestion>
+        Which social media platforms do you use? (Select all that apply)
+      </PollQuestion>
       <PollAnswer emoji="📘">Facebook</PollAnswer>
       <PollAnswer emoji="🐦">Twitter</PollAnswer>
       <PollAnswer emoji="📷">Instagram</PollAnswer>
@@ -191,11 +193,11 @@ export const command: CommandData = {
 export const chatInput: ChatInputCommand = async (ctx) => {
   const poll: PollData = (
     <Poll duration={24}>
-      <PollQuestion 
+      <PollQuestion
         text="Which logo design do you prefer?"
         media={{
           type: 1,
-          url: "https://example.com/logos.png"
+          url: 'https://example.com/logos.png',
         }}
       >
         Choose your favorite logo design

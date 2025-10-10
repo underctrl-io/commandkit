@@ -1,5 +1,5 @@
 ---
-title: "WarnUnstable"
+title: "PollChildrenType"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,26 +11,13 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## warnUnstable
+## PollChildrenType
 
-<GenerationInfo sourceFile="packages/commandkit/src/utils/warning.ts" sourceLine="18" packageName="commandkit" />
-
-Emit a warning for unstable features in CommandKit.
+<GenerationInfo sourceFile="packages/commandkit/src/components/display/poll.ts" sourceLine="28" packageName="commandkit" />
 
 
-
-*Example*
-
-```ts
-warnUnstable('MyUnstableFeature');
-```
 
 ```ts title="Signature"
-function warnUnstable(name: string): void
+type PollChildrenType = | PollChild<PollQuestionProps, PollChildType.Question>
+  | PollChild<PollAnswerProps, PollChildType.Answer>
 ```
-Parameters
-
-### name
-
-<MemberInfo kind="parameter" type={`string`} />
-

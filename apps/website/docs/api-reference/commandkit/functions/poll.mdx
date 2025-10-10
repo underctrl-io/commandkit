@@ -1,0 +1,43 @@
+---
+title: "Poll"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## Poll
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/display/poll.ts" sourceLine="47" packageName="commandkit" />
+
+The poll component creates a Discord poll with a question and multiple answer options.
+
+
+
+*Example*
+
+```tsx
+import { Poll, PollQuestion, PollAnswer } from 'commandkit';
+
+const poll = <Poll duration={24} allowMultiselect={false}>
+<PollQuestion>What's your favorite color?</PollQuestion>
+<PollAnswer emoji="🟥">Red</PollAnswer>
+<PollAnswer emoji="🟦">Blue</PollAnswer>
+<PollAnswer emoji="🟩">Green</PollAnswer>
+</Poll>;
+```
+
+```ts title="Signature"
+function Poll({ children, ...props }: PollProps): PollData
+```
+Parameters
+
+### \{ children, ...props }
+
+<MemberInfo kind="parameter" type={`<a href='/docs/api-reference/commandkit/interfaces/poll-props#pollprops'>PollProps</a>`} />
+

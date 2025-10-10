@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## ModalProps
 
-<GenerationInfo sourceFile="packages/commandkit/src/components/v1/modal/Modal.ts" sourceLine="15" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/components/interactive/modal/Modal.ts" sourceLine="16" packageName="commandkit" />
 
 The properties for the modal component.
 
@@ -21,7 +21,7 @@ The properties for the modal component.
 interface ModalProps {
     customId?: string;
     title: string;
-    children?: MaybeArray<TextInputBuilder | ActionRowBuilder>;
+    children?: MaybeArray<ModalKit['components'][number]>;
     onSubmit?: OnModalKitSubmit;
     onEnd?: OnModalKitEnd;
     onError?: EventInterceptorErrorHandler;
@@ -43,7 +43,7 @@ interface ModalProps {
 
 ### children
 
-<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/types/maybe-array#maybearray'>MaybeArray</a>&#60;TextInputBuilder | ActionRowBuilder&#62;`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/types/maybe-array#maybearray'>MaybeArray</a>&#60;<a href='/docs/api-reference/commandkit/classes/modal-kit#modalkit'>ModalKit</a>['components'][number]&#62;`}   />
 
 
 ### onSubmit
