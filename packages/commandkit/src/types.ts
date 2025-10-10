@@ -3,7 +3,6 @@ import type {
   Client,
   ClientEvents,
   Interaction,
-  PermissionResolvable,
   PermissionsString,
   RESTPostAPIApplicationCommandsJSONBody,
 } from 'discord.js';

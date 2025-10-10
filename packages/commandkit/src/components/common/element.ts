@@ -1,7 +1,6 @@
-import { ActionRowBuilder, TextInputBuilder } from 'discord.js';
-import type { ButtonKit } from '../v1/button/ButtonKit';
-import { warnUnstable } from '../../utils/warn-unstable';
-import { ModalKit } from '../v1/modal/ModalKit';
+import type { ActionRowBuilder, TextInputBuilder } from 'discord.js';
+import type { ButtonKit } from '../interactive/button/ButtonKit';
+import type { ModalKit } from '../interactive/modal/ModalKit';
 
 /**
  * Represents the types of elements that can be used in CommandKit.

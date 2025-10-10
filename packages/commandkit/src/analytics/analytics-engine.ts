@@ -1,4 +1,4 @@
-import { CommandKit } from '../commandkit';
+import type { CommandKit } from '../commandkit';
 import { Logger } from '../logger/Logger';
 import {
   AnalyticsEvent,

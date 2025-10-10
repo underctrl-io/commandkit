@@ -1,4 +1,4 @@
-import { ActionRowBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { TextInputBuilder, TextInputStyle } from 'discord.js';
 import { MaybeArray } from '../../common/types';
 import { CommandKitElement } from '../../common/element';
 import {
@@ -8,6 +8,7 @@ import {
   OnModalKitSubmit,
 } from './ModalKit';
 import { EventInterceptorErrorHandler } from '../../common/EventInterceptor';
+import { warnDeprecated } from '../../../utils/warning';
 
 /**
  * The properties for the modal component.
@@ -15,7 +16,7 @@ import { EventInterceptorErrorHandler } from '../../common/EventInterceptor';
 export interface ModalProps {
   customId?: string;
   title: string;
-  children?: MaybeArray<TextInputBuilder | ActionRowBuilder>;
+  children?: MaybeArray<ModalKit['components'][number]>;
   onSubmit?: OnModalKitSubmit;
   onEnd?: OnModalKitEnd;
   onError?: EventInterceptorErrorHandler;
@@ -48,17 +49,11 @@ export function Modal(props: ModalProps): CommandKitElement<'modal'> {
   }
 
   if (props.children) {
-    const childs = (
-      Array.isArray(props.children) ? props.children : [props.children]
-    )
-      .map((c) => {
-        if (c instanceof ActionRowBuilder) return c;
-        if (c instanceof TextInputBuilder)
-          return new ActionRowBuilder().addComponents(c);
-      })
-      .filter((c): c is ActionRowBuilder<TextInputBuilder> => c != null);
+    const childs = Array.isArray(props.children)
+      ? props.children
+      : [props.children];
 
-    modal.addComponents(childs);
+    modal.components.push(...childs);
   }
 
   if (props.onEnd) {
@@ -74,7 +69,10 @@ export function Modal(props: ModalProps): CommandKitElement<'modal'> {
 
 export interface TextInputProps {
   customId: string;
-  label: string;
+  /**
+   * @deprecated use the `<Label />` component instead.
+   */
+  label?: string;
   placeholder?: string;
   maxLength?: number;
   minLength?: number;
@@ -86,7 +84,7 @@ export interface TextInputProps {
  * The text input component.
  * @param props The text input properties.
  * @returns The commandkit element.
- * @example <TextInput customId="input" label="Input" style={TextInputStyle.Short} />
+ * @example <TextInput customId="input" style={TextInputStyle.Short} />
  */
 export function TextInput(
   props: TextInputProps & { style: TextInputStyle },
@@ -98,6 +96,12 @@ export function TextInput(
   }
 
   if (props.label) {
+    warnDeprecated({
+      what: 'Property `label`',
+      where: '<TextInput />',
+      message: 'Use the <Label /> component instead.',
+    });
+
     input.setLabel(props.label);
   }
 

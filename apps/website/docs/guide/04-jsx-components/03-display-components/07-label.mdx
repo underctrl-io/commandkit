@@ -1,0 +1,187 @@
+---
+title: Label
+---
+
+The `Label` component wraps modal components with text as a label and optional description, providing better organization and context for form elements.
+
+## Basic usage
+
+```tsx title="src/app/commands/label-example.tsx"
+import {
+  CommandData,
+  Modal,
+  ShortInput,
+  Label,
+  OnModalKitSubmit,
+  ChatInputCommandContext,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'profile',
+  description: 'Create your profile',
+};
+
+const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
+  const name = interaction.fields.getTextInputValue('name');
+
+  await interaction.reply({
+    content: `Hello, ${name}!`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommandContext = async (ctx) => {
+  const modal = (
+    <Modal title="User Information" onSubmit={handleSubmit}>
+      <Label label="Personal Details" description="Enter your personal information">
+        <ShortInput
+          customId="name"
+          placeholder="John Doe"
+          required
+        />
+      </Label>
+    </Modal>
+  );
+
+  await ctx.interaction.showModal(modal);
+};
+```
+
+## With description
+
+Labels can include descriptive text to provide additional context:
+
+```tsx title="src/app/commands/label-description.tsx"
+import {
+  CommandData,
+  Modal,
+  ShortInput,
+  ParagraphInput,
+  Label,
+  OnModalKitSubmit,
+  ChatInputCommandContext,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'profile',
+  description: 'Create your profile',
+};
+
+const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
+  const username = interaction.fields.getTextInputValue('username');
+  const bio = interaction.fields.getTextInputValue('bio');
+
+  await interaction.reply({
+    content: `**Username:** ${username}\n**Bio:** ${bio}`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommandContext = async (ctx) => {
+  const modal = (
+    <Modal title="Profile Setup" onSubmit={handleSubmit}>
+      <Label 
+        label="Account Information" 
+        description="This information will be visible to other users"
+      >
+        <ShortInput
+          customId="username"
+          placeholder="cooluser123"
+          required
+        />
+      </Label>
+      
+      <Label 
+        label="About You" 
+        description="Tell others about yourself"
+      >
+        <ParagraphInput
+          customId="bio"
+          placeholder="Write a short description about yourself..."
+        />
+      </Label>
+    </Modal>
+  );
+
+  await ctx.interaction.showModal(modal);
+};
+```
+
+## Multiple labels
+
+Use multiple labels to organize different sections of your modal:
+
+```tsx title="src/app/commands/multiple-labels.tsx"
+import {
+  CommandData,
+  Modal,
+  ShortInput,
+  ParagraphInput,
+  Label,
+  OnModalKitSubmit,
+  ChatInputCommandContext,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'contact',
+  description: 'Send us a message',
+};
+
+const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
+  const firstName = interaction.fields.getTextInputValue('firstName');
+  const lastName = interaction.fields.getTextInputValue('lastName');
+  const email = interaction.fields.getTextInputValue('email');
+  const message = interaction.fields.getTextInputValue('message');
+
+  await interaction.reply({
+    content: `**Contact Form Submitted**\n**Name:** ${firstName} ${lastName}\n**Email:** ${email}\n**Message:** ${message}`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommandContext = async (ctx) => {
+  const modal = (
+    <Modal title="Contact Form" onSubmit={handleSubmit}>
+      <Label label="Personal Information">
+        <ShortInput
+          customId="firstName"
+          placeholder="John"
+          required
+        />
+        <ShortInput
+          customId="lastName"
+          placeholder="Doe"
+          required
+        />
+      </Label>
+      
+      <Label label="Contact Details">
+        <ShortInput
+          customId="email"
+          placeholder="john@example.com"
+          required
+        />
+      </Label>
+      
+      <Label label="Message" description="What would you like to tell us?">
+        <ParagraphInput
+          customId="message"
+          placeholder="Type your message here..."
+          required
+        />
+      </Label>
+    </Modal>
+  );
+
+  await ctx.interaction.showModal(modal);
+};
+```

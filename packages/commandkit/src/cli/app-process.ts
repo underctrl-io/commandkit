@@ -36,7 +36,7 @@ export function createAppProcess(
     '--enable-source-maps',
   ];
 
-  const nodeOptions = process.env.NODE_OPTIONS;
+  const nodeOptions = process.env.CK_NODE_OPTIONS || process.env.NODE_OPTIONS;
   let nodeArgs = [...baseArgs];
 
   if (nodeOptions) {

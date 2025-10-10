@@ -1,4 +1,5 @@
 const WARNED_KEYS = new Set<string>();
+const DEPRECATED_KEYS = new Set<string>();
 
 /**
  * Emit a warning message to the console as a CommandKitWarning.
@@ -22,5 +23,31 @@ export function warnUnstable(name: string) {
   emitWarning(
     `${name} is unstable and may change in future versions.`,
     'CommandKitUnstableWarning',
+  );
+}
+export function warnDeprecated({
+  what,
+  message,
+  where,
+}: {
+  what: string;
+  where?: string;
+  message?: string;
+}) {
+  const name = `${what}:${where}`;
+
+  if (DEPRECATED_KEYS.has(name)) return;
+
+  DEPRECATED_KEYS.add(name);
+
+  emitWarning(
+    [
+      `${what} is deprecated`,
+      where ? `in ${where}` : '',
+      message || 'and may be removed in future versions.',
+    ]
+      .filter(Boolean)
+      .join(' '),
+    'CommandKitDeprecatedWarning',
   );
 }

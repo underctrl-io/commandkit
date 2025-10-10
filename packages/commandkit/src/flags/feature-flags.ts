@@ -1,7 +1,7 @@
 import { getCommandKit, getContext } from '../context/async-context';
 import { eventWorkerContext } from '../app/events/EventWorkerContext';
 import { ParsedEvent } from '../app/router';
-import { CommandKit } from '../commandkit';
+import type { CommandKit } from '../commandkit';
 import {
   AutocompleteInteraction,
   ChatInputCommandInteraction,

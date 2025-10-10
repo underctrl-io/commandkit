@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { ParsedEvent } from '../router';
-import { CommandKit } from '../../commandkit';
+import type { CommandKit } from '../../commandkit';
 
 /**
  * Context object containing information about the currently executing event.

@@ -4,6 +4,7 @@ export default CommandKit;
 
 export * from './commandkit';
 export * from './components';
+export * from './components/common/EventInterceptor';
 export * from './config/config';
 export * from './context/async-context';
 export {
