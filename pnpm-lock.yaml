@@ -81,7 +81,7 @@ importers:
     dependencies:
       '@ai-sdk/google':
         specifier: ^2.0.8
-        version: 2.0.8(zod@4.1.11)
+        version: 2.0.20(zod@4.1.11)
       '@commandkit/ai':
         specifier: workspace:*
         version: link:../../packages/ai
@@ -659,11 +659,11 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/google@2.0.8':
-    resolution: {integrity: sha512-k+5SLtoV0qG4rSCxwWQ+/0qrJFXwYHQ1TcH4GyaP4X0qOuVS4NDtD8ymSu8ej0ejFluogtBfTLev7sbj2AnJzA==}
+  '@ai-sdk/google@2.0.20':
+    resolution: {integrity: sha512-+pVkl1GSnORRJEKnjscQEdfW4RR2csVVY8F3QkCHdWjbeSIqrEQw8MWQ4SrtsVLJdAvqyG9WMdiDR7WXSXpn4Q==}
     engines: {node: '>=18'}
     peerDependencies:
-      zod: ^3.25.76 || ^4
+      zod: ^3.25.76 || ^4.1.8
 
   '@ai-sdk/provider-utils@3.0.10':
     resolution: {integrity: sha512-T1gZ76gEIwffep6MWI0QNy9jgoybUHE7TRaHB5k54K8mF91ciGFlbtCGxDYhMH3nCRergKwYFIDeFF0hJSIQHQ==}
@@ -671,11 +671,11 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/provider-utils@3.0.5':
-    resolution: {integrity: sha512-HliwB/yzufw3iwczbFVE2Fiwf1XqROB/I6ng8EKUsPM5+2wnIa8f4VbljZcDx+grhFrPV+PnRZH7zBqi8WZM7Q==}
+  '@ai-sdk/provider-utils@3.0.12':
+    resolution: {integrity: sha512-ZtbdvYxdMoria+2SlNarEk6Hlgyf+zzcznlD55EAl+7VZvJaSg2sqPvwArY7L6TfDEDJsnCq0fdhBSkYo0Xqdg==}
     engines: {node: '>=18'}
     peerDependencies:
-      zod: ^3.25.76 || ^4
+      zod: ^3.25.76 || ^4.1.8
 
   '@ai-sdk/provider@2.0.0':
     resolution: {integrity: sha512-6o7Y2SeO9vFKB8lArHXehNuusnpddKPk7xqL7T2/b+OvXMRIXUO1rR4wcv1hAFUAT9avGZshty3Wlua/XA7TvA==}
@@ -5647,10 +5647,6 @@ packages:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
 
-  eventsource-parser@3.0.5:
-    resolution: {integrity: sha512-bSRG85ZrMdmWtm7qkF9He9TNRzc/Bm99gEJMaQoHJ9E6Kv9QBbsldh2oMj7iXmYNEAVvNgvv5vPorG6W+XtBhQ==}
-    engines: {node: '>=20.0.0'}
-
   eventsource-parser@3.0.6:
     resolution: {integrity: sha512-Vo1ab+QXPzZ4tCa8SwIHJFaSzy4R6SHf7BY79rFBDf0idraZWAkYrDjDj8uWaSm3S2TK+hJ7/t1CEmZ7jXw+pg==}
     engines: {node: '>=18.0.0'}
@@ -9568,11 +9564,6 @@ packages:
     resolution: {integrity: sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==}
     engines: {node: '>=12.20'}
 
-  zod-to-json-schema@3.24.6:
-    resolution: {integrity: sha512-h/z3PKvcTcTetyjl1fkj79MHNEjm+HpD6NXheWjzOekY7kV+lwDYnHw+ivHkijnCSMz1yJaWBD9vu/Fcmk+vEg==}
-    peerDependencies:
-      zod: ^3.24.1
-
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
@@ -9609,10 +9600,10 @@ snapshots:
       '@vercel/oidc': 3.0.1
       zod: 4.1.11
 
-  '@ai-sdk/google@2.0.8(zod@4.1.11)':
+  '@ai-sdk/google@2.0.20(zod@4.1.11)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.5(zod@4.1.11)
+      '@ai-sdk/provider-utils': 3.0.12(zod@4.1.11)
       zod: 4.1.11
 
   '@ai-sdk/provider-utils@3.0.10(zod@4.1.11)':
@@ -9622,13 +9613,12 @@ snapshots:
       eventsource-parser: 3.0.6
       zod: 4.1.11
 
-  '@ai-sdk/provider-utils@3.0.5(zod@4.1.11)':
+  '@ai-sdk/provider-utils@3.0.12(zod@4.1.11)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
       '@standard-schema/spec': 1.0.0
-      eventsource-parser: 3.0.5
+      eventsource-parser: 3.0.6
       zod: 4.1.11
-      zod-to-json-schema: 3.24.6(zod@4.1.11)
 
   '@ai-sdk/provider@2.0.0':
     dependencies:
@@ -12123,7 +12113,7 @@ snapshots:
 
   '@docusaurus/react-loadable@6.0.0(react@19.2.0)':
     dependencies:
-      '@types/react': 19.2.1
+      '@types/react': 19.1.8
       react: 19.2.0
 
   '@docusaurus/remark-plugin-npm2yarn@3.8.1':
@@ -14293,7 +14283,7 @@ snapshots:
   '@types/react-router@5.1.20':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.2.1
+      '@types/react': 19.1.8
 
   '@types/react@19.1.10':
     dependencies:
@@ -16223,8 +16213,6 @@ snapshots:
   eventemitter3@4.0.7: {}
 
   events@3.3.0: {}
-
-  eventsource-parser@3.0.5: {}
 
   eventsource-parser@3.0.6: {}
 
@@ -20871,10 +20859,6 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.2.1: {}
-
-  zod-to-json-schema@3.24.6(zod@4.1.11):
-    dependencies:
-      zod: 4.1.11
 
   zod@3.25.76: {}
 
