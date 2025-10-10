@@ -1,5 +1,5 @@
 import { Collection, Constructable } from 'discord.js';
-import { CommandKit } from '../../commandkit';
+import type { CommandKit } from '../../commandkit';
 import { RuntimePlugin } from '../RuntimePlugin';
 import {
   CommandKitErrorCodes,

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { CommandKit } from '../commandkit';
-import { GenericFunction, getContext, useEnvironment } from './async-context';
+import type { CommandKit } from '../commandkit';
+import { GenericFunction, getContext } from './async-context';
 import type { Context } from '../app';
 import { Collection } from 'discord.js';
 

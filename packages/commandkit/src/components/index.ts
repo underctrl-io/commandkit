@@ -1,27 +1,26 @@
 // action row
-export * from './v1/action-row/ActionRow';
+export * from './interactive/action-row/ActionRow';
 
 // buttons
-export * from './v1/button/ButtonKit';
-export * from './v1/button/Button';
+export * from './interactive/button/ButtonKit';
+export * from './interactive/button/Button';
 
 // modals
-export * from './v1/modal/ModalKit';
-export * from './v1/modal/Modal';
+export * from './interactive/modal/ModalKit';
+export * from './interactive/modal/Modal';
 
 // select menus
-export * from './v1/select-menu/StringSelectMenuKit';
-export * from './v1/select-menu/ChannelSelectMenuKit';
-export * from './v1/select-menu/MentionableSelectMenuKit';
-export * from './v1/select-menu/UserSelectMenuKit';
-export * from './v1/select-menu/RoleSelectMenuKit';
-export * from './v1/select-menu/SelectMenu';
-export * from './v1/select-menu/common';
+export * from './interactive/select-menu/StringSelectMenuKit';
+export * from './interactive/select-menu/ChannelSelectMenuKit';
+export * from './interactive/select-menu/MentionableSelectMenuKit';
+export * from './interactive/select-menu/UserSelectMenuKit';
+export * from './interactive/select-menu/RoleSelectMenuKit';
+export * from './interactive/select-menu/SelectMenu';
+export * from './interactive/select-menu/common';
 
 // v2
-export * from './v2/index';
+export * from './display/index';
 
 // common
 export * from './common/element';
 export * from './common/types';
-export * from './common/EventInterceptor';

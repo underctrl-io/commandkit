@@ -209,6 +209,7 @@ export class ButtonKit extends ButtonBuilder {
     }
 
     const interceptor = this.#getEventInterceptor();
+    if (!interceptor) return;
 
     this.#unsub = interceptor.subscribe(
       Events.InteractionCreate,

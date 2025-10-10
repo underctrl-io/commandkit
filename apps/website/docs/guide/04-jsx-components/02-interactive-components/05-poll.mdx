@@ -1,0 +1,213 @@
+---
+title: Poll
+---
+
+The `Poll` component allows you to create interactive polls in Discord messages. Users can vote on poll questions with multiple answer options, and the results are displayed in real-time. Polls can be open for up to 32 days (768 hours).
+
+## Basic usage
+
+```tsx title="src/app/commands/poll-example.tsx"
+import {
+  CommandData,
+  Poll,
+  PollQuestion,
+  PollAnswer,
+  ChatInputCommand,
+} from 'commandkit';
+import { PollData } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'poll',
+  description: 'Create a poll',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const poll: PollData = (
+    <Poll duration={24} allowMultiselect={false}>
+      <PollQuestion>What's your favorite programming language?</PollQuestion>
+      <PollAnswer emoji="🟥">JavaScript</PollAnswer>
+      <PollAnswer emoji="🟦">TypeScript</PollAnswer>
+      <PollAnswer emoji="🟩">Python</PollAnswer>
+      <PollAnswer emoji="🟨">Rust</PollAnswer>
+    </Poll>
+  );
+
+  await ctx.interaction.reply({ poll });
+};
+```
+
+## Poll duration
+
+Set how long the poll should be active (in hours). The duration defaults to 24 hours and can be up to 32 days (768 hours):
+
+```tsx title="src/app/commands/poll-duration.tsx"
+import {
+  CommandData,
+  Poll,
+  PollQuestion,
+  PollAnswer,
+  ChatInputCommand,
+} from 'commandkit';
+import { PollData } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'quickpoll',
+  description: 'Create a quick poll',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const poll: PollData = (
+    <Poll duration={1}>
+      <PollQuestion>Quick question: Coffee or tea?</PollQuestion>
+      <PollAnswer emoji="☕">Coffee</PollAnswer>
+      <PollAnswer emoji="🍵">Tea</PollAnswer>
+    </Poll>
+  );
+
+  await ctx.interaction.reply({ poll });
+};
+```
+
+For longer polls, you can specify durations up to 32 days:
+
+```tsx title="src/app/commands/long-poll.tsx"
+import {
+  CommandData,
+  Poll,
+  PollQuestion,
+  PollAnswer,
+  ChatInputCommand,
+} from 'commandkit';
+import { PollData } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'weeklypoll',
+  description: 'Create a weekly poll',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const poll: PollData = (
+    <Poll duration={168}>
+      <PollQuestion>Weekly poll: What should we work on next?</PollQuestion>
+      <PollAnswer emoji="🚀">New features</PollAnswer>
+      <PollAnswer emoji="🐛">Bug fixes</PollAnswer>
+      <PollAnswer emoji="📚">Documentation</PollAnswer>
+      <PollAnswer emoji="🎨">UI improvements</PollAnswer>
+    </Poll>
+  );
+
+  await ctx.interaction.reply({ poll });
+};
+```
+
+## Multiple choice polls
+
+Allow users to select multiple answers:
+
+```tsx title="src/app/commands/multiselect-poll.tsx"
+import {
+  CommandData,
+  Poll,
+  PollQuestion,
+  PollAnswer,
+  ChatInputCommand,
+} from 'commandkit';
+import { PollData } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'multiselect',
+  description: 'Create a multiple choice poll',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const poll: PollData = (
+    <Poll duration={48} allowMultiselect={true}>
+      <PollQuestion>
+        Which social media platforms do you use? (Select all that apply)
+      </PollQuestion>
+      <PollAnswer emoji="📘">Facebook</PollAnswer>
+      <PollAnswer emoji="🐦">Twitter</PollAnswer>
+      <PollAnswer emoji="📷">Instagram</PollAnswer>
+      <PollAnswer emoji="💼">LinkedIn</PollAnswer>
+      <PollAnswer emoji="🎵">TikTok</PollAnswer>
+      <PollAnswer emoji="📺">YouTube</PollAnswer>
+    </Poll>
+  );
+
+  await ctx.interaction.reply({ poll });
+};
+```
+
+## Poll layout types
+
+Customize how your poll appears using different layout types:
+
+```tsx title="src/app/commands/poll-layouts.tsx"
+import {
+  CommandData,
+  Poll,
+  PollQuestion,
+  PollAnswer,
+  ChatInputCommand,
+} from 'commandkit';
+import { PollData, PollLayoutType } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'layoutpoll',
+  description: 'Create a poll with custom layout',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const poll: PollData = (
+    <Poll duration={24} layoutType={PollLayoutType.List}>
+      <PollQuestion>List layout poll</PollQuestion>
+      <PollAnswer emoji="📝">First item</PollAnswer>
+      <PollAnswer emoji="📋">Second item</PollAnswer>
+      <PollAnswer emoji="📄">Third item</PollAnswer>
+    </Poll>
+  );
+
+  await ctx.interaction.reply({ poll });
+};
+```
+
+## Poll with media
+
+Add images or other media to your poll questions:
+
+```tsx title="src/app/commands/media-poll.tsx"
+import {
+  CommandData,
+  Poll,
+  PollQuestion,
+  PollAnswer,
+  ChatInputCommand,
+} from 'commandkit';
+import { PollData } from 'discord.js';
+
+export const command: CommandData = {
+  name: 'mediapoll',
+  description: 'Create a poll with media',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const poll: PollData = (
+    <Poll duration={24}>
+      <PollQuestion
+        text="Which logo design do you prefer?"
+        media={{
+          type: 1,
+          url: 'https://example.com/logos.png',
+        }}
+      >
+        Choose your favorite logo design
+      </PollQuestion>
+      <PollAnswer emoji="🎨">Design A</PollAnswer>
+      <PollAnswer emoji="🖼️">Design B</PollAnswer>
+      <PollAnswer emoji="✨">Design C</PollAnswer>
+    </Poll>
+  );
+
+  await ctx.interaction.reply({ poll });
+};
+```

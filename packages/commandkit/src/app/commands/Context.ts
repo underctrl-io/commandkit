@@ -12,7 +12,7 @@ import {
   TextBasedChannel,
   UserContextMenuCommandInteraction,
 } from 'discord.js';
-import { CommandKit } from '../../commandkit';
+import type { CommandKit } from '../../commandkit';
 import { GenericFunction, getContext } from '../../context/async-context';
 import { CommandKitEnvironment } from '../../context/environment';
 import {

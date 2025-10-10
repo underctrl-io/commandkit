@@ -1,0 +1,44 @@
+---
+title: "PollAnswer"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## PollAnswer
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/display/poll.ts" sourceLine="127" packageName="commandkit" />
+
+The poll answer component defines an answer option for a Discord poll.
+
+
+
+*Example*
+
+```tsx
+import { PollAnswer } from 'commandkit';
+
+const answer = <PollAnswer emoji="🟦">TypeScript</PollAnswer>;
+```
+
+```ts title="Signature"
+function PollAnswer({
+  children,
+  ...props
+}: PollAnswerProps): PollChild<PollAnswerData, PollChildType.Answer>
+```
+Parameters
+
+### \{
+  children,
+  ...props
+}
+
+<MemberInfo kind="parameter" type={`<a href='/docs/api-reference/commandkit/interfaces/poll-answer-props#pollanswerprops'>PollAnswerProps</a>`} />
+

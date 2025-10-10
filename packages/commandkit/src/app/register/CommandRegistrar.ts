@@ -1,5 +1,5 @@
 import { ApplicationCommandType, REST, Routes } from 'discord.js';
-import { CommandKit } from '../../commandkit';
+import type { CommandKit } from '../../commandkit';
 import { CommandData, CommandMetadata } from '../../types';
 import { Logger } from '../../logger/Logger';
 

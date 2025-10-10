@@ -4,3 +4,5 @@ export * from './media-gallery';
 export * from './section';
 export * from './separator';
 export * from './text-display';
+export * from './label';
+export * from './poll';

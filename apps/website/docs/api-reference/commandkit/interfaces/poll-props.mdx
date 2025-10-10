@@ -1,0 +1,38 @@
+---
+title: "PollProps"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## PollProps
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/display/poll.ts" sourceLine="11" packageName="commandkit" />
+
+The poll properties for the poll component.
+
+```ts title="Signature"
+interface PollProps extends Partial<Omit<PollData, 'question' | 'answers'>> {
+    children: PollChildrenType[];
+}
+```
+* Extends: <code>Partial&#60;Omit&#60;PollData, 'question' | 'answers'&#62;&#62;</code>
+
+
+
+<div className="members-wrapper">
+
+### children
+
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/types/poll-children-type#pollchildrentype'>PollChildrenType</a>[]`}   />
+
+The poll children components (question and answers).
+
+
+</div>

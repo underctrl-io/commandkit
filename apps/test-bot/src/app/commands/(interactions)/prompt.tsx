@@ -3,11 +3,14 @@ import {
   Modal,
   ShortInput,
   ParagraphInput,
+  Label,
   OnModalKitSubmit,
   MessageCommandContext,
   ChatInputCommandContext,
+  StringSelectMenu,
+  StringSelectMenuOption,
 } from 'commandkit';
-import { MessageFlags } from 'discord.js';
+import { ComponentType, MessageFlags } from 'discord.js';
 
 export const command: CommandData = {
   name: 'prompt',
@@ -17,9 +20,10 @@ export const command: CommandData = {
 const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
   const name = interaction.fields.getTextInputValue('name');
   const description = interaction.fields.getTextInputValue('description');
+  const select = interaction.fields.getField('select');
 
   await interaction.reply({
-    content: `Name: ${name}\nDescription: ${description}`,
+    content: `Name: ${name}\nDescription: ${description}\nSelect: ${select}`,
     flags: MessageFlags.Ephemeral,
   });
 
@@ -28,13 +32,38 @@ const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
 
 export async function chatInput(ctx: ChatInputCommandContext) {
   const modal = (
-    <Modal title={'Modal'} onSubmit={handleSubmit}>
-      <ShortInput customId="name" label="Name" placeholder="John" required />
-      <ParagraphInput
-        customId="description"
-        label={'Description'}
-        placeholder={'Enter a description here...'}
-      />
+    <Modal title="Modal" onSubmit={handleSubmit}>
+      <Label label="Name" description="Enter your name">
+        <ShortInput customId="name" placeholder="John Doe" required />
+      </Label>
+      <Label label="Description" description="Enter a description here...">
+        <ParagraphInput
+          customId="description"
+          placeholder="Lorem ipsum dolor sit amet..."
+        />
+      </Label>
+      <Label label="Select" description="Select an option">
+        <StringSelectMenu customId="select">
+          <StringSelectMenuOption
+            label="Option 1"
+            value="option1"
+            description="This is the first option"
+            emoji="👍"
+          />
+          <StringSelectMenuOption
+            label="Option 2"
+            value="option2"
+            description="This is the second option"
+            emoji="👍"
+          />
+          <StringSelectMenuOption
+            label="Option 3"
+            value="option3"
+            description="This is the third option"
+            emoji="👍"
+          />
+        </StringSelectMenu>
+      </Label>
     </Modal>
   );
 

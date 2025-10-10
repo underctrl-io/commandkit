@@ -1,0 +1,44 @@
+---
+title: "PollQuestion"
+isDefaultIndex: false
+generated: true
+---
+
+import MemberInfo from '@site/src/components/MemberInfo';
+import GenerationInfo from '@site/src/components/GenerationInfo';
+import MemberDescription from '@site/src/components/MemberDescription';
+
+<!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
+
+
+## PollQuestion
+
+<GenerationInfo sourceFile="packages/commandkit/src/components/display/poll.ts" sourceLine="100" packageName="commandkit" />
+
+The poll question component defines the question text for a Discord poll.
+
+
+
+*Example*
+
+```tsx
+import { PollQuestion } from 'commandkit';
+
+const question = <PollQuestion>What's your favorite programming language?</PollQuestion>;
+```
+
+```ts title="Signature"
+function PollQuestion({
+  children,
+  ...props
+}: PollQuestionProps): PollChild<PollQuestionMedia, PollChildType.Question>
+```
+Parameters
+
+### \{
+  children,
+  ...props
+}
+
+<MemberInfo kind="parameter" type={`<a href='/docs/api-reference/commandkit/interfaces/poll-question-props#pollquestionprops'>PollQuestionProps</a>`} />
+

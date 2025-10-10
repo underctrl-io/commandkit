@@ -75,9 +75,17 @@ export class ModalKit extends ModalBuilder {
 
   #getEventInterceptor() {
     const ctx = getContext();
-    if (!ctx) return getCommandKit(true).eventInterceptor;
+    if (!ctx) {
+      const interceptor = getCommandKit(true).eventInterceptor;
 
-    return exitContext(() => ctx.commandkit.eventInterceptor);
+      console.log({ interceptor, commandkit: getCommandKit(true) });
+
+      return interceptor;
+    }
+
+    const interceptor = exitContext(() => ctx.commandkit.eventInterceptor);
+    console.log({ interceptor2: interceptor });
+    return interceptor;
   }
 
   /**
