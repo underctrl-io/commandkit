@@ -309,6 +309,17 @@ export class Context<
   }
 
   /**
+   * Gets the invoked command name (could be an alias for message commands)
+   */
+  public get invokedCommandName(): string {
+    if (this.isInteraction()) {
+      return this.interaction.commandName;
+    }
+
+    return this.config.messageCommandParser!.getCommand();
+  }
+
+  /**
    * Gets the command options based on the execution mode.
    */
   public get options(): CommandContextOptions<ExecutionMode> {
