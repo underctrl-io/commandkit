@@ -302,9 +302,10 @@ export class Context<
   public get commandName(): string {
     if (this.isInteraction()) {
       return this.interaction.commandName;
-    } else {
-      return this.config.messageCommandParser!.getCommand();
     }
+
+    const maybeAlias = this.config.messageCommandParser!.getCommand();
+    return this.commandkit.commandHandler.resolveMessageCommandName(maybeAlias);
   }
 
   /**

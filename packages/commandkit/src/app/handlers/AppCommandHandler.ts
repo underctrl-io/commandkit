@@ -1,5 +1,4 @@
 import {
-  ApplicationCommandType,
   AutocompleteInteraction,
   Awaitable,
   Collection,
@@ -646,6 +645,22 @@ export class AppCommandHandler {
     }
 
     return null;
+  }
+
+  public resolveMessageCommandName(name: string): string {
+    for (const [, loadedCommand] of this.loadedCommands) {
+      if (loadedCommand.data.command.name === name) {
+        return loadedCommand.data.command.name;
+      }
+
+      const aliases = loadedCommand.data.metadata?.aliases;
+
+      if (aliases && Array.isArray(aliases) && aliases.includes(name)) {
+        return loadedCommand.data.command.name;
+      }
+    }
+
+    return name;
   }
 
   /**
