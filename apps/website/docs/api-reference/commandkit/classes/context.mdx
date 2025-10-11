@@ -31,6 +31,7 @@ class Context<ExecutionMode extends CommandExecutionMode = CommandExecutionMode,
     constructor(commandkit: CommandKit, config: ContextParameters<ExecutionMode, Args>)
     store: void
     commandName: string
+    invokedCommandName: string
     options: CommandContextOptions<ExecutionMode>
     forwarded: boolean
     forwardCommand(command: C) => Promise<never>;
@@ -110,6 +111,11 @@ This store is shared across all contexts in the same command execution, includin
 <MemberInfo kind="property" type={`string`}   />
 
 Gets the name of the current command.
+### invokedCommandName
+
+<MemberInfo kind="property" type={`string`}   />
+
+Gets the invoked command name (could be an alias for message commands)
 ### options
 
 <MemberInfo kind="property" type={`<a href='/docs/api-reference/commandkit/types/command-context-options#commandcontextoptions'>CommandContextOptions</a>&#60;ExecutionMode&#62;`}   />
