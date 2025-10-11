@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## AppCommandHandler
 
-<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="195" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/app/handlers/AppCommandHandler.ts" sourceLine="194" packageName="commandkit" />
 
 Handles application commands for CommandKit, including loading, registration, and execution.
 Manages both slash commands and message commands with middleware support.
@@ -29,6 +29,7 @@ class AppCommandHandler {
     getCommandsArray() => ;
     registerCommandHandler() => ;
     prepareCommandRun(source: Interaction | Message, cmdName?: string) => Promise<PreparedAppCommandExecution | null>;
+    resolveMessageCommandName(name: string) => string;
     reloadCommands() => ;
     addExternalMiddleware(data: Middleware[]) => ;
     addExternalCommands(data: Command[]) => ;
@@ -86,6 +87,11 @@ Registers event handlers for Discord interactions and messages.
 <MemberInfo kind="method" type={`(source: Interaction | Message, cmdName?: string) => Promise&#60;<a href='/docs/api-reference/commandkit/interfaces/prepared-app-command-execution#preparedappcommandexecution'>PreparedAppCommandExecution</a> | null&#62;`}   />
 
 Prepares a command for execution by resolving the command and its middleware.
+### resolveMessageCommandName
+
+<MemberInfo kind="method" type={`(name: string) => string`}   />
+
+
 ### reloadCommands
 
 <MemberInfo kind="method" type={`() => `}   />
