@@ -2,18 +2,35 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+The following table lists the versions of our project that are currently supported with security updates.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.x   | :white_check_mark: |
-| < 1   | :x:                |
+| 1.x     | :white_check_mark: |
+| < 1.0   | :x:                |
+
+We strongly recommend keeping your installation up to date with the latest stable release to ensure you receive all security patches and improvements.
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+If you discover a security vulnerability, we greatly appreciate your help in responsibly disclosing it.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+To report a potential issue, please contact our security team at:
+
+📧 **[security@underctrl.io](mailto:security@underctrl.io)**
+
+When reporting, please include as much detail as possible:
+
+* Steps to reproduce the vulnerability
+* Potential impact or risk level
+* Any relevant code snippets or configurations
+
+You can expect:
+
+* **Initial acknowledgment** within **48 hours**
+* **Regular updates** (at least weekly) on the status of your report
+* **Notification** once the issue is verified, mitigated, or resolved
+
+If the vulnerability is confirmed, we will prioritize it for patching and release a fix as soon as possible. If it is not accepted as a valid security issue, we will explain our reasoning clearly.
+
+Thank you for helping us keep our project and community secure.
