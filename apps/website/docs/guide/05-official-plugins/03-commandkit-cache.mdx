@@ -207,7 +207,7 @@ Redis:
 ```ts title="commandkit.config.ts"
 import { defineConfig } from 'commandkit';
 import { cache, setCacheProvider } from '@commandkit/cache';
-import { RedisCache } from '@commandkit/redis';
+import { RedisCache } from '@commandkit/cache/redis';
 
 // Set up Redis as the cache provider
 setCacheProvider(
@@ -240,12 +240,3 @@ setInterval(
   24 * 60 * 60 * 1000,
 ); // Run daily
 ```
-
-:::tip
-
-The `@commandkit/cache` plugin works seamlessly with other CommandKit
-features and plugins. You can use it alongside the
-[`@commandkit/redis`](./07-commandkit-redis.mdx) plugin for
-distributed caching across multiple bot instances.
-
-:::

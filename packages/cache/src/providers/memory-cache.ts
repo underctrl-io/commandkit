@@ -1,4 +1,4 @@
-import { CacheEntry, CacheProvider } from './cache-provider';
+import { CacheEntry, CacheProvider } from '../cache-provider';
 
 /**
  * MemoryCache is an in-memory cache provider that implements the CacheProvider interface.

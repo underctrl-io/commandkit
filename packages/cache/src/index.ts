@@ -6,7 +6,7 @@ import { UseCacheDirectivePlugin } from './use-cache-directive';
 import { CachePlugin } from './cache-plugin';
 
 export * from './cache-provider';
-export * from './memory-cache';
+export * from './providers/memory-cache';
 export * from './use-cache';
 export * from './use-cache-directive';
 export * from './cache-plugin';

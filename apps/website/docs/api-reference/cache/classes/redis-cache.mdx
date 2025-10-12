@@ -13,7 +13,7 @@ import MemberDescription from '@site/src/components/MemberDescription';
 
 ## RedisCache
 
-<GenerationInfo sourceFile="packages/redis/src/cache-storage.ts" sourceLine="15" packageName="@commandkit/redis" />
+<GenerationInfo sourceFile="packages/cache/src/providers/redis.ts" sourceLine="16" packageName="@commandkit/cache" />
 
 A cache provider that uses Redis as the cache store.
 
@@ -23,7 +23,10 @@ A cache provider that uses Redis as the cache store.
 
 ```ts
 const redisCache = new RedisCache();
-setCacheProvider(redisCache);
+new CommandKit({
+...
+cacheProvider: redisCache,
+});
 ```
 
 ```ts title="Signature"
@@ -56,13 +59,13 @@ class RedisCache extends CacheProvider {
 
 ### serialize
 
-<MemberInfo kind="property" type={`<a href='/docs/api-reference/redis/types/serialize-function#serializefunction'>SerializeFunction</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/cache/types/serialize-function#serializefunction'>SerializeFunction</a>`}   />
 
 Serialize function used to serialize values before storing them in the cache.
 By default, it uses `JSON.stringify`.
 ### deserialize
 
-<MemberInfo kind="property" type={`<a href='/docs/api-reference/redis/types/deserialize-function#deserializefunction'>DeserializeFunction</a>`}   />
+<MemberInfo kind="property" type={`<a href='/docs/api-reference/cache/types/deserialize-function#deserializefunction'>DeserializeFunction</a>`}   />
 
 Deserialize function used to deserialize values before returning them from the cache.
 By default, it uses `JSON.parse`.
