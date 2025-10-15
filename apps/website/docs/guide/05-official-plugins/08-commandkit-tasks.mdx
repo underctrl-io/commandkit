@@ -130,29 +130,41 @@ const driver = new BullMQDriver({
 ### Environment-specific configuration
 
 ```ts
+import { COMMANDKIT_IS_DEV } from 'commandkit';
+import { defineConfig, noBuildOnly } from 'commandkit/config';
 import { tasks } from '@commandkit/tasks';
 import { SQLiteDriver } from '@commandkit/tasks/sqlite';
 import { BullMQDriver } from '@commandkit/tasks/bullmq';
 import { setDriver } from '@commandkit/tasks';
-import { COMMANDKIT_IS_DEV } from 'commandkit';
 
-// Choose driver based on environment
-if (COMMANDKIT_IS_DEV) {
-  setDriver(new SQLiteDriver('./tasks.db'));
-} else {
-  setDriver(
-    new BullMQDriver({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-    }),
-  );
-}
+// set up the driver in non-build processes only
+const setupDriver = noBuildOnly(() => {
+  // Choose driver based on environment
+  if (COMMANDKIT_IS_DEV) {
+    setDriver(new SQLiteDriver('./tasks.db'));
+  } else {
+    setDriver(
+      new BullMQDriver({
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379'),
+        password: process.env.REDIS_PASSWORD,
+      }),
+    );
+  }
+});
 
-export default {
+setupDriver();
+
+export default defineConfig({
   plugins: [tasks()],
-};
+});
 ```
+
+:::warning
+Avoid loading the code that keeps the event loop alive inside the build process.
+Otherwise the build command will never exit. Use the helper functions such as `buildOnly()` or `noBuildOnly()`
+to conditionally load the code in appropriate places.
+:::
 
 ## Creating your first task
 

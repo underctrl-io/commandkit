@@ -4,6 +4,7 @@ import {
   COMMANDKIT_CWD,
   COMMANDKIT_IS_CLI,
   COMMANDKIT_IS_DEV,
+  isBuildLikeEnvironment,
 } from './constants';
 import { getConfig } from '../config/config';
 
@@ -162,6 +163,50 @@ export function JsonSerialize<R = any>(value: any, defaultValue = {} as R): R {
 export function devOnly<T extends (...args: any[]) => any>(fn: T): T {
   const f = (...args: Parameters<T>) => {
     if (COMMANDKIT_IS_DEV) {
+      return fn(...args);
+    }
+  };
+
+  return f as T;
+}
+
+/**
+ * Creates a function from the given function that runs only in build mode.
+ * @param fn The function to run in build mode.
+ * @returns The function that runs only in build mode.
+ * @example
+ * ```ts
+ * const buildOnlyFn = buildOnly(() => {
+ *   console.log('This function runs only in build mode');
+ * });
+ * buildOnlyFn(); // This will log the message only in build mode
+ * ```
+ */
+export function buildOnly<T extends (...args: any[]) => any>(fn: T): T {
+  const f = (...args: Parameters<T>) => {
+    if (isBuildLikeEnvironment()) {
+      return fn(...args);
+    }
+  };
+
+  return f as T;
+}
+
+/**
+ * Creates a function from the given function that runs only outside of build mode.
+ * @param fn The function to run outside of build mode.
+ * @returns The function that runs only outside of build mode.
+ * @example
+ * ```ts
+ * const noBuildOnlyFn = noBuildOnly(() => {
+ *   console.log('This function runs only outside of build mode');
+ * });
+ * noBuildOnlyFn(); // This will log the message only outside of build mode
+ * ```
+ */
+export function noBuildOnly<T extends (...args: any[]) => any>(fn: T): T {
+  const f = (...args: Parameters<T>) => {
+    if (!isBuildLikeEnvironment()) {
       return fn(...args);
     }
   };

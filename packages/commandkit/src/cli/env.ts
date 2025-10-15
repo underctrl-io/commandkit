@@ -6,6 +6,8 @@ export function DevEnv(_static = false) {
   const common = {
     NODE_ENV: 'development',
     COMMANDKIT_IS_DEV: 'true',
+    COMMANDKIT_INTERNAL_IS_CLI_PROCESS: 'false',
+    COMMANDKIT_IS_BUILD: 'false',
   };
 
   if (_static) return Object.assign({}, common);
@@ -21,6 +23,8 @@ export function ProdEnv(_static = false) {
   const common = {
     NODE_ENV: 'production',
     COMMANDKIT_IS_DEV: 'false',
+    COMMANDKIT_INTERNAL_IS_CLI_PROCESS: 'false',
+    COMMANDKIT_IS_BUILD: 'false',
   };
 
   if (_static) return Object.assign({}, common);

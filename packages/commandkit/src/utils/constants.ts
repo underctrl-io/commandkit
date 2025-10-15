@@ -19,6 +19,18 @@ export const COMMANDKIT_IS_CLI = process.env.COMMANDKIT_IS_CLI === 'true';
 export const COMMANDKIT_IS_TEST = process.env.COMMANDKIT_IS_TEST === 'true';
 
 /**
+ * Indicates that CommandKit is running in a build-like environment.
+ * @private
+ * @internal
+ */
+export function isBuildLikeEnvironment() {
+  const isCLI = process.env.COMMANDKIT_INTERNAL_IS_CLI_PROCESS === 'true';
+  if (isCLI) return true;
+
+  return process.env.COMMANDKIT_IS_BUILD === 'true';
+}
+
+/**
  * The current bootstrap mode of CommandKit.
  * This can be 'development' or 'production'.
  */

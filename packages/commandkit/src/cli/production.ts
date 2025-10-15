@@ -32,6 +32,8 @@ export async function bootstrapProductionServer(configPath?: string) {
  */
 export async function createProductionBuild(configPath?: string) {
   process.env.COMMANDKIT_BOOTSTRAP_MODE = 'production';
+  process.env.COMMANDKIT_INTERNAL_IS_CLI_PROCESS = 'true';
+  process.env.COMMANDKIT_IS_BUILD ??= 'true';
   const cwd = configPath || COMMANDKIT_CWD;
   const config = await loadConfigFile(cwd);
 

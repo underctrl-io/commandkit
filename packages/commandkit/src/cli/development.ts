@@ -54,6 +54,7 @@ const isEventSource = (p: string) =>
  */
 export async function bootstrapDevelopmentServer(configPath?: string) {
   process.env.COMMANDKIT_BOOTSTRAP_MODE = 'development';
+  process.env.COMMANDKIT_INTERNAL_IS_CLI_PROCESS = 'true';
   const start = performance.now();
   const cwd = configPath || COMMANDKIT_CWD;
   const configPaths = getPossibleConfigPaths(cwd);
