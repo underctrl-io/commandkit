@@ -7,6 +7,20 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./redis": {
+      "import": "./dist/providers/redis.js",
+      "types": "./dist/providers/redis.d.ts"
+    },
+    "./memory-cache": {
+      "import": "./dist/providers/memory-cache.js",
+      "types": "./dist/providers/memory-cache.d.ts"
+    }
+  },
   "scripts": {
     "check-types": "tsc --noEmit",
     "build": "tsc"
@@ -34,6 +48,7 @@
   "devDependencies": {
     "@types/ms": "^2.0.0",
     "commandkit": "workspace:*",
+    "ioredis": "^5.8.1",
     "tsconfig": "workspace:*",
     "typescript": "catalog:build"
   },

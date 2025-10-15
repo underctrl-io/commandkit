@@ -6,7 +6,6 @@ import {
   getCommandKit,
 } from 'commandkit';
 import { AnalyticsEvents } from 'commandkit/analytics';
-import { randomUUID } from 'node:crypto';
 import ms, { type StringValue } from 'ms';
 import { getCacheProvider } from './cache-plugin';
 import { createHash } from './utils';
@@ -18,17 +17,11 @@ const fnStore = new Map<
     key: string;
     hash: string;
     ttl?: number;
-    original: GenericFunction;
-    memo: GenericFunction;
     tags: Set<string>;
     lastAccess: number;
   }
 >();
-const CACHE_FN_ID = `__cache_fn_id_${Date.now()}__${Math.random()}__`;
 const CACHED_FN_SYMBOL = Symbol('commandkit.cache.sentinel');
-
-// WeakMap to store function metadata without preventing garbage collection
-const fnMetadata = new WeakMap<GenericFunction, string>();
 
 /**
  * Context for managing cache operations within an async scope
@@ -68,40 +61,19 @@ export interface CacheMetadata {
  * }
  * ```
  */
-function useCache<R extends any[], F extends AsyncFunction<R>>(
-  fn: F,
-  id?: string,
-  params?: CacheMetadata,
-): F {
-  const isLocal = id === CACHE_FN_ID;
-
-  if (id && !isLocal) {
-    throw new Error('Illegal use of cache function.');
-  }
-
-  // Get or create function metadata
-  let metadata = fnMetadata.get(fn);
-  if (!metadata) {
-    metadata = randomUUID();
-    fnMetadata.set(fn, metadata);
-  }
+function useCache<R extends any[], F extends AsyncFunction<R>>(fn: F): F {
+  // assign unique id to the function to avoid collisions with other functions
+  const metadata = crypto.randomUUID();
 
   const memo = (async (...args) => {
     const analytics = getCommandKit()?.analytics;
     const keyHash = createHash(metadata, args);
 
-    const resolvedTTL =
-      isLocal && params?.ttl != null
-        ? typeof params.ttl === 'string'
-          ? ms(params.ttl as StringValue)
-          : params.ttl
-        : null;
-
     return cacheContext.run(
       {
         params: {
-          ttl: resolvedTTL,
-          tags: new Set(params?.tags ?? []),
+          ttl: null,
+          tags: new Set(),
         },
       },
       async () => {
@@ -151,8 +123,6 @@ function useCache<R extends any[], F extends AsyncFunction<R>>(
             key: keyHash,
             hash: keyHash,
             ttl: ttl ?? undefined,
-            original: fn,
-            memo,
             tags: context.params.tags,
             lastAccess: Date.now(),
           });

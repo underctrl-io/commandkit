@@ -30,6 +30,7 @@ export {
   debounce,
   defer,
 } from './utils/utilities';
+export { warnDeprecated, emitWarning, warnUnstable } from './utils/warning';
 export { toFileURL } from './utils/resolve-file-url';
 export * from './app/interrupt/signals';
 export type { CommandKitHMREvent } from './utils/dev-hooks';

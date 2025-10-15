@@ -24,7 +24,7 @@ Next, you can define advanced configurations for the plugin if needed. For examp
 
 ```ts
 import { setCacheProvider } from '@commandkit/cache';
-import { RedisCache } from '@commandkit/redis';
+import { RedisCache } from '@commandkit/cache/providers/redis';
 
 setCacheProvider(new RedisCache({...}));
 ```

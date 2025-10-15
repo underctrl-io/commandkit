@@ -10,6 +10,9 @@ npm install @commandkit/redis
 
 ## Usage
 
+> [!WARNING]
+> `RedisCache` from `@commandkit/redis` is deprecated. Import `RedisCache` from `@commandkit/cache/redis` instead.
+
 This package provides a commandkit plugin that automatically registers the cache provider with the commandkit instance.
 
 ```js

@@ -1,6 +1,6 @@
 import { Logger, RuntimePlugin } from 'commandkit';
 import type { CacheProvider } from './cache-provider';
-import { MemoryCache } from './memory-cache';
+import { MemoryCache } from './providers/memory-cache';
 
 let cacheProvider: CacheProvider | null = null;
 

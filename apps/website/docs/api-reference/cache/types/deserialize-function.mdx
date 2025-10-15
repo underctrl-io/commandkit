@@ -1,5 +1,5 @@
 ---
-title: "SerializeFunction"
+title: "DeserializeFunction"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,12 +11,12 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## SerializeFunction
+## DeserializeFunction
 
-<GenerationInfo sourceFile="packages/redis/src/cache-storage.ts" sourceLine="6" packageName="@commandkit/redis" />
+<GenerationInfo sourceFile="packages/cache/src/providers/redis.ts" sourceLine="6" packageName="@commandkit/cache" />
 
 
 
 ```ts title="Signature"
-type SerializeFunction = (value: any) => Awaitable<string>
+type DeserializeFunction = (value: string) => Awaitable<any>
 ```
