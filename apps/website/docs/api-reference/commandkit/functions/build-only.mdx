@@ -1,5 +1,5 @@
 ---
-title: "DevOnly"
+title: "BuildOnly"
 isDefaultIndex: false
 generated: true
 ---
@@ -11,25 +11,25 @@ import MemberDescription from '@site/src/components/MemberDescription';
 <!-- This file was generated from the CommandKit source. Do not modify. Instead, re-run the "docgen" script -->
 
 
-## devOnly
+## buildOnly
 
-<GenerationInfo sourceFile="packages/commandkit/src/utils/utilities.ts" sourceLine="163" packageName="commandkit" />
+<GenerationInfo sourceFile="packages/commandkit/src/utils/utilities.ts" sourceLine="185" packageName="commandkit" />
 
-Creates a function from the given function that runs only in development mode.
+Creates a function from the given function that runs only in build mode.
 
 
 
 *Example*
 
 ```ts
-const devOnlyFn = devOnly(() => {
-  console.log('This function runs only in development mode');
+const buildOnlyFn = buildOnly(() => {
+  console.log('This function runs only in build mode');
 });
-devOnlyFn(); // This will log the message only in development mode
+buildOnlyFn(); // This will log the message only in build mode
 ```
 
 ```ts title="Signature"
-function devOnly<T extends (...args: any[]) => any>(fn: T): T
+function buildOnly<T extends (...args: any[]) => any>(fn: T): T
 ```
 Parameters
 
