@@ -76,7 +76,7 @@ the `beforeExecute` function.
 <Tabs>
   <TabItem value="ts" label="TypeScript" default>
     ```ts title="src/app/commands/+middleware.ts"
-    import type { MiddlewareContext, stopMiddlewares } from 'commandkit';
+    import { type MiddlewareContext, stopMiddlewares } from 'commandkit';
 
     export function beforeExecute(ctx: MiddlewareContext) {
       if (ctx.interaction.user.id !== '1234567890') {
@@ -138,7 +138,7 @@ instance of the `CommandKitErrorCodes.StopMiddlewares` error.
 <Tabs>
   <TabItem value="ts" label="TypeScript" default>
     ```ts title="src/app/commands/+middleware.ts"
-    import type { MiddlewareContext, stopMiddlewares } from 'commandkit';
+    import { type MiddlewareContext, stopMiddlewares } from 'commandkit';
 
     export function beforeExecute(ctx: MiddlewareContext) {
       try {
