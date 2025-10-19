@@ -1,0 +1,22 @@
+{
+  "name": "commandkit-without-cli",
+  "description": "A CommandKit project without using the CLI",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "cross-env COMMANDKIT_IS_CLI=true node .",
+    "format": "prettier --write \"src/**/*.{js,ts}\""
+  },
+  "dependencies": {
+    "commandkit": "^1.2.0-rc.12",
+    "discord.js": "^14.23.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.3",
+    "cross-env": "^10.0.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
+  }
+}

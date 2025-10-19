@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "commandkit"
+  },
+  "nodeModulesDir": "auto",
+  "lock": true,
+  "lint": {
+    "include": ["src/"],
+    "exclude": ["node_modules/", "dist/", ".commandkit/"]
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 120,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": true,
+    "include": ["src/"],
+    "exclude": ["node_modules/", "dist/", ".commandkit/"]
+  }
+}
