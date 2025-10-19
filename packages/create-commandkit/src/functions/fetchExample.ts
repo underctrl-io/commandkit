@@ -79,7 +79,7 @@ export async function fetchExample({
         error.message.includes('404')
       ) {
         throw new Error(
-          `Example '${example}' not found. Available examples: basic-ts, basic-js, with-database, with-i18n`,
+          `Example '${example}' not found. Available examples: basic-ts, basic-js, deno-ts, without-cli`,
         );
       }
       throw new Error(`Failed to fetch example: ${error.message}`);

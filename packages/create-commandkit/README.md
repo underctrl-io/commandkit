@@ -77,8 +77,8 @@ npx create-commandkit@latest --example "https://github.com/user/repo" --example-
 ### Examples
 
 ```sh
-# Create a bot with database example, skip installation
-npx create-commandkit@latest --example with-database --skip-install
+# Create a basic TypeScript bot, skip installation
+npx create-commandkit@latest --example basic-ts --skip-install
 
 # Create a bot with all defaults (no prompts)
 npx create-commandkit@latest --yes

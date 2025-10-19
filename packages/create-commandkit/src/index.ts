@@ -49,7 +49,7 @@ Options:
 Examples:
   npx create-commandkit@latest
   npx create-commandkit@latest my-bot
-  npx create-commandkit@latest --example with-database
+  npx create-commandkit@latest --example basic-ts
   npx create-commandkit@latest --example "https://github.com/user/repo" --example-path "examples/bot"
   npx create-commandkit@latest --use-pnpm --yes
   npx create-commandkit@latest --list-examples
@@ -83,9 +83,7 @@ Examples:
         ),
       );
       console.log(
-        colors.gray(
-          'Example: npx create-commandkit@latest --example with-database',
-        ),
+        colors.gray('Example: npx create-commandkit@latest --example basic-ts'),
       );
     } catch (error) {
       console.error(
