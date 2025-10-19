@@ -1,18 +1,9 @@
-import fs from 'fs-extra';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import type { PackageManager } from './types';
+import type { CLIOptions, PackageManager } from './types';
 
 export const textColors = {
   commandkit: ['#fdba74', '#e4a5a2', '#c288de', '#b27bf9'],
   js: ['#f7e01c', '#f7e01c'],
   ts: ['#2480c5', '#2480c5'],
-};
-
-export const commands = {
-  init: {
-    yarn: 'yarn set version stable; yarn config set nodeLinker node-modules;',
-  },
 };
 
 export function detectPackageManager(): PackageManager {
@@ -27,26 +18,124 @@ export function detectPackageManager(): PackageManager {
   return 'npm';
 }
 
-export function getCommandKitVersion(): string {
-  try {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
+export function getPackageManagerFromCLI(options: {
+  useNpm?: boolean;
+  usePnpm?: boolean;
+  useYarn?: boolean;
+  useBun?: boolean;
+  useDeno?: boolean;
+}): PackageManager | null {
+  if (options.useNpm) return 'npm';
+  if (options.usePnpm) return 'pnpm';
+  if (options.useYarn) return 'yarn';
+  if (options.useBun) return 'bun';
+  if (options.useDeno) return 'deno';
 
-    const packageJsonPath = path.resolve(__dirname, '..', 'package.json');
-    const packageJson = fs.readJsonSync(packageJsonPath);
-    const currentVersion = packageJson.version as string;
+  return null;
+}
 
-    if (currentVersion.includes('dev.')) {
-      return '@dev';
-    } else if (currentVersion.includes('rc.')) {
-      return '@next';
-    } else {
-      return '@latest';
+export function resolvePackageManager(cliOptions: {
+  useNpm?: boolean;
+  usePnpm?: boolean;
+  useYarn?: boolean;
+  useBun?: boolean;
+  useDeno?: boolean;
+}): PackageManager {
+  const cliManager = getPackageManagerFromCLI(cliOptions);
+  return cliManager || detectPackageManager();
+}
+
+export function getDefaultExample(cliOptions: CLIOptions): string {
+  if (cliOptions.useDeno) {
+    return 'deno-ts';
+  }
+
+  return 'basic-ts';
+}
+
+export function isOfficialExample(example: string): boolean {
+  // Check if it's a GitHub URL pointing to underctrl-io/commandkit
+  if (example.startsWith('http://') || example.startsWith('https://')) {
+    try {
+      const url = new URL(example);
+      return (
+        url.hostname === 'github.com' &&
+        url.pathname.startsWith('/underctrl-io/commandkit')
+      );
+    } catch {
+      return false;
     }
-  } catch (error) {
-    console.warn(
-      'Could not determine create-commandkit version, defaulting to commandkit@latest',
+  }
+
+  // If it's just an example name, it's official
+  return true;
+}
+
+export function getInstallCommand(
+  manager: PackageManager,
+  deps: string[],
+  dev = false,
+): string {
+  switch (manager) {
+    case 'npm':
+    case 'pnpm':
+    case 'yarn':
+    case 'bun':
+      return `${manager} add ${dev ? '-D' : ''} ${deps.join(' ')}`;
+    case 'deno':
+      return `deno add ${dev ? '--dev' : ''} ${deps.map((d) => `npm:${d}`).join(' ')}`;
+    default:
+      return manager satisfies never;
+  }
+}
+
+export async function fetchAvailableExamples(): Promise<string[]> {
+  let controller: AbortController | null = null;
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  try {
+    controller = new AbortController();
+    timeoutId = setTimeout(() => controller!.abort(), 10000); // 10 second timeout
+
+    const response = await fetch(
+      'https://api.github.com/repos/underctrl-io/commandkit/contents/examples',
+      {
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'create-commandkit',
+        },
+      },
     );
-    return '@latest';
+
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status}`);
+    }
+
+    const data = (await response.json()) as Array<{
+      name: string;
+      type: string;
+    }>;
+
+    // Filter for directories only and return their names
+    return data
+      .filter((item) => item.type === 'dir')
+      .map((item) => item.name)
+      .sort();
+  } catch (error) {
+    // Clean up on error
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    if (controller) {
+      controller.abort();
+    }
+
+    // Fallback to few known examples if API fails
+    return ['basic-ts', 'basic-js', 'deno-ts', 'without-cli'];
   }
 }

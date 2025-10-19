@@ -1,0 +1,21 @@
+{
+  "name": "commandkit-basic-js",
+  "description": "A CommandKit project using JavaScript",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "commandkit dev",
+    "build": "commandkit build",
+    "start": "commandkit start"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "commandkit": "^1.2.0-rc.12",
+    "discord.js": "^14.23.2"
+  }
+}
