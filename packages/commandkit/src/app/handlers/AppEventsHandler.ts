@@ -167,10 +167,18 @@ export class AppEventsHandler {
       const onListeners = listeners.filter((listener) => !listener.once);
 
       // Further separate into parallel and sequential groups
-      const onParallelListeners = onListeners.filter((listener) => listener.parallel);
-      const onSequentialListeners = onListeners.filter((listener) => !listener.parallel);
-      const onceParallelListeners = onceListeners.filter((listener) => listener.parallel);
-      const onceSequentialListeners = onceListeners.filter((listener) => !listener.parallel);
+      const onParallelListeners = onListeners.filter(
+        (listener) => listener.parallel,
+      );
+      const onSequentialListeners = onListeners.filter(
+        (listener) => !listener.parallel,
+      );
+      const onceParallelListeners = onceListeners.filter(
+        (listener) => listener.parallel,
+      );
+      const onceSequentialListeners = onceListeners.filter(
+        (listener) => !listener.parallel,
+      );
 
       // Initialize set to track executed once listeners
       const executedOnceListeners = new Set<ListenerFunction>();
