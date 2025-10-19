@@ -2,7 +2,6 @@ export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun' | 'deno';
 
 export interface CLIOptions {
   help?: boolean;
-  version?: boolean;
   example?: string;
   examplePath?: string;
   useNpm?: boolean;

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-console.clear();
 
 import { confirm, intro, outro, password, text } from '@clack/prompts';
 import fs from 'fs-extra';
@@ -34,7 +33,7 @@ Usage: create-commandkit [options] [project-directory]
 
 Options:
   -h, --help                    Show all available options
-  -v, --version                 Output the version number
+  -V, --version                 Output the version number
   -e, --example <name-or-url>  An example to bootstrap the app with
   --example-path <path>        Specify the path to the example separately
   --use-npm                    Explicitly tell the CLI to bootstrap using npm
@@ -55,11 +54,6 @@ Examples:
   npx create-commandkit@latest --use-pnpm --yes
   npx create-commandkit@latest --list-examples
 `);
-    process.exit(0);
-  }
-
-  if (cliOptions.version) {
-    console.log(process.env.npm_package_version || '1.0.0');
     process.exit(0);
   }
 

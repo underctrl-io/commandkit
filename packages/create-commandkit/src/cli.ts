@@ -10,7 +10,6 @@ export function parseCLI(): CLIOptions {
     .version(process.env.npm_package_version || '1.0.0')
     .argument('[project-directory]', 'Project directory name')
     .option('-h, --help', 'Show all available options')
-    .option('-v, --version', 'Output the version number')
     .option(
       '-e, --example <name-or-url>',
       'An example to bootstrap the app with',
@@ -42,7 +41,6 @@ export function parseCLI(): CLIOptions {
 
   return {
     help: options.help,
-    version: options.version,
     example: options.example,
     examplePath: options.examplePath,
     useNpm: options.useNpm,

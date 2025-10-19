@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'node:path';
 // @ts-ignore
-import { tiged } from 'tiged';
+import tiged from 'tiged';
 import { validateExampleName } from './validate.js';
 
 export interface FetchExampleOptions {

@@ -52,7 +52,7 @@ npx create-commandkit@latest --example "https://github.com/user/repo" --example-
 ### CLI Options
 
 - `-h, --help` - Show all available options
-- `-v, --version` - Output the version number
+- `-V, --version` - Output the version number
 - `-e, --example <name-or-url>` - An example to bootstrap the app with
 - `--example-path <path>` - Specify the path to the example separately
 - `--use-npm` - Use npm as package manager
