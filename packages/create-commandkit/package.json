@@ -18,8 +18,7 @@
     "commands"
   ],
   "files": [
-    "dist",
-    "templates"
+    "dist"
   ],
   "repository": {
     "type": "git",
