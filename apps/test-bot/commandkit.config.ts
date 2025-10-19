@@ -3,15 +3,16 @@ import { i18n } from '@commandkit/i18n';
 import { devtools } from '@commandkit/devtools';
 import { cache } from '@commandkit/cache';
 import { ai } from '@commandkit/ai';
-import { tasks } from '@commandkit/tasks';
+import { tasks, setDriver } from '@commandkit/tasks';
+import { BullMQDriver } from '@commandkit/tasks/bullmq';
 
-const setup = noBuildOnly(() => {
-  setInterval(() => {
-    console.log(`Hello from ${process.pid}`);
-  }, 1000);
-});
-
-setup();
+noBuildOnly(() => {
+  setDriver(
+    new BullMQDriver({
+      maxRetriesPerRequest: null,
+    }),
+  );
+})();
 
 export default defineConfig({
   plugins: [
@@ -20,8 +21,7 @@ export default defineConfig({
     cache(),
     ai(),
     tasks({
-      initializeDefaultDriver: true,
-      sqliteDriverDatabasePath: './tasks.db',
+      initializeDefaultDriver: false,
     }),
   ],
 });
