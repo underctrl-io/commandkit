@@ -1,0 +1,267 @@
+---
+title: Using CLI API
+description: Learn how to use the CommandKit CLI API for advanced use cases
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `commandkit/cli` module provides programmatic access to CommandKit's CLI functionality. This API is **not recommended for normal use cases** but can be useful in specific situations where you need to integrate CommandKit's build and development processes into custom tooling or scripts.
+
+:::warning Advanced Usage Only
+This API is intended for advanced users who need to integrate CommandKit into custom build systems or development workflows. For most users, the standard CLI commands (`commandkit dev`, `commandkit build`, etc.) should be sufficient.
+:::
+
+## Installation
+
+The CLI API is available as part of the main CommandKit package:
+
+```sh npm2yarn
+npm install commandkit@next
+```
+
+## Available Modules
+
+The CLI API is organized into several modules, each providing specific functionality:
+
+### Development Module
+
+The `development` module provides functions for running CommandKit in development mode with hot module reloading.
+
+```ts
+import { development } from 'commandkit/cli';
+
+// Bootstrap development server
+const devServer = await development.bootstrapDevelopmentServer(
+  './commandkit.config.ts',
+);
+
+// Access the development server instance
+const watcher = devServer.watcher;
+const process = devServer.getProcess();
+```
+
+**Key Functions:**
+
+- `bootstrapDevelopmentServer(configPath?: string)` - Starts the development server with file watching and HMR
+
+### Production Module
+
+The `production` module handles production builds and server startup.
+
+```ts
+import { production } from 'commandkit/cli';
+
+// Create a production build
+await production.createProductionBuild('./commandkit.config.ts');
+
+// Start production server
+const server = await production.bootstrapProductionServer(
+  './commandkit.config.ts',
+);
+```
+
+**Key Functions:**
+
+- `createProductionBuild(configPath?: string)` - Creates an optimized production build
+- `bootstrapProductionServer(configPath?: string)` - Starts the production server
+
+### Environment Module
+
+The `env` module provides environment configuration utilities.
+
+```ts
+import { env } from 'commandkit/cli';
+
+// Get development environment variables
+const devEnv = env.DevEnv();
+
+// Get production environment variables
+const prodEnv = env.ProdEnv();
+
+// Set CLI environment flag
+env.setCLIEnv();
+```
+
+**Key Functions:**
+
+- `DevEnv(static?: boolean)` - Returns development environment variables
+- `ProdEnv(static?: boolean)` - Returns production environment variables
+- `setCLIEnv()` - Sets the CLI environment flag
+
+### CLI Module
+
+The `cli` module provides the main CLI bootstrap functionality.
+
+```ts
+import { cli } from 'commandkit/cli';
+
+// Bootstrap the CLI with custom arguments
+await cli.bootstrapCommandkitCLI(['dev', '--config', './custom.config.ts']);
+```
+
+**Key Functions:**
+
+- `bootstrapCommandkitCLI(argv: string[], options?: ParseOptions)` - Bootstraps the CLI with custom arguments
+
+### Compiler Module
+
+The `compiler` module handles application building and compilation.
+
+```ts
+import { compiler } from 'commandkit/cli';
+
+// Build application with custom options
+await compiler.buildApplication({
+  configPath: './commandkit.config.ts',
+  isDev: false,
+  plugins: [],
+  rolldownPlugins: [],
+});
+```
+
+**Key Functions:**
+
+- `buildApplication(options: ApplicationBuildOptions)` - Builds the application with custom options
+
+### App Process Module
+
+The `appProcess` module manages child processes for running applications.
+
+```ts
+import { appProcess } from 'commandkit/cli';
+
+// Create a new app process
+const process = appProcess.createAppProcess(
+  './dist/index.js',
+  process.cwd(),
+  false, // isDev
+);
+```
+
+**Key Functions:**
+
+- `createAppProcess(fileName: string, cwd: string, isDev: boolean)` - Creates a new application process
+
+### Type Checker Module
+
+The `typeChecker` module provides TypeScript type checking functionality.
+
+```ts
+import { typeChecker } from 'commandkit/cli';
+
+// Perform type checking
+await typeChecker.performTypeCheck('./src');
+```
+
+**Key Functions:**
+
+- `performTypeCheck(path: string)` - Performs TypeScript type checking on the specified path
+
+### Utilities Module
+
+The `utilities` module provides common utility functions used throughout the CLI.
+
+```ts
+import { utilities } from 'commandkit/cli';
+
+// Find entrypoint file
+const entrypoint = utilities.findEntrypoint('./dist');
+
+// Write to stdout
+utilities.write('Hello, World!');
+
+// Panic with error message
+utilities.panic('Something went wrong!');
+```
+
+**Key Functions:**
+
+- `findEntrypoint(dir: string)` - Finds the entrypoint file in a directory
+- `write(message: any)` - Writes a message to stdout
+- `panic(message: any)` - Exits the process with an error message
+- `loadTypeScript(errorMessage?: string)` - Loads TypeScript dynamically
+- `loadConfigFileFromPath(target: string)` - Loads configuration from a specific path
+
+## Example: Custom Build Script
+
+Here's an example of how you might use the CLI API to create a custom build script:
+
+```ts
+import { production, compiler, typeChecker } from 'commandkit/cli';
+
+async function customBuild() {
+  const configPath = './commandkit.config.ts';
+
+  try {
+    // Perform type checking first
+    await typeChecker.performTypeCheck('./src');
+
+    // Create production build
+    await production.createProductionBuild(configPath);
+
+    // Additional custom build steps
+    console.log('Custom build completed successfully!');
+  } catch (error) {
+    console.error('Build failed:', error);
+    process.exit(1);
+  }
+}
+
+customBuild();
+```
+
+## Example: Custom Development Server
+
+Here's an example of creating a custom development server with additional functionality:
+
+```ts
+import { development, env } from 'commandkit/cli';
+
+async function customDevServer() {
+  // Set custom environment variables
+  process.env.CUSTOM_DEV_FLAG = 'true';
+
+  // Bootstrap development server
+  const devServer = await development.bootstrapDevelopmentServer(
+    './commandkit.config.ts',
+  );
+
+  // Add custom file watchers
+  devServer.watcher.on('change', (path) => {
+    console.log(`File changed: ${path}`);
+    // Custom logic here
+  });
+
+  // Access the running process
+  const process = devServer.getProcess();
+
+  return devServer;
+}
+
+customDevServer();
+```
+
+## Important Notes
+
+1. **Internal API**: These functions are marked as `@private` and `@internal`, meaning they may change without notice in future versions.
+
+2. **Error Handling**: Always wrap CLI API calls in try-catch blocks as they may throw errors.
+
+3. **Process Management**: When using `createAppProcess`, make sure to properly manage the returned child process.
+
+4. **Configuration**: Most functions accept an optional `configPath` parameter. If not provided, they will look for configuration files in the current working directory.
+
+5. **Environment Variables**: The environment modules provide pre-configured environment variables for development and production modes.
+
+## When to Use the CLI API
+
+Consider using the CLI API when you need to:
+
+- Integrate CommandKit into existing build systems
+- Create custom development workflows
+- Build tooling that wraps CommandKit functionality
+- Implement custom file watching or hot reloading (though we recommend using the plugins api for this)
+- Create automated deployment scripts
+
+For most use cases, the standard CLI commands should be sufficient and are the recommended approach.

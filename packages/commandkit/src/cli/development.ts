@@ -241,4 +241,14 @@ ${colors.yellowBright('re')} - Reload all events`);
   console.log(
     `\n${colors.greenBright('Development mode compilation took')} ${colors.yellowBright(`${(buildEnd - buildStart).toFixed(2)}ms`)}\n`,
   );
+
+  return {
+    watcher,
+    isConfigUpdate,
+    performHMR,
+    hmrHandler,
+    sendHmrEvent,
+    getProcess: () => ps,
+    buildAndStart,
+  };
 }

@@ -46,7 +46,9 @@
     "./mutex.cjs",
     "./mutex.d.ts",
     "./kv.cjs",
-    "./kv.d.ts"
+    "./kv.d.ts",
+    "./cli.cjs",
+    "./cli.d.ts"
   ],
   "exports": {
     ".": {
@@ -143,6 +145,11 @@
       "require": "./semaphore.cjs",
       "import": "./semaphore.cjs",
       "types": "./semaphore.d.ts"
+    },
+    "./cli": {
+      "require": "./cli.cjs",
+      "import": "./cli.cjs",
+      "types": "./cli.d.ts"
     }
   },
   "scripts": {

@@ -25,6 +25,6 @@ commandkit.setPrefixResolver((message) => {
   ];
 });
 
-console.dir({ importedConfig: config }, { depth: null });
+Logger.info`Imported JSON file: ${config}`;
 
 export default client;
