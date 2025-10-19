@@ -144,5 +144,10 @@ export async function fetchAvailableExamples(): Promise<string[]> {
 }
 
 export function isDenoProject(example: string): boolean {
+  const isOfficial = isOfficialExample(example);
+  // if it's not an official example, we can assume it's not a Deno project
+  // the user may use --use-deno to force a Deno project
+  if (!isOfficial) return false;
+
   return example.startsWith('deno-') || example.startsWith('with-deno-');
 }
