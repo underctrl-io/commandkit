@@ -34,15 +34,18 @@ export function getPackageManagerFromCLI(options: {
   return null;
 }
 
-export function resolvePackageManager(cliOptions: {
-  useNpm?: boolean;
-  usePnpm?: boolean;
-  useYarn?: boolean;
-  useBun?: boolean;
-  useDeno?: boolean;
-}): PackageManager {
+export function resolvePackageManager(
+  cliOptions: {
+    useNpm?: boolean;
+    usePnpm?: boolean;
+    useYarn?: boolean;
+    useBun?: boolean;
+    useDeno?: boolean;
+  },
+  name: string,
+): PackageManager {
   const cliManager = getPackageManagerFromCLI(cliOptions);
-  return cliManager || detectPackageManager();
+  return cliManager || (isDenoProject(name) ? 'deno' : detectPackageManager());
 }
 
 export function getDefaultExample(cliOptions: CLIOptions): string {
@@ -138,4 +141,8 @@ export async function fetchAvailableExamples(): Promise<string[]> {
     // Fallback to few known examples if API fails
     return ['basic-ts', 'basic-js', 'deno-ts', 'without-cli'];
   }
+}
+
+export function isDenoProject(example: string): boolean {
+  return example.startsWith('deno-') || example.startsWith('with-deno-');
 }

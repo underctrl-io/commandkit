@@ -132,9 +132,6 @@ Examples:
     process.exit(1);
   }
 
-  // Determine package manager
-  const manager = resolvePackageManager(cliOptions);
-
   // Get Discord token
   let token: string;
   if (cliOptions.yes) {
@@ -158,9 +155,13 @@ Examples:
 
   outro(colors.cyan('Setup complete.'));
 
+  const example = cliOptions.example || getDefaultExample(cliOptions);
+
+  // Determine package manager
+  const manager = resolvePackageManager(cliOptions, example);
+
   // Fetch example from GitHub
   try {
-    const example = cliOptions.example || getDefaultExample(cliOptions);
     await fetchExample({
       example,
       examplePath: cliOptions.examplePath,
