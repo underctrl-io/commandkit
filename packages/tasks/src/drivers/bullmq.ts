@@ -80,9 +80,8 @@ export class BullMQDriver implements TaskDriver {
    * @returns A unique job identifier
    */
   public async create(task: TaskData): Promise<string> {
-    const jobId = crypto.randomUUID();
+    const taskId = `${task.name}-${typeof task.schedule === 'string' ? 'scheduled' : 'delayed'}`;
     const job = await this.queue.add(task.name, task.data, {
-      jobId,
       ...(typeof task.schedule === 'string'
         ? {
             repeat: {
@@ -97,9 +96,14 @@ export class BullMQDriver implements TaskDriver {
                 ? task.schedule.getTime()
                 : task.schedule) - Date.now(),
           }),
+      jobId: taskId,
+      deduplication: {
+        id: taskId,
+        replace: true,
+      },
     });
 
-    return job.id ?? jobId;
+    return job.id ?? taskId;
   }
 
   /**
