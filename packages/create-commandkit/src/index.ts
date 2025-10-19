@@ -5,7 +5,7 @@ import { confirm, intro, outro, password, text } from '@clack/prompts';
 import fs from 'fs-extra';
 import gradient from 'gradient-string';
 import { execSync } from 'node:child_process';
-import path from 'node:path';
+import path, { join } from 'node:path';
 import colors from 'picocolors';
 
 import { parseCLI } from './cli.js';
@@ -22,6 +22,7 @@ import {
   resolvePackageManager,
   textColors,
 } from './utils.js';
+import { readFile } from 'node:fs/promises';
 
 async function main() {
   const cliOptions = parseCLI();
@@ -181,9 +182,28 @@ Examples:
       );
 
       try {
+        const tagMap = [
+          ['-dev.', 'dev'],
+          ['-rc.', 'next'],
+        ];
+
+        const tag = await readFile(
+          join(import.meta.dirname, '..', 'package.json'),
+          'utf-8',
+        )
+          .then((data) => {
+            const version = JSON.parse(data).version;
+
+            return (
+              tagMap.find(([suffix]) => version.includes(suffix))?.[1] ||
+              'latest'
+            );
+          })
+          .catch(() => 'latest');
+
         // Install dependencies
         const depsCommand = getInstallCommand(manager, [
-          'commandkit@rc',
+          `commandkit@${tag}`,
           'discord.js',
         ]);
         execSync(depsCommand, { cwd: projectDir, stdio: 'pipe' });
