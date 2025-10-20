@@ -1,0 +1,8 @@
+{
+  "$command": {
+    "name": "leaderboard",
+    "description": "Zeigt die Bestenliste des Servers"
+  },
+  "no_players": "Keine Spieler in der Bestenliste gefunden.",
+  "title": "Bestenliste 🏆"
+}

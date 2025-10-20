@@ -1,0 +1,35 @@
+{
+  "name": "leveling-bot",
+  "description": "A leveling bot for Discord using CommandKit.",
+  "version": "0.1.0",
+  "main": "./dist/index.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "commandkit dev",
+    "build": "commandkit build",
+    "start": "commandkit start",
+    "prepare": "prisma generate"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^22.15.18"
+  },
+  "peerDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@commandkit/analytics": "^1.2.0-rc.12",
+    "@commandkit/cache": "^1.2.0-rc.12",
+    "@commandkit/i18n": "^1.2.0-rc.12",
+    "@commandkit/redis": "^1.2.0-rc.12",
+    "@prisma/client": "^6.8.2",
+    "@umami/node": "^0.4.0",
+    "canvacord": "^6.0.2",
+    "commandkit": "^1.2.0-rc.12",
+    "discord.js": "^14.23.2",
+    "murmurhash": "^2.0.1",
+    "prisma": "^6.8.2",
+    "sharp": "^0.34.2"
+  }
+}
