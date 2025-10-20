@@ -32,6 +32,6 @@ declare module 'weather-js' {
 
   export function find(
     options: { search: string; degreeType: 'C' | 'F' },
-    callback: (err: Error | null, result: Weather[]) => void
+    callback: (err: Error | null, result: Weather[]) => void,
   ): void;
 }

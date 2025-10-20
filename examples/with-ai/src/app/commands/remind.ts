@@ -30,7 +30,7 @@ export const aiConfig = {
     time: z
       .string()
       .describe(
-        'The time to remind after. Example: 10s, 10m, 10h, 10d, 10w, 10y'
+        'The time to remind after. Example: 10s, 10m, 10h, 10d, 10w, 10y',
       ),
     message: z
       .string()
@@ -75,7 +75,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
   }
 
   await ctx.interaction.reply(
-    `Reminder set for <t:${Math.floor(timer! / 1000)}:R>`
+    `Reminder set for <t:${Math.floor(timer! / 1000)}:R>`,
   );
 };
 
@@ -102,7 +102,7 @@ export const message: MessageCommand = async (ctx) => {
   }
 
   await ctx.message.reply(
-    `Reminder set for <t:${Math.floor(timer! / 1000)}:R>`
+    `Reminder set for <t:${Math.floor(timer! / 1000)}:R>`,
   );
 };
 
@@ -125,7 +125,7 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
 
   return {
     success: `Reminder set for <t:${Math.floor(
-      timer! / 1000
+      timer! / 1000,
     )}:R>. Show this markdown to the user for live updates on discord.`,
   };
 };

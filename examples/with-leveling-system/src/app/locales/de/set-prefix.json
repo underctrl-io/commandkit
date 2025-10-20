@@ -1,7 +1,7 @@
 {
-    "$command": {
-        "name": "set-prefix",
-        "description": "Legt das Befehlspräfix des Servers fest"
-    },
-    "prefix_set": "Präfix auf `{{prefix}}` gesetzt"
+  "$command": {
+    "name": "set-prefix",
+    "description": "Legt das Befehlspräfix des Servers fest"
+  },
+  "prefix_set": "Präfix auf `{{prefix}}` gesetzt"
 }

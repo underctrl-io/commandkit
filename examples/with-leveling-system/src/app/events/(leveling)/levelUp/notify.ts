@@ -6,7 +6,7 @@ import { imageResponse } from './responses/_image.response';
 // this is a custom event that is triggered when a user levels up
 export default async function onLevelUp(
   message: Message<true>,
-  newLevel: number
+  newLevel: number,
 ) {
   const levelUpMessageType = await determineLevelUpMessageType();
 

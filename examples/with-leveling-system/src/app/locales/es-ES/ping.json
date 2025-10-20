@@ -1,7 +1,7 @@
 {
-    "$command": {
-        "name": "ping",
-        "description": "Haz ping al bot para comprobar si está en línea."
-    },
-    "pong": "Pong! Latencia: {{latency}}ms"
+  "$command": {
+    "name": "ping",
+    "description": "Haz ping al bot para comprobar si está en línea."
+  },
+  "pong": "Pong! Latencia: {{latency}}ms"
 }

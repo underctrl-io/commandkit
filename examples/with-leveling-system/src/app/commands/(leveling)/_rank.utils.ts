@@ -23,7 +23,7 @@ async function createRankCard(
     level: { xp: number; level: number };
     rank: number;
   },
-  target: User
+  target: User,
 ) {
   const { level, rank } = levelingData;
 
@@ -33,7 +33,7 @@ async function createRankCard(
         forceStatic: true,
         extension: 'png',
         size: 512,
-      })
+      }),
     )
     .setCurrentXP(level.xp)
     .setRequiredXP(LevelingModule.calculateLevelXP(level.level))

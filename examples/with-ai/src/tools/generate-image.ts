@@ -21,7 +21,7 @@ async function generateImage(prompt: string) {
 
   if (!response.ok) {
     throw new Error(
-      `Failed to generate image: ${response.status} ${response.statusText}`
+      `Failed to generate image: ${response.status} ${response.statusText}`,
     );
   }
 

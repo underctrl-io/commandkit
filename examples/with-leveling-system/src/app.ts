@@ -11,7 +11,7 @@ Font.loadDefault();
 
 // set the prefix resolver for message commands
 commandkit.setPrefixResolver((message) =>
-  message.inGuild() ? fetchGuildPrefix(message.guildId) : '!'
+  message.inGuild() ? fetchGuildPrefix(message.guildId) : '!',
 );
 
 setCacheProvider(new RedisCache(redis));

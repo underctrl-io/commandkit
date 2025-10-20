@@ -59,12 +59,12 @@ function Component({
 
 async function commonInteraction(
   interaction: ChatInputCommandInteraction | UserContextMenuCommandInteraction,
-  t: (key: string, params?: Record<string, string>) => string
+  t: (key: string, params?: Record<string, string>) => string,
 ) {
   const guildId = interaction.guildId!;
   const target = interaction.isUserContextMenuCommand()
     ? interaction.targetUser
-    : interaction.options.getUser('user', false) ?? interaction.user;
+    : (interaction.options.getUser('user', false) ?? interaction.user);
 
   if (target.bot) {
     await interaction.reply({

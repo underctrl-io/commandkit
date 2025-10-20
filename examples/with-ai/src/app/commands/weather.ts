@@ -6,7 +6,7 @@ import weather from 'weather-js';
 
 const findWeather = (
   location: string,
-  unit: 'C' | 'F'
+  unit: 'C' | 'F',
 ): Promise<weather.Weather> => {
   return new Promise((resolve, reject) => {
     weather.find({ search: location, degreeType: unit }, (err, result) => {
@@ -83,7 +83,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
           name: 'Wind Speed',
           value: weatherData.current.windspeed,
           inline: true,
-        }
+        },
       );
 
     // Add forecast information
@@ -91,7 +91,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
       .slice(0, 3)
       .map(
         (day) =>
-          `${day.shortday}: ${day.skytextday} (${day.low}°${unit} - ${day.high}°${unit})`
+          `${day.shortday}: ${day.skytextday} (${day.low}°${unit} - ${day.high}°${unit})`,
       )
       .join('\n');
 
@@ -109,7 +109,7 @@ export const chatInput: ChatInputCommand = async (ctx) => {
     await ctx.interaction.editReply({ embeds: [embed] });
   } catch (error) {
     await ctx.interaction.editReply(
-      'Could not find weather information for that location.'
+      'Could not find weather information for that location.',
     );
   }
 };
@@ -141,7 +141,7 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
           name: 'Wind Speed',
           value: weatherData.current.windspeed,
           inline: true,
-        }
+        },
       );
 
     // Add forecast information
@@ -149,7 +149,7 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
       .slice(0, 3)
       .map(
         (day) =>
-          `${day.shortday}: ${day.skytextday} (${day.low}°${unit} - ${day.high}°${unit})`
+          `${day.shortday}: ${day.skytextday} (${day.low}°${unit} - ${day.high}°${unit})`,
       )
       .join('\n');
 

@@ -44,7 +44,7 @@ const pollMediaObject = z
       .describe('An optional emoji associated with the poll question. Eg: 👍'),
   })
   .describe(
-    'An object representing the media for a poll question, containing the text of the question. Emoji cannot be used in question text.'
+    'An object representing the media for a poll question, containing the text of the question. Emoji cannot be used in question text.',
   );
 
 export const aiConfig = {

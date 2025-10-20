@@ -19,7 +19,7 @@ export default async function onMessageCreate(message: Message) {
 
   const rateLimited = await isRateLimited(
     `xp_ratelimit:${message.guildId}:${message.author.id}`,
-    60_000
+    60_000,
   );
 
   if (rateLimited) return;
@@ -30,7 +30,7 @@ export default async function onMessageCreate(message: Message) {
 
   const currentLevel = await LevelingModule.getLevel(
     message.guildId,
-    message.author.id
+    message.author.id,
   );
 
   // random xp between 1 and 30

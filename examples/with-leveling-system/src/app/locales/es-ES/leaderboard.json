@@ -1,8 +1,8 @@
 {
-    "$command": {
-        "name": "leaderboard",
-        "description": "Muestra la tabla de clasificación del servidor"
-    },
-    "no_players": "No se encontraron jugadores en la tabla de clasificación.",
-    "title": "Tabla de Clasificación 🏆"
+  "$command": {
+    "name": "leaderboard",
+    "description": "Muestra la tabla de clasificación del servidor"
+  },
+  "no_players": "No se encontraron jugadores en la tabla de clasificación.",
+  "title": "Tabla de Clasificación 🏆"
 }

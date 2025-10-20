@@ -105,9 +105,8 @@ export const ai: AiCommand<typeof aiConfig> = async (ctx) => {
         permissionOverwrites,
       };
 
-      const newChannel = await ctx.message.guild.channels.create(
-        channelOptions
-      );
+      const newChannel =
+        await ctx.message.guild.channels.create(channelOptions);
       createdChannels.push(newChannel);
     } catch (err) {
       const error = err as Error;
