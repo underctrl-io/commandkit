@@ -1,0 +1,7 @@
+{
+    "$command": {
+        "name": "set-prefix",
+        "description": "Establece el prefijo de comandos del servidor"
+    },
+    "prefix_set": "Prefijo establecido en `{{prefix}}`"
+}

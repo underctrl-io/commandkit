@@ -1,0 +1,11 @@
+{
+    "$command": {
+        "name": "rank",
+        "description": "Shows your rank card or another user's rank card"
+    },
+    "bot_not_allowed": "You cannot check the rank of a bot.",
+    "not_ranked": "{{username}} is not ranked yet. Tell them to send a message in the server to get ranked!",
+    "no_mention": "You need to mention a user to check their rank.",
+    "bot_no_rank": "I don't have rank silly",
+    "rank_title": "Rank of {{username}} 🏆"
+}

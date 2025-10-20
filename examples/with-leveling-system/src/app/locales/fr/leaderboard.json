@@ -1,0 +1,8 @@
+{
+    "$command": {
+        "name": "leaderboard",
+        "description": "Affiche le classement du serveur"
+    },
+    "no_players": "Aucun joueur trouvé dans le classement.",
+    "title": "Classement 🏆"
+}

@@ -1,0 +1,8 @@
+{
+    "$command": {
+        "name": "leaderboard",
+        "description": "Shows the server's leaderboard"
+    },
+    "no_players": "No players found in the leaderboard.",
+    "title": "Leaderboard 🏆"
+}

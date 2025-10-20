@@ -1,0 +1,11 @@
+{
+    "$command": {
+        "name": "rank",
+        "description": "Affiche votre carte de rang ou celle d'un autre utilisateur"
+    },
+    "bot_not_allowed": "Vous ne pouvez pas vérifier le rang d'un bot.",
+    "not_ranked": "{{username}} n'a pas encore de rang. Dites-lui d'envoyer un message sur le serveur pour obtenir un rang !",
+    "no_mention": "Vous devez mentionner un utilisateur pour vérifier son rang.",
+    "bot_no_rank": "Je n'ai pas de rang, voyons !",
+    "rank_title": "Rang de {{username}} 🏆"
+}

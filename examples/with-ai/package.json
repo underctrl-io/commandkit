@@ -1,0 +1,27 @@
+{
+  "name": "commandkit-with-ai",
+  "type": "module",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AI powered Discord bot built with CommandKit",
+  "scripts": {
+    "dev": "commandkit dev",
+    "build": "commandkit build",
+    "start": "commandkit start"
+  },
+  "dependencies": {
+    "@ai-sdk/google": "^2.0.19",
+    "@commandkit/ai": "^1.2.0-rc.12",
+    "@commandkit/tasks": "^1.2.0-rc.12",
+    "@types/ms": "^2.1.0",
+    "commandkit": "^1.2.0-rc.12",
+    "discord.js": "^14.23.2",
+    "ms": "^2.1.3",
+    "weather-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^24.0.1",
+    "typescript": "^5.8.3"
+  }
+}
