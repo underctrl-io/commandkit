@@ -1,0 +1,39 @@
+---
+title: File
+---
+
+The `File` component allows you to display file attachments in your
+Discord messages.
+
+## Basic usage
+
+```tsx title="src/app/commands/file-example.tsx"
+import {
+  type ChatInputCommand,
+  Container,
+  File,
+  TextDisplay,
+} from 'commandkit';
+import { AttachmentBuilder, Colors, MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const fileContent = '# Hello World\nThis is a test markdown file.';
+
+  const container = (
+    <Container accentColor={Colors.Blue}>
+      <TextDisplay content="Here's a file:" />
+      <File url="attachment://example.md" />
+    </Container>
+  );
+
+  await interaction.reply({
+    components: [container],
+    files: [
+      new AttachmentBuilder(Buffer.from(fileContent), {
+        name: 'example.md',
+      }),
+    ],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```

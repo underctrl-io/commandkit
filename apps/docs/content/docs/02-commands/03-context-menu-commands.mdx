@@ -1,0 +1,199 @@
+---
+title: Context Menu Commands
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+Context menu commands allows users on Discord to run commands by
+either referencing a message or a user. Context menu commands can be
+grouped to either 'Message' or 'User' context menu commands.
+
+Alongside chat input commands, you can use CommandKit to also register
+and handle context menu commands.
+
+Context menu commands live in the same directory as your chat input
+commands. To begin, create a command file in your `src/app/commands`
+directory.
+
+This guide will create 2 simple `report-message` and `report-user`
+commands. It's not an actual reporting system, but it should make
+understanding the nature of these context menu commands easier.
+
+## Message context menu command
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/report-message.ts"
+    import type { CommandData, MessageContextMenuCommand } from 'commandkit';
+    import { MessageFlags } from 'discord.js';
+
+    export const command: CommandData = {
+      name: 'report-message',
+      description: 'Report a message to moderators.',
+    };
+
+    export const messageContextMenu: MessageContextMenuCommand = async ({
+      interaction,
+    }) => {
+      const content = interaction.targetMessage.content;
+
+      // you could add your message reporting logic here
+
+      await interaction.reply({
+        content: `You have reported the following message: ${content}`,
+        flags: MessageFlags.Ephemeral,
+      });
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/report-message.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').MessageContextMenuCommand} MessageContextMenuCommand
+     */
+    import { MessageFlags } from 'discord.js';
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'report-message',
+      description: 'Report a message to moderators.',
+    };
+
+    /** @type {MessageContextMenuCommand} */
+    export const messageContextMenu = async ({ interaction }) => {
+      const content = interaction.targetMessage.content;
+
+      // you could add your message reporting logic here
+
+      await interaction.reply({
+        content: `You have reported the following message: ${content}`,
+        flags: MessageFlags.Ephemeral,
+      });
+    };
+    ```
+
+  </Tab>
+</Tabs>
+
+By just exporting the `messageContextMenu` function from your command
+file, CommandKit will properly update your command type before
+registering it to the Discord API. You don't have to manually set a
+`type` in your `command` object, as you would with most command
+handlers.
+
+## User context menu command
+
+The logic for registering and handling user context menu commands is
+very similar to message context menu commands.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/report-user.ts"
+    import type { CommandData, UserContextMenuCommand } from 'commandkit';
+    import { MessageFlags } from 'discord.js';
+
+    export const command: CommandData = {
+      name: 'report-user',
+      description: 'Report a user to moderators.',
+    };
+
+    export const userContextMenu: UserContextMenuCommand = async ({
+      interaction,
+    }) => {
+      const userId = interaction.targetUser.id;
+
+      // you could add your user reporting logic here
+
+      await interaction.reply({
+        content: `You have reported a user with the ID: ${userId}`,
+        flags: MessageFlags.Ephemeral,
+      });
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/report-user.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').UserContextMenuCommand} UserContextMenuCommand
+     */
+    import { MessageFlags } from 'discord.js';
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'report-user',
+      description: 'Report a user to moderators.',
+    };
+
+    /** @type {UserContextMenuCommand} */
+    export const userContextMenu = async ({ interaction }) => {
+      const userId = interaction.targetUser.id;
+
+      // you could add your user reporting logic here
+
+      await interaction.reply({
+        content: `You have reported a user with the ID: ${userId}`,
+        flags: MessageFlags.Ephemeral,
+      });
+    };
+    ```
+
+  </Tab>
+</Tabs>
+
+You may have noticed that the context menu command names are the same as the message command names.
+This is because the context menu command names are borrowed from the non-context menu command names.
+
+In order to change the context menu command name, you can use the `nameAliases` option in the `CommandMetadata` object.
+
+<Callout type="warning">
+
+If you are using the [i18n plugin](../05-official-plugins/05-commandkit-i18n.mdx), the plugin will add `name_localizations` to the `nameAliases` option if localization for the context menu command name is provided.
+
+```json title="src/app/locales/en/command.json"
+{
+  "$command": {
+    "name": "Report", // this will add `name_localizations` to the regular command name
+    "description": "Report a message or user to moderators." // this will add `description_localizations` to the regular command description
+  },
+  "$command:user-ctx": {
+    "name": "Report User" // this will add `name_localizations` to the `nameAliases.user` option
+  },
+  "$command:message-ctx": {
+    "name": "Report Message" // this will add `name_localizations` to the `nameAliases.message` option
+  }
+}
+```
+
+</Callout>
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/report-user.ts"
+    import type { CommandMetadata } from 'commandkit';
+    import { MessageFlags } from 'discord.js';
+
+    export const metadata: CommandMetadata = {
+      nameAliases: {
+        user: 'Report User',
+        message: 'Report Message',
+      }
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/report-user.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      nameAliases: {
+        user: 'Report User',
+        message: 'Report Message',
+      }
+    };
+    ```
+  </Tab>
+</Tabs>

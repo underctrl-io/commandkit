@@ -1,0 +1,139 @@
+---
+title: Container
+---
+
+The `Container` component is a building block that allows you to
+organize and style multiple components together.
+
+## Basic usage
+
+```tsx title="src/app/commands/container-example.tsx"
+import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
+import { Colors, MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const container = (
+    <Container accentColor={Colors.Blue}>
+      <TextDisplay content="Welcome to my bot!" />
+      <TextDisplay content="This is a container example" />
+    </Container>
+  );
+
+  await interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Container styling
+
+The `Container` component accepts an `accentColor` prop that can be
+used to customize its appearance:
+
+```tsx title="src/app/commands/styled-container.tsx"
+import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
+import { Colors, MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const containers = [
+    <Container accentColor={Colors.Red}>
+      <TextDisplay content="🔴 Red accent container" />
+    </Container>,
+    <Container accentColor={Colors.Green}>
+      <TextDisplay content="🟢 Green accent container" />
+    </Container>,
+    <Container accentColor={Colors.Blue}>
+      <TextDisplay content="🔵 Blue accent container" />
+    </Container>,
+    <Container accentColor={Colors.Yellow}>
+      <TextDisplay content="🟡 Yellow accent container" />
+    </Container>,
+  ];
+
+  await interaction.reply({
+    components: containers,
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Nesting components
+
+You can nest various components inside a Container:
+
+```tsx title="src/app/commands/nested-container.tsx"
+import {
+  type ChatInputCommand,
+  Container,
+  TextDisplay,
+  Separator,
+} from 'commandkit';
+import { Colors, MessageFlags, SeparatorSpacingSize } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const container = (
+    <Container accentColor={Colors.Purple}>
+      <TextDisplay content="# Main Title" />
+      <TextDisplay content="This is the main content section" />
+
+      <Separator spacing={SeparatorSpacingSize.Large} />
+
+      <TextDisplay content="## Subsection" />
+      <TextDisplay content="Here's some additional information" />
+
+      <Separator spacing={SeparatorSpacingSize.Large} divider />
+
+      <TextDisplay content="## Footer" />
+      <TextDisplay content="Thanks for using our service!" />
+    </Container>
+  );
+
+  await interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
+
+## Multiple containers
+
+You can use multiple containers to organize different sections:
+
+```tsx title="src/app/commands/multi-container.tsx"
+import { type ChatInputCommand, Container, TextDisplay } from 'commandkit';
+import { Colors, MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const headerContainer = (
+    <Container accentColor={Colors.Blue}>
+      <TextDisplay content="# Bot Status Report" />
+      <TextDisplay
+        content={`Generated on <t:${Math.floor(Date.now() / 1000)}:F>`}
+      />
+    </Container>
+  );
+
+  const statsContainer = (
+    <Container accentColor={Colors.Green}>
+      <TextDisplay content="## Server Statistics" />
+      <TextDisplay content="**Servers:** 50" />
+      <TextDisplay content="**Users:** 15,000" />
+      <TextDisplay content="**Commands executed:** 1,250 today" />
+    </Container>
+  );
+
+  const alertsContainer = (
+    <Container accentColor={Colors.Yellow}>
+      <TextDisplay content="## System Alerts" />
+      <TextDisplay content="⚠️ Scheduled maintenance in 2 hours" />
+      <TextDisplay content="✅ All systems operational" />
+    </Container>
+  );
+
+  await interaction.reply({
+    components: [headerContainer, statsContainer, alertsContainer],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```

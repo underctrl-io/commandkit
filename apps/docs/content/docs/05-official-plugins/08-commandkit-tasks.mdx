@@ -1,0 +1,684 @@
+---
+title: '@commandkit/tasks'
+---
+
+The CommandKit tasks plugin provides a powerful way to schedule and
+manage background tasks in your Discord application. Whether you need
+to run periodic maintenance, send scheduled reminders, or perform data
+cleanup, the tasks plugin has you covered.
+
+## Installation
+
+```bash
+npm install @commandkit/tasks@next
+```
+
+## Basic setup
+
+Add the tasks plugin to your CommandKit configuration:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { tasks } from '@commandkit/tasks';
+
+export default defineConfig({
+  plugins: [tasks()],
+});
+```
+
+## Setting up a driver
+
+By default, the plugin will initialize the SQLite driver. You can set
+up a different driver by calling `setDriver` function from the
+`@commandkit/tasks` package. If you want to disable the default driver
+initialization behavior, you can pass `initializeDefaultDriver: false`
+to the `tasks()` options in your commandkit config.
+
+```ts
+import { setDriver } from '@commandkit/tasks';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+
+// For development
+setDriver(new SQLiteDriver('./tasks.db'));
+
+// For production, use BullMQ with Redis
+// setDriver(new BullMQDriver({ host: 'localhost', port: 6379 }));
+```
+
+## Available drivers
+
+### SQLite driver (Development)
+
+The SQLite driver provides persistent, file-based task scheduling.
+It's perfect for development environments and single-instance
+applications with job recovery on restart.
+
+**Pros:**
+
+- Persistent job storage
+- Jobs recoverable on restart
+- No external dependencies
+- Lightweight and reliable
+
+**Cons:**
+
+- Single instance only
+- No distributed scheduling support
+- Intended for development use
+
+**Usage:**
+
+```ts
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+import { setDriver } from '@commandkit/tasks';
+
+setDriver(new SQLiteDriver('./tasks.db'));
+```
+
+### BullMQ driver (Production)
+
+The BullMQ driver provides robust, distributed task scheduling using
+Redis as the backend. It's ideal for production environments with
+multiple bot instances.
+
+**Pros:**
+
+- Distributed scheduling across multiple instances
+- Persistent task storage
+- Built-in retry mechanisms
+- Production-ready with Redis
+
+**Cons:**
+
+- Requires Redis server
+- More complex setup
+- Additional dependency
+
+**Installation:**
+
+```bash
+npm install bullmq
+```
+
+**Usage:**
+
+```ts
+import { BullMQDriver } from '@commandkit/tasks/bullmq';
+import { setDriver } from '@commandkit/tasks';
+
+setDriver(
+  new BullMQDriver({
+    host: 'localhost',
+    port: 6379,
+  }),
+);
+```
+
+**Advanced Redis configuration:**
+
+```ts
+const driver = new BullMQDriver({
+  host: 'redis.example.com',
+  port: 6379,
+  password: 'your-password',
+  tls: true,
+  retryDelayOnFailover: 100,
+  maxRetriesPerRequest: 3,
+});
+```
+
+### Environment-specific configuration
+
+```ts
+import { COMMANDKIT_IS_DEV } from 'commandkit';
+import { defineConfig, noBuildOnly } from 'commandkit/config';
+import { tasks } from '@commandkit/tasks';
+import { SQLiteDriver } from '@commandkit/tasks/sqlite';
+import { BullMQDriver } from '@commandkit/tasks/bullmq';
+import { setDriver } from '@commandkit/tasks';
+
+// set up the driver in non-build processes only
+const setupDriver = noBuildOnly(() => {
+  // Choose driver based on environment
+  if (COMMANDKIT_IS_DEV) {
+    setDriver(new SQLiteDriver('./tasks.db'));
+  } else {
+    setDriver(
+      new BullMQDriver({
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379'),
+        password: process.env.REDIS_PASSWORD,
+      }),
+    );
+  }
+});
+
+setupDriver();
+
+export default defineConfig({
+  plugins: [tasks()],
+});
+```
+
+<Callout type="warning">
+Avoid loading the code that keeps the event loop alive inside the build process.
+Otherwise the build command will never exit. Use the helper functions such as `buildOnly()` or `noBuildOnly()`
+to conditionally load the code in appropriate places.
+</Callout>
+
+## Creating your first task
+
+Create a file in `src/app/tasks/` to define your tasks:
+
+```ts
+import { task } from '@commandkit/tasks';
+
+export default task({
+  name: 'daily-backup',
+  schedule: '0 0 * * *', // Daily at midnight (cron string)
+  async execute(ctx) {
+    // Your task logic here
+    await performBackup();
+    console.log('Daily backup completed!');
+  },
+});
+```
+
+## Task structure
+
+Every task has the following components:
+
+- **name**: A unique identifier for the task
+- **schedule**: When the task should run (optional for manual
+  execution)
+- **execute**: The main function that performs the task work
+- **prepare**: Optional function to determine if the task should run
+
+## Schedule types
+
+### Cron schedules
+
+Use cron expressions for recurring tasks:
+
+```ts
+export default task({
+  name: 'hourly-task',
+  schedule: '0 * * * *', // Every hour
+  async execute(ctx) {
+    // Task logic
+  },
+});
+```
+
+### Date schedules
+
+Schedule tasks for specific times:
+
+```ts
+export default task({
+  name: 'reminder',
+  schedule: new Date('2024-01-01T12:00:00Z'), // Specific date
+  async execute(ctx) {
+    // Send reminder
+  },
+});
+
+// Or use timestamps
+export default task({
+  name: 'timestamp-task',
+  schedule: Date.now() + 60000, // 1 minute from now
+  async execute(ctx) {
+    // Task logic
+  },
+});
+```
+
+## Task context
+
+The `execute` function receives a context object with useful
+properties:
+
+```ts
+export default task({
+  name: 'context-example',
+  schedule: '0 */6 * * *', // Every 6 hours
+  async execute(ctx) {
+    // Access the Discord.js client
+    const client = ctx.commandkit.client;
+
+    // Access custom data (for dynamic tasks)
+    const { userId, message } = ctx.data;
+
+    // Use the temporary store
+    ctx.store.set('lastRun', Date.now());
+
+    // Send a message to a channel
+    const channel = client.channels.cache.get('channel-id');
+    if (channel?.isTextBased()) {
+      await channel.send('Task executed!');
+    }
+  },
+});
+```
+
+## Conditional execution
+
+Use the `prepare` function to conditionally execute tasks:
+
+```ts
+export default task({
+  name: 'conditional-task',
+  schedule: '0 */2 * * *', // Every 2 hours
+  async prepare(ctx) {
+    // Only run if maintenance mode is not enabled
+    return !ctx.commandkit.store.get('maintenance-mode');
+  },
+  async execute(ctx) {
+    await performMaintenanceChecks();
+  },
+});
+```
+
+## Dynamic tasks
+
+While static tasks are great for recurring operations, you often need
+to create tasks dynamically based on user interactions or events. The
+tasks plugin provides utilities for creating tasks on-demand.
+
+### Creating dynamic tasks
+
+Use the `createTask` function to create tasks programmatically:
+
+```ts
+import { createTask } from '@commandkit/tasks';
+
+// Create a task that runs in 5 minutes
+const taskId = await createTask({
+  name: 'reminder',
+  data: { userId: '123', message: "Don't forget your meeting!" },
+  schedule: Date.now() + 5 * 60 * 1000, // 5 minutes from now
+});
+```
+
+### Reminder system example
+
+Here's a complete example of a reminder command that creates dynamic
+tasks:
+
+```ts
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+import ms from 'ms';
+import { createTask } from '@commandkit/tasks';
+
+export const command: CommandData = {
+  name: 'remind',
+  description: 'remind command',
+  options: [
+    {
+      name: 'time',
+      description: 'The time to remind after. Eg: 6h, 10m, 1d',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+    {
+      name: 'message',
+      description: 'The message to remind about.',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+  ],
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const time = ctx.options.getString('time', true);
+  const message = ctx.options.getString('message', true);
+  const timeMs = Date.now() + ms(time as `${number}`);
+
+  await createTask({
+    name: 'remind',
+    data: {
+      userId: ctx.interaction.user.id,
+      message,
+      channelId: ctx.interaction.channelId,
+      setAt: Date.now(),
+    },
+    schedule: timeMs,
+  });
+
+  await ctx.interaction.reply(
+    `I will remind you <t:${Math.floor(timeMs / 1000)}:R> for \`${message}\``,
+  );
+};
+```
+
+### The reminder task
+
+Create a static task definition that handles the actual reminder:
+
+```ts
+// src/app/tasks/remind.ts
+import { task } from '@commandkit/tasks';
+
+export interface RemindTaskData {
+  userId: string;
+  message: string;
+  channelId: string;
+  setAt: number;
+}
+
+export default task<RemindTaskData>({
+  name: 'remind',
+  async execute(ctx) {
+    const { userId, message, channelId, setAt } = ctx.data;
+
+    const channel = await ctx.client.channels.fetch(channelId);
+
+    if (!channel?.isTextBased() || !channel.isSendable()) return;
+
+    await channel.send({
+      content: `<@${userId}>`,
+      embeds: [
+        {
+          title: `You asked me <t:${Math.floor(setAt / 1000)}:R> to remind you about:`,
+          description: message,
+          color: 0x0099ff,
+          timestamp: new Date(setAt).toISOString(),
+        },
+      ],
+    });
+  },
+});
+```
+
+### Managing dynamic tasks
+
+You can also delete tasks programmatically:
+
+```ts
+import { deleteTask } from '@commandkit/tasks';
+
+// Cancel a scheduled task
+try {
+  await deleteTask(taskId);
+  console.log('Task cancelled successfully');
+} catch (error) {
+  console.error('Failed to cancel task:', error);
+}
+```
+
+## Advanced patterns
+
+### Task workflows
+
+Organize related tasks to create complex workflows:
+
+```ts
+// src/app/tasks/data-processing.ts
+import { task } from '@commandkit/tasks';
+
+export default task({
+  name: 'data-processing',
+  schedule: '0 2 * * *', // Daily at 2 AM
+  async execute(ctx) {
+    // Step 1: Collect data
+    const data = await collectData();
+    ctx.store.set('collectedData', data);
+
+    // Step 2: Process data immediately
+    const processedData = await processData(data);
+
+    // Step 3: Send notification
+    const channel = ctx.commandkit.client.channels.cache.get('log-channel');
+    if (channel?.isTextBased()) {
+      await channel.send(`Data processing completed for ID: ${data.id}`);
+    }
+  },
+});
+```
+
+### Task batching
+
+Process multiple items in batches:
+
+```ts
+// src/app/tasks/batch-processing.ts
+import { task } from '@commandkit/tasks';
+
+export default task({
+  name: 'batch-processor',
+  schedule: '0 */6 * * *', // Every 6 hours
+  async execute(ctx) {
+    // Get items to process
+    const items = await getItemsToProcess();
+
+    if (items.length === 0) {
+      console.log('No items to process');
+      return;
+    }
+
+    // Process in batches of 10
+    const batchSize = 10;
+    let processedCount = 0;
+
+    for (let i = 0; i < items.length; i += batchSize) {
+      const batch = items.slice(i, i + batchSize);
+      console.log(
+        `Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(items.length / batchSize)}`,
+      );
+
+      // Process the batch
+      for (const item of batch) {
+        await processItem(item);
+        processedCount++;
+      }
+    }
+
+    console.log(`Completed processing ${processedCount} items`);
+  },
+});
+```
+
+### Task state management
+
+Use the context store to manage state across task executions:
+
+```ts
+// src/app/tasks/state-management.ts
+import { task } from '@commandkit/tasks';
+
+export default task({
+  name: 'stateful-task',
+  schedule: '0 */2 * * *', // Every 2 hours
+  async prepare(ctx) {
+    // Check if we're in a cooldown period
+    const lastRun = ctx.commandkit.store.get('last-run');
+    const cooldown = 30 * 60 * 1000; // 30 minutes
+
+    if (lastRun && Date.now() - lastRun < cooldown) {
+      return false; // Skip execution
+    }
+
+    return true;
+  },
+  async execute(ctx) {
+    // Update last run time
+    ctx.commandkit.store.set('last-run', Date.now());
+
+    // Get or initialize counter
+    const counter = ctx.commandkit.store.get('execution-counter') || 0;
+    ctx.commandkit.store.set('execution-counter', counter + 1);
+
+    console.log(`Task executed ${counter + 1} times`);
+
+    // Perform the actual work
+    await performWork();
+  },
+});
+```
+
+### Task cleanup
+
+Implement cleanup tasks for resource management:
+
+```ts
+// src/app/tasks/cleanup.ts
+import { task } from '@commandkit/tasks';
+
+export default task({
+  name: 'cleanup',
+  schedule: '0 3 * * *', // Daily at 3 AM
+  async execute(ctx) {
+    const cutoffDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+
+    // Clean up old data
+    await cleanupOldRecords(cutoffDate);
+
+    // Clean up expired tasks
+    await cleanupExpiredTasks();
+
+    // Clean up temporary files
+    await cleanupTempFiles();
+
+    console.log('Cleanup completed successfully');
+  },
+});
+```
+
+## Best practices
+
+### Use descriptive task names
+
+```ts
+// Good
+await createTask({
+  name: 'user-reminder',
+  data: { userId, message },
+  schedule: reminderTime,
+});
+
+// Avoid
+await createTask({
+  name: 'task',
+  data: { userId, message },
+  schedule: reminderTime,
+});
+```
+
+### Validate input data
+
+```ts
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { ApplicationCommandOptionType } from 'discord.js';
+import ms from 'ms';
+import { createTask } from '@commandkit/tasks';
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  const timeStr = ctx.options.getString('time', true);
+  const message = ctx.options.getString('message', true);
+
+  // Validate time format
+  const delay = ms(timeStr as `${number}`);
+  if (!delay || delay < 60000 || delay > 30 * 24 * 60 * 60 * 1000) {
+    await ctx.interaction.reply(
+      'Please specify a time between 1 minute and 30 days.',
+    );
+    return;
+  }
+
+  // Validate message length
+  if (message.length > 1000) {
+    await ctx.interaction.reply(
+      'Message too long. Please keep it under 1000 characters.',
+    );
+    return;
+  }
+
+  // Create task
+  await createTask({
+    name: 'reminder',
+    data: { userId: ctx.interaction.user.id, message },
+    schedule: Date.now() + delay,
+  });
+
+  await ctx.interaction.reply('Reminder scheduled successfully!');
+};
+```
+
+### Handle errors gracefully
+
+```ts
+await receive('user-events', async (message) => {
+  try {
+    // Process the message
+    await processUserEvent(message);
+  } catch (error) {
+    // Log error but don't crash
+    console.error('Failed to process event:', error);
+
+    // Optionally retry or send to dead letter queue
+    await handleFailedMessage(message, error);
+  }
+});
+```
+
+### Implement proper error handling
+
+```ts
+export default task({
+  name: 'resilient-task',
+  async execute(ctx) {
+    try {
+      // Try the primary operation
+      await performOperation();
+    } catch (error) {
+      console.error('Primary operation failed:', error);
+
+      // Try fallback operation
+      try {
+        await performFallbackOperation();
+        console.log('Fallback operation succeeded');
+      } catch (fallbackError) {
+        console.error('Fallback operation also failed:', fallbackError);
+
+        // Log the failure for manual intervention
+        const channel =
+          ctx.commandkit.client.channels.cache.get('error-channel');
+        if (channel?.isTextBased()) {
+          await channel.send(
+            `Task failed: ${error.message}. Fallback also failed: ${fallbackError.message}`,
+          );
+        }
+      }
+    }
+  },
+});
+```
+
+## Driver comparison
+
+| Feature              | SQLite      | BullMQ          |
+| -------------------- | ----------- | --------------- |
+| **Setup Complexity** | Simple      | Moderate        |
+| **Dependencies**     | None        | `bullmq`, Redis |
+| **Persistence**      | File-based  | Redis           |
+| **Distributed**      | No          | Yes             |
+| **Job Recovery**     | Yes         | Yes             |
+| **Production Ready** | Development | Yes             |
+| **Memory Usage**     | Low         | Moderate        |
+
+## Choosing the right driver
+
+### Use SQLite when:
+
+- You're developing locally
+- You want persistent job storage during development
+- You have a single bot instance
+- You need job recovery on restart
+
+### Use BullMQ when:
+
+- You have multiple bot instances
+- You need distributed task scheduling
+- You're deploying to production
+- You need advanced features like retries and monitoring

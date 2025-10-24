@@ -1,0 +1,312 @@
+---
+title: Discord.js Events
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+Events allow your Discord bot to react to various actions happening on
+Discord, such as when users send messages, join guilds, or when your
+bot comes online.
+
+CommandKit provides a simple way to organize and handle Discord.js
+events using the `events` directory inside your `src/app` directory.
+This approach makes it easy to manage multiple events and keep your
+code organized.
+
+## Basic event directory structure
+
+Each Discord.js event gets its own directory within `src/app/events`,
+and the directory name must match the exact Discord.js event name.
+Inside each event directory, you can create multiple handler files
+that will all execute when that event is triggered.
+
+Here's how your project structure might look with the
+`"messageCreate"` and `"clientReady"` events:
+
+```
+.
+├── src/
+│   ├── app/
+│   │   └── events/ // [!code highlight]
+│   │       ├── messageCreate/ // [!code highlight]
+│   │       │   ├── give-xp.ts // [!code highlight]
+│   │       │   └── log-message.ts // [!code highlight]
+│   │       └── clientReady/ // [!code highlight]
+│   │           └── log.ts // [!code highlight]
+│   └── app.ts
+├── .env
+├── .gitignore
+├── commandkit.config.ts
+├── package.json
+└── tsconfig.json
+```
+
+<Callout>
+You can see what events are available in Discord.js by checking the
+[Discord.js documentation](https://discord.js.org/docs/packages/discord.js/main/ClientEventTypes:Interface).
+</Callout>
+
+## Creating an event handler
+
+To create an event handler, create a folder inside the
+`src/app/events` directory which should match the event name from
+Discord.js. This example will use the `"clientReady"` event.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/events/clientReady/log.ts"
+    import type { EventHandler } from 'commandkit';
+
+    const handler: EventHandler<'clientReady'> = (client) => {
+      console.log(`🤖 ${client.user.displayName} is online!`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/events/clientReady/log.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'clientReady'>} ClientReadyHandler
+     */
+
+    /** @type {ClientReadyHandler} */
+    const handler = (client) => {
+      console.log(`🤖 ${client.user.displayName} is online!`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+</Tabs>
+
+That's it! CommandKit will automatically detect this file and register
+it as one of the handler functions for the `"clientReady"` event.
+
+Just like the Discord.js `client.on()` method, the parameters you
+receive in your event file will be based on what event you're trying
+to handle. In the example above, the `"clientReady"` event should give
+you a
+[`Client`](https://discord.js.org/docs/packages/discord.js/main/Client:Class)
+instance.
+
+<Callout>
+By using the
+[`EventHandler`](../../api-reference/commandkit/types/event-handler.mdx)
+type, you can get type safety for the parameters you receive in your
+event file, without having to manually typing each Discord.js type
+definition.
+</Callout>
+
+## Once events
+
+You may want to have some events to only get called once. For this,
+you can export a variable called `once` from your event function file.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/events/clientReady/log.ts"
+    import type { EventHandler } from 'commandkit';
+
+    export const once = true;
+
+    const handler: EventHandler<'clientReady'> = (client) => {
+      console.log(`🤖 ${client.user.displayName} is online!`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/events/clientReady/log.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'clientReady'>} ClientReadyHandler
+     */
+
+    export const once = true;
+
+    /** @type {ClientReadyHandler} */
+    const handler = (client) => {
+      console.log(`🤖 ${client.user.displayName} is online!`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+</Tabs>
+
+## Events with multiple parameter
+
+Some Discord.js events have multiple parameters, such as the
+`"messageUpdate"` event.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/events/messageUpdate/log-message-update.ts"
+    import type { EventHandler } from 'commandkit';
+
+    const handler: EventHandler<'messageUpdate'> = (oldMessage, newMessage) => {
+      console.log(
+        `Message from ${oldMessage.author?.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
+      );
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/events/messageUpdate/log-message-update.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'messageUpdate'>} MessageUpdateHandler
+     */
+
+    /** @type {MessageUpdateHandler} */
+    const handler = (oldMessage, newMessage) => {
+      console.log(
+        `Message from ${oldMessage.author?.username} updated: ${oldMessage.content} -> ${newMessage.content}`,
+      );
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+</Tabs>
+
+## Additional parameters
+
+Outside of the parameters provided by Discord.js, CommandKit will pass
+additional parameters to the event handler, including a
+[`Client`](https://discord.js.org/docs/packages/discord.js/main/Client:Class)
+and
+[`CommandKit`](../../api-reference/commandkit/classes/command-kit.mdx)
+instance.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/events/messageCreate/log.ts"
+    import type { EventHandler } from 'commandkit';
+
+    const handler: EventHandler<'messageCreate'> = (
+      message,
+      client,
+      commandkit,
+    ) => {
+      console.log(`Message from ${message.author.username}: ${message.content}`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/events/messageCreate/log.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'messageCreate'>} MessageCreateHandler
+     */
+
+    /** @type {MessageCreateHandler} */
+    const handler = (message, client, commandkit) => {
+      console.log(`Message from ${message.author.username}: ${message.content}`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+</Tabs>
+
+## Multiple handlers for the same event
+
+One of the powerful features of CommandKit's event system is the
+ability to have multiple handlers for the same event. Each handler
+file you create in an event directory will be executed when that event
+is called.
+
+For example, you might want to do several things when a message is
+created:
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/events/messageCreate/give-xp.ts"
+    import type { EventHandler } from 'commandkit';
+
+    const handler: EventHandler<'messageCreate'> = (message) => {
+      // Don't give XP to bots
+      if (message.author.bot) return;
+
+      // Give XP to the user
+      console.log(`Giving XP to ${message.author.username}`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/events/messageCreate/give-xp.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'messageCreate'>} MessageCreateHandler
+     */
+
+    /** @type {MessageCreateHandler} */
+    const handler = (message) => {
+      // Don't give XP to bots
+      if (message.author.bot) return;
+
+      // Give XP to the user
+      console.log(`Giving XP to ${message.author.username}`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+</Tabs>
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/events/messageCreate/log-message.ts"
+    import type { EventHandler } from 'commandkit';
+
+    const handler: EventHandler<'messageCreate'> = (message) => {
+      console.log(`Message from ${message.author.username}: ${message.content}`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/events/messageCreate/log-message.js"
+    /**
+     * @typedef {import('commandkit').EventHandler<'messageCreate'>} MessageCreateHandler
+     */
+
+    /** @type {MessageCreateHandler} */
+    const handler = (message) => {
+      console.log(`Message from ${message.author.username}: ${message.content}`);
+    };
+
+    export default handler;
+    ```
+
+  </Tab>
+</Tabs>
+
+Both handler functions will be called whenever a message is sent in
+Discord.
+
+<Callout>
+Event handler files can be named anything you want - CommandKit
+identifies them by their location in the event directory, not by their
+filename. However, since each file is treated as a handler function,
+they're executed one-by-one in the order of their file name.
+
+Example: `01-give-xp.ts` will be executed before `02-log-message.ts`.
+</Callout>

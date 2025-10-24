@@ -1,0 +1,273 @@
+---
+title: Command Metadata
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+Command metadata is a way to add additional information to your
+commands that CommandKit will handle.
+
+To get started, you can export a `metadata` object from your command:
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts" {8-10}
+    import type { CommandData, CommandMetadata } from 'commandkit';
+
+    export const command: CommandData = {
+      name: 'ping',
+      description: 'Replies with Pong!',
+    };
+
+    export const metadata: CommandMetadata = {
+      // Add your metadata here
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js" {13-15}
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').CommandMetadata} CommandMetadata
+     */
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'ping',
+      description: 'Replies with Pong!',
+    };
+
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      // Add your metadata here
+    };
+    ```
+
+  </Tab>
+</Tabs>
+
+## Metadata properties
+
+### `userPermissions`
+
+This is a string, or array of user permission strings that will be
+required by the person executing the command.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts"
+    export const metadata: CommandMetadata = {
+      // If the user does not have the Administrator permission, CommandKit will let them know
+      userPermissions: 'Administrator',
+    };
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      // If the user does not have the Administrator permission, CommandKit will let them know
+      userPermissions: 'Administrator',
+    };
+    ```
+  </Tab>
+</Tabs>
+
+### `botPermissions`
+
+This is a string, or array of bot permission strings that will be
+required by your bot to execute the command. This is useful for
+commands where your bot needs to have certain permissions in a guild
+e.g. moderation commands.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts"
+    export const metadata: CommandMetadata = {
+      // If the bot does not have these permissions, CommandKit will let them know
+      botPermissions: ['KickMembers', 'BanMembers'],
+    };
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      // If the bot does not have these permissions, CommandKit will let them know
+      botPermissions: ['KickMembers', 'BanMembers'],
+    };
+    ```
+  </Tab>
+</Tabs>
+
+### `guilds`
+
+This is an array of guild IDs that the command will be registered in,
+or be available to be executed (message commands).
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts"
+    export const metadata: CommandMetadata = {
+      guilds: ['1234567890', '1234567891'],
+    };
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      guilds: ['1234567890', '1234567891'],
+    };
+    ```
+  </Tab>
+</Tabs>
+
+### `aliases`
+
+This is an array of alternative command names that will be available
+for users to use to execute the command.
+
+<Callout type="warning">
+
+This only works for [message commands](./04-message-commands.mdx).
+
+</Callout>
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts"
+    export const metadata: CommandMetadata = {
+      aliases: ['p', 'pong'],
+    };
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /** @type {CommandMetadata} */
+    export const metadata = {
+      aliases: ['p', 'pong'],
+    };
+    ```
+  </Tab>
+</Tabs>
+
+### `nameAliases`
+
+This is a way to use a different context menu command name from the
+one defined in your `command` object. This is helpful when you want a
+different name compared to your chat input or message command while
+still using the same command file to handle them.
+
+<Callout type="warning">
+
+When the
+[@commandkit/i18n](../05-official-plugins/05-commandkit-i18n.mdx)
+plugin is in use and a translation for the context menu command is
+provided, this will be taken as base name and translations will be applied on top of it.
+
+</Callout>
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/avatar.ts"
+    export const command: CommandData = {
+      name: 'avatar'
+    }
+
+    export const metadata: CommandMetadata = {
+      nameAliases: {
+        message: 'Author Avatar',
+        user: 'Profile Picture'
+      }
+    };
+
+    // this slash command will run using the name `avatar`
+    export const chatInput: ChatInputCommand = () => {};
+
+    // this message command will run using the name `avatar`
+    export const message: MessageCommand = () => {};
+
+    // this message context menu command will run using the name `author-avatar`
+    export const messageContextMenu: MessageContextMenuCommand = () => {};
+
+    // this user context menu command will run using the name `profile-picture`
+    export const userContextMenu: UserContextMenuCommand = () => {};
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/avatar.js"
+    export const command = {
+      name: 'avatar'
+    }
+
+    export const metadata = {
+      nameAliases: {
+        message: 'author-avatar',
+        user: 'profile-picture'
+      }
+    };
+
+    // this slash command will run using the name `avatar`
+    export const chatInput = () => {};
+
+    // this message command will run using the name `avatar`
+    export const message = () => {};
+
+    // this message context menu command will run using the name `author-avatar`
+    export const messageContextMenu = () => {};
+
+    // this user context menu command will run using the name `profile-picture`
+    export const userContextMenu = () => {};
+    ```
+
+  </Tab>
+</Tabs>
+
+## Generated metadata
+
+If you'd like to generate metadata dynamically, you can export a
+`generateMetadata` function from your command file that should return
+a `CommandMetadata` object.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts"
+    import type { CommandMetadataFunction } from 'commandkit';
+
+    export const generateMetadata: CommandMetadataFunction = async () => {
+      // Dynamically determine the metadata for the command
+
+      return {
+        userPermissions: 'Administrator',
+        botPermissions: ['KickMembers', 'BanMembers'],
+        guilds: ['1234567890', '1234567891'],
+        aliases: ['p', 'pong'],
+      };
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /**
+     * @typedef {import('commandkit').CommandMetadataFunction} CommandMetadataFunction
+     */
+
+    /** @type {CommandMetadataFunction} */
+    export const generateMetadata = async () => {
+      // Dynamically determine the metadata for the command
+
+      return {
+        userPermissions: 'Administrator',
+        botPermissions: ['KickMembers', 'BanMembers'],
+        guilds: ['1234567890', '1234567891'],
+        aliases: ['p', 'pong'],
+      };
+    };
+    ```
+
+  </Tab>
+</Tabs>

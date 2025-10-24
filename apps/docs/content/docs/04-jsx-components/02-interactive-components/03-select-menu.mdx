@@ -1,0 +1,291 @@
+---
+title: Select Menu
+---
+
+CommandKit provides several types of select menus for different use
+cases.
+
+## String select menu
+
+The most common type of select menu that allows users to select from
+predefined string options:
+
+```tsx title="src/app/commands/string-select.tsx"
+import {
+  type ChatInputCommand,
+  type OnStringSelectMenuKitSubmit,
+  ActionRow,
+  StringSelectMenu,
+  StringSelectMenuOption,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSelect: OnStringSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const selection = interaction.values[0];
+  await interaction.reply({
+    content: `You selected: ${selection}`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  // Clean up the select menu context
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const selectMenu = (
+    <ActionRow>
+      <StringSelectMenu placeholder="Choose an option" onSelect={handleSelect}>
+        <StringSelectMenuOption
+          label="Option 1"
+          value="1"
+          description="First option"
+          emoji="1️⃣"
+        />
+        <StringSelectMenuOption
+          label="Option 2"
+          value="2"
+          description="Second option"
+          emoji="2️⃣"
+        />
+        <StringSelectMenuOption
+          label="Option 3"
+          value="3"
+          description="Third option"
+          emoji="3️⃣"
+        />
+      </StringSelectMenu>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Please make a selection:',
+    components: [selectMenu],
+  });
+};
+```
+
+## Channel select menu
+
+Allows users to select a channel from the server:
+
+```tsx title="src/app/commands/channel-select.tsx"
+import {
+  type ChatInputCommand,
+  type OnChannelSelectMenuKitSubmit,
+  ActionRow,
+  ChannelSelectMenu,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSelect: OnChannelSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const channel = interaction.values[0];
+  await interaction.reply({
+    content: `Selected channel: <#${channel}>`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  // Clean up the select menu context
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const selectMenu = (
+    <ActionRow>
+      <ChannelSelectMenu
+        placeholder="Choose a channel"
+        onSelect={handleSelect}
+      />
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Select a channel:',
+    components: [selectMenu],
+  });
+};
+```
+
+## Role select menu
+
+Allows users to select a role from the server:
+
+```tsx title="src/app/commands/role-select.tsx"
+import {
+  type ChatInputCommand,
+  type OnRoleSelectMenuKitSubmit,
+  ActionRow,
+  RoleSelectMenu,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSelect: OnRoleSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const role = interaction.values[0];
+  await interaction.reply({
+    content: `Selected role: <@&${role}>`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  // Clean up the select menu context
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const selectMenu = (
+    <ActionRow>
+      <RoleSelectMenu placeholder="Choose a role" onSelect={handleSelect} />
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Select a role:',
+    components: [selectMenu],
+  });
+};
+```
+
+## User select menu
+
+Allows users to select a user from the server:
+
+```tsx title="src/app/commands/user-select.tsx"
+import {
+  type ChatInputCommand,
+  type OnUserSelectMenuKitSubmit,
+  ActionRow,
+  UserSelectMenu,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSelect: OnUserSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const user = interaction.values[0];
+  await interaction.reply({
+    content: `Selected user: <@${user}>`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  // Clean up the select menu context
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const selectMenu = (
+    <ActionRow>
+      <UserSelectMenu placeholder="Choose a user" onSelect={handleSelect} />
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Select a user:',
+    components: [selectMenu],
+  });
+};
+```
+
+## Mentionable select menu
+
+Allows users to select a user or role from the server:
+
+```tsx title="src/app/commands/mentionable-select.tsx"
+import {
+  type ChatInputCommand,
+  type OnMentionableSelectMenuKitSubmit,
+  ActionRow,
+  MentionableSelectMenu,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSelect: OnMentionableSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const mentionable = interaction.values[0];
+  await interaction.reply({
+    content: `Selected: <@${mentionable}>`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  // Clean up the select menu context
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const selectMenu = (
+    <ActionRow>
+      <MentionableSelectMenu
+        placeholder="Choose a user or role"
+        onSelect={handleSelect}
+      />
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Select a user or role:',
+    components: [selectMenu],
+  });
+};
+```
+
+## Multiple selection
+
+You can allow multiple selections by setting the `minValues` and
+`maxValues` properties:
+
+```tsx title="src/app/commands/multi-select.tsx"
+import {
+  type ChatInputCommand,
+  type OnStringSelectMenuKitSubmit,
+  ActionRow,
+  StringSelectMenu,
+  StringSelectMenuOption,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSelect: OnStringSelectMenuKitSubmit = async (
+  interaction,
+  context,
+) => {
+  const selections = interaction.values;
+  await interaction.reply({
+    content: `You selected: ${selections.join(', ')}`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  // Clean up the select menu context
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const selectMenu = (
+    <ActionRow>
+      <StringSelectMenu
+        placeholder="Choose multiple options"
+        minValues={1}
+        maxValues={3}
+        onSelect={handleSelect}
+      >
+        <StringSelectMenuOption label="Pizza" value="pizza" emoji="🍕" />
+        <StringSelectMenuOption label="Burger" value="burger" emoji="🍔" />
+        <StringSelectMenuOption label="Pasta" value="pasta" emoji="🍝" />
+        <StringSelectMenuOption label="Sushi" value="sushi" emoji="🍣" />
+      </StringSelectMenu>
+    </ActionRow>
+  );
+
+  await interaction.reply({
+    content: 'Select your favorite foods (1-3 options):',
+    components: [selectMenu],
+  });
+};
+```

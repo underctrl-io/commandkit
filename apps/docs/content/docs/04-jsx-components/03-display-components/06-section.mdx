@@ -1,0 +1,38 @@
+---
+title: Section
+---
+
+The `Section` component allows you to combine a text component with an
+accessory component.
+
+## Basic usage
+
+```tsx title="src/app/commands/section-example.tsx"
+import {
+  type ChatInputCommand,
+  Section,
+  TextDisplay,
+  Thumbnail,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const section = (
+    <Section>
+      <TextDisplay content="Here's a text component (1)" />
+      <TextDisplay content="Here's a text component (2)" />
+      <TextDisplay content="Here's a text component (3)" />
+
+      <Thumbnail
+        url="https://cdn.discordapp.com/embed/avatars/0.png"
+        description="Discord avatar"
+      />
+    </Section>
+  );
+
+  await interaction.reply({
+    components: [section],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```

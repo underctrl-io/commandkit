@@ -1,0 +1,178 @@
+---
+title: Setup CommandKit
+description: Setup a new CommandKit project using the create-commandkit CLI
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+<Callout title="Important">
+1. CommandKit requires at least [Node.js](https://nodejs.org/) v24
+2. This documentation assumes that you have a basic understanding of
+  how to use [discord.js](https://discord.js.org/). If you are new to
+  discord.js, we recommend you to read the
+  [discord.js guide](https://discordjs.guide/) first.
+</Callout>
+
+The quickest way to setup a new CommandKit project is to use the
+`create-commandkit` CLI. To get started, run the following command in
+your terminal:
+
+```npm
+npm create commandkit@latest
+```
+
+This will start the CLI in an interactive mode. You can follow the
+prompts to setup your project.
+
+## Available Examples
+
+CommandKit comes with several pre-built examples to help you get started quickly. You can list all available examples using:
+
+```npm
+npm create commandkit@latest --list-examples
+```
+
+### Using Examples
+
+You can create a project from any example using the `--example` flag:
+
+```npm
+# Create a basic TypeScript bot
+npm create commandkit@latest --example basic-ts
+
+# Create a basic JavaScript bot
+npm create commandkit@latest --example basic-js
+
+# Create a Deno TypeScript bot
+npm create commandkit@latest --example deno-ts
+
+# Create a bot without CLI integration
+npm create commandkit@latest --example without-cli
+```
+
+### CLI Options
+
+The CLI supports various options for customization:
+
+```npm
+# Skip prompts and use defaults
+npm create commandkit@latest --yes
+
+# Use a specific package manager
+npm create commandkit@latest --use-pnpm
+npm create commandkit@latest --use-yarn
+npm create commandkit@latest --use-bun
+npm create commandkit@latest --use-deno
+
+# Skip dependency installation
+npm create commandkit@latest --skip-install
+
+# Skip git initialization
+npm create commandkit@latest --no-git
+
+# Create in a specific directory
+npm create commandkit@latest my-bot
+
+# Use a custom GitHub repository
+npm create commandkit@latest --example "https://github.com/user/repo"
+```
+
+## Project structure
+
+By using the CLI to create a base project, you should get a file tree
+that looks something like this:
+
+```
+.
+├── src/
+│   ├── app/
+│   │   ├── commands/
+│   │   │   └── ping.ts
+│   │   └── events/
+│   │       └── clientReady/
+│   │           └── log.ts
+│   └── app.ts
+├── .env
+├── .gitignore
+├── commandkit.config.ts
+├── package.json
+└── tsconfig.json
+```
+
+<Callout>
+The exact project structure may vary depending on the example you choose. Each example comes with its own configuration and dependencies tailored to its specific use case.
+</Callout>
+
+## Entry point
+
+The `src/app.ts` file is the main entry point for your application.
+This file default exports the discord.js client instance which
+CommandKit loads at runtime.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app.ts"
+    import { Client } from 'discord.js';
+
+    const client = new Client({
+      intents: ['Guilds', 'GuildMessages', 'MessageContent'],
+    });
+
+    // Optional: Setting up the token manually
+    client.token = process.env.MY_BOT_TOKEN;
+
+    export default client;
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app.js"
+    import { Client } from 'discord.js';
+
+    const client = new Client({
+      intents: ['Guilds', 'GuildMessages', 'MessageContent'],
+    });
+
+    // Optional: Setting up the token manually
+    client.token = process.env.MY_BOT_TOKEN;
+
+    export default client;
+    ```
+
+  </Tab>
+</Tabs>
+
+Notice how there's no `client.login()` in this file. This is because
+CommandKit will automatically handle the login process for you when
+the application starts.
+
+## Development version
+
+If you would like to try the latest development builds, you can use
+the `@dev` tag like so:
+
+```npm
+npm create commandkit@dev
+```
+
+<Callout type="warning">
+
+The development version is likely to have bugs.
+
+</Callout>
+
+## Getting Help
+
+For more information about the CLI options, you can use the help flag:
+
+```npm
+npm create commandkit@latest --help
+```
+
+This will display all available options and usage examples.
+
+## Manual setup
+
+Alternatively, if you would like to setup a new CommandKit project
+manually, you can follow
+[this guide](../08-advanced/01-setup-commandkit-manually.mdx).

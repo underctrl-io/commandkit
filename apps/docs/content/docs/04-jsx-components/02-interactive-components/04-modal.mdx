@@ -1,0 +1,52 @@
+---
+title: Modal
+---
+
+The `Modal` component allows you to create interactive forms that
+appear as popups in Discord.
+
+## Basic usage
+
+```tsx title="src/app/commands/user-profile.tsx"
+import {
+  type ChatInputCommand,
+  type OnModalKitSubmit,
+  Modal,
+  ShortInput,
+  ParagraphInput,
+} from 'commandkit';
+import { MessageFlags } from 'discord.js';
+
+const handleSubmit: OnModalKitSubmit = async (interaction, context) => {
+  const name = interaction.fields.getTextInputValue('name');
+  const description = interaction.fields.getTextInputValue('description');
+
+  await interaction.reply({
+    content: `**Profile Created!**\n**Name:** ${name}\n**Description:** ${description}`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  // Clean up the modal context
+  context.dispose();
+};
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const modal = (
+    <Modal title="User Profile" onSubmit={handleSubmit}>
+      <ShortInput
+        customId="name"
+        label="Name"
+        placeholder="Enter your name"
+        required
+      />
+      <ParagraphInput
+        customId="description"
+        label="Description"
+        placeholder="Tell us about yourself"
+      />
+    </Modal>
+  );
+
+  await interaction.showModal(modal);
+};
+```

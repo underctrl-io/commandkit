@@ -1,0 +1,64 @@
+---
+title: stopEvents Function
+---
+
+The `stopEvents()` function is a utility function that allows you to
+stop the execution of the events chain in CommandKit. This is useful
+when you want to prevent further event handlers from being executed
+after a certain point. It is typically used in the context of event
+handlers to control the flow of execution.
+
+## Usage
+
+```ts title="src/app/events/messageCreate/event.ts"
+import { type EventHandler, stopEvents } from 'commandkit';
+
+const handler: EventHandler<'messageCreate'> = (message) => {
+  console.log('Message received:', message.content);
+
+  // Stop further event handlers of messageCreate from being executed after this point
+  stopEvents();
+  // code below, and the rest of the event handlers, will not be executed
+};
+
+export default handler;
+```
+
+<Callout type="warning">
+
+Calling `stopEvents()` in a try/catch block may lead to unexpected
+behavior.
+
+If you still want to use `stopEvents()` in a try/catch block, you can
+use the `isErrorType` function to check if the error is an instance of
+the `CommandKitErrorCodes.StopEvents` error.
+
+```ts title="src/app/events/messageCreate/event.ts"
+import {
+  type EventHandler,
+  stopEvents,
+  isErrorType,
+  CommandKitErrorCodes,
+} from 'commandkit';
+
+const handler: EventHandler<'messageCreate'> = (message) => {
+  try {
+    // code that may throw an error
+
+    stopEvents(); // conditionally stop the event chain
+  } catch (error) {
+    if (isErrorType(error, CommandKitErrorCodes.StopEvents)) {
+      // if stopEvents() is called in the try block, throw it so CommandKit can stop the event chain
+      throw error;
+    }
+
+    // this means that the code threw the error, and stopEvents() was not called
+    // the rest of the event handlers will be executed as normal
+    console.error(error);
+  }
+};
+
+export default handler;
+```
+
+</Callout>

@@ -1,0 +1,328 @@
+---
+title: Migrating From v0
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+<Callout type="warning">
+**Minimum Requirements**: CommandKit v1 requires
+[Node.js](https://nodejs.org) version 24 or higher. Please ensure your
+environment meets this requirement before proceeding.
+
+**Migration Focus**: This guide specifically covers converting
+existing v0 code to v1. For information about new v1 features and
+capabilities, please refer to the rest of the documentation after
+completing your migration.
+</Callout>
+
+<Callout>
+This guide uses TypeScript examples, but all concepts apply to
+JavaScript projects as well. Simply use the corresponding JavaScript
+file extensions (e.g., `app.js`, `commandkit.config.js`).
+</Callout>
+
+This comprehensive guide will walk you through migrating your Discord
+bot from CommandKit v0 to v1. CommandKit v1 introduces significant
+architectural improvements, including a framework-based approach with
+enhanced developer experience features.
+
+## Updating CommandKit
+
+Begin your migration by updating to the latest version of CommandKit:
+
+```npm
+npm install commandkit@next
+```
+
+This command will install CommandKit v1 and update your `package.json`
+with the latest version.
+
+## Project structure migration
+
+CommandKit v1 adopts a framework-based approach with a structured
+`app` directory that serves as the primary location for your bot's
+functionality. This new structure provides better organization and
+enables advanced features like automatic route discovery.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="v1 (New Structure) ✅">
+
+  ```
+  .
+  ├── src/
+  │   ├── app/
+  │   │   ├── commands/
+  │   │   │   └── ping.ts
+  │   │   └── events/
+  │   │       └── clientReady/
+  │   │           └── log.ts
+  │   └── app.ts
+  ├── .env
+  ├── commandkit.config.ts
+  ├── package.json
+  └── tsconfig.json
+  ```
+
+  </Tab>
+  <Tab value="v0 (Legacy Structure) ❌">
+
+      ```
+      .
+      ├── src/
+      │   ├── commands/
+      │   │   └── ping.ts
+      │   ├── events/
+      │   │   └── clientReady/
+      │   │       └── log.ts
+      │   └── index.ts
+      ├── .env
+      ├── commandkit.config.mjs
+      ├── package.json
+      └── tsconfig.json
+      ```
+
+  </Tab>
+</Tabs>
+
+## Configuration file updates
+
+CommandKit v1 significantly simplifies configuration by automatically
+detecting your project structure and entry points. The framework now
+supports a standardized set of configuration file names for
+consistency.
+
+**Supported configuration files:**
+
+- `commandkit.config.js`
+- `commandkit.config.mjs`
+- `commandkit.config.cjs`
+- `commandkit.config.ts`
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="v1" label="v1 (Simplified Config) ✅" default>
+      ```ts title='commandkit.config.ts'
+      import { defineConfig } from 'commandkit';
+
+      export default defineConfig({
+        // Configuration is now optional for most use cases
+        // CommandKit automatically detects your app structure
+      });
+      ```
+
+  </Tab>
+  <Tab value="v0" label="v0 (Manual Config) ❌">
+      ```ts title='commandkit.config.mjs'
+      import { defineConfig } from 'commandkit';
+
+      export default defineConfig({
+        src: 'src',
+        main: 'index.mjs',
+        // Manual configuration was required
+      });
+      ```
+
+  </Tab>
+</Tabs>
+
+<Callout>
+The CommandKit CLI commands (`commandkit dev`, `commandkit build`,
+`commandkit start`) continue to work seamlessly with the new
+configuration system.
+</Callout>
+
+## Entry point transformation
+
+CommandKit v1 introduces a dramatically simplified entry point system.
+Instead of manually managing the CommandKit instance, bot login, and
+path configurations, you now simply export a configured Discord.js
+client.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="v1" label="v1 (Streamlined Entry) ✅" default>
+      ```ts title='src/app.ts'
+      import { Client } from 'discord.js';
+
+      const client = new Client({
+        intents: [
+          'Guilds',
+          'GuildMessages',
+          'MessageContent',
+        ],
+      });
+
+      // Optional: Override the default DISCORD_TOKEN env variable
+      client.token = 'CUSTOM_BOT_TOKEN';
+
+      export default client; // CommandKit handles the rest automatically
+      ```
+
+  </Tab>
+  <Tab value="v0" label="v0 (Manual Setup) ❌">
+      ```ts title='src/index.ts'
+      import { Client, GatewayIntentBits } from 'discord.js';
+      import { CommandKit } from 'commandkit';
+      import path from 'path';
+
+      const client = new Client({
+        intents: [
+          'Guilds',
+          'GuildMessages',
+          'MessageContent',
+        ],
+      });
+
+      new CommandKit({
+        client,
+        commandsPath: path.join(__dirname, 'commands'),
+        eventsPath: path.join(__dirname, 'events'),
+        validationsPath: path.join(__dirname, 'validations'),
+        skipBuiltInValidations: true,
+        bulkRegister: true,
+      });
+
+      client.login('YOUR_TOKEN_HERE');
+      ```
+
+  </Tab>
+</Tabs>
+
+## Command file structure
+
+CommandKit v1 modernizes the command API with more intuitive naming
+and cleaner type definitions. The new structure separates command
+metadata from execution logic more clearly, while introducing room for
+new APIs such as message (legacy) commands.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="v1" label="v1 (Modern API) ✅" default>
+      ```ts title='src/app/commands/ping.ts'
+      import type { CommandData, ChatInputCommandContext } from 'commandkit';
+
+      export const command: CommandData = {
+        name: 'ping',
+        description: 'Pong!',
+      };
+
+      export function chatInput({ interaction }: ChatInputCommandContext) {
+        interaction.reply('Pong!');
+      }
+      ```
+
+  </Tab>
+  <Tab value="v0" label="v0 (Legacy API) ❌">
+      ```ts title='src/commands/ping.ts'
+      import type { CommandData, SlashCommandProps } from 'commandkit';
+
+      export const data: CommandData = {
+        name: 'ping',
+        description: 'Pong!',
+      };
+
+      export function run({ interaction }: SlashCommandProps) {
+        interaction.reply('Pong!');
+      }
+      ```
+
+  </Tab>
+</Tabs>
+
+## Middleware system (formerly validations)
+
+CommandKit v1 renames and enhances the validation system to
+"middleware," which better reflects its purpose and capabilities.
+Middleware can now run in various contexts and provides more granular
+control over command execution.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="v1" label="v1 (Middleware System) ✅" default>
+      ```ts title='src/app/commands/+global-middleware.ts'
+      import type { MiddlewareContext, stopMiddlewares } from 'commandkit';
+
+      export function beforeExecute(ctx: MiddlewareContext) {
+        // Example: Block command execution based on conditions
+        if (ctx.interaction.isRepliable()) {
+          ctx.interaction.reply('Access denied: Command execution blocked.');
+        }
+
+        stopMiddlewares(); // Prevents command execution
+      }
+      ```
+
+  </Tab>
+  <Tab value="v0" label="v0 (Validation System) ❌">
+      ```ts title='src/validations/block-execution.ts'
+      import type { ValidationProps } from 'commandkit';
+
+      export default function (ctx: ValidationProps) {
+        if (ctx.interaction.isRepliable()) {
+          ctx.interaction.reply('You are blocked from running the command!');
+        }
+        return true; // command will not be executed
+      };
+      ```
+
+  </Tab>
+</Tabs>
+
+For comprehensive middleware documentation, including command and
+directory-specific middlewares, refer to the
+[middleware documentation](../02-commands/07-middlewares.mdx).
+
+## Development environment
+
+CommandKit v1 introduces advanced development features that require
+using the CommandKit CLI. The development server provides Hot Module
+Replacement (HMR) for rapid iteration and supports modern features
+like JSX components.
+
+### Starting development server
+
+```npm
+npx commandkit dev
+```
+
+<Callout type="warning">
+
+**Generated Files**: The development server creates a `.commandkit`
+directory for temporary files. Add this to your `.gitignore` to
+prevent committing generated files:
+
+```
+.commandkit/
+```
+
+</Callout>
+
+## Production deployment
+
+### Building your application
+
+```npm
+npx commandkit build
+```
+
+### Starting production application
+
+Option 1 - Using CommandKit CLI (recommended):
+
+```npm
+npx commandkit start
+```
+
+Option 2 - Direct Node.js execution:
+
+```bash
+node dist/index.js
+```
+
+<Callout type="warning">
+
+**Generated Build Files**: The build process creates a `dist`
+directory. Add this to your `.gitignore` to prevent committing build
+artifacts:
+
+```
+dist/
+```
+
+</Callout>

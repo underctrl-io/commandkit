@@ -1,0 +1,220 @@
+---
+title: Message Commands
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+Message commands, which are generally considered 'Legacy', are a way
+to run commands on Discord bots using regular messages. Before the
+introduction of
+[Slash/Chat Input Commands](./01-chat-input-commands.mdx), this was
+the primary way commands were handled. They were usually triggered by
+using a prefix set by the developer of the bot (for example: `!ping`).
+
+<Callout type="warning">
+
+While CommandKit allows developers to create and handle message
+commands, it's important to note that Discord generally discourages
+message commands in favor of the more modern
+[Chat Input Commands](./01-chat-input-commands.mdx).
+
+</Callout>
+
+## Basic setup
+
+Message commands, like all the other command types, live in your
+`src/app/commands` directory. To let CommandKit know that this is a
+message command, just export the `message` function from your command
+file.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts"
+    import type { CommandData, MessageCommand } from 'commandkit';
+
+    export const command: CommandData = {
+      name: 'ping',
+    };
+
+    export const message: MessageCommand = async (ctx) => {
+      await ctx.message.reply('Pong!');
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').MessageCommand} MessageCommand
+     */
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'ping',
+    };
+
+    /** @type {MessageCommand} */
+    export const message = async (ctx) => {
+      await ctx.message.reply('Pong!');
+    };
+    ```
+
+  </Tab>
+</Tabs>
+
+## Message command options (arguments)
+
+Since a message command - on a technical level - is just a string, the
+idea of message command options will be different compared to
+[chat input command](./01-chat-input-commands.mdx) options. Instead of
+getting parsed data, you'll essentially be dealing with string
+'arguments'.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts" {8}
+    import type { CommandData, MessageCommand } from 'commandkit';
+
+    export const command: CommandData = {
+      name: 'ping',
+    };
+
+    export const message: MessageCommand = async (ctx) => {
+      const args = ctx.args(); // string[]
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js" {13}
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').MessageCommand} MessageCommand
+     */
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'ping',
+    };
+
+    /** @type {MessageCommand} */
+    export const message = async (ctx) => {
+      const args = ctx.args(); // string[]
+    };
+    ```
+
+  </Tab>
+</Tabs>
+
+With the above command as an example, if a user on Discord runs
+`!ping john jack jane`, the value of `args` will equal
+`['john', 'jack', 'jane']`.
+
+## Custom prefixes
+
+The simplest way to set a custom prefix is using the
+`setPrefixResolver` method on the `commandkit` instance:
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app.ts"
+    import { commandkit } from 'commandkit';
+
+    commandkit.setPrefixResolver(async (message) => {
+      return '?';
+    });
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app.js"
+    import { commandkit } from 'commandkit';
+
+    commandkit.setPrefixResolver(async (message) => {
+      return '?';
+    });
+    ```
+
+  </Tab>
+</Tabs>
+
+This sets a global prefix of `?` for all message commands. Your bot
+will now respond to commands like `?help` or `?ping`.
+
+<Callout>
+You can return an array of strings to support multiple prefixes
+simultaneously:
+
+```js
+return ['?', '!', '>'];
+```
+
+</Callout>
+
+### Guild-specific prefixes
+
+For a more dynamic approach, you might want different prefixes for
+different guilds. Here's how to implement that:
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app.ts"
+    import { commandkit } from 'commandkit';
+    import { database } from '../database'; // This is a mock database
+
+    commandkit.setPrefixResolver(async (message) => {
+      if (!message.guildId) {
+        return '!'; // Fallback to '!' if command is used in a DM
+      }
+
+      const guildSettings = await database.findUnique({
+        where: {
+          guildId: message.guildId,
+        },
+        select: {
+          prefix: true,
+        },
+      });
+
+      return guildSettings?.prefix ?? '!'; // Fallback to '!' if no prefix is found
+    });
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app.js"
+    import { commandkit } from 'commandkit';
+    import { database } from '../database'; // This is a mock database
+
+    commandkit.setPrefixResolver(async (message) => {
+      if (!message.guildId) {
+        return '!'; // Fallback to '!' if command is used in a DM
+      }
+
+      const guildSettings = await database.findUnique({
+        where: {
+          guildId: message.guildId,
+        },
+        select: {
+          prefix: true,
+        },
+      });
+
+      return guildSettings?.prefix ?? '!'; // Fallback to '!' if no prefix is found
+    });
+    ```
+
+  </Tab>
+</Tabs>
+
+<Callout type="warning">
+
+The `setPrefixResolver` method runs on every message, so it's
+important to make sure that it's as lightweight as possible. To help
+with performance, you may want to implement caching, which CommandKit
+also supports with the
+[`@commandkit/cache`](../05-official-plugins/03-commandkit-cache.mdx)
+official plugin.
+
+</Callout>

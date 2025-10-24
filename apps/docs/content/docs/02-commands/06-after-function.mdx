@@ -1,0 +1,129 @@
+---
+title: after Function
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+<Callout type="warning" title="UNSTABLE">
+
+The `after()` function is currently marked as unstable and may change
+in the future.
+
+</Callout>
+
+The `after()` function allows you to execute a callback after a
+command has been executed. This is useful for performing actions that
+should occur after the command has completed, such as logging or
+cleanup tasks.
+
+## Usage
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts"
+    import {
+      type CommandData,
+      type ChatInputCommand,
+      unstable_after as after,
+    } from 'commandkit';
+
+    export const command: CommandData = {};
+
+    export const chatInput: ChatInputCommand = async (ctx) => {
+      after(() => {
+        // This code will be executed after the command has been executed
+        // Perform any cleanup here
+        console.log('Command has been executed');
+      });
+
+      await ctx.interaction.reply({
+        content: 'Hello World',
+        ephemeral: true,
+      });
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').ChatInputCommand} ChatInputCommand
+     */
+    import { unstable_after as after } from 'commandkit';
+
+    /** @type {CommandData} */
+    export const command = {};
+
+    /** @type {ChatInputCommand} */
+    export const chatInput = async (ctx) => {
+      after(() => {
+        // This code will be executed after the command has been executed
+        // Perform any cleanup here
+        console.log('Command has been executed');
+      });
+
+      await ctx.interaction.reply({
+        content: 'Hello World',
+        ephemeral: true,
+      });
+    };
+    ```
+
+  </Tab>
+</Tabs>
+
+<Callout>
+The `after()` function will always be called, regardless of whether
+the command execution was successful or not.
+</Callout>
+
+## Cancelling the after function
+
+You can cancel the after function by calling the `cancelAfter`
+function with the ID of the after function.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/ping.ts"
+    import {
+      unstable_after as after,
+      unstable_cancelAfter as cancelAfter,
+    } from 'commandkit';
+
+    export const chatInput: ChatInputCommand = async (ctx) => {
+      const id = after(() => {
+        console.log('This will run after the command has finished executing.');
+      });
+
+      if (something) {
+        cancelAfter(id);
+      }
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/ping.js"
+    /**
+     * @typedef {import('commandkit').ChatInputCommand} ChatInputCommand
+     */
+    import {
+      unstable_after as after,
+      unstable_cancelAfter as cancelAfter,
+    } from 'commandkit';
+
+    /** @type {ChatInputCommand} */
+    export const chatInput = async (ctx) => {
+      const id = after(() => {
+        console.log('This will run after the command has finished executing.');
+      });
+
+      if (something) {
+        cancelAfter(id);
+      }
+    };
+    ```
+
+  </Tab>
+</Tabs>

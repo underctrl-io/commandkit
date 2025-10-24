@@ -1,0 +1,242 @@
+---
+title: '@commandkit/cache'
+---
+
+CommandKit provides a powerful caching system that helps you optimize
+your bot's performance by storing frequently accessed data in memory.
+The `@commandkit/cache` plugin allows you to cache expensive
+operations like API calls and database queries, significantly
+improving response times and reducing external service usage.
+
+## Installation
+
+Install the cache package to get started:
+
+```npm
+npm install @commandkit/cache@next
+```
+
+## Setup
+
+Add the cache plugin to your CommandKit configuration:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { cache } from '@commandkit/cache';
+
+export default defineConfig({
+  plugins: [cache()],
+});
+```
+
+## Basic usage
+
+The simplest way to use caching is with the `"use cache"` directive.
+This tells CommandKit to cache the result of your function:
+
+```ts title="src/app/commands/weather.ts"
+import type { ChatInputCommand, CommandData } from 'commandkit';
+
+export const command: CommandData = {
+  name: 'weather',
+  description: 'Get weather information for a city',
+  options: [
+    {
+      name: 'city',
+      description: 'The city to get weather for',
+      type: 3, // String
+      required: true,
+    },
+  ],
+};
+
+async function fetchWeatherData(city: string) {
+  'use cache';
+
+  // This expensive API call will only run once for each unique city
+  const response = await fetch(`https://api.weather.com/v1/current?q=${city}`);
+  return response.json();
+}
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const city = interaction.options.getString('city', true);
+  const weather = await fetchWeatherData(city);
+
+  await interaction.reply(`Weather in ${city}: ${weather.description}`);
+};
+```
+
+When you call `fetchWeatherData` multiple times with the same city, it
+will only perform the API call once and return the cached result for
+subsequent calls.
+
+## How caching works
+
+CommandKit's caching system works by:
+
+1. **Generating a cache key**: Each cached function call generates a
+   unique key based on the function's identity, arguments, and build
+   ID
+2. **Storing results**: When a function is called, if the result isn't
+   cached, the function executes and stores its result. If cached, it
+   returns immediately
+3. **Automatic cleanup**: The cache system automatically removes stale
+   entries and manages memory usage
+
+## Controlling cache behavior
+
+### Setting cache duration
+
+Use `cacheLife` to control how long entries stay in the cache:
+
+```ts
+import { cacheLife } from '@commandkit/cache';
+
+async function fetchUserData(userId: string) {
+  'use cache';
+
+  // Cache for 1 hour
+  cacheLife('1h');
+
+  const userData = await db.users.findOne(userId);
+  return userData;
+}
+```
+
+Supported time formats:
+
+- `'5s'` - 5 seconds
+- `'1m'` - 1 minute
+- `'2h'` - 2 hours
+- `'1d'` - 1 day
+- `60000` - Direct milliseconds
+
+### Using cache tags
+
+Use `cacheTag` to group related cache entries for easier management:
+
+```ts
+import { cacheTag } from '@commandkit/cache';
+
+async function fetchGuildSettings(guildId: string) {
+  'use cache';
+
+  // Tag this entry for easy invalidation
+  cacheTag(`guild:${guildId}`);
+  cacheTag('settings');
+  cacheLife('1h');
+
+  return await db.guilds.findOne(guildId);
+}
+```
+
+### Invalidating cache entries
+
+Use `revalidateTag` to invalidate specific cache entries:
+
+```ts
+import { revalidateTag } from '@commandkit/cache';
+
+async function updateGuildSettings(guildId: string, settings: any) {
+  // Update the database
+  await db.guilds.update(guildId, settings);
+
+  // Invalidate all cached guild data
+  await revalidateTag(`guild:${guildId}`);
+}
+```
+
+## Common use cases
+
+### Caching API responses
+
+```ts
+async function fetchGameStats(gameId: string) {
+  'use cache';
+
+  cacheTag(`game:${gameId}`);
+  cacheLife('30m'); // API updates every 30 minutes
+
+  const response = await fetch(`https://api.game.com/stats/${gameId}`);
+  return response.json();
+}
+```
+
+### Caching database queries
+
+```ts
+async function getUserProfile(userId: string) {
+  'use cache';
+
+  cacheTag(`user:${userId}`);
+  cacheLife('1h'); // User profiles don't change often
+
+  return await db.users.findOne({
+    where: { id: userId },
+    include: ['profile', 'settings'],
+  });
+}
+```
+
+### Caching computed results
+
+```ts
+async function calculateUserStats(userId: string) {
+  'use cache';
+
+  cacheTag(`user:${userId}`);
+  cacheTag('stats');
+  cacheLife('5m'); // Recalculate every 5 minutes
+
+  const user = await db.users.findOne(userId);
+  return {
+    level: calculateLevel(user.xp),
+    rank: await calculateRank(userId),
+    achievements: await getAchievements(userId),
+  };
+}
+```
+
+## Advanced configuration
+
+### Custom cache provider
+
+For distributed caching, you can use a custom cache provider like
+Redis:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit';
+import { cache, setCacheProvider } from '@commandkit/cache';
+import { RedisCache } from '@commandkit/cache/redis';
+
+// Set up Redis as the cache provider
+setCacheProvider(
+  new RedisCache({
+    host: 'localhost',
+    port: 6379,
+  }),
+);
+
+export default defineConfig({
+  plugins: [cache()],
+});
+```
+
+### Manual cache cleanup
+
+Clean up stale cache entries to manage memory usage:
+
+```ts
+import { cleanup } from '@commandkit/cache';
+
+// Clean up entries older than 24 hours
+await cleanup(24 * 60 * 60 * 1000);
+
+// Set up regular cleanup
+setInterval(
+  async () => {
+    await cleanup(24 * 60 * 60 * 1000);
+  },
+  24 * 60 * 60 * 1000,
+); // Run daily
+```

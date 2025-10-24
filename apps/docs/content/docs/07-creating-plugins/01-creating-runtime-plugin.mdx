@@ -1,0 +1,582 @@
+---
+title: Creating a Runtime Plugin
+---
+
+Runtime plugins are used to modify the way CommandKit runs your
+application. They are executed at runtime and can be used to modify
+the behavior of CommandKit. These plugins can register new commands,
+modify existing ones, or even change the way CommandKit works. For
+example, you can use a runtime plugin to add new commands or even
+custom handlers.
+
+## Getting started with runtime plugins
+
+To create a runtime plugin, you need to create a class that extends
+the
+[`RuntimePlugin`](../../api-reference/commandkit/classes/runtime-plugin.mdx)
+class from CommandKit. This class provides various hooks that you can
+use to modify the behavior of CommandKit at different stages of
+execution.
+
+Here's a basic example of a runtime plugin that logs when the bot logs
+in:
+
+```ts title="my-runtime-plugin.ts"
+import { type CommandKitPluginRuntime, RuntimePlugin } from 'commandkit';
+
+export class MyRuntimePlugin extends RuntimePlugin {
+  // Override any hooks you want to use
+  async onAfterClientLogin(ctx: CommandKitPluginRuntime): Promise<void> {
+    console.log('Bot has logged in!');
+  }
+}
+```
+
+To use this plugin in your application, you can add it to your
+CommandKit instance.
+
+```ts title="commandkit.config.ts"
+import { CommandKit } from 'commandkit';
+import { MyRuntimePlugin } from './plugins/MyRuntimePlugin';
+
+const commandkit = new CommandKit({
+  // ... other options
+  plugins: [new MyRuntimePlugin()],
+});
+```
+
+## Lifecycle hooks
+
+Runtime plugins provide hooks at different stages of your
+application's lifecycle. These hooks allow you to perform actions
+before or after key events in your bot's execution.
+
+### Initialization hooks
+
+These hooks are called during the initialization of your CommandKit
+application.
+
+#### `onBeforeCommandsLoad(ctx)`
+
+Called before commands are loaded into CommandKit.
+
+**Parameters:**
+
+- `ctx`: The runtime context, providing access to CommandKit internals
+  like the client, command context, etc.
+
+**Example use case:** Initialize resources needed by commands, or
+modify command loading behavior.
+
+```ts title="my-runtime-plugin.ts"
+async onBeforeCommandsLoad(ctx: CommandKitPluginRuntime): Promise<void> {
+  console.log('Loading commands soon...');
+  // Initialize resources needed for commands
+}
+```
+
+#### `onAfterCommandsLoad(ctx)`
+
+Called after all commands have been loaded into CommandKit.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+
+**Example use case:** Log the loaded commands, perform validation, or
+add metadata to loaded commands.
+
+```ts title="my-runtime-plugin.ts"
+async onAfterCommandsLoad(ctx: CommandKitPluginRuntime): Promise<void> {
+  console.log(`Loaded ${ctx.commands.size} commands!`);
+  // Do something with the loaded commands
+}
+```
+
+#### `onBeforeEventsLoad(ctx)`
+
+Called before event handlers are loaded into CommandKit.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+
+**Example use case:** Set up prerequisites for event handlers.
+
+```ts title="my-runtime-plugin.ts"
+async onBeforeEventsLoad(ctx: CommandKitPluginRuntime): Promise<void> {
+  console.log('Loading event handlers soon...');
+  // Prepare event handling prerequisites
+}
+```
+
+#### `onAfterEventsLoad(ctx)`
+
+Called after all event handlers have been loaded.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+
+**Example use case:** Log the loaded events, add custom event
+processing.
+
+```ts title="my-runtime-plugin.ts"
+async onAfterEventsLoad(ctx: CommandKitPluginRuntime): Promise<void> {
+  console.log('All event handlers loaded!');
+  // Perform post-event-loading actions
+}
+```
+
+#### `onBeforeClientLogin(ctx)`
+
+Called right before the Discord client attempts to log in.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+
+**Example use case:** Perform last-minute setup before connecting to
+Discord.
+
+```ts title="my-runtime-plugin.ts"
+async onBeforeClientLogin(ctx: CommandKitPluginRuntime): Promise<void> {
+  console.log('Bot is about to connect to Discord...');
+  // Last minute preparations before login
+}
+```
+
+#### `onAfterClientLogin(ctx)`
+
+Called after the Discord client has successfully logged in.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+
+**Example use case:** Start additional services once the bot is
+online, log connection details.
+
+```ts title="my-runtime-plugin.ts"
+async onAfterClientLogin(ctx: CommandKitPluginRuntime): Promise<void> {
+  console.log(`Bot logged in as ${ctx.client.user?.tag}!`);
+  // Start additional services, initialize post-login resources
+}
+```
+
+### Router initialization hooks
+
+These hooks are called when the command and event routers are
+initialized.
+
+#### `onCommandsRouterInit(ctx)`
+
+Called after the commands router is initialized.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+
+**Example use case:** Add custom command routing logic or middleware.
+
+```ts title="my-runtime-plugin.ts"
+async onCommandsRouterInit(ctx: CommandKitPluginRuntime): Promise<void> {
+  console.log('Commands router initialized!');
+  // Add custom middleware or routing logic
+}
+```
+
+#### `onEventsRouterInit(ctx)`
+
+Called after the events router is initialized.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+
+**Example use case:** Add custom event handling logic.
+
+```ts title="my-runtime-plugin.ts"
+async onEventsRouterInit(ctx: CommandKitPluginRuntime): Promise<void> {
+  console.log('Events router initialized!');
+  // Set up custom event processing
+}
+```
+
+## Event handler hooks
+
+These hooks are called when processing events.
+
+#### `willEmitEvent(ctx, event)`
+
+Called before an event is emitted.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `event`: The event object being emitted.
+
+**Example use case:** Modify event data before it's emitted, or cancel
+the event.
+
+```ts title="my-runtime-plugin.ts"
+async willEmitEvent(
+  ctx: CommandKitPluginRuntime,
+  event: CommandKitEventDispatch
+): Promise<void> {
+  // prevent other plugins from handling this event
+  event.accept();
+  // Modify event data
+  event.args.push('This is a custom argument');
+}
+```
+
+Now the event listener will receive the modified event data.
+
+## Command registration hooks
+
+These hooks are called during the command registration process,
+allowing you to modify commands before they're registered with
+Discord.
+
+#### `prepareCommand(ctx, commands)`
+
+Called before a command is loaded for registration, allowing you to
+modify the command data.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `commands`: The command object being loaded (CommandBuilderLike).
+
+**Returns:** The modified command or `null` to use the original.
+
+**Example use case:** Add default options to commands, modify command
+properties.
+
+```ts title="my-runtime-plugin.ts"
+async prepareCommand(
+  ctx: CommandKitPluginRuntime,
+  commands: CommandBuilderLike
+): Promise<CommandBuilderLike | null> {
+  // Add a disclaimer to all command descriptions
+  if (commands.description) {
+    commands.description = `[BETA] ${commands.description}`;
+  }
+  return commands;
+}
+```
+
+#### `onBeforeRegisterCommands(ctx, event)`
+
+Called before command registration process starts, allowing you to
+cancel or modify the registration.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `event`: The command registration event data.
+
+**Example use case:** Log commands being registered, filter commands,
+or handle registration manually.
+
+```ts title="my-runtime-plugin.ts"
+async onBeforeRegisterCommands(
+  ctx: CommandKitPluginRuntime,
+  event: PreRegisterCommandsEvent
+): Promise<void> {
+  console.log(`Registering ${event.commands.length} commands...`);
+  // You can modify event.handled = true to cancel standard registration
+}
+```
+
+#### `onBeforeRegisterGlobalCommands(ctx, event)`
+
+Called before global commands are registered with Discord.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `event`: The command registration event data.
+
+**Example use case:** Handle global command registration differently.
+
+```ts title="my-runtime-plugin.ts"
+async onBeforeRegisterGlobalCommands(
+  ctx: CommandKitPluginRuntime,
+  event: PreRegisterCommandsEvent
+): Promise<void> {
+  console.log(`Registering ${event.commands.length} global commands...`);
+  // Custom global command registration logic
+}
+```
+
+#### `onBeforePrepareGuildCommandsRegistration(ctx, event)`
+
+Called before guild commands are prepared for registration, before
+guilds are resolved.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `event`: The command registration event data.
+
+**Example use case:** Modify guild commands before guild resolution.
+
+```ts title="my-runtime-plugin.ts"
+async onBeforePrepareGuildCommandsRegistration(
+  ctx: CommandKitPluginRuntime,
+  event: PreRegisterCommandsEvent
+): Promise<void> {
+  console.log('Preparing guild commands for registration...');
+  // Modify guild commands before guilds are resolved
+}
+```
+
+#### `onBeforeRegisterGuildCommands(ctx, event)`
+
+Called before guild commands are registered, after guilds have been
+resolved.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `event`: The command registration event data.
+
+**Example use case:** Custom guild command registration logic.
+
+```ts title="my-runtime-plugin.ts"
+async onBeforeRegisterGuildCommands(
+  ctx: CommandKitPluginRuntime,
+  event: PreRegisterCommandsEvent
+): Promise<void> {
+  console.log('Registering guild commands...');
+  // Custom guild command registration
+}
+```
+
+## Interaction hooks
+
+These hooks are called when processing interactions and messages.
+
+#### `onBeforeInteraction(ctx, interaction)`
+
+Called before an interaction is handled.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `interaction`: The Discord.js Interaction object.
+
+**Example use case:** Log interactions, perform checks before
+handling, add analytics.
+
+```ts title="my-runtime-plugin.ts"
+async onBeforeInteraction(
+  ctx: CommandKitPluginRuntime,
+  interaction: Interaction
+): Promise<void> {
+  if (interaction.isCommand()) {
+    console.log(`Command used: ${interaction.commandName}`);
+  }
+  // Add analytics, perform checks, etc.
+}
+```
+
+#### `onBeforeMessageCommand(ctx, message)`
+
+Called before a message command is processed.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `message`: The Discord.js Message object.
+
+**Example use case:** Filter messages, add logging, perform checks.
+
+```ts title="my-runtime-plugin.ts"
+async onBeforeMessageCommand(
+  ctx: CommandKitPluginRuntime,
+  message: Message
+): Promise<void> {
+  console.log(`Potential message command: ${message.content}`);
+  // Message filtering, logging, etc.
+}
+```
+
+#### `executeCommand(ctx, env, source, command, execute)`
+
+Called before a command is executed, allowing you to handle command
+execution yourself.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `env`: The CommandKitEnvironment containing command context.
+- `source`: The interaction or message that triggered the command.
+- `command`: The prepared command execution.
+- `execute`: The function that would normally execute the command.
+
+**Returns:** `true` if you handled the command execution, `false` to
+let CommandKit handle it.
+
+**Example use case:** Custom command execution, permission checking,
+rate limiting.
+
+```ts title="my-runtime-plugin.ts"
+async executeCommand(
+  ctx: CommandKitPluginRuntime,
+  env: CommandKitEnvironment,
+  source: Interaction | Message,
+  command: PreparedAppCommandExecution,
+  execute: () => Promise<any>
+): Promise<boolean> {
+  // Check if command is being rate limited
+  if (this.isRateLimited(command.name, source.user.id)) {
+    if (source instanceof Interaction && source.isRepliable()) {
+      await source.reply('You are being rate limited! Try again later.');
+    }
+    return true; // We handled it, don't execute the normal way
+  }
+
+  // Let CommandKit handle it normally
+  return false;
+}
+```
+
+#### `onAfterCommand(ctx, env)`
+
+Called after a command and all its deferred functions are executed.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `env`: The CommandKitEnvironment containing command context.
+
+**Example use case:** Logging, analytics, cleanup after command
+execution.
+
+```ts title="my-runtime-plugin.ts"
+async onAfterCommand(
+  ctx: CommandKitPluginRuntime,
+  env: CommandKitEnvironment
+): Promise<void> {
+  console.log(`Command ${env.command.name} executed by ${env.user?.tag}`);
+  // Log command usage, perform cleanup, etc.
+}
+```
+
+## Development hooks
+
+These hooks are used during development.
+
+#### `performHMR(ctx, event)`
+
+Called when a Hot Module Replacement event is received in development
+mode.
+
+**Parameters:**
+
+- `ctx`: The runtime context.
+- `event`: The HMR event data.
+
+**Example use case:** Handle reloading of specific resources during
+development.
+
+```ts title="my-runtime-plugin.ts"
+async performHMR(
+  ctx: CommandKitPluginRuntime,
+  event: CommandKitHMREvent
+): Promise<void> {
+  console.log(`HMR event: ${event.type}`);
+  // Custom HMR handling
+}
+```
+
+## Creating a Complete Runtime Plugin
+
+Now that we've covered all available hooks, let's put together a more
+complete example of a runtime plugin that implements several hooks:
+
+```ts title="my-runtime-plugin.ts"
+import {
+  type PreparedAppCommandExecution,
+  type CommandKitEnvironment,
+  type CommandKitPluginRuntime,
+  type CommandBuilderLike,
+  RuntimePlugin,
+} from 'commandkit';
+import type { Interaction, Message } from 'discord.js';
+
+export class LoggingPlugin extends RuntimePlugin {
+  private commandUsage = new Map<string, number>();
+
+  async onAfterClientLogin(ctx: CommandKitPluginRuntime): Promise<void> {
+    console.log(`Bot logged in as ${ctx.client.user?.tag}!`);
+    console.log(`Serving ${ctx.client.guilds.cache.size} guilds`);
+  }
+
+  async onBeforeInteraction(
+    ctx: CommandKitPluginRuntime,
+    interaction: Interaction,
+  ): Promise<void> {
+    if (interaction.isCommand()) {
+      console.log(
+        `Command "${interaction.commandName}" used by ${interaction.user.tag}`,
+      );
+    }
+  }
+
+  async executeCommand(
+    ctx: CommandKitPluginRuntime,
+    env: CommandKitEnvironment,
+    source: Interaction | Message,
+    command: PreparedAppCommandExecution,
+    execute: () => Promise<any>,
+  ): Promise<boolean> {
+    const startTime = Date.now();
+
+    // Let CommandKit handle normal execution
+    await execute();
+
+    // Log execution time
+    const execTime = Date.now() - startTime;
+    console.log(`Command "${command.name}" executed in ${execTime}ms`);
+
+    // Track usage
+    this.commandUsage.set(
+      command.name,
+      (this.commandUsage.get(command.name) || 0) + 1,
+    );
+
+    return true; // We've handled it
+  }
+
+  async prepareCommand(
+    ctx: CommandKitPluginRuntime,
+    command: CommandBuilderLike,
+  ): Promise<CommandBuilderLike | null> {
+    // Add dev tag to command names in development environment
+    if (process.env.NODE_ENV === 'development') {
+      command.name = `dev_${command.name}`;
+    }
+
+    return command;
+  }
+}
+```
+
+## Best practices
+
+When creating runtime plugins, here are some best practices to follow:
+
+1. **Keep it focused** - Each plugin should have a specific purpose.
+2. **Handle errors** - Wrap your hook implementations in try/catch
+   blocks to prevent crashing your bot.
+3. **Be performance-conscious** - Some hooks may be called frequently,
+   so keep your code efficient.
+4. **Respect the return values** - Make sure to return the appropriate
+   values from hooks, especially for hooks like `executeCommand` that
+   can change the execution flow.
+5. **Document your plugins** - If you're creating plugins for others
+   to use, document how they should be configured and used.

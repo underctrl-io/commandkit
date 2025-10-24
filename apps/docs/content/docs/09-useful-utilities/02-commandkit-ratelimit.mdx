@@ -1,0 +1,106 @@
+---
+title: commandkit/ratelimit
+---
+
+CommandKit provides a rate limiter utility that controls the frequency
+of operations such as user actions or API requests. This helps prevent
+system overload by enforcing configurable request limits.
+
+## Basic usage
+
+The simplest way to use rate limiting is with the default settings:
+
+```typescript
+import { ratelimit } from 'commandkit/ratelimit';
+
+// Check if this user can make another request
+const allowed = await ratelimit('user:123');
+if (allowed) {
+  // Process the request
+  console.log('Request processed successfully');
+} else {
+  // User has made too many requests
+  console.log('Please wait before making another request');
+}
+```
+
+## Custom configuration
+
+You can create a custom rate limiter with specific settings:
+
+```typescript
+import { createRateLimiter } from 'commandkit/ratelimit';
+
+// Create a stricter rate limiter for API endpoints
+const apiLimiter = createRateLimiter({
+  maxRequests: 5, // Allow 5 requests
+  interval: 30000, // Per 30 seconds
+});
+
+const allowed = await apiLimiter.limit('api:endpoint');
+```
+
+## Advanced usage
+
+### Checking remaining requests
+
+You can check how many requests a user has left and when the limit
+resets:
+
+```typescript
+import { getRemainingRequests, getResetTime } from 'commandkit/ratelimit';
+
+const remaining = await getRemainingRequests('user:123');
+const resetTime = await getResetTime('user:123');
+
+console.log(`${remaining} requests remaining`);
+console.log(`Limit resets in ${Math.round(resetTime / 1000)} seconds`);
+```
+
+### Manual reset
+
+You can manually reset a user's rate limit when needed:
+
+```typescript
+import { resetRateLimit } from 'commandkit/ratelimit';
+
+// Give the user a fresh start
+await resetRateLimit('user:123');
+```
+
+### Using external storage
+
+Rate limiters store data in memory by default. For multi-server
+deployments, use external storage like Redis to share rate limit data
+across all servers:
+
+```typescript
+import { RateLimiter, RateLimitStorage } from 'commandkit/ratelimit';
+import { RedisRateLimitStorage } from '@commandkit/redis';
+import { Redis } from 'ioredis';
+
+// Create Redis client
+const redis = new Redis();
+
+// Use Redis-based rate limit storage
+const limiter = new RateLimiter(10, 60000, new RedisRateLimitStorage(redis));
+```
+
+You can also use the convenience function:
+
+```typescript
+import { createRateLimiter } from 'commandkit/ratelimit';
+import { RedisRateLimitStorage } from '@commandkit/redis';
+
+const limiter = createRateLimiter({
+  maxRequests: 10,
+  interval: 60000,
+  storage: new RedisRateLimitStorage(redis),
+});
+```
+
+## Default settings
+
+- **Max Requests**: 10 requests
+- **Time Window**: 60 seconds (1 minute)
+- **Storage**: In-memory (works for single-server applications)

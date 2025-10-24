@@ -1,0 +1,167 @@
+---
+title: Options Autocomplete
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+<Callout type="warning">
+
+This feature is only available for
+[chat input commands](./01-chat-input-commands.mdx).
+
+</Callout>
+
+In your chat input command options, autocomplete allows users on
+Discord to see a list of suggested choices based on what they're
+actively typing.
+
+## Managing autocomplete choices
+
+In addition to registering your application commands, CommandKit can
+also handle any options you mark as 'autocomplete'. This means that
+CommandKit will automatically identify which command the autocomplete
+interaction belongs to. This will save you the hassle of registering
+and managing your own `interactionCreate` event listener.
+
+To begin, export the `autocomplete` function from the command where
+you have an option with `autocomplete` set to `true`.
+
+<Tabs groupId='language' persist items={['TypeScript', 'JavaScript']} defaultIndex={0}>
+  <Tab value="TypeScript">
+    ```ts title="src/app/commands/pet.ts"
+    import type { CommandData, AutocompleteCommand, ChatInputCommand } from 'commandkit';
+    import { ApplicationCommandOptionType } from 'discord.js';
+
+    export const command: CommandData = {
+      name: 'pet',
+      description: 'Check in one of your pets.',
+      options: [
+        {
+          name: 'name',
+          description: 'The name of your pet',
+          type: ApplicationCommandOptionType.String,
+          autocomplete: true,
+          required: true,
+        },
+      ],
+    };
+
+    const pets = Array.from({ length: 20 }, (_, i) => ({
+      name: `Pet ${i + 1}`, // e.g. Pet 1, Pet 2, Pet 3, etc.
+      value: `petId_${i}`,
+    }));
+
+    export const autocomplete: AutocompleteCommand = async ({ interaction }) => {
+      try {
+        // Get the input value of your autocomplete option
+        const input = interaction.options.getString('name', false);
+        if (!input) {
+          interaction.respond(pets);
+          return;
+        }
+
+        const filteredPets = pets.filter((pet) =>
+          pet.name.toLowerCase().includes(input.toLowerCase()),
+        );
+
+        // Respond with what you think the user may trying to find
+        interaction.respond(filteredPets);
+      } catch (error) {
+        console.error('Autocomplete error', error);
+      }
+    };
+
+    export const chatInput: ChatInputCommand = async ({ interaction }) => {
+      const chosenPetId = interaction.options.getString('name', true);
+      const chosenPet = pets.find((pet) => pet.value === chosenPetId);
+
+      if (!chosenPet) {
+        interaction.reply('Pet not found.');
+        return;
+      }
+
+      interaction.reply(`You chose ${chosenPet.name}`);
+    };
+    ```
+
+  </Tab>
+  <Tab value="JavaScript">
+    ```js title="src/app/commands/pet.js"
+    /**
+     * @typedef {import('commandkit').CommandData} CommandData
+     * @typedef {import('commandkit').AutocompleteCommand} AutocompleteCommand
+     * @typedef {import('commandkit').ChatInputCommand} ChatInputCommand
+     */
+    import { ApplicationCommandOptionType } from 'discord.js';
+
+    /** @type {CommandData} */
+    export const command = {
+      name: 'pet',
+      description: 'Check in one of your pets.',
+      options: [
+        {
+          name: 'name',
+          description: 'The name of your pet',
+          type: ApplicationCommandOptionType.String,
+          autocomplete: true,
+          required: true,
+        },
+      ],
+    };
+
+    const pets = Array.from({ length: 20 }, (_, i) => ({
+      name: `Pet ${i + 1}`, // e.g. Pet 1, Pet 2, Pet 3, etc.
+      value: `petId_${i}`,
+    }));
+
+    /** @type {AutocompleteCommand} */
+    export const autocomplete = async ({ interaction }) => {
+      try {
+        // Get the input value of your autocomplete option
+        const input = interaction.options.getString('name', false);
+        if (!input) {
+          interaction.respond(pets);
+          return;
+        }
+
+        const filteredPets = pets.filter((pet) =>
+          pet.name.toLowerCase().includes(input.toLowerCase()),
+        );
+
+        // Respond with what you think the user may trying to find
+        interaction.respond(filteredPets);
+      } catch (error) {
+        console.error('Autocomplete error', error);
+      }
+    };
+
+    /** @type {ChatInputCommand} */
+    export const chatInput = async ({ interaction }) => {
+      const chosenPetId = interaction.options.getString('name', true);
+      const chosenPet = pets.find((pet) => pet.value === chosenPetId);
+
+      if (!chosenPet) {
+        interaction.reply('Pet not found.');
+        return;
+      }
+
+      interaction.reply(`You chose ${chosenPet.name}`);
+    };
+    ```
+
+  </Tab>
+</Tabs>
+
+<Callout type="warning">
+
+The Discord API only allows a maximum of 25 autocomplete choices per
+response. To ensure you don't run into errors, it's highly recommended
+to manually limit your choices response array to this amount.
+
+</Callout>
+
+<Callout>
+It's highly recommended to use try/catch blocks in your `autocomplete`
+function as it's very common for autocomplete responses to run into
+errors, as they may take longer due to their dynamic nature.
+</Callout>

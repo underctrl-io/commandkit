@@ -1,0 +1,37 @@
+---
+title: Separator
+---
+
+The `Separator` component creates visual spacing between sections in
+your message components.
+
+## Basic usage
+
+```tsx title="src/app/commands/separator-example.tsx"
+import {
+  type ChatInputCommand,
+  Container,
+  TextDisplay,
+  Separator,
+} from 'commandkit';
+import { Colors, MessageFlags, SeparatorSpacingSize } from 'discord.js';
+
+export const chatInput: ChatInputCommand = async ({ interaction }) => {
+  const container = (
+    <Container accentColor={Colors.Blue}>
+      <TextDisplay content="# First Section" />
+      <TextDisplay content="This is the first part of our message." />
+
+      <Separator spacing={SeparatorSpacingSize.Large} />
+
+      <TextDisplay content="# Second Section" />
+      <TextDisplay content="This is the second part, separated from the first." />
+    </Container>
+  );
+
+  await interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2,
+  });
+};
+```
