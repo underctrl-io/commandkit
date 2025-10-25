@@ -27,7 +27,7 @@
     "@umami/node": "^0.4.0",
     "canvacord": "^6.0.2",
     "commandkit": "^1.2.0-rc.12",
-    "discord.js": "^14.23.2",
+    "discord.js": "^14.24.0",
     "murmurhash": "^2.0.1",
     "prisma": "^6.8.2",
     "sharp": "^0.34.2"

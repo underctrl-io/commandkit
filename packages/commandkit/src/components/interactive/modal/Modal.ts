@@ -1,4 +1,9 @@
-import { TextInputBuilder, TextInputStyle } from 'discord.js';
+import {
+  TextInputBuilder,
+  TextInputStyle,
+  FileUploadComponentData,
+  FileUploadBuilder,
+} from 'discord.js';
 import { MaybeArray } from '../../common/types';
 import { CommandKitElement } from '../../common/element';
 import {
@@ -9,6 +14,7 @@ import {
 } from './ModalKit';
 import { EventInterceptorErrorHandler } from '../../common/EventInterceptor';
 import { warnDeprecated } from '../../../utils/warning';
+import { applyId } from '../../display/common';
 
 /**
  * The properties for the modal component.
@@ -150,4 +156,40 @@ export function ParagraphInput(
   props: TextInputProps,
 ): CommandKitElement<'text-input'> {
   return TextInput({ ...props, style: TextInputStyle.Paragraph });
+}
+
+export interface FileUploadProps
+  extends Omit<FileUploadComponentData, 'type' | 'required'> {
+  id?: number;
+  required?: boolean;
+}
+
+/**
+ * The file upload component.
+ * @param props The file upload properties.
+ * @returns The commandkit element.
+ * @example <FileUpload customId="file" />
+ */
+export function FileUpload(props: FileUploadProps): FileUploadBuilder {
+  const file = new FileUploadBuilder();
+
+  applyId(props, file);
+
+  if (props.maxValues != null) {
+    file.setMaxValues(props.maxValues);
+  }
+
+  if (props.minValues != null) {
+    file.setMinValues(props.minValues);
+  }
+
+  if (props.customId != null) {
+    file.setCustomId(props.customId);
+  }
+
+  if (props.required != null) {
+    file.setRequired(props.required);
+  }
+
+  return file;
 }

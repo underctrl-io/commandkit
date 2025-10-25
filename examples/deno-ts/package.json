@@ -16,6 +16,6 @@
   },
   "dependencies": {
     "commandkit": "^1.2.0-rc.12",
-    "discord.js": "^14.23.2"
+    "discord.js": "^14.24.0"
   }
 }

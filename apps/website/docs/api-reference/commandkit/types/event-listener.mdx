@@ -21,6 +21,7 @@ Represents an event listener with its configuration.
 type EventListener = {
     handler: ListenerFunction;
     once: boolean;
+    parallel: boolean;
 }
 ```
 
@@ -32,6 +33,11 @@ type EventListener = {
 
 
 ### once
+
+<MemberInfo kind="property" type={`boolean`}   />
+
+
+### parallel
 
 <MemberInfo kind="property" type={`boolean`}   />
 
