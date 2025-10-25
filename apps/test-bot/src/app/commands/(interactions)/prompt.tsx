@@ -9,6 +9,7 @@ import {
   ChatInputCommandContext,
   StringSelectMenu,
   StringSelectMenuOption,
+  FileUpload,
 } from 'commandkit';
 import { ComponentType, MessageFlags } from 'discord.js';
 
@@ -41,6 +42,9 @@ export async function chatInput(ctx: ChatInputCommandContext) {
           customId="description"
           placeholder="Lorem ipsum dolor sit amet..."
         />
+      </Label>
+      <Label label="File" description="Upload a file">
+        <FileUpload customId="file" />
       </Label>
       <Label label="Select" description="Select an option">
         <StringSelectMenu customId="select">
