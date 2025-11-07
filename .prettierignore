@@ -9,7 +9,9 @@ node_modules
 dist
 build
 .next
+.swc
 .commandkit
+.workflow-data
 
 .DS_Store
 .vscode
