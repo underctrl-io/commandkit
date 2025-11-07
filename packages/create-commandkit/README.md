@@ -71,6 +71,9 @@ npx create-commandkit@latest --example "https://github.com/user/repo" --example-
 - `basic-js` - [examples/basic-js](https://github.com/underctrl-io/commandkit/tree/main/examples/basic-js)
 - `basic-ts` - [examples/basic-ts](https://github.com/underctrl-io/commandkit/tree/main/examples/basic-ts)
 - `deno-ts` - [examples/deno-ts](https://github.com/underctrl-io/commandkit/tree/main/examples/deno-ts)
+- `with-ai` - [examples/with-ai](https://github.com/underctrl-io/commandkit/tree/main/examples/with-ai)
+- `with-leveling-system` - [examples/with-leveling-system](https://github.com/underctrl-io/commandkit/tree/main/examples/with-leveling-system)
+- `with-workflow` - [examples/with-workflow](https://github.com/underctrl-io/commandkit/tree/main/examples/with-workflow)
 - `without-cli` - [examples/without-cli](https://github.com/underctrl-io/commandkit/tree/main/examples/without-cli)
 <!-- END_AVAILABLE_EXAMPLES -->
 

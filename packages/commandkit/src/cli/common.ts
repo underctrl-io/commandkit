@@ -226,13 +226,15 @@ export async function copyLocaleFiles(_from: string, _to: string) {
     const destLocalePath = destLocalePaths[srcLocalePaths.indexOf(localePath)];
 
     if (!fs.existsSync(destLocalePath)) {
-      fs.promises.mkdir(destLocalePath, { recursive: true });
+      fs.promises.mkdir(destLocalePath, { recursive: true }).catch(() => {});
     }
 
-    await fs.promises.cp(localePath, destLocalePath, {
-      recursive: true,
-      force: true,
-    });
+    await fs.promises
+      .cp(localePath, destLocalePath, {
+        recursive: true,
+        force: true,
+      })
+      .catch(() => {});
   }
 }
 
