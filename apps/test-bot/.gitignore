@@ -2,3 +2,5 @@
 .commandkit
 compiled-commandkit.config.mjs
 *.db*
+.workflow-data/
+.swc/
