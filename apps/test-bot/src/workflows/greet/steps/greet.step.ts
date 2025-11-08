@@ -1,4 +1,3 @@
-import { Logger } from 'commandkit';
 import { useClient } from 'commandkit/hooks';
 
 export async function greetUser(userId: string, again = false) {

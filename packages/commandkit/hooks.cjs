@@ -9,11 +9,18 @@ const {
 } = require('./dist/app/events/EventWorkerContext.js');
 
 function useAnyEnvironment() {
-  const commandCtx = getContext();
-  if (commandCtx) return commandCtx;
+  try {
+    const commandCtx = getContext();
+    if (commandCtx) return commandCtx;
+  } catch {}
 
-  const eventWorkerCtx = getEventWorkerContext();
-  if (eventWorkerCtx) return eventWorkerCtx;
+  try {
+    const eventWorkerCtx = getEventWorkerContext();
+    if (eventWorkerCtx) return eventWorkerCtx;
+  } catch {}
+
+  const maybeCommandKit = getCommandKit();
+  if (maybeCommandKit) return { commandkit: maybeCommandKit };
 
   throw new Error(
     'No environment found. This hook must be used within a CommandKit environment.',

@@ -2,9 +2,9 @@
 // @ts-nocheck
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
-import { POST as WebhookPOST } from './webhook.mjs';
-import { POST as StepPOST } from './steps.mjs';
-import { POST as FlowPOST } from './workflows.mjs';
+import { POST as WebhookPOST } from '{{webhookPath}}';
+import { POST as StepPOST } from '{{stepsPath}}';
+import { POST as FlowPOST } from '{{workflowPath}}';
 
 const app = new Hono();
 

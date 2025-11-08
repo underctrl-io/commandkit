@@ -55,7 +55,10 @@ export class CommandKitPluginRuntime {
    */
   public async preload(plugin: RuntimePlugin) {
     for (const entrypoint of plugin.preload) {
-      await import(toFileURL(`${getCurrentDirectory()}/${entrypoint}`));
+      const path = entrypoint.startsWith('module:')
+        ? entrypoint.slice(7)
+        : toFileURL(`${getCurrentDirectory()}/${entrypoint}`);
+      await import(path);
     }
   }
 

@@ -1,9 +1,11 @@
-import { commandkit } from 'commandkit';
+import { useClient } from 'commandkit/hooks';
 
 export async function greetUser(userId: string, again = false) {
   'use step';
 
-  const user = await commandkit.client.users.fetch(userId);
+  const client = useClient<true>();
+
+  const user = await client.users.fetch(userId);
 
   const message = again ? 'Hello again!' : 'Hello!';
 
