@@ -1,0 +1,44 @@
+{
+  "name": "@commandkit/workflow",
+  "version": "0.0.0",
+  "description": "CommandKit plugin for useworkflow.dev",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underctrl-io/commandkit.git",
+    "directory": "packages/workflow"
+  },
+  "keywords": [
+    "commandkit",
+    "workflow"
+  ],
+  "contributors": [
+    "Twilight <hello@twlite.dev>",
+    "Avraj <avraj@underctrl.io>"
+  ],
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/underctrl-io/commandkit/issues"
+  },
+  "homepage": "https://github.com/underctrl-io/commandkit#readme",
+  "devDependencies": {
+    "commandkit": "workspace:*",
+    "tsconfig": "workspace:*",
+    "typescript": "catalog:build",
+    "workflow": "catalog:workflow"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.6",
+    "@workflow/builders": "catalog:workflow",
+    "hono": "^4.10.4"
+  }
+}

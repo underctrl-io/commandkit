@@ -96,6 +96,7 @@ export async function bootstrapCommandkitCLI(
       const { plugins } = await loadConfigFile();
       const runtime = new CompilerPluginRuntime(
         plugins.filter((p) => isCompilerPlugin(p)) as CompilerPlugin[],
+        true,
       );
 
       try {

@@ -20,7 +20,7 @@ CompilerPluginRuntime is a runtime for managing compiler plugins in CommandKit.
 ```ts title="Signature"
 class CompilerPluginRuntime {
     public readonly name = 'CompilerPluginRuntime';
-    constructor(plugins: CompilerPlugin[])
+    constructor(plugins: CompilerPlugin[], isDevMode: boolean)
     getPlugins() => ;
     isEmpty() => ;
     registerTemplate(name: string, handler: TemplateHandler) => ;
@@ -43,7 +43,7 @@ class CompilerPluginRuntime {
 
 ### constructor
 
-<MemberInfo kind="method" type={`(plugins: <a href='/docs/api-reference/commandkit/classes/compiler-plugin#compilerplugin'>CompilerPlugin</a>[]) => CompilerPluginRuntime`}   />
+<MemberInfo kind="method" type={`(plugins: <a href='/docs/api-reference/commandkit/classes/compiler-plugin#compilerplugin'>CompilerPlugin</a>[], isDevMode: boolean) => CompilerPluginRuntime`}   />
 
 Creates a new instance of CompilerPluginRuntime.
 ### getPlugins

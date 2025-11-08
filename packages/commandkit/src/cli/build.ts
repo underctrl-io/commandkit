@@ -74,6 +74,7 @@ export async function buildApplication({
 
   const pluginRuntime = new CompilerPluginRuntime(
     (plugins || []) as CompilerPlugin[],
+    !!isDev,
   );
 
   rolldownPlugins ??= [];

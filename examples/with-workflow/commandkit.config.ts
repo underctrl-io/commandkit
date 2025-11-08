@@ -1,6 +1,6 @@
 import { defineConfig } from 'commandkit/config';
-import { workflowRollupPlugin } from 'workflow/rollup';
+import { workflow } from '@commandkit/workflow';
 
 export default defineConfig({
-  rolldownPlugins: [workflowRollupPlugin()],
+  plugins: [workflow()],
 });

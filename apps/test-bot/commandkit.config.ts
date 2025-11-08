@@ -5,7 +5,7 @@ import { cache } from '@commandkit/cache';
 import { ai } from '@commandkit/ai';
 import { tasks, setDriver } from '@commandkit/tasks';
 import { BullMQDriver } from '@commandkit/tasks/bullmq';
-import { workflowRollupPlugin } from 'workflow/rollup';
+import { workflow } from '@commandkit/workflow';
 
 noBuildOnly(() => {
   setDriver(
@@ -16,7 +16,6 @@ noBuildOnly(() => {
 })();
 
 export default defineConfig({
-  rolldownPlugins: [workflowRollupPlugin()],
   plugins: [
     i18n(),
     devtools(),
@@ -25,5 +24,6 @@ export default defineConfig({
     tasks({
       initializeDefaultDriver: false,
     }),
+    workflow(),
   ],
 });

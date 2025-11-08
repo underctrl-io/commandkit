@@ -36,6 +36,7 @@ export class MacroPlugin extends CompilerPlugin {
   ): Promise<MaybeFalsey<TransformedResult>> {
     if (!this.options.enabled) return null;
     if (/\.json$/.test(params.id)) return null;
+    if (!params.code.includes('use macro')) return null;
 
     const { contents } = await this.macroTransformer.transform(
       params.code,

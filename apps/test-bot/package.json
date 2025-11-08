@@ -18,11 +18,12 @@
     "@commandkit/i18n": "workspace:*",
     "@commandkit/legacy": "workspace:*",
     "@commandkit/tasks": "workspace:*",
+    "@commandkit/workflow": "workspace:*",
     "commandkit": "workspace:*",
     "discord.js": "catalog:discordjs",
     "dotenv": "^16.4.7",
     "ms": "^2.1.3",
-    "workflow": "4.0.1-beta.11",
+    "workflow": "catalog:workflow",
     "zod": "^4.1.1"
   },
   "devDependencies": {

@@ -17,6 +17,6 @@
   "dependencies": {
     "commandkit": "^1.2.0-rc.12",
     "discord.js": "^14.24.0",
-    "workflow": "^4.0.1-beta.11"
+    "workflow": "^4.0.1-beta.12"
   }
 }
