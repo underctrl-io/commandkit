@@ -1,6 +1,6 @@
 # @commandkit/workflow
 
-CommandKit plugin for useworkflow.dev
+CommandKit plugin for [useworkflow.dev](https://useworkflow.dev).
 
 ## Installation
 
