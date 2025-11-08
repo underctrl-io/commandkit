@@ -1,0 +1,442 @@
+---
+title: '@commandkit/workflow'
+description: Learn how to use the @commandkit/workflow plugin to build durable,
+  long-running workflows with CommandKit.
+---
+
+The `@commandkit/workflow` plugin integrates
+[Workflow DevKit](https://useworkflow.dev) into your CommandKit
+application, enabling you to build durable, long-running workflows
+that can suspend, resume, and maintain state across restarts or
+failures.
+
+Workflows are perfect for building complex multi-step processes like
+user onboarding sequences, scheduled reminders, data processing
+pipelines, or any task that requires reliability and state
+persistence.
+
+## Installation
+
+```bash
+npm install @commandkit/workflow workflow
+```
+
+## Basic setup
+
+Add the workflow plugin to your CommandKit configuration:
+
+```ts title="commandkit.config.ts"
+import { defineConfig } from 'commandkit/config';
+import { workflow } from '@commandkit/workflow';
+
+export default defineConfig({
+  plugins: [workflow()],
+});
+```
+
+## Understanding workflows
+
+Workflows are durable functions that can maintain their execution
+state across restarts, failures, or user events. They consist of two
+types of functions:
+
+- **Workflow Functions**: Functions that orchestrate steps using
+  `"use workflow"` directive
+- **Step Functions**: Functions that perform actual work using
+  `"use step"` directive
+
+For comprehensive documentation on workflows, steps, control flow
+patterns, error handling, and more, refer to the
+[official Workflow DevKit documentation](https://useworkflow.dev).
+
+## Creating workflows
+
+Create workflow files in the `src/workflows` directory. Each workflow
+should export a workflow function that orchestrates one or more step
+functions.
+
+### Basic workflow structure
+
+```ts title="src/workflows/greet/greet.workflow.ts"
+import { sleep } from 'workflow';
+import { greetUser } from './steps/greet.step';
+
+export async function greetUserWorkflow(userId: string) {
+  'use workflow';
+
+  await greetUser(userId);
+
+  await sleep('5 seconds');
+
+  await greetUser(userId, true);
+
+  return { success: true };
+}
+```
+
+### Step functions
+
+Step functions perform the actual work and have full Node.js runtime
+access. They can use CommandKit hooks and any npm packages:
+
+```ts title="src/workflows/greet/steps/greet.step.ts"
+import { useClient } from 'commandkit/hooks';
+
+export async function greetUser(userId: string, again = false) {
+  'use step';
+
+  const client = useClient<true>();
+
+  const user = await client.users.fetch(userId);
+
+  const message = again ? 'Hello again!' : 'Hello!';
+
+  await user.send(message);
+}
+```
+
+## Starting workflows
+
+Use the `start` function from `workflow/api` to start workflows from
+your commands or other parts of your application:
+
+```ts title="src/app/commands/greet.ts"
+import type { CommandData, ChatInputCommand } from 'commandkit';
+import { start } from 'workflow/api';
+import { greetUserWorkflow } from '@/workflows/greet/greet.workflow';
+
+export const command: CommandData = {
+  name: 'greet',
+  description: 'Greet a user with a workflow',
+};
+
+export const chatInput: ChatInputCommand = async (ctx) => {
+  await ctx.interaction.reply("I'm going to greet you! :wink:");
+
+  await start(greetUserWorkflow, [ctx.interaction.user.id]);
+};
+```
+
+## Project structure
+
+Organize your workflows and steps in a clear structure:
+
+```
+src/
+  workflows/
+    greet/
+      greet.workflow.ts
+      steps/
+        greet.step.ts
+    userOnboarding/
+      index.ts
+      steps/
+        send-welcome-message.ts
+        assign-role.ts
+        log-activity.ts
+    shared/
+      validate-input.ts
+      log-activity.ts
+```
+
+You can organize steps into a single `steps.ts` file or separate files
+within a `steps` folder. The `shared` folder is useful for common
+steps used by multiple workflows.
+
+## Advanced examples
+
+### User onboarding workflow
+
+Create a multi-step onboarding process:
+
+```ts title="src/workflows/onboarding/onboarding.workflow.ts"
+import { sleep } from 'workflow';
+import { sendWelcomeMessage } from './steps/send-welcome-message';
+import { assignRole } from './steps/assign-role';
+import { sendFollowUpMessage } from './steps/send-follow-up-message';
+
+export async function userOnboardingWorkflow(userId: string, guildId: string) {
+  'use workflow';
+
+  await sendWelcomeMessage(userId, guildId);
+
+  await assignRole(userId, guildId);
+
+  await sleep('7 days');
+
+  await sendFollowUpMessage(userId, guildId);
+
+  return { userId, status: 'completed' };
+}
+```
+
+### Step with error handling
+
+```ts title="src/workflows/onboarding/steps/send-welcome-message.ts"
+import { FatalError } from 'workflow';
+import { useClient } from 'commandkit/hooks';
+
+export async function sendWelcomeMessage(userId: string, guildId: string) {
+  'use step';
+
+  const client = useClient<true>();
+
+  try {
+    const guild = await client.guilds.fetch(guildId);
+    const member = await guild.members.fetch(userId);
+
+    const welcomeChannel = guild.channels.cache.find(
+      (channel) => channel.name === 'welcome',
+    );
+
+    if (welcomeChannel?.isTextBased()) {
+      await welcomeChannel.send({
+        content: `Welcome to ${guild.name}, <@${userId}>! 🎉`,
+        embeds: [
+          {
+            title: 'Welcome!',
+            description: 'Thanks for joining our server!',
+            color: 0x00ff00,
+          },
+        ],
+      });
+    } else {
+      const user = await client.users.fetch(userId);
+      await user.send({
+        embeds: [
+          {
+            title: 'Welcome!',
+            description: `Thanks for joining ${guild.name}!`,
+            color: 0x00ff00,
+          },
+        ],
+      });
+    }
+  } catch (error: any) {
+    if (error.code === 50007) {
+      throw new FatalError('User has DMs disabled');
+    }
+    if (error.code === 10007) {
+      throw new FatalError('Member not found in guild');
+    }
+    throw error;
+  }
+}
+```
+
+### Parallel execution
+
+Execute multiple steps in parallel:
+
+```ts title="src/workflows/memberSetup/memberSetup.workflow.ts"
+import {
+  assignRoles,
+  sendWelcomeMessage,
+  createPrivateChannel,
+  logMemberJoin,
+} from './steps';
+
+export async function memberSetupWorkflow(userId: string, guildId: string) {
+  'use workflow';
+
+  const [roles, channel, log] = await Promise.all([
+    assignRoles(userId, guildId),
+    createPrivateChannel(userId, guildId),
+    logMemberJoin(userId, guildId),
+  ]);
+
+  await sendWelcomeMessage(userId, guildId, channel.id);
+
+  return { userId, roles, channelId: channel.id, logged: log };
+}
+```
+
+## Using CommandKit hooks in steps
+
+Step functions have full access to CommandKit hooks:
+
+```ts
+import { useClient, useCommandKit } from 'commandkit/hooks';
+
+export async function updateMemberStats(userId: string, guildId: string) {
+  'use step';
+
+  const client = useClient<true>();
+  const commandkit = useCommandKit();
+
+  const guild = await client.guilds.fetch(guildId);
+  const member = await guild.members.fetch(userId);
+
+  const stats = {
+    joinedAt: member.joinedAt?.toISOString(),
+    roles: member.roles.cache.size,
+    lastUpdated: Date.now(),
+  };
+
+  commandkit.store.set(`member:${userId}:stats`, stats);
+
+  return { userId, stats };
+}
+```
+
+## Best practices
+
+### Organize workflows and steps
+
+Keep workflows focused on orchestration and steps focused on
+individual tasks:
+
+```ts
+// Good - workflow orchestrates, steps do work
+export async function memberVerificationWorkflow(
+  userId: string,
+  guildId: string,
+) {
+  'use workflow';
+  const member = await fetchMember(userId, guildId);
+  const verified = await verifyMember(member);
+  return { userId, verified, status: 'completed' };
+}
+
+// Avoid - doing too much in the workflow
+export async function badWorkflow(userId: string) {
+  'use workflow';
+  // Don't do actual work here - use steps instead
+  const user = await fetch('...'); // ❌
+}
+```
+
+### Handle errors appropriately
+
+Use `FatalError` for errors that shouldn't retry and `RetryableError`
+for custom retry behavior:
+
+```ts
+import { FatalError, RetryableError } from 'workflow';
+import { useClient } from 'commandkit/hooks';
+
+export async function sendModerationAction(
+  userId: string,
+  guildId: string,
+  action: 'warn' | 'mute' | 'kick',
+) {
+  'use step';
+
+  const client = useClient<true>();
+  const guild = await client.guilds.fetch(guildId);
+  const member = await guild.members.fetch(userId);
+
+  if (!member) {
+    throw new FatalError('Member not found in guild');
+  }
+
+  try {
+    if (action === 'warn') {
+      await member.send('You have been warned for violating server rules.');
+    } else if (action === 'mute') {
+      await member.timeout(60 * 60 * 1000, 'Violation of server rules');
+    } else if (action === 'kick') {
+      await member.kick('Violation of server rules');
+    }
+
+    return { userId, action, success: true };
+  } catch (error: any) {
+    if (error.code === 50013) {
+      throw new FatalError('Missing permissions to perform action');
+    }
+
+    if (error.code === 50035) {
+      throw new RetryableError('Rate limited by Discord', {
+        retryAfter: '1 minute',
+      });
+    }
+
+    throw error;
+  }
+}
+```
+
+### Use descriptive names
+
+```ts
+// Good
+export async function userOnboardingWorkflow(userId: string) {
+  'use workflow';
+  // ...
+}
+
+// Avoid
+export async function workflow1(userId: string) {
+  'use workflow';
+  // ...
+}
+```
+
+### Keep steps idempotent
+
+Since steps can retry, ensure they're idempotent when performing side
+effects:
+
+```ts
+export async function assignRole(userId: string, roleId: string) {
+  'use step';
+
+  const client = useClient<true>();
+  const member = await client.guilds.cache
+    .get('guild-id')
+    ?.members.fetch(userId);
+
+  if (!member) {
+    throw new FatalError('Member not found');
+  }
+
+  if (member.roles.cache.has(roleId)) {
+    return { alreadyAssigned: true };
+  }
+
+  await member.roles.add(roleId);
+  return { assigned: true };
+}
+```
+
+## Troubleshooting
+
+### Workflow not executing
+
+1. **Check the workflow plugin is registered** in your
+   `commandkit.config.ts`
+2. **Verify workflow files are in `src/workflows`** directory
+3. **Ensure you're using `start` function** from `workflow/api` to
+   start workflows
+4. **Check for compilation errors** in your workflow or step functions
+
+### Step errors
+
+1. **Verify CommandKit hooks** are used correctly in steps
+2. **Check error handling** - use `FatalError` for non-retryable
+   errors
+3. **Ensure steps are idempotent** when performing side effects
+4. **Review step retry behavior** - steps retry up to 3 times by
+   default
+
+### Build issues
+
+1. **Separate workflows and steps** into different files to avoid
+   bundler issues
+2. **Check TypeScript configuration** for proper module resolution
+3. **Verify workflow directives** (`"use workflow"` and `"use step"`)
+   are present
+
+## Learn more
+
+For comprehensive documentation on workflows, including:
+
+- Workflow and step fundamentals
+- Control flow patterns (sequential, parallel, conditional)
+- Error handling and retrying
+- Webhooks and external integrations
+- Serialization and idempotency
+- Observability and debugging
+
+Visit the
+[official Workflow DevKit documentation](https://useworkflow.dev).
