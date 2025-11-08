@@ -7,6 +7,6 @@ export class WorkflowPlugin extends RuntimePlugin<WorkflowPluginOptions> {
 
   public constructor(options: WorkflowPluginOptions) {
     super(options);
-    this.preload.add('.compiled-workflows/handler.js');
+    this.preload.add('module:@commandkit/workflow/handler');
   }
 }

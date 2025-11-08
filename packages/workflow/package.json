@@ -8,6 +8,16 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./handler": {
+      "types": "./dist/public-handler.d.ts",
+      "import": "./dist/public-handler.js"
+    }
+  },
   "scripts": {
     "check-types": "tsc --noEmit",
     "build": "tsc"
