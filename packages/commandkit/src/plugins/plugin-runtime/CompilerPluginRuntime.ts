@@ -50,8 +50,12 @@ export class CompilerPluginRuntime {
   /**
    * Creates a new instance of CompilerPluginRuntime.
    * @param plugins An array of compiler plugins to be managed by this runtime.
+   * @param isDevMode Whether the build is in development mode.
    */
-  public constructor(private readonly plugins: CompilerPlugin[]) {
+  public constructor(
+    private readonly plugins: CompilerPlugin[],
+    public readonly isDevMode: boolean,
+  ) {
     this.plugins = this.plugins.filter((p) => !!p && isCompilerPlugin(p));
   }
 

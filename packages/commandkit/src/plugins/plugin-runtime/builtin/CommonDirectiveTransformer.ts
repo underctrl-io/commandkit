@@ -41,6 +41,7 @@ export abstract class CommonDirectiveTransformer extends CompilerPlugin<CommonDi
     if (!this.options.enabled) return null;
     if (!this.transformer) return null;
     if (/\.json$/.test(params.id)) return null;
+    if (!params.code.includes(this.options.directive)) return null;
 
     const result = await this.transformer(params.code.toString(), params.id);
 

@@ -70,6 +70,7 @@ jobs:
             "@commandkit/ai:packages/ai"
             "@commandkit/queue:packages/queue"
             "@commandkit/tasks:packages/tasks"
+            "@commandkit/workflow:packages/workflow"
           )
 
           for entry in "${PACKAGES[@]}"; do
