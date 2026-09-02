@@ -727,7 +727,7 @@ export class AppCommandHandler {
       : undefined;
     const loadedCommand = hint
       ? this.findCommandByName(routeKey!, hint)
-      : this.findCommandByRoute(routeKey!, usedCommandOverride);
+      : this.findCommandByRoute(routeKey!);
     if (!loadedCommand) return null;
 
     // If this is a guild specific command, check if we're in the right guild
