@@ -18,7 +18,9 @@ export default defineConfig({
   minify: false,
   dts: true,
   shims: false,
-  skipNodeModulesBundle: true,
+  deps: {
+    skipNodeModulesBundle: true,
+  },
   clean: true,
   platform: 'node',
   target: 'node16',

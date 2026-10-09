@@ -125,7 +125,7 @@ jobs:
       - name: Build packages
         run: pnpm dlx turbo build --filter='./packages/*'
 
-      - name: Publish packages with npm trusted publishing
+      - name: Publish packages with pnpm trusted publishing
         env:
           NPM_TAG: ${{ steps.release.outputs.publish_tag }}
         run: |
@@ -150,10 +150,7 @@ jobs:
 
             if npm view "$name@$version" version >/dev/null 2>&1; then
               echo "📦 $name@$version already exists on npm, skipping..."
-            elif (
-              cd "$path"
-              npm publish --provenance --access public --tag "$NPM_TAG"
-            ); then
+            elif pnpm --filter="$name" publish --no-git-checks --provenance --access public --tag "$NPM_TAG"; then
               echo "✅ Published $name@$version under '$NPM_TAG'"
             elif npm view "$name@$version" version >/dev/null 2>&1; then
               echo "📦 $name@$version was published by another process, skipping..."
