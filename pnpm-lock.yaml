@@ -245,7 +245,7 @@ importers:
         version: link:../commandkit
       ioredis:
         specifier: ^5.11.1
-        version: 5.11.1
+        version: 5.11.1(supports-color@8.1.1)
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -283,8 +283,8 @@ importers:
         specifier: catalog:build
         version: 0.22.14(tsx@4.23.15)(typescript@5.9.3)
       use-macro:
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^2.0.0-next.1
+        version: 2.0.0-next.1(esbuild@0.28.2)
     devDependencies:
       '@types/ms':
         specifier: ^2.1.0
@@ -413,7 +413,7 @@ importers:
     dependencies:
       ioredis:
         specifier: ^5.11.1
-        version: 5.11.1
+        version: 5.11.1(supports-color@8.1.1)
       ms:
         specifier: ^2.1.3
         version: 2.1.3
@@ -444,7 +444,7 @@ importers:
     dependencies:
       ioredis:
         specifier: ^5.11.1
-        version: 5.11.1
+        version: 5.11.1(supports-color@8.1.1)
     devDependencies:
       '@commandkit/cache':
         specifier: workspace:*
@@ -5067,8 +5067,9 @@ packages:
   devalue@5.9.2:
     resolution: {integrity: sha512-po4PAY5c53tw5XMocSnf8A/5OHhbbUftpr93aEN6BBoAdntUmK7vu7wOATqvt7cXO7m1Cl4gMVn6p7n6n4mj0w==}
 
-  devalue@5.9.4:
-    resolution: {integrity: sha512-sPAT4pztbu6586/hrhOnMKS17IJrvg12mXiSPSS3W5qDeN2RGgvZ0diZCm31dBbnevfVmujNO3IM2wrS4Y2Rhg==}
+  devalue@6.0.2:
+    resolution: {integrity: sha512-6V1HzU4to74skg//ScZR2mp9bdz+rESC9jQzVIIG/ha0HYgymHcXIQQCjH0+ivRaSuY82fa9fZ7Ro6QZT4s4uw==}
+    engines: {node: '>=22.17'}
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
@@ -8634,8 +8635,14 @@ packages:
       file-loader:
         optional: true
 
-  use-macro@1.1.0:
-    resolution: {integrity: sha512-swkpddhh4pBk3PI7ig+KtNrSzcGQbNBciFdIrajIuOICany29Exvw4KRK+CsybDsGgc4BHufw3rPG6vAbrSvhg==}
+  use-macro@2.0.0-next.1:
+    resolution: {integrity: sha512-BsFm2q7RdqPNGP8N1gaTCW9Jt+CFgEOUnkghHoa1O7J95BI0dT8arkXNeJeHl9YwlX6ipHJMEj4wL41Ekz47HQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      esbuild: '>=0.24.0'
+    peerDependenciesMeta:
+      esbuild:
+        optional: true
 
   use-sync-external-store@1.7.0:
     resolution: {integrity: sha512-6L+EeigHMQhdaIPNIFUKwfWJSwWFQ8gJbJ2DLOs5sDIegTwR9fRxvnM3uciHKjIZhFz+KAv2emhWMRvDmMcY8A==}
@@ -10359,7 +10366,7 @@ snapshots:
     dependencies:
       '@msgpack/msgpack': 3.1.3
       '@vladfrangu/async_event_emitter': 2.4.7
-      ioredis: 5.11.1
+      ioredis: 5.11.1(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -14062,7 +14069,7 @@ snapshots:
   bullmq@5.81.5:
     dependencies:
       cron-parser: 4.9.0
-      ioredis: 5.11.1
+      ioredis: 5.11.1(supports-color@8.1.1)
       msgpackr: 2.0.5
       node-abort-controller: 3.1.1
       semver: 7.8.5
@@ -14863,7 +14870,7 @@ snapshots:
 
   devalue@5.9.2: {}
 
-  devalue@5.9.4: {}
+  devalue@6.0.2: {}
 
   devlop@1.1.0:
     dependencies:
@@ -15833,7 +15840,7 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
 
-  ioredis@5.11.1:
+  ioredis@5.11.1(supports-color@8.1.1):
     dependencies:
       '@ioredis/commands': 1.10.0
       cluster-key-slot: 1.1.1
@@ -18914,16 +18921,15 @@ snapshots:
     optionalDependencies:
       file-loader: 6.2.0(webpack@5.111.1(postcss@8.5.29))
 
-  use-macro@1.1.0:
+  use-macro@2.0.0-next.1(esbuild@0.28.2):
     dependencies:
-      '@babel/core': 7.29.7
       '@babel/generator': 7.29.8
       '@babel/parser': 7.29.9
-      '@babel/preset-typescript': 7.29.7(@babel/core@7.29.7)
       '@babel/traverse': 7.29.10
       '@babel/types': 7.29.8
-      '@types/babel__core': 7.20.5
-      devalue: 5.9.4
+      devalue: 6.0.2
+    optionalDependencies:
+      esbuild: 0.28.2
     transitivePeerDependencies:
       - supports-color
 

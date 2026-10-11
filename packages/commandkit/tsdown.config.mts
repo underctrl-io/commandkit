@@ -1,7 +1,5 @@
 import { defineConfig } from 'tsdown';
-import { MacroTransformer } from 'use-macro';
-
-const macro = new MacroTransformer();
+import { rollupPluginUseMacro } from 'use-macro/rollup';
 
 export default defineConfig({
   format: ['cjs'],
@@ -36,21 +34,5 @@ export default defineConfig({
   },
   logLevel: 'silent',
   unbundle: false,
-  plugins: [
-    {
-      name: 'macro',
-      transform: {
-        filter: {
-          id: /\.(c|m)?(t|j)sx?$/,
-        },
-        async handler(code, id) {
-          const result = await macro.transform(code, id);
-
-          return {
-            code: result.contents as string,
-          };
-        },
-      },
-    },
-  ],
+  plugins: [rollupPluginUseMacro({ execution: { mode: 'trusted' } })],
 });

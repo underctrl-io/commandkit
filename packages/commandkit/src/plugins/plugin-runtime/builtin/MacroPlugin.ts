@@ -38,7 +38,7 @@ export class MacroPlugin extends CompilerPlugin {
     if (/\.json$/.test(params.id)) return null;
     if (!params.code.includes('use macro')) return null;
 
-    const { contents } = await this.macroTransformer.transform(
+    const { code: contents } = await this.macroTransformer.transform(
       params.code,
       params.id,
     );

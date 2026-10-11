@@ -67,3 +67,4 @@ minimumReleaseAgeExclude:
   - postcss-selector-parser@7.1.6
   - tinypool@2.1.1 || 2.1.2
   - shell-quote@1.11.0
+  - use-macro@2.0.0-next.1
