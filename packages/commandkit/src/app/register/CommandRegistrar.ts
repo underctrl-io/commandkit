@@ -190,6 +190,39 @@ export class CommandRegistrar {
   }
 
   /**
+   * Keeps duplicate command names within a registration scope from invalidating
+   * the entire bulk overwrite request.
+   */
+  private deduplicateCommands(
+    commands: RegistrationCommandData[],
+    scope: string,
+  ): RegistrationCommandData[] {
+    const seen = new Set<string>();
+
+    return commands.filter((command) => {
+      const type = command.type ?? ApplicationCommandType.ChatInput;
+      const key = `${type}:${command.name.toLowerCase()}`;
+
+      if (seen.has(key)) {
+        const typeName =
+          type === ApplicationCommandType.ChatInput
+            ? 'chat-input'
+            : type === ApplicationCommandType.User
+              ? 'user context-menu'
+              : type === ApplicationCommandType.Message
+                ? 'message context-menu'
+                : `type ${type}`;
+
+        Logger.warn`Skipping duplicate ${typeName} application command "${command.name}" in ${scope}; only the first definition will be registered.`;
+        return false;
+      }
+
+      seen.add(key);
+      return true;
+    });
+  }
+
+  /**
    * Builds a top-level Discord payload for a hierarchical command root.
    */
   private buildHierarchicalRootPayload(
@@ -442,10 +475,11 @@ export class CommandRegistrar {
     });
 
     try {
+      const uniqueCommands = this.deduplicateCommands(commands, 'global');
       const data = (await this.api.put(
         Routes.applicationCommands(this.commandkit.client.user!.id),
         {
-          body: commands.map((c) => ({
+          body: uniqueCommands.map((c) => ({
             ...c,
             __metadata: undefined,
             __applyId: undefined,
@@ -456,7 +490,7 @@ export class CommandRegistrar {
       // inject the command id into the command
       data.forEach((c) => {
         if (!c.id) return;
-        const cmd = commands.find(
+        const cmd = uniqueCommands.find(
           (co) => co.name === c.name && co.type === c.type,
         );
         if (!cmd) return;
@@ -494,7 +528,7 @@ export class CommandRegistrar {
     if (prevented) return;
 
     try {
-      const guildCommandsMap = new Map<string, CommandData[]>();
+      const guildCommandsMap = new Map<string, RegistrationCommandData[]>();
 
       commands.forEach((command) => {
         if (!command.__metadata?.guilds?.length) return;
@@ -528,13 +562,17 @@ export class CommandRegistrar {
 
         if (prevented) continue;
 
+        const uniqueGuildCommands = this.deduplicateCommands(
+          guildCommands,
+          `guild ${guild}`,
+        );
         const data = (await this.api.put(
           Routes.applicationGuildCommands(
             this.commandkit.client.user!.id,
             guild,
           ),
           {
-            body: guildCommands.map((b) => ({
+            body: uniqueGuildCommands.map((b) => ({
               ...b,
               __metadata: undefined,
               __applyId: undefined,
@@ -544,7 +582,7 @@ export class CommandRegistrar {
 
         data.forEach((c) => {
           if (!c.id) return;
-          const cmd = commands.find(
+          const cmd = uniqueGuildCommands.find(
             (co) => co.name === c.name && co.type === c.type,
           );
           if (!cmd) return;
