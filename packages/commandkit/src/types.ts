@@ -5,6 +5,7 @@ import type {
   Interaction,
   PermissionsString,
   RESTPostAPIApplicationCommandsJSONBody,
+  RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from 'discord.js';
 import type { CommandKit } from './commandkit';
 
@@ -78,6 +79,7 @@ export type CommandData = Prettify<
      * The description of the command.
      */
     description?: string;
+    options?: RESTPostAPIChatInputApplicationCommandsJSONBody['options'];
   }
 >;
 

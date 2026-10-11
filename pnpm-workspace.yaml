@@ -21,9 +21,9 @@ catalogs:
     typescript: ^5.9.3
     tsdown: ^0.22.14
   workflow:
-    workflow: ^4.6.0
-    '@workflow/builders': ^4.1.1
-    '@workflow/rollup': ^4.0.11
+    workflow: ^5.2.0
+    '@workflow/builders': ^5.0.3
+    '@workflow/rollup': ^5.0.3
 
 minimumReleaseAgeExclude:
   - '@ai-sdk/gateway@4.0.24'

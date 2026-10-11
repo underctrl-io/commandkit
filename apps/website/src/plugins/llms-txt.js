@@ -1,6 +1,19 @@
 const path = require('path');
 const fs = require('fs');
-const matter = require('gray-matter');
+const { parse: parseYaml } = require('yaml');
+
+const FRONTMATTER_PATTERN =
+  /^\uFEFF?---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/;
+
+function parseFrontmatter(markdown) {
+  const match = markdown.match(FRONTMATTER_PATTERN);
+  if (!match) return { data: {}, content: markdown };
+
+  return {
+    data: parseYaml(match[1]) || {},
+    content: markdown.slice(match[0].length),
+  };
+}
 
 const DOCS_URL = 'https://commandkit.dev/docs/guide';
 
@@ -39,7 +52,7 @@ module.exports = function (context) {
           ) {
             const content = await fs.promises.readFile(fullPath, 'utf8');
             const { data: frontmatter, content: markdownContent } =
-              matter(content);
+              parseFrontmatter(content);
 
             // Get relative path from guide directory
             const relativePath = path

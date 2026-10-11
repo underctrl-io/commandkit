@@ -1,8 +1,36 @@
 import fs from 'fs-extra';
 import path from 'node:path';
-// @ts-ignore
-import tiged from 'tiged';
+import { downloadTemplate } from 'giget';
 import { validateExampleName } from './validate.js';
+
+function toGigetSource(source: string): string {
+  if (!source.startsWith('http://') && !source.startsWith('https://')) {
+    return `github:${source}`;
+  }
+
+  const url = new URL(source);
+  const segments = url.pathname.split('/').filter(Boolean);
+  const [owner, rawRepository, tree, ...rest] = segments;
+
+  if (!owner || !rawRepository) {
+    throw new Error('GitHub example URLs must include an owner and repository');
+  }
+
+  const repository = rawRepository.replace(/\.git$/, '');
+  if (tree === 'tree' && rest.length > 0) {
+    const [ref, ...subdirectory] = rest;
+    const path = subdirectory.length > 0 ? `/${subdirectory.join('/')}` : '';
+    return `github:${owner}/${repository}${path}#${ref}`;
+  }
+
+  if (segments.length === 2) {
+    return `github:${owner}/${repository}`;
+  }
+
+  throw new Error(
+    'GitHub example URLs must point to a repository or a /tree/<branch>/<path> directory',
+  );
+}
 
 export interface FetchExampleOptions {
   example: string;
@@ -35,12 +63,10 @@ export async function fetchExample({
 
   try {
     // Download the example
-    const emitter = tiged(sourceUrl, {
-      mode: 'tar',
-      disableCache: true,
+    await downloadTemplate(toGigetSource(sourceUrl), {
+      dir: tempDir,
+      forceClean: true,
     });
-
-    await emitter.clone(tempDir);
 
     // If examplePath is specified, navigate to that subdirectory
     const sourceDir = examplePath ? path.join(tempDir, examplePath) : tempDir;
