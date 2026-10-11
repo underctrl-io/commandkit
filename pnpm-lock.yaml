@@ -283,7 +283,7 @@ importers:
         specifier: catalog:build
         version: 0.22.14(tsx@4.23.15)(typescript@5.9.3)
       use-macro:
-        specifier: ^2.0.0-next.1
+        specifier: 2.0.0-next.1
         version: 2.0.0-next.1(esbuild@0.28.2)
     devDependencies:
       '@types/ms':

@@ -180,7 +180,7 @@
     "picocolors": "^1.1.1",
     "rimraf": "^6.1.3",
     "tsdown": "catalog:build",
-    "use-macro": "^2.0.0-next.1"
+    "use-macro": "2.0.0-next.1"
   },
   "devDependencies": {
     "@types/ms": "^2.1.0",
