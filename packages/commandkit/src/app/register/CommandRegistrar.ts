@@ -83,6 +83,19 @@ export class CommandRegistrar {
 
       // Pre-generated context menu commands are already fully formed (#558)
       if (isPreGeneratedCtx || isContextMenuType) {
+        const hasMatchingPreGeneratedContextMenu =
+          (json.type === ApplicationCommandType.User &&
+            commandIds.has(`${cmd.command.id}::user-ctx`)) ||
+          (json.type === ApplicationCommandType.Message &&
+            commandIds.has(`${cmd.command.id}::message-ctx`));
+
+        // An explicit ContextMenuCommandBuilder and its handler generate the
+        // same context menu entry. Register the generated entry once so its
+        // alias and metadata are preserved without duplicating the builder.
+        if (!isPreGeneratedCtx && hasMatchingPreGeneratedContextMenu) {
+          return [];
+        }
+
         return [
           {
             ...json,

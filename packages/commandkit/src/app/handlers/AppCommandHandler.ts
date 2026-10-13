@@ -292,15 +292,57 @@ export class AppCommandHandler {
     const uncategorized = crypto.randomUUID();
 
     // Collect flat commands
-    const flatCommands = this.getCommandsArray();
+    const loadedFlatCommands = this.getCommandsArray();
+    const loadedCommandIds = new Set(
+      loadedFlatCommands.map((cmd) => cmd.command.id),
+    );
+    const flatCommands = loadedFlatCommands.filter((cmd) => {
+      const type = cmd.data.command.type;
+      const generatedUserContextMenu = loadedCommandIds.has(
+        `${cmd.command.id}::user-ctx`,
+      );
+      const generatedMessageContextMenu = loadedCommandIds.has(
+        `${cmd.command.id}::message-ctx`,
+      );
+      const hasMatchingGeneratedContextMenu =
+        (type === ApplicationCommandType.User && generatedUserContextMenu) ||
+        (type === ApplicationCommandType.Message &&
+          generatedMessageContextMenu);
+      const hasOnlyContextMenuHandlers =
+        !cmd.data.chatInput &&
+        !cmd.data.message &&
+        (cmd.data.userContextMenu || cmd.data.messageContextMenu);
+      const isInferredContextMenuPlaceholder =
+        type !== ApplicationCommandType.User &&
+        type !== ApplicationCommandType.Message &&
+        hasOnlyContextMenuHandlers &&
+        (generatedUserContextMenu || generatedMessageContextMenu);
+
+      // The source definition can be a context-menu builder or a placeholder
+      // whose type is inferred from its handler. Show generated entries once.
+      return (
+        !hasMatchingGeneratedContextMenu && !isInferredContextMenuPlaceholder
+      );
+    });
 
     // Collect hierarchical root nodes from treeNodes (kind === 'command')
     const treeNodes = Array.from(
       this.commandkit.commandsRouter?.getData().treeNodes.values() ?? [],
     );
-    const hierarchicalRoots = treeNodes.filter(
-      (n) => n.kind === 'command' && n.source !== 'root',
-    );
+    const hierarchicalRoots = treeNodes.filter((node) => {
+      if (node.kind !== 'command' || node.source === 'root') return false;
+
+      const loadedNode = this.hierarchicalNodes.get(node.id);
+      const hasOnlyContextMenuHandlers =
+        loadedNode &&
+        !loadedNode.data.chatInput &&
+        !loadedNode.data.message &&
+        (loadedNode.data.userContextMenu || loadedNode.data.messageContextMenu);
+
+      // Context-menu-only executable leaves are displayed by their generated
+      // entries in flatCommands, not again as slash-command roots.
+      return !(node.executable && hasOnlyContextMenuHandlers);
+    });
 
     // Total = flat commands + hierarchical roots (top-level slash commands)
     const totalCount = flatCommands.length + hierarchicalRoots.length;
