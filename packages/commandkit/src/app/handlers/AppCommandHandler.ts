@@ -428,10 +428,17 @@ export class AppCommandHandler {
         const isLastEntry = entryIndex === totalEntries - 1 && !hasChildren;
         const cmdPrefix = isLastEntry ? '└─' : '├─';
         const name = cmd.data.command.name;
+        const contextMenuType = cmd.data.command.type;
+        const contextMenuLabel =
+          contextMenuType === ApplicationCommandType.User
+            ? colors.cyan(' [user context menu]')
+            : contextMenuType === ApplicationCommandType.Message
+              ? colors.cyan(' [message context menu]')
+              : '';
         const hasMw = cmd.command.middlewares.length > 0;
         const middlewareIcon = hasMw ? colors.magenta(' (λ)') : '';
         console.log(
-          `${colors.green(`${cmdIndent}${cmdPrefix}`)} ${colors.yellow(name)}${middlewareIcon}`,
+          `${colors.green(`${cmdIndent}${cmdPrefix}`)} ${colors.yellow(name)}${contextMenuLabel}${middlewareIcon}`,
         );
         entryIndex++;
       });
